@@ -13,8 +13,15 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.vision.MockCamera;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -31,6 +38,17 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
+
+  private SwerveDrivePoseEstimator poseEstimator;
+  private MockCamera cam1;
+  private MockCamera cam2;
+  private Thread camThread1; // Cam1
+  private Thread camThread2; // Cam2
+
+  Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
+  Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
+  Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
+  Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -55,6 +73,23 @@ public class Robot extends LoggedRobot {
         Logger.recordMetadata("GitDirty", "Unknown");
         break;
     }
+    SwerveDriveKinematics kinematics =
+        new SwerveDriveKinematics(
+            m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
+
+    poseEstimator =
+        new SwerveDrivePoseEstimator(
+            kinematics, new Rotation2d(), new SwerveModulePosition[] {}, new Pose2d());
+
+    Pose2d basePose = new Pose2d(new Translation2d(5.0, 5.0), Rotation2d.fromDegrees(45.0));
+    cam1 = new MockCamera(poseEstimator, "Camera 1", basePose);
+    cam2 = new MockCamera(poseEstimator, "Camera 2", basePose);
+
+    camThread1 = new Thread(cam1);
+    camThread2 = new Thread(cam2);
+
+    camThread1.start();
+    camThread2.start();
 
     // Set up data receivers & replay source
     switch (Constants.currentMode) {
@@ -96,6 +131,8 @@ public class Robot extends LoggedRobot {
     // newly-scheduled commands, running already-scheduled commands, removing
     // finished or interrupted commands, and running subsystem periodic() methods.
     // This must be called from the robot's periodic block in order for anything in
+
+    System.out.println("Estimated Pose: " + poseEstimator.getEstimatedPosition());
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
   }
