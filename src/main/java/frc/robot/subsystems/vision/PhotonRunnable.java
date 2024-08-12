@@ -110,20 +110,18 @@ public class PhotonRunnable implements Runnable {
   }
 
   public TimestampedVisionUpdate getPoseAtTimestamp(double timestamp) {
-    if(isMultiDetection()){
+    if (isMultiDetection()) {
       return new TimestampedVisionUpdate(
-        timestamp,
-        grabLatestEstimatedPose().estimatedPose.toPose2d(),
-        VecBuilder.fill(.001, .003, .005)); // SUBJECT TO CHANGE (multi tag constants)
+          timestamp,
+          grabLatestEstimatedPose().estimatedPose.toPose2d(),
+          VecBuilder.fill(.001, .003, .005)); // SUBJECT TO CHANGE (multi tag constants)
     }
     double distance = getDistanceToBestTag();
     double n1 = .001 * distance; // SUBJECT TO CHANGE
     double n2 = .003 * distance; // SUBJECT TO CHANGE
     double n3 = .005 * distance; // SUBJECT TO CHANGE
     return new TimestampedVisionUpdate(
-        timestamp,
-        grabLatestEstimatedPose().estimatedPose.toPose2d(),
-        VecBuilder.fill(n1, n2, n3));
+        timestamp, grabLatestEstimatedPose().estimatedPose.toPose2d(), VecBuilder.fill(n1, n2, n3));
   }
 
   // returns if multi tag detection is being used
