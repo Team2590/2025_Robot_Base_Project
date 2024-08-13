@@ -12,11 +12,14 @@ public class MockCamera implements Runnable {
   private final SwerveDrivePoseEstimator poseEstimator;
   private final String camName;
   private final Pose2d base;
+  private final Timer timer;
 
   public MockCamera(SwerveDrivePoseEstimator poseEstimator, String camName, Pose2d base) {
     this.poseEstimator = poseEstimator;
     this.camName = camName;
     this.base = base;
+    this.timer = new Timer();
+    this.timer.start();
   }
 
   @Override
@@ -39,7 +42,7 @@ public class MockCamera implements Runnable {
   }
 
   public void updatePose(Pose2d pose) {
-    double timestamp = System.currentTimeMillis() / 1000.0; // current time in seconds
+    double timestamp = timer.get();
     poseEstimator.addVisionMeasurement(pose, timestamp);
     System.out.println("[" + camName + "] New pose: " + pose + " at timestamp: " + timestamp);
   }

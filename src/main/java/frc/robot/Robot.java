@@ -82,6 +82,7 @@ public class Robot extends LoggedRobot {
             kinematics, new Rotation2d(), new SwerveModulePosition[] {}, new Pose2d());
 
     Pose2d basePose = new Pose2d(new Translation2d(5.0, 5.0), Rotation2d.fromDegrees(45.0));
+
     cam1 = new MockCamera(poseEstimator, "Camera 1", basePose);
     cam2 = new MockCamera(poseEstimator, "Camera 2", basePose);
 
@@ -89,7 +90,7 @@ public class Robot extends LoggedRobot {
     camThread2 = new Thread(cam2);
 
     camThread1.start();
-    camThread2.start();
+    // camThread2.start();
 
     // Set up data receivers & replay source
     switch (Constants.currentMode) {
@@ -131,8 +132,11 @@ public class Robot extends LoggedRobot {
     // newly-scheduled commands, running already-scheduled commands, removing
     // finished or interrupted commands, and running subsystem periodic() methods.
     // This must be called from the robot's periodic block in order for anything in
-
-    System.out.println("Estimated Pose: " + poseEstimator.getEstimatedPosition());
+    Pose2d estimatedPose = poseEstimator.getEstimatedPosition();
+    // System.out.println("Estimated Pose: " + estimatedPose);
+    // Additional debugging information
+    System.out.println("Translation: " + estimatedPose.getTranslation());
+    System.out.println("Rotation: " + estimatedPose.getRotation().getDegrees());
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
   }
