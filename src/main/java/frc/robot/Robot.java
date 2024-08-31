@@ -18,9 +18,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.MockCamera;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -44,6 +44,7 @@ public class Robot extends LoggedRobot {
   private MockCamera cam2;
   private Thread camThread1; // Cam1
   private Thread camThread2; // Cam2
+  private Drive drive;
 
   Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
   Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
@@ -56,6 +57,8 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
+    robotContainer = new RobotContainer();
+    this.drive = robotContainer.getDrive();
     // Record metadata
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -77,20 +80,20 @@ public class Robot extends LoggedRobot {
         new SwerveDriveKinematics(
             m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
 
-    poseEstimator =
-        new SwerveDrivePoseEstimator(
-            kinematics, new Rotation2d(), new SwerveModulePosition[] {}, new Pose2d());
+    // poseEstimator =
+    //     new SwerveDrivePoseEstimator(
+    //         kinematics, new Rotation2d(), new SwerveModulePosition[] {}, new Pose2d());
 
     Pose2d basePose = new Pose2d(new Translation2d(5.0, 5.0), Rotation2d.fromDegrees(45.0));
 
-    cam1 = new MockCamera(poseEstimator, "Camera 1", basePose);
-    cam2 = new MockCamera(poseEstimator, "Camera 2", basePose);
+    cam1 = new MockCamera(drive, "Camera 1", basePose);
+    cam2 = new MockCamera(drive, "Camera 2", basePose);
 
     camThread1 = new Thread(cam1);
     camThread2 = new Thread(cam2);
 
     camThread1.start();
-    // camThread2.start();
+    camThread2.start();
 
     // Set up data receivers & replay source
     switch (Constants.currentMode) {
@@ -122,7 +125,6 @@ public class Robot extends LoggedRobot {
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
-    robotContainer = new RobotContainer();
   }
 
   /** This function is called periodically during all modes. */
@@ -132,11 +134,11 @@ public class Robot extends LoggedRobot {
     // newly-scheduled commands, running already-scheduled commands, removing
     // finished or interrupted commands, and running subsystem periodic() methods.
     // This must be called from the robot's periodic block in order for anything in
-    Pose2d estimatedPose = poseEstimator.getEstimatedPosition();
+
     // System.out.println("Estimated Pose: " + estimatedPose);
     // Additional debugging information
-    System.out.println("Translation: " + estimatedPose.getTranslation());
-    System.out.println("Rotation: " + estimatedPose.getRotation().getDegrees());
+
+    // System.out.println("Rotation: " + estimatedPose.getRotation().getDegrees());
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
   }
@@ -178,7 +180,11 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    Pose2d estimatedPose = drive.getPose();
+    System.out.println("Translation: " + estimatedPose.getTranslation());
+    System.out.println("Estimated Pose: " + estimatedPose);
+  }
 
   /** This function is called once when test mode is enabled. */
   @Override
