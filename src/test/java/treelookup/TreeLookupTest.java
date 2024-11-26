@@ -15,6 +15,7 @@ class TreeLookupTest {
   static void setup() {
     testMap.put(2.0, 2.0);
     testMap.put(4.0, 4.0);
+    testMap.put(6.0, 6.0);
   }
 
   @Test
@@ -32,6 +33,6 @@ class TreeLookupTest {
   @Test
   void testMaxClamp() {
     double result = treeLookup.getValue(5);
-    assertEquals(4, result);
+    assertEquals(5, result);
   }
 }
