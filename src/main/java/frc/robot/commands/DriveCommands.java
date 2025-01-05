@@ -35,6 +35,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -46,6 +50,9 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
+  private static final double MAX_MODULE_SPEED = 4.5; // m/s
+  private static final double PATH_TRANSLATION_kP = 5.0;
+  private static final double PATH_ROTATION_kP = 5.0;
 
   private DriveCommands() {}
 
@@ -83,17 +90,14 @@ public class DriveCommands {
           // Square rotation value for more precise control
           omega = Math.copySign(omega * omega, omega);
 
-          // Convert to field relative speeds & send command
+          // Create field relative speeds
           ChassisSpeeds speeds =
-              new ChassisSpeeds(
+              ChassisSpeeds.fromFieldRelativeSpeeds(
                   linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
                   linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                  omega * drive.getMaxAngularSpeedRadPerSec());
-          boolean isFlipped =
-              DriverStation.getAlliance().isPresent()
-                  && DriverStation.getAlliance().get() == Alliance.Red;
-          speeds.toRobotRelativeSpeeds(
-              isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation());
+                  omega * drive.getMaxAngularSpeedRadPerSec(),
+                  isFlipped(drive) ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation());
+          
           drive.runVelocity(speeds);
         },
         drive);
@@ -101,8 +105,6 @@ public class DriveCommands {
 
   /**
    * Field relative drive command using joystick for linear control and PID for angular control.
-   * Possible use cases include snapping to an angle, aiming at a vision target, or controlling
-   * absolute rotation with a joystick.
    */
   public static Command joystickDriveAtAngle(
       Drive drive,
@@ -131,25 +133,24 @@ public class DriveCommands {
                   angleController.calculate(
                       drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
 
-              // Convert to field relative speeds & send command
+              // Create field relative speeds
               ChassisSpeeds speeds =
-                  new ChassisSpeeds(
+                  ChassisSpeeds.fromFieldRelativeSpeeds(
                       linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
                       linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                      omega);
-              boolean isFlipped =
-                  DriverStation.getAlliance().isPresent()
-                      && DriverStation.getAlliance().get() == Alliance.Red;
-              speeds.toRobotRelativeSpeeds(
-                  isFlipped
-                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                      : drive.getRotation());
+                      omega,
+                      isFlipped(drive) ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation());
+              
               drive.runVelocity(speeds);
             },
             drive)
-
-        // Reset PID controller when command starts
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+  }
+
+  // Helper method to check if robot is on red alliance
+  private static boolean isFlipped(Drive drive) {
+    return DriverStation.getAlliance().isPresent() 
+        && DriverStation.getAlliance().get() == Alliance.Red;
   }
 
   /**
@@ -288,5 +289,57 @@ public class DriveCommands {
     double[] positions = new double[4];
     Rotation2d lastAngle = new Rotation2d();
     double gyroDelta = 0.0;
+  }
+
+  /**
+   * Creates a command to drive to a specified pose using PathPlanner.
+   * @param drive The drive subsystem
+   * @param targetPose The target pose to drive to (field-relative)
+   * @return Command that will drive to the specified pose
+   */
+  public static Command driveToPose(Drive drive, Pose2d targetPose) {
+    // Create path constraints for max speed/acceleration
+    PathConstraints constraints = new PathConstraints(
+        drive.getMaxLinearSpeedMetersPerSec() * 0.5, // Max velocity (50% of max)
+        2.0, // Max acceleration (m/s^2)
+        drive.getMaxAngularSpeedRadPerSec() * 0.5, // Max angular velocity (50% of max)
+        Math.PI); // Max angular acceleration (rad/s^2)
+
+    // Get current robot pose
+    Pose2d currentPose = drive.getPose();
+
+    // Create the path command using PathPlanner's AutoBuilder
+    return AutoBuilder.pathfindToPose(
+        targetPose,
+        constraints,
+        0.0, // Goal end velocity in meters/sec
+        0.0); // Rotation delay distance in meters
+  }
+
+  /**
+   * This method should be called once in Robot.java robotInit() 
+   * to configure PathPlanner for this drive subsystem
+   */
+  public static void configurePathPlanner(Drive drive) {
+    AutoBuilder.configureHolonomic(
+        drive::getPose, // Robot pose supplier
+        drive::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+        drive::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        drive::runVelocity, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+        new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, for advanced tuning
+            PATH_TRANSLATION_kP, // Translation PID constants
+            PATH_ROTATION_kP, // Rotation PID constants
+            MAX_MODULE_SPEED, // Max module speed, in m/s
+            drive.getDriveBaseRadius(), // Drive base radius in meters. Distance from robot center to furthest module.
+            new ReplanningConfig() // Default path replanning config. See the API for the options here
+        ),
+        () -> {
+          // Boolean supplier that controls when the path will be mirrored for the red alliance
+          // This will flip the path being followed to the red side of the field.
+          var alliance = DriverStation.getAlliance();
+          return alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red;
+        },
+        drive // Reference to this subsystem to set requirements
+    );
   }
 }

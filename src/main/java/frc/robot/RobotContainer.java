@@ -146,6 +146,12 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    // Add a test button to drive to a specific pose
+    new JoystickButton(driverController, Button.kA.value)
+        .onTrue(DriveCommands.driveToPose(
+            drive,
+            new Pose2d(2.0, 2.0, Rotation2d.fromDegrees(180)))); // Drive to X:2m, Y:2m, facing backward
   }
 
   /**
