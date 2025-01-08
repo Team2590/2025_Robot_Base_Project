@@ -6,9 +6,14 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.robot.util.LoggedTunableNumber;
 
+
+/**
+ * @author Dhruv Shah, copied a bit from Vidur ngl
+ */
 public class ElevatorIOTalonFX implements ElevatorIO {
   private TalonFX leader = new TalonFX(0);
   private CANcoder cancoder = new CANcoder(0);
@@ -37,6 +42,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     motionMagicConfigs.MotionMagicAcceleration = acceleration.get();
     motionMagicConfigs.MotionMagicJerk = jerk.get();
 
+    talonFXConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    talonFXConfig.Feedback.FeedbackRemoteSensorID = cancoder.getDeviceID();
+
     leader.getConfigurator().apply(talonFXConfig);
     leader.setNeutralMode(NeutralModeValue.Brake);
   }
@@ -47,44 +55,54 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   }
 
   public void updateTunableNumbers() {
+    boolean applyConfig = false;
+
     if (kP.hasChanged(0)) {
       slot0Configs.kP = kP.get();
-      leader.getConfigurator().apply(talonFXConfig);
+      applyConfig = true;
     }
-    
+
     if (kI.hasChanged(0)) {
       slot0Configs.kI = kI.get();
-      leader.getConfigurator().apply(talonFXConfig);
+      applyConfig = true;
     }
+
     if (kD.hasChanged(0)) {
       slot0Configs.kD = kD.get();
-      leader.getConfigurator().apply(talonFXConfig);
+      applyConfig = true;
     }
+
     if (kS.hasChanged(0)) {
       slot0Configs.kS = kS.get();
-      leader.getConfigurator().apply(talonFXConfig);
+      applyConfig = true;
     }
+
     if (kV.hasChanged(0)) {
       slot0Configs.kV = kV.get();
-      leader.getConfigurator().apply(talonFXConfig);
+      applyConfig = true;
     }
+
     if (kG.hasChanged(0)) {
       slot0Configs.kG = kG.get();
-      leader.getConfigurator().apply(talonFXConfig);
+      applyConfig = true;
     }
 
     if (cruiseVelocity.hasChanged(0)) {
       motionMagicConfigs.MotionMagicCruiseVelocity = cruiseVelocity.get();
-      leader.getConfigurator().apply(talonFXConfig);
+      applyConfig = true;
     }
 
     if (acceleration.hasChanged(0)) {
       motionMagicConfigs.MotionMagicAcceleration = acceleration.get();
-      leader.getConfigurator().apply(talonFXConfig);
+      applyConfig = true;
     }
 
     if (jerk.hasChanged(0)) {
       motionMagicConfigs.MotionMagicJerk = jerk.get();
+      applyConfig = true;
+    }
+
+    if (applyConfig) {
       leader.getConfigurator().apply(talonFXConfig);
     }
   }
