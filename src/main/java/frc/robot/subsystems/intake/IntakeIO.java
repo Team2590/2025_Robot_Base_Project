@@ -4,14 +4,19 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface IntakeIO {
   @AutoLog
-  public static class IntakeIOInputs {
-    public double leaderAppliedVolts = 0.0;
-    public double followerAppliedVolts = 0.0;
+  static class IntakeIOInputs {
+    public boolean connected = false;
+    public double positionRads = 0.0;
+    public double velocityRadsPerSec = 0.0;
+    public double appliedVoltage = 0.0;
+    public double supplyCurrentAmps = 0.0;
+    public double torqueCurrentAmps = 0.0;
+    public double tempCelsius = 0.0;
   }
 
   public void stop();
 
-  public void setSpeed(double speed);
+  public void setVoltage(double voltage);
 
   public void updateInputs(IntakeIOInputs io);
 }
