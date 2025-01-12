@@ -44,7 +44,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Elevator elevator = new Elevator(new ElevatorIOTalonFX());
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -147,10 +146,10 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    joystick.button(1).whileTrue(Commands.runOnce(elevator::raise, elevator));
-    joystick.button(2).whileTrue(Commands.runOnce(elevator::lower, elevator));
-    joystick.button(3).onTrue(Commands.runOnce(() -> elevator.setPosition(10), elevator));
-    joystick.button(4).onTrue(Commands.runOnce(elevator::stop, elevator));
+    // joystick.button(1).whileTrue(Commands.runOnce(elevator::raise, elevator));
+    // joystick.button(2).whileTrue(Commands.runOnce(elevator::lower, elevator));
+    // joystick.button(3).onTrue(Commands.runOnce(() -> elevator.setPosition(10), elevator));
+    // joystick.button(4).onTrue(Commands.runOnce(elevator::stop, elevator));
   }
 
   /**
