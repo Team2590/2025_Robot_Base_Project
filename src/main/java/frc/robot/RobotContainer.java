@@ -33,7 +33,6 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
