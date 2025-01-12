@@ -71,7 +71,11 @@ public class LoggedTunableNumber {
     if (!hasDefault) {
       return 0.0;
     } else {
-      return Constants.tuningMode ? dashboardNumber.get() : defaultValue;
+      try {
+        return Constants.tuningMode ? dashboardNumber.get() : defaultValue;
+      } catch (NullPointerException e) {
+        return hasDefault ? defaultValue : 0;
+      }
     }
   }
 
