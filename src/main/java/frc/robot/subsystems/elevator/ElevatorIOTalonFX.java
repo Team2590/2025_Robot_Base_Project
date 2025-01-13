@@ -73,6 +73,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     this.reduction = reduction;
 
     BaseStatusSignal.setUpdateFrequencyForAll(50.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
+    leader.optimizeBusUtilization(0, 1);
   }
 
   public void updateInputs(ElevatorIOInputs inputs) {
@@ -141,7 +142,11 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   public void setPosition(double position) {
     var request = new MotionMagicVoltage(0);
-    leader.setControl(request.withPosition(position));
+    if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {
+      leader.setControl(request);
+    } else {
+      leader.setControl(request.withPosition(position));
+    }
   }
 
   public void stop() {
@@ -150,5 +155,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   public void resetRotationCount() {
     leader.setPosition(0);
+  }
+
+  public void setNeutralMode(NeutralModeValue mode) {
+    leader.setNeutralMode(mode);
   }
 }

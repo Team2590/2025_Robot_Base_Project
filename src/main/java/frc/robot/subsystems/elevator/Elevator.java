@@ -2,8 +2,9 @@ package frc.robot.subsystems.elevator;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
@@ -22,32 +23,31 @@ public class Elevator extends SubsystemBase {
 
   @AutoLogOutput
   public Command stop() {
-    return Commands.runOnce(io::stop, this);
+    return runOnce(io::stop);
   }
 
   @AutoLogOutput
   public Command setPosition(double position) {
-    return Commands.runOnce(() -> {
-      io.setPosition(position);
-    }, this);
+    return runOnce(() -> io.setPosition(position));
   }
 
   @AutoLogOutput
   public Command resetRotationCount() {
-    return Commands.runOnce(io::resetRotationCount, this);
+    return runOnce(io::resetRotationCount);
+  }
+
+  @AutoLogOutput
+  public Command setNeutralMode(NeutralModeValue mode) {
+    return runOnce(() -> io.setNeutralMode(mode));
   }
 
   @AutoLogOutput
   public Command raise() {
-    return Commands.runOnce(() -> {
-      io.setPosition(inputs.rotationCount + 05);
-    }, this);
+    return runOnce(() -> io.setPosition(inputs.rotationCount + 1));
   }
 
   @AutoLogOutput
   public Command lower() {
-    return Commands.runOnce(() -> {
-      io.setPosition(inputs.rotationCount - 0.5);
-    }, this);
+    return runOnce(() -> io.setPosition(inputs.rotationCount - 1));
   }
 }

@@ -2,6 +2,8 @@ package frc.robot.subsystems.elevator;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 public interface ElevatorIO {
   @AutoLog
   public class ElevatorIOInputs {
@@ -24,4 +26,6 @@ public interface ElevatorIO {
   public void stop();
 
   public void resetRotationCount();
-}
+
+  public void setNeutralMode(NeutralModeValue mode);  
+} 
