@@ -70,7 +70,6 @@ public class Robot extends LoggedRobot {
     RobotController.setBrownoutVoltage(6.0);
 
     // Create RobotConatiner
-    System.out.println("I am here");
     robotContainer = new RobotContainer();
   }
 
