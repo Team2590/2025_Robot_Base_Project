@@ -35,7 +35,7 @@ import java.util.Queue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class ModuleIOComp implements ModuleIO {
+public class ModuleIOTalonFX implements ModuleIO {
   private static final double driveCurrentLimitAmps = 80;
   private static final double turnCurrentLimitAmps = 40;
   public static final double driveReduction = (50.0 / 14.0) * (16.0 / 28.0) * (45.0 / 15.0);
@@ -82,7 +82,7 @@ public class ModuleIOComp implements ModuleIO {
   private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
   private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5);
 
-  public ModuleIOComp(ModuleConfig config) {
+  public ModuleIOTalonFX(ModuleConfig config) {
     driveTalon = new TalonFX(config.driveMotorId(), DriveConstants.canBusName);
     turnTalon = new TalonFX(config.turnMotorId(), DriveConstants.canBusName);
     encoder = new CANcoder(config.encoderId(), DriveConstants.canBusName);

@@ -39,7 +39,7 @@ public class Module {
         drivekS.initDefault(5.0);
         drivekV.initDefault(0);
         // Multiplied by desired wheelTorqueNm
-        drivekT.initDefault(ModuleIOComp.driveReduction / DCMotor.getKrakenX60Foc(1).KtNMPerAmp);
+        drivekT.initDefault(ModuleIOTalonFX.driveReduction / DCMotor.getKrakenX60Foc(1).KtNMPerAmp);
         drivekP.initDefault(35.0);
         drivekD.initDefault(0);
         turnkP.initDefault(4000.0);

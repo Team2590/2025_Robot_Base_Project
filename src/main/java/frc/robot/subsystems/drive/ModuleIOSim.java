@@ -26,11 +26,12 @@ public class ModuleIOSim implements ModuleIO {
 
   private final DCMotorSim driveSim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(driveMotorModel, 0.025, ModuleIOComp.driveReduction),
+          LinearSystemId.createDCMotorSystem(
+              driveMotorModel, 0.025, ModuleIOTalonFX.driveReduction),
           driveMotorModel);
   private final DCMotorSim turnSim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(turnMotorModel, 0.004, ModuleIOComp.turnReduction),
+          LinearSystemId.createDCMotorSystem(turnMotorModel, 0.004, ModuleIOTalonFX.turnReduction),
           turnMotorModel);
 
   private boolean driveClosedLoop = false;
