@@ -7,24 +7,35 @@
 
 package frc.robot.subsystems.drive;
 
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
+import static edu.wpi.first.units.Units.*;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.PathPlannerLogging;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.RobotState;
+import frc.robot.util.LocalADStarAK;
 import frc.robot.util.swerve.SwerveSetpoint;
 import frc.robot.util.swerve.SwerveSetpointGenerator;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -39,11 +50,30 @@ public class Drive extends SubsystemBase {
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
+  private final SysIdRoutine sysId;
+
   private final SwerveDriveKinematics kinematics =
       new SwerveDriveKinematics(DriveConstants.moduleTranslations);
 
   @AutoLogOutput(key = "Drive/VelocityMode")
   private boolean velocityMode = false;
+
+  // PathPlanner config constants
+  private static final double ROBOT_MASS_KG = 74.088;
+  private static final double ROBOT_MOI = 6.883;
+  private static final double WHEEL_COF = 1.2;
+  private static final RobotConfig PP_CONFIG =
+      new RobotConfig(
+          ROBOT_MASS_KG,
+          ROBOT_MOI,
+          new ModuleConfig(
+              DriveConstants.wheelRadius,
+              DriveConstants.maxLinearSpeed,
+              WHEEL_COF,
+              DCMotor.getKrakenX60Foc(1).withReduction(DriveConstants.driveMotorGearReduction),
+              DriveConstants.driveStatorCurrentLimit,
+              1),
+          DriveConstants.moduleTranslations);
 
   private SwerveSetpoint currentSetpoint =
       new SwerveSetpoint(
@@ -73,6 +103,39 @@ public class Drive extends SubsystemBase {
 
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
+
+    // Configure AutoBuilder for PathPlanner
+    AutoBuilder.configure(
+        RobotState.getInstance()::getEstimatedPose,
+        RobotState.getInstance()::resetPose,
+        this::getChassisSpeeds,
+        this::runVelocity,
+        new PPHolonomicDriveController(
+            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+        PP_CONFIG,
+        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+        this);
+    Pathfinding.setPathfinder(new LocalADStarAK());
+    PathPlannerLogging.setLogActivePathCallback(
+        (activePath) -> {
+          Logger.recordOutput(
+              "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+        });
+    PathPlannerLogging.setLogTargetPoseCallback(
+        (targetPose) -> {
+          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+        });
+
+    // Configure SysId
+    sysId =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                null,
+                null,
+                (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   @Override
@@ -159,51 +222,52 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  /**
-   * Runs the drive at the desired velocity with setpoint module forces.
-   *
-   * @param speeds Speeds in meters/sec
-   * @param moduleForces The forces applied to each module
-   */
-  public void runVelocity(ChassisSpeeds speeds, List<Vector<N2>> moduleForces) {
-    velocityMode = true;
-    // Calculate module setpoints
-    ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, Constants.loopPeriodSecs);
-    SwerveModuleState[] setpointStatesUnoptimized = kinematics.toSwerveModuleStates(discreteSpeeds);
-    currentSetpoint =
-        swerveSetpointGenerator.generateSetpoint(
-            DriveConstants.moduleLimitsFree,
-            currentSetpoint,
-            discreteSpeeds,
-            Constants.loopPeriodSecs);
-    SwerveModuleState[] setpointStates = currentSetpoint.moduleStates();
+  // /**
+  //  * Runs the drive at the desired velocity with setpoint module forces.
+  //  *
+  //  * @param speeds Speeds in meters/sec
+  //  * @param moduleForces The forces applied to each module
+  //  */
+  // public void runVelocity(ChassisSpeeds speeds, List<Vector<N2>> moduleForces) {
+  //   velocityMode = true;
+  //   // Calculate module setpoints
+  //   ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, Constants.loopPeriodSecs);
+  //   SwerveModuleState[] setpointStatesUnoptimized =
+  // kinematics.toSwerveModuleStates(discreteSpeeds);
+  //   currentSetpoint =
+  //       swerveSetpointGenerator.generateSetpoint(
+  //           DriveConstants.moduleLimitsFree,
+  //           currentSetpoint,
+  //           discreteSpeeds,
+  //           Constants.loopPeriodSecs);
+  //   SwerveModuleState[] setpointStates = currentSetpoint.moduleStates();
 
-    // Log unoptimized setpoints and setpoint speeds
-    Logger.recordOutput("SwerveStates/SetpointsUnoptimized", setpointStatesUnoptimized);
-    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-    Logger.recordOutput("SwerveChassisSpeeds/Setpoints", currentSetpoint.chassisSpeeds());
+  //   // Log unoptimized setpoints and setpoint speeds
+  //   Logger.recordOutput("SwerveStates/SetpointsUnoptimized", setpointStatesUnoptimized);
+  //   Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
+  //   Logger.recordOutput("SwerveChassisSpeeds/Setpoints", currentSetpoint.chassisSpeeds());
 
-    // Save module forces to swerve states for logging
-    SwerveModuleState[] wheelForces = new SwerveModuleState[4];
-    // Send setpoints to modules
-    SwerveModuleState[] moduleStates = getModuleStates();
-    for (int i = 0; i < 4; i++) {
-      // Optimize state
-      Rotation2d wheelAngle = moduleStates[i].angle;
-      setpointStates[i].optimize(wheelAngle);
-      setpointStates[i].cosineScale(wheelAngle);
+  //   // Save module forces to swerve states for logging
+  //   SwerveModuleState[] wheelForces = new SwerveModuleState[4];
+  //   // Send setpoints to modules
+  //   SwerveModuleState[] moduleStates = getModuleStates();
+  //   for (int i = 0; i < 4; i++) {
+  //     // Optimize state
+  //     Rotation2d wheelAngle = moduleStates[i].angle;
+  //     setpointStates[i].optimize(wheelAngle);
+  //     setpointStates[i].cosineScale(wheelAngle);
 
-      // Calculate wheel torque in direction
-      var wheelForce = moduleForces.get(i);
-      Vector<N2> wheelDirection = VecBuilder.fill(wheelAngle.getCos(), wheelAngle.getSin());
-      double wheelTorqueNm = wheelForce.dot(wheelDirection) * DriveConstants.wheelRadius;
-      modules[i].runSetpoint(setpointStates[i], wheelTorqueNm);
+  //     // Calculate wheel torque in direction
+  //     var wheelForce = moduleForces.get(i);
+  //     Vector<N2> wheelDirection = VecBuilder.fill(wheelAngle.getCos(), wheelAngle.getSin());
+  //     double wheelTorqueNm = wheelForce.dot(wheelDirection) * DriveConstants.wheelRadius;
+  //     modules[i].runSetpoint(setpointStates[i], wheelTorqueNm);
 
-      // Save to array for logging
-      wheelForces[i] = new SwerveModuleState(wheelTorqueNm, setpointStates[i].angle);
-    }
-    Logger.recordOutput("SwerveStates/ModuleForces", wheelForces);
-  }
+  //     // Save to array for logging
+  //     wheelForces[i] = new SwerveModuleState(wheelTorqueNm, setpointStates[i].angle);
+  //   }
+  //   Logger.recordOutput("SwerveStates/ModuleForces", wheelForces);
+  // }
 
   /** Runs the drive in a straight line with the specified drive output. */
   public void runCharacterization(double output) {
@@ -229,6 +293,18 @@ public class Drive extends SubsystemBase {
     }
     kinematics.resetHeadings(headings);
     stop();
+  }
+
+  /** Returns a command to run a quasistatic test in the specified direction. */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return run(() -> runCharacterization(0.0))
+        .withTimeout(1.0)
+        .andThen(sysId.quasistatic(direction));
+  }
+
+  /** Returns a command to run a dynamic test in the specified direction. */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 
   /** Returns the module states (turn angles and drive velocities) for all the modules. */

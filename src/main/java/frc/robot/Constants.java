@@ -58,24 +58,4 @@ public final class Constants {
   public static void disableHAL() {
     disableHAL = true;
   }
-
-  /** Checks whether the correct robot is selected when deploying. */
-  public static class CheckDeploy {
-    public static void main(String... args) {
-      if (robotType == RobotType.SIMBOT) {
-        System.err.println("Cannot deploy, invalid robot selected: " + robotType);
-        System.exit(1);
-      }
-    }
-  }
-
-  /** Checks that the default robot is selected and tuning mode is disabled. */
-  public static class CheckPullRequest {
-    public static void main(String... args) {
-      if (robotType != RobotType.DEVBOT || tuningMode) {
-        System.err.println("Do not merge, non-default constants are configured.");
-        System.exit(1);
-      }
-    }
-  }
 }
