@@ -30,6 +30,7 @@ public class DriveConstants {
   public static double driveStatorCurrentLimit;
   public static double maxAngularSpeed;
   public static double driveBaseRadius;
+  public static int pigeonId;
 
   public static final Translation2d[] moduleTranslations = {
     new Translation2d(trackWidthX / 2, trackWidthY / 2),
@@ -120,10 +121,6 @@ public class DriveConstants {
         .encoderInverted(false)
         .build()
   };
-
-  public static class PigeonConstants {
-    public static final int id = 0;
-  }
 
   public static void initializeConstants() {
     switch (Constants.getMode()) {
