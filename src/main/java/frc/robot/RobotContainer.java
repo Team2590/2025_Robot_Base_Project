@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -18,8 +19,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.*;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
-import com.pathplanner.lib.auto.AutoBuilder;
 
 public class RobotContainer {
   // Load RobotState class
@@ -70,7 +69,7 @@ public class RobotContainer {
               new ModuleIO() {});
     }
 
- // Set up auto routines
+    // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
