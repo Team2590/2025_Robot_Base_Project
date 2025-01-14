@@ -38,6 +38,8 @@ public final class Constants {
     /** Running on a real robot. */
     REAL,
 
+    KRONOS,
+
     /** Running a physics simulator. */
     SIM,
 

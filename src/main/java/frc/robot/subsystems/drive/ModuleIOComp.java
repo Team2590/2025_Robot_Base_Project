@@ -83,9 +83,9 @@ public class ModuleIOComp implements ModuleIO {
   private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5);
 
   public ModuleIOComp(ModuleConfig config) {
-    driveTalon = new TalonFX(config.driveMotorId(), "*");
-    turnTalon = new TalonFX(config.turnMotorId(), "*");
-    encoder = new CANcoder(config.encoderId(), "*");
+    driveTalon = new TalonFX(config.driveMotorId(), DriveConstants.canBusName);
+    turnTalon = new TalonFX(config.turnMotorId(), DriveConstants.canBusName);
+    encoder = new CANcoder(config.encoderId(), DriveConstants.canBusName);
     encoderOffset = config.encoderOffset();
 
     // Configure drive motor
@@ -147,7 +147,7 @@ public class ModuleIOComp implements ModuleIO {
 
     // Configure periodic frames
     BaseStatusSignal.setUpdateFrequencyForAll(
-        DriveConstants.odometryFrequency, drivePosition, turnPosition);
+        DriveConstants.ODOMETRY_FREQUENCY, drivePosition, turnPosition);
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0,
         driveVelocity,

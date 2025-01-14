@@ -39,10 +39,10 @@ public class RobotContainer {
           drive =
               new Drive(
                   new GyroIOPigeon2(),
-                  new ModuleIOComp(DriveConstants.moduleConfigsComp[0]),
-                  new ModuleIOComp(DriveConstants.moduleConfigsComp[1]),
-                  new ModuleIOComp(DriveConstants.moduleConfigsComp[2]),
-                  new ModuleIOComp(DriveConstants.moduleConfigsComp[3]));
+                  new ModuleIOComp(DriveConstants.moduleConfigsKronos[0]),
+                  new ModuleIOComp(DriveConstants.moduleConfigsKronos[1]),
+                  new ModuleIOComp(DriveConstants.moduleConfigsKronos[2]),
+                  new ModuleIOComp(DriveConstants.moduleConfigsKronos[3]));
         }
         case SIMBOT -> {
           drive =
