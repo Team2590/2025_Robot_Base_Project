@@ -30,6 +30,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.subsystems.drive.DriveConstants.ModuleConfig;
 import java.util.Queue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -84,7 +85,7 @@ public class ModuleIOComp implements ModuleIO {
   public ModuleIOComp(ModuleConfig config) {
     driveTalon = new TalonFX(config.driveMotorId(), "*");
     turnTalon = new TalonFX(config.turnMotorId(), "*");
-    encoder = new CANcoder(config.encoderChannel(), "*");
+    encoder = new CANcoder(config.encoderId(), "*");
     encoderOffset = config.encoderOffset();
 
     // Configure drive motor
@@ -102,7 +103,7 @@ public class ModuleIOComp implements ModuleIO {
     // Configure turn motor
     turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     turnConfig.Slot0 = new Slot0Configs().withKP(0).withKI(0).withKD(0);
-    turnConfig.Feedback.FeedbackRemoteSensorID = config.encoderChannel();
+    turnConfig.Feedback.FeedbackRemoteSensorID = config.encoderId();
     turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     turnConfig.Feedback.RotorToSensorRatio = turnReduction;
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;

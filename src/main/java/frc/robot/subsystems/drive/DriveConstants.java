@@ -38,7 +38,7 @@ public class DriveConstants {
     ModuleConfig.builder()
         .driveMotorId(3)
         .turnMotorId(2)
-        .encoderChannel(1)
+        .encoderId(1)
         .encoderOffset(Rotation2d.fromRotations(0.0))
         .turnInverted(true)
         .encoderInverted(false)
@@ -47,7 +47,7 @@ public class DriveConstants {
     ModuleConfig.builder()
         .driveMotorId(1)
         .turnMotorId(0)
-        .encoderChannel(0)
+        .encoderId(0)
         .encoderOffset(Rotation2d.fromRotations(0.0))
         .turnInverted(true)
         .encoderInverted(false)
@@ -56,7 +56,7 @@ public class DriveConstants {
     ModuleConfig.builder()
         .driveMotorId(7)
         .turnMotorId(6)
-        .encoderChannel(3)
+        .encoderId(3)
         .encoderOffset(Rotation2d.fromRotations(0.0))
         .turnInverted(true)
         .encoderInverted(false)
@@ -65,7 +65,7 @@ public class DriveConstants {
     ModuleConfig.builder()
         .driveMotorId(5)
         .turnMotorId(4)
-        .encoderChannel(2)
+        .encoderId(2)
         .encoderOffset(Rotation2d.fromRotations(0.0))
         .turnInverted(true)
         .encoderInverted(false)
@@ -77,7 +77,7 @@ public class DriveConstants {
     ModuleConfig.builder()
         .driveMotorId(3)
         .turnMotorId(2)
-        .encoderChannel(1)
+        .encoderId(1)
         .encoderOffset(Rotation2d.fromRotations(0.0))
         .turnInverted(true)
         .encoderInverted(false)
@@ -86,7 +86,7 @@ public class DriveConstants {
     ModuleConfig.builder()
         .driveMotorId(1)
         .turnMotorId(0)
-        .encoderChannel(0)
+        .encoderId(0)
         .encoderOffset(Rotation2d.fromRotations(0.0))
         .turnInverted(true)
         .encoderInverted(false)
@@ -95,7 +95,7 @@ public class DriveConstants {
     ModuleConfig.builder()
         .driveMotorId(7)
         .turnMotorId(6)
-        .encoderChannel(3)
+        .encoderId(3)
         .encoderOffset(Rotation2d.fromRotations(0.0))
         .turnInverted(true)
         .encoderInverted(false)
@@ -104,7 +104,7 @@ public class DriveConstants {
     ModuleConfig.builder()
         .driveMotorId(5)
         .turnMotorId(4)
-        .encoderChannel(2)
+        .encoderId(2)
         .encoderOffset(Rotation2d.fromRotations(0.0))
         .turnInverted(true)
         .encoderInverted(false)
@@ -119,7 +119,7 @@ public class DriveConstants {
   public record ModuleConfig(
       int driveMotorId,
       int turnMotorId,
-      int encoderChannel,
+      int encoderId,
       Rotation2d encoderOffset,
       boolean turnInverted,
       boolean encoderInverted) {}
