@@ -12,6 +12,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 
+/**
+ * @author Dhruv Shah
+ */
 public class NemesisLED extends SubsystemBase {
     private AddressableLED led; 
     private AddressableLEDBuffer buffer;
