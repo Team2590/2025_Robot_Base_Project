@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.RobotBase;
  */
 public final class Constants {
   public static final Mode simMode = Mode.SIM;
-  public static final Mode currentMode = RobotBase.isReal() ? Mode.COMP : simMode;
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.KRONOS : simMode;
   public static final boolean tuningMode = true;
 
   public static enum Mode {
