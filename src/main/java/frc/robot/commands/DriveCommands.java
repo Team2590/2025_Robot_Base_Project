@@ -300,7 +300,6 @@ public class DriveCommands {
     System.out.println("THIS IS WORKING");
     PathConstraints constraints =
         new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
-    return AutoBuilder.pathfindToPose(
-        new Pose2d(new Translation2d(2, 2), new Rotation2d(90)), constraints, 0.0);
+    return AutoBuilder.pathfindToPose(targetPose, constraints);
   }
 }
