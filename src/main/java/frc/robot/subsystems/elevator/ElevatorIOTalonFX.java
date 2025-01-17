@@ -1,16 +1,19 @@
 package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -43,10 +46,42 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private StatusSignal<Current> torqueCurrent;
   private StatusSignal<Temperature> tempCelsius;
   private double reduction;
+  private CANcoder cancoder;
+  private final StatusSignal<Angle> cancoderPosition;
+  private final StatusSignal<Angle> cancoderAbsPosition;
 
-  public ElevatorIOTalonFX(int canID, String canBus, int currentLimitAmps, boolean invert, boolean brake, double reduction) {
+  public ElevatorIOTalonFX(
+    int canID,
+    String canBus,
+    int currentLimitAmps,
+    boolean invert,
+    boolean brake,
+    double reduction,
+    int cancoderCanID,
+    String cancoderCanBus,
+    double elevatorMagOffset,
+    double rotorToSensorRatio,
+    int feedbackRemoteSensorID
+  ) {
     leader = new TalonFX(canID, canBus);
-    talonFXConfig.MotorOutput.Inverted = invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+    cancoder = new CANcoder(cancoderCanID, cancoderCanBus);
+    
+    var mag = new MagnetSensorConfigs();
+    mag.MagnetOffset = elevatorMagOffset;
+
+    var cancoderConfig = new CANcoderConfiguration();
+    cancoderConfig.withMagnetSensor(mag);
+    cancoder.getConfigurator().apply(cancoderConfig);
+
+    talonFXConfig.Feedback.FeedbackRemoteSensorID = cancoderCanID;
+    talonFXConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    talonFXConfig.Feedback.RotorToSensorRatio = elevatorMagOffset;
+
+    cancoderPosition = cancoder.getPosition();
+    cancoderAbsPosition = cancoder.getAbsolutePosition();
+
+    talonFXConfig.MotorOutput.Inverted =
+        invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
     talonFXConfig.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     talonFXConfig.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
     talonFXConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -72,12 +107,17 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     tempCelsius = leader.getDeviceTemp();
     this.reduction = reduction;
 
-    BaseStatusSignal.setUpdateFrequencyForAll(50.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius, cancoderPosition, cancoderAbsPosition);
     leader.optimizeBusUtilization(0, 1);
+    cancoder.optimizeBusUtilization(0, 1);
   }
 
   public void updateInputs(ElevatorIOInputs inputs) {
-    inputs.connected = BaseStatusSignal.refreshAll(position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius).isOK();
+    inputs.connected =
+        BaseStatusSignal.refreshAll(
+                position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius)
+            .isOK();
     inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble()) / reduction;
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble()) / reduction;
     inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
