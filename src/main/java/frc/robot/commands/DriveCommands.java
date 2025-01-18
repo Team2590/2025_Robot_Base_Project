@@ -29,6 +29,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.vision.PhotonAlgaeRunnable;
+import frc.robot.subsystems.vision.PhotonCoralRunnable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
@@ -46,6 +48,8 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
+  private static final PhotonCoralRunnable coralCam = new PhotonCoralRunnable();
+  private static final PhotonAlgaeRunnable algaeCam = new PhotonAlgaeRunnable();
 
   private DriveCommands() {}
 
@@ -286,6 +290,37 @@ public class DriveCommands {
                               + formatter.format(Units.metersToInches(wheelRadius))
                               + " inches");
                     })));
+  }
+
+  /**
+   * Translate in line to a grounded note. Use camera data to get relative note pose.
+   *
+   * @param drive - drive instance
+   * @param xSupplier - left joystick x value
+   * @param ySupplier - left joystick y value
+   * @param yError - lateral error from note; take directly from note camera
+   * @return the command
+   */
+  public static Command translateToNote(
+      Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier yError) {
+    return Commands.run(
+        (() -> {
+          // Logger.recordOutput(
+          //     "Drive/NoteController/PID Output",
+          //     drive.noteController.calculate(-yError.getAsDouble(), 0)
+          //         * drive.getMaxLinearSpeedMetersPerSec());
+          // Logger.recordOutput("Drive/NoteController/YError", yError.getAsDouble());
+          drive.runVelocity(
+              new ChassisSpeeds(
+                  // joystick magnitude
+                  -Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble())
+                      * drive.getMaxLinearSpeedMetersPerSec(),
+                  drive.algaeController.calculate(-yError.getAsDouble(), 0)
+                      * drive.getMaxLinearSpeedMetersPerSec()
+                      * 6,
+                  0));
+        }),
+        drive);
   }
 
   private static class WheelRadiusCharacterizationState {

@@ -13,10 +13,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.math.util.Units;;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -45,5 +42,4 @@ public final class Constants {
     public static final double OBJECT_CAMERA_Y_DISTANCE_FROM_CENTER_METERS = 0;
     public static final double OBJECT_CAMERA_PITCH = 0;
   }
-
 }
