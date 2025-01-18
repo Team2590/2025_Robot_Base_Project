@@ -16,7 +16,7 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -36,12 +36,13 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.util.PoseEstimator;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -55,6 +56,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final Intake intake;
+  private static PoseEstimator poseEstimator;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(2);
@@ -69,6 +71,7 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case KRONOS:
         // Real robot, instantiate hardware IO implementations
+        poseEstimator = new PoseEstimator(VecBuilder.fill(0.003, 0.003, 0.0002));
         drive =
             new Drive(
                 new GyroIOPigeon2(),
@@ -88,6 +91,7 @@ public class RobotContainer {
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
+        poseEstimator = new PoseEstimator(VecBuilder.fill(0.003, 0.003, 0.0002));
         drive =
             new Drive(
                 new GyroIO() {},
@@ -107,6 +111,7 @@ public class RobotContainer {
 
       default:
         // Replayed robot, disable IO implementations
+        poseEstimator = new PoseEstimator(VecBuilder.fill(0.003, 0.003, 0.0002));
         drive =
             new Drive(
                 new GyroIO() {},
@@ -199,5 +204,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public static PoseEstimator getPoseEstimator() {
+    return poseEstimator;
   }
 }
