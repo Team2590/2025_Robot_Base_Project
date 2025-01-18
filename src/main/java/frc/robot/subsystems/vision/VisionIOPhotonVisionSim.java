@@ -17,6 +17,7 @@ import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import java.util.List;
 import java.util.function.Supplier;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
@@ -25,19 +26,17 @@ import org.photonvision.simulation.VisionSystemSim;
 /** IO implementation for physics sim using PhotonVision simulator. */
 public class VisionIOPhotonVisionSim extends VisionIOPhotonVision {
   private static VisionSystemSim visionSim;
-
   private final Supplier<Pose2d> poseSupplier;
-  private final PhotonCameraSim cameraSim;
 
   /**
-   * Creates a new VisionIOPhotonVisionSim.
+   * Creates a new VisionIOPhotonVisionSim with multiple cameras.
    *
-   * @param name The name of the camera.
-   * @param poseSupplier Supplier for the robot pose to use in simulation.
+   * @param cameraConfigs List of camera configurations
+   * @param poseSupplier Supplier for the robot pose to use in simulation
    */
   public VisionIOPhotonVisionSim(
-      String name, Transform3d robotToCamera, Supplier<Pose2d> poseSupplier) {
-    super(name, robotToCamera);
+      List<CameraConfig> cameraConfigs, Supplier<Pose2d> poseSupplier) {
+    super(cameraConfigs);
     this.poseSupplier = poseSupplier;
 
     // Initialize vision sim
@@ -46,10 +45,12 @@ public class VisionIOPhotonVisionSim extends VisionIOPhotonVision {
       visionSim.addAprilTags(aprilTagLayout);
     }
 
-    // Add sim camera
+    // Add sim cameras for each camera config
     var cameraProperties = new SimCameraProperties();
-    cameraSim = new PhotonCameraSim(camera, cameraProperties);
-    visionSim.addCamera(cameraSim, robotToCamera);
+    for (CameraThread thread : cameraThreads) {
+      PhotonCameraSim cameraSim = new PhotonCameraSim(thread.getCamera(), cameraProperties);
+      visionSim.addCamera(cameraSim, thread.getRobotToCamera());
+    }
   }
 
   @Override
