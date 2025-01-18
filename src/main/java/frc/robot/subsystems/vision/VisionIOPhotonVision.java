@@ -20,18 +20,20 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.photonvision.PhotonCamera;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
-  private final List<CameraThread> cameraThreads = new ArrayList<>();
+  public static record CameraConfig(String name, Transform3d robotToCamera) {}
+
+  protected final List<CameraThread> cameraThreads = new ArrayList<>();
   private final Object observationLock = new Object();
   private List<PoseObservation> latestPoseObservations = new ArrayList<>();
   private Set<Short> latestTagIds = new HashSet<>();
-  private TargetObservation latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
+  private TargetObservation latestTargetObservation =
+      new TargetObservation(new Rotation2d(), new Rotation2d());
 
   /**
    * Creates a new VisionIOPhotonVision with multiple cameras.
@@ -51,19 +53,19 @@ public class VisionIOPhotonVision implements VisionIO {
     synchronized (observationLock) {
       // Update connected status - true if any camera is connected
       inputs.connected = cameraThreads.stream().anyMatch(CameraThread::isConnected);
-      
+
       // Copy latest observations to inputs
       inputs.poseObservations = latestPoseObservations.toArray(new PoseObservation[0]);
       inputs.tagIds = latestTagIds.stream().mapToInt(Integer::valueOf).toArray();
       inputs.latestTargetObservation = latestTargetObservation;
-      
+
       // Clear for next update
       latestPoseObservations.clear();
       latestTagIds.clear();
     }
   }
 
-  private class CameraThread extends Thread {
+  protected class CameraThread extends Thread {
     private final PhotonCamera camera;
     private final Transform3d robotToCamera;
     private volatile boolean connected = false;
@@ -79,12 +81,20 @@ public class VisionIOPhotonVision implements VisionIO {
       return connected;
     }
 
+    public PhotonCamera getCamera() {
+      return camera;
+    }
+
+    public Transform3d getRobotToCamera() {
+      return robotToCamera;
+    }
+
     @Override
     public void run() {
       while (!Thread.interrupted()) {
         try {
           connected = camera.isConnected();
-          
+
           // Process camera results
           for (var result : camera.getAllUnreadResults()) {
             synchronized (observationLock) {
@@ -101,7 +111,8 @@ public class VisionIOPhotonVision implements VisionIO {
                 var multitagResult = result.multitagResult.get();
                 Transform3d fieldToCamera = multitagResult.estimatedPose.best;
                 Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
-                Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
+                Pose3d robotPose =
+                    new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
 
                 double totalTagDistance = 0.0;
                 for (var target : result.targets) {
@@ -109,7 +120,7 @@ public class VisionIOPhotonVision implements VisionIO {
                 }
 
                 latestTagIds.addAll(multitagResult.fiducialIDsUsed);
-                
+
                 latestPoseObservations.add(
                     new PoseObservation(
                         result.getTimestampSeconds(),
@@ -129,7 +140,8 @@ public class VisionIOPhotonVision implements VisionIO {
                   Transform3d cameraToTarget = target.bestCameraToTarget;
                   Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
                   Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
-                  Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
+                  Pose3d robotPose =
+                      new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
 
                   // Add tag ID
                   latestTagIds.add((short) target.fiducialId);
@@ -157,6 +169,3 @@ public class VisionIOPhotonVision implements VisionIO {
     }
   }
 }
-
-// New record to hold camera configuration
-record CameraConfig(String name, Transform3d robotToCamera) {}

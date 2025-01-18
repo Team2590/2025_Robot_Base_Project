@@ -16,7 +16,6 @@ package frc.robot.subsystems.vision;
 import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import java.util.List;
 import java.util.function.Supplier;
 import org.photonvision.simulation.PhotonCameraSim;
@@ -34,8 +33,7 @@ public class VisionIOPhotonVisionSim extends VisionIOPhotonVision {
    * @param cameraConfigs List of camera configurations
    * @param poseSupplier Supplier for the robot pose to use in simulation
    */
-  public VisionIOPhotonVisionSim(
-      List<CameraConfig> cameraConfigs, Supplier<Pose2d> poseSupplier) {
+  public VisionIOPhotonVisionSim(List<CameraConfig> cameraConfigs, Supplier<Pose2d> poseSupplier) {
     super(cameraConfigs);
     this.poseSupplier = poseSupplier;
 
