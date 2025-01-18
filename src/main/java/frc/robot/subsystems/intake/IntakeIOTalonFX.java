@@ -9,73 +9,78 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.Constants;
 
 public class IntakeIOTalonFX implements IntakeIO {
-  private final TalonFX talon;
-  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
-  private final NeutralOut neutralOut = new NeutralOut();
-  private final double reduction;
+    private final TalonFX talon;
+    private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
+    private final NeutralOut neutralOut = new NeutralOut();
+    private final double reduction;
+    private final DigitalInput beamBreak;
 
-  private final StatusSignal<Angle> position;
-  private final StatusSignal<AngularVelocity> velocity;
-  private final StatusSignal<Voltage> appliedVoltage;
-  private final StatusSignal<Current> supplyCurrent;
-  private final StatusSignal<Current> torqueCurrent;
-  private final StatusSignal<Temperature> tempCelsius;
+    private final StatusSignal<Angle> position;
+    private final StatusSignal<AngularVelocity> velocity;
+    private final StatusSignal<Voltage> appliedVoltage;
+    private final StatusSignal<Current> supplyCurrent;
+    private final StatusSignal<Current> torqueCurrent;
+    private final StatusSignal<Temperature> tempCelsius;
 
-  public IntakeIOTalonFX(
-      int canID,
-      String canBus,
-      int currentLimitAmps,
-      boolean invert,
-      boolean brake,
-      double reduction) {
-    this.reduction = reduction;
-    talon = new TalonFX(canID, canBus);
-    TalonFXConfiguration config = new TalonFXConfiguration();
-    config.MotorOutput.Inverted =
-        invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
-    config.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-    config.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
-    config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    talon.getConfigurator().apply(config);
+    public IntakeIOTalonFX(
+            int canID,
+            String canBus,
+            int currentLimitAmps,
+            boolean invert,
+            boolean brake,
+            double reduction) {
+        this.reduction = reduction;
+        talon = new TalonFX(canID, canBus);
+        beamBreak = new DigitalInput(Constants.BEAM_BREAK_DIO_PORT);
 
-    position = talon.getPosition();
-    velocity = talon.getVelocity();
-    appliedVoltage = talon.getMotorVoltage();
-    supplyCurrent = talon.getSupplyCurrent();
-    torqueCurrent = talon.getTorqueCurrent();
-    tempCelsius = talon.getDeviceTemp();
+        TalonFXConfiguration config = new TalonFXConfiguration();
+        config.MotorOutput.Inverted =
+                invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+        config.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+        config.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
+        config.CurrentLimits.SupplyCurrentLimitEnable = true;
+        talon.getConfigurator().apply(config);
 
-    BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
+        position = talon.getPosition();
+        velocity = talon.getVelocity();
+        appliedVoltage = talon.getMotorVoltage();
+        supplyCurrent = talon.getSupplyCurrent();
+        torqueCurrent = talon.getTorqueCurrent();
+        tempCelsius = talon.getDeviceTemp();
 
-    talon.optimizeBusUtilization(0, 1.0);
-  }
+        BaseStatusSignal.setUpdateFrequencyForAll(
+                50.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
 
-  public void stop() {
-    talon.setControl(neutralOut);
-  }
+        talon.optimizeBusUtilization(0, 1.0);
+    }
 
-  public void setVoltage(double voltage) {
-    talon.setControl(voltageOut.withOutput(voltage));
-  }
+    @Override
+    public void stop() {
+        talon.setControl(neutralOut);
+    }
 
-  public void updateInputs(IntakeIOInputs inputs) {
-    inputs.connected =
-        BaseStatusSignal.refreshAll(
-                position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius)
-            .isOK();
-    inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble()) / reduction;
-    inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble()) / reduction;
-    inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
-    inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
-    inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
-    inputs.tempCelsius = tempCelsius.getValueAsDouble();
-  }
+    @Override
+    public void setVoltage(double voltage) {
+        talon.setControl(voltageOut.withOutput(voltage));
+    }
+
+    @Override
+    public void updateInputs(IntakeIOInputs inputs) {
+        inputs.connected =
+                BaseStatusSignal.refreshAll(
+                        position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius)
+                        .isOK();
+        inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble()) / reduction;
+        inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble()) / reduction;
+        inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
+        inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
+        inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
+        inputs.tempCelsius = tempCelsius.getValueAsDouble();
+        inputs.beamBreakTriggered = beamBreak.get();  
+    }
 }

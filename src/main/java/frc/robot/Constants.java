@@ -25,6 +25,7 @@ public final class Constants {
   public static final Mode currentMode = RobotBase.isReal() ? Mode.KRONOS : simMode;
   public static final boolean tuningMode = true;
   public static final double loopPeriodSecs = 0.02;
+  public static final int BEAM_BREAK_DIO_PORT=1;}
 
   public static enum Mode {
     /** Running on a real robot. */
@@ -40,4 +41,3 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
-}
