@@ -29,6 +29,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import frc.robot.util.AprilTag;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
@@ -286,6 +289,35 @@ public class DriveCommands {
                               + formatter.format(Units.metersToInches(wheelRadius))
                               + " inches");
                     })));
+  }
+
+  public static Command alignReef(
+      Drive drive, DoubleSupplier xSupplier, double lateralOffset) {
+    double angleSetpoint = AprilTag.TagPoses[VisionIOPhotonVision.getReefAprilTag(drive.getPose())].getRotation().getDegrees();
+
+    return Commands.run(
+        () -> {
+          double theta = drive.getPose().getRotation().getDegrees() % 360;
+          double currentError = theta - angleSetpoint;
+
+          if (currentError > 180) {
+            currentError -= 360;
+          } else if (currentError < -180) {
+            currentError += 360;
+          }
+
+          drive.runVelocity(
+              new ChassisSpeeds(
+                  xSupplier.getAsDouble()
+                      * drive.getMaxLinearSpeedMetersPerSec()
+                      * .25, // Adjusted linear speed
+                  drive.linearMovementController.calculate(lateralOffset, 0)
+                      * drive.getMaxLinearSpeedMetersPerSec(), // Lateral movement
+                  drive.snapController.calculate(currentError, 0)
+                      * .25 // Adjusted angular speed for shortest rotation path
+                  ));
+        },
+        drive);
   }
 
   private static class WheelRadiusCharacterizationState {

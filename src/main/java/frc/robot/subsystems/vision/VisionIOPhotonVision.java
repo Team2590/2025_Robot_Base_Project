@@ -15,14 +15,18 @@ package frc.robot.subsystems.vision;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import frc.robot.util.AprilTag;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
@@ -127,5 +131,29 @@ public class VisionIOPhotonVision implements VisionIO {
     for (int id : tagIds) {
       inputs.tagIds[i++] = id;
     }
+  }
+
+  /** Gets the current reef tag, or 0 */
+  public static int getReefAprilTag(Pose2d RobotPose) {
+    int lastAprilTagId = 0;
+    double minDistance = Integer.MAX_VALUE;
+    for (int id = 6; id<=22; id++) {
+      if ((id >= 6 && id <= 11)) {
+        Transform2d camTransform = RobotPose.minus(AprilTag.TagPoses[id]);
+        double distance = Math.hypot(camTransform.getX(), camTransform.getY());
+        if(distance < minDistance){
+          minDistance = distance;
+          lastAprilTagId = id;
+        }
+      } else if (id>11) {id = 16;}
+    }
+    return lastAprilTagId;
+  }
+
+  public static double getReefHorizontalOffset(Pose2d RobotPose) {
+    if (getReefAprilTag(RobotPose) > 0) {
+      return RobotPose.minus(AprilTag.TagPoses[getReefAprilTag(RobotPose)]).getY();
+    }
+    return 0;
   }
 }
