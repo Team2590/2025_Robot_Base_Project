@@ -11,12 +11,14 @@ public class ElevatorIOSim implements ElevatorIO {
   private ElevatorSim elevatorSim;
   private double drumRadiusMeters;
   private double gearing;
-  private LoggedTunableNumber cruiseVelocity = new LoggedTunableNumber("Arm/cruiseVelocity", 0);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Arm/acceleration", 0);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("Arm/jerk", 0);
+  private LoggedTunableNumber cruiseVelocity = new LoggedTunableNumber("Arm/cruiseVelocity", 10);
+  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Arm/acceleration", 15);
+  private LoggedTunableNumber jerk = new LoggedTunableNumber("Arm/jerk", 20);
   private NeutralModeValue neutralMode;
   private double rotationCount;
   private DCMotor gearBox;
+  private double requestedPositionMeters = 0;
+  private boolean holding = true;
 
   public ElevatorIOSim(
       DCMotor gearbox,
@@ -58,6 +60,7 @@ public class ElevatorIOSim implements ElevatorIO {
     io.supplyCurrentAmps = elevatorSim.getCurrentDrawAmps();
     io.torqueCurrentAmps = elevatorSim.getCurrentDrawAmps();
     io.tempCelsius = 30;
+    if (holding) elevatorSim.setState(requestedPositionMeters, cruiseVelocity.get());
   }
 
   @Override
@@ -66,6 +69,8 @@ public class ElevatorIOSim implements ElevatorIO {
   @Override
   public void setPosition(double position) {
     double positionMeters = position * 2 * Math.PI * drumRadiusMeters / gearing;
+
+    requestedPositionMeters = positionMeters;
 
     elevatorSim.setState(positionMeters, cruiseVelocity.get());
   }
@@ -76,6 +81,8 @@ public class ElevatorIOSim implements ElevatorIO {
 
     if (neutralMode == NeutralModeValue.Brake) {
       elevatorSim.setState(currentPositionMeters, 0.0);
+    } else {
+      requestedPositionMeters = 0;
     }
   }
 
