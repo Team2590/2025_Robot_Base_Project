@@ -82,7 +82,7 @@ public class ElevatorIOSim implements ElevatorIO {
     if (neutralMode == NeutralModeValue.Brake) {
       elevatorSim.setState(currentPositionMeters, 0.0);
     } else {
-      requestedPositionMeters = 0;
+      holding = false;
     }
   }
 
