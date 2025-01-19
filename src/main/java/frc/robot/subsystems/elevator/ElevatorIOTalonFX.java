@@ -3,7 +3,6 @@ package frc.robot.subsystems.elevator;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -51,21 +50,20 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final StatusSignal<Angle> cancoderAbsPosition;
 
   public ElevatorIOTalonFX(
-    int canID,
-    String canBus,
-    int currentLimitAmps,
-    boolean invert,
-    boolean brake,
-    double reduction,
-    int cancoderCanID,
-    String cancoderCanBus,
-    double elevatorMagOffset,
-    double rotorToSensorRatio,
-    int feedbackRemoteSensorID
-  ) {
+      int canID,
+      String canBus,
+      int currentLimitAmps,
+      boolean invert,
+      boolean brake,
+      double reduction,
+      int cancoderCanID,
+      String cancoderCanBus,
+      double elevatorMagOffset,
+      double rotorToSensorRatio,
+      int feedbackRemoteSensorID) {
     leader = new TalonFX(canID, canBus);
     cancoder = new CANcoder(cancoderCanID, cancoderCanBus);
-    
+
     var mag = new MagnetSensorConfigs();
     mag.MagnetOffset = elevatorMagOffset;
 
@@ -108,11 +106,20 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     this.reduction = reduction;
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius, cancoderPosition, cancoderAbsPosition);
+        50.0,
+        position,
+        velocity,
+        appliedVoltage,
+        supplyCurrent,
+        torqueCurrent,
+        tempCelsius,
+        cancoderPosition,
+        cancoderAbsPosition);
     leader.optimizeBusUtilization(0, 1);
     cancoder.optimizeBusUtilization(0, 1);
   }
 
+  @Override
   public void updateInputs(ElevatorIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(
@@ -127,6 +134,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     inputs.rotationCount = leader.getPosition().getValueAsDouble();
   }
 
+  @Override
   public void updateTunableNumbers() {
     boolean applyConfig = false;
 
@@ -180,6 +188,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     }
   }
 
+  @Override
   public void setPosition(double position) {
     var request = new MotionMagicVoltage(0);
     if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {
@@ -189,14 +198,17 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     }
   }
 
+  @Override
   public void stop() {
     leader.stopMotor();
   }
 
+  @Override
   public void resetRotationCount() {
     leader.setPosition(0);
   }
 
+  @Override
   public void setNeutralMode(NeutralModeValue mode) {
     leader.setNeutralMode(mode);
   }
