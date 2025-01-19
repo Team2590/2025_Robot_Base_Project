@@ -160,8 +160,6 @@ public class VisionIOPhotonVision implements VisionIO {
             }
           }
 
-          // Small sleep to prevent CPU overuse
-          Thread.sleep(5);
         } catch (Exception e) {
           e.printStackTrace();
         }
