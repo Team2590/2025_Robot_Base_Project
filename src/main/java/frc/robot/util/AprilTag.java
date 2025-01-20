@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 
 public class AprilTag {
 
+  // April Tag positions on the field
   public static Pose2d[] TagPoses = {
     null,
     new Pose2d(16.70, 0.66, new Rotation2d(Math.toRadians(126))),

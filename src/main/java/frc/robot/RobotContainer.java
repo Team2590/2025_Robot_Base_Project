@@ -44,7 +44,6 @@ import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -201,14 +200,14 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
-
-  public void alignReef(){
-    CommandScheduler.getInstance().schedule(
-        DriveCommands.alignReef(
-            drive, 
-            () -> -leftJoystick.getY(), 
-            VisionIOPhotonVision.getReefHorizontalOffset(drive.getPose()))
-        .until(() -> rightJoystick.getHID().getPOV() == 180)
-    );
+  // Uses pose to find closest reef and aligns to tag on the reef
+  public void alignReef() {
+    CommandScheduler.getInstance()
+        .schedule(
+            DriveCommands.alignReef(
+                    drive,
+                    () -> -leftJoystick.getY(),
+                    VisionIOPhotonVision.getReefHorizontalOffset(drive.getPose()))
+                .until(() -> rightJoystick.getHID().getPOV() == 180));
   }
 }

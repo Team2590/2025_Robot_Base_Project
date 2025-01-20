@@ -31,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.AprilTag;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
@@ -291,9 +290,11 @@ public class DriveCommands {
                     })));
   }
 
-  public static Command alignReef(
-      Drive drive, DoubleSupplier xSupplier, double lateralOffset) {
-    double angleSetpoint = AprilTag.TagPoses[VisionIOPhotonVision.getReefAprilTag(drive.getPose())].getRotation().getDegrees();
+  public static Command alignReef(Drive drive, DoubleSupplier xSupplier, double lateralOffset) {
+    double angleSetpoint =
+        AprilTag.TagPoses[VisionIOPhotonVision.getReefAprilTag(drive.getPose())]
+            .getRotation()
+            .getDegrees();
 
     return Commands.run(
         () -> {
