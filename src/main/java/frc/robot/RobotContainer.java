@@ -28,11 +28,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.generated.TunerConstantsParent;
+import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
@@ -66,13 +67,11 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    TunerConstantsParent constants;
-    SwerveModuleConstants[] moduleConstants;
+    TunerConstantsWrapper constants = new TunerConstantsWrapper(Constants.currentMode);
+    SwerveModuleConstants[] moduleConstants = constants.getSwerveModuleConstants();
     switch (Constants.currentMode) {
       case KRONOS:
         // Real robot, instantiate hardware IO implementations
-        constants = new TunerConstantsParent(Constants.currentMode);
-        moduleConstants = constants.getSwerveModuleConstants();
         drive =
             new Drive(
                 new GyroIOPigeon2(),
@@ -94,15 +93,13 @@ public class RobotContainer {
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        constants = new TunerConstantsParent(Constants.currentMode);
-        moduleConstants = constants.getSwerveModuleConstants();
         drive =
             new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOTalonFX(moduleConstants[0]),
-                new ModuleIOTalonFX(moduleConstants[1]),
-                new ModuleIOTalonFX(moduleConstants[2]),
-                new ModuleIOTalonFX(moduleConstants[3]));
+                new GyroIO() {},
+                new ModuleIOSim(moduleConstants[0]),
+                new ModuleIOSim(moduleConstants[1]),
+                new ModuleIOSim(moduleConstants[2]),
+                new ModuleIOSim(moduleConstants[3]));
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -169,10 +166,7 @@ public class RobotContainer {
             () -> -rightJoystick.getX()));
 
     // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.driveToPose(new Pose2d()));
+    controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
 
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

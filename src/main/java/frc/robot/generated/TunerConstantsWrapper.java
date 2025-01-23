@@ -7,24 +7,24 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import edu.wpi.first.units.measure.LinearVelocity;
 import frc.robot.Constants;
 
-public class TunerConstantsParent {
+public class TunerConstantsWrapper {
   /**
    * Canbus (drivetrainconstants) pigeon2ID (drivetrainconstants) frontleft frontright backleft
    * backright kspeedvoltsat12
    */
-  public SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+  private SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       FrontLeft;
 
-  public SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+  private SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       FrontRight;
-  public SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+  private SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       BackLeft;
-  public SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+  private SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       BackRight;
-  public LinearVelocity kSpeedAt12Volts;
-  public SwerveDrivetrainConstants DrivetrainConstants;
+  private LinearVelocity kSpeedAt12Volts;
+  private SwerveDrivetrainConstants DrivetrainConstants;
 
-  public TunerConstantsParent(Constants.Mode mode) {
+  public TunerConstantsWrapper(Constants.Mode mode) {
     try {
       switch (mode) {
         case KRONOS:
@@ -58,6 +58,35 @@ public class TunerConstantsParent {
           break;
 
         case COMP:
+          break;
+
+        case SIM:
+          // This must be manually changed based on which robot you want to sim, just copy/paste
+          // from the appropriate case
+          FrontLeft =
+              (SwerveModuleConstants<
+                      TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>)
+                  TunerConstantsKronos.class.getField("FrontLeft").get(null);
+          FrontRight =
+              (SwerveModuleConstants<
+                      TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>)
+                  TunerConstantsKronos.class.getField("FrontRight").get(null);
+          BackLeft =
+              (SwerveModuleConstants<
+                      TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>)
+                  TunerConstantsKronos.class.getField("BackLeft").get(null);
+          BackRight =
+              (SwerveModuleConstants<
+                      TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>)
+                  TunerConstantsKronos.class.getField("BackRight").get(null);
+          kSpeedAt12Volts =
+              (LinearVelocity)
+                  TunerConstantsKronos.class
+                      .getField("kSpeedAt12Volts")
+                      .get(null); // .get(LinearVelocity);
+          DrivetrainConstants =
+              (SwerveDrivetrainConstants)
+                  TunerConstantsKronos.class.getField("DrivetrainConstants").get(null);
           break;
 
         default:

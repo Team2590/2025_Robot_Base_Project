@@ -49,8 +49,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
-import frc.robot.generated.TunerConstants;
-import frc.robot.generated.TunerConstantsParent;
+import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -63,7 +62,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
-  static TunerConstantsParent constants = new TunerConstantsParent(Constants.currentMode);
+  static TunerConstantsWrapper constants = new TunerConstantsWrapper(Constants.currentMode);
   static final double ODOMETRY_FREQUENCY =
       new CANBus(constants.getDrivetrainConstants().CANBusName).isNetworkFD() ? 250.0 : 100.0;
   static SwerveModuleConstants[] moduleConstants = constants.getSwerveModuleConstants();
@@ -85,8 +84,8 @@ public class Drive extends SubsystemBase {
           ROBOT_MASS_KG,
           ROBOT_MOI,
           new ModuleConfig(
-              TunerConstants.FrontLeft.WheelRadius,
-              TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
+              moduleConstants[0].WheelRadius,
+              constants.getLinearVelocity().in(MetersPerSecond),
               WHEEL_COF,
               DCMotor.getKrakenX60Foc(1).withReduction(moduleConstants[0].DriveMotorGearRatio),
               moduleConstants[0].SlipCurrent,
@@ -355,7 +354,7 @@ public class Drive extends SubsystemBase {
 
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
-    return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    return constants.getLinearVelocity().in(MetersPerSecond);
   }
 
   /** Returns the maximum angular speed in radians per sec. */
@@ -366,10 +365,10 @@ public class Drive extends SubsystemBase {
   /** Returns an array of module translations. */
   public static Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
-      new Translation2d(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
-      new Translation2d(TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY),
-      new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
-      new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
+      new Translation2d(moduleConstants[0].LocationX, moduleConstants[0].LocationY),
+      new Translation2d(moduleConstants[1].LocationX, moduleConstants[1].LocationY),
+      new Translation2d(moduleConstants[2].LocationX, moduleConstants[2].LocationY),
+      new Translation2d(moduleConstants[3].LocationX, moduleConstants[3].LocationY)
     };
   }
 }

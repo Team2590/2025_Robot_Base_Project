@@ -40,7 +40,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.generated.TunerConstants;
+import frc.robot.Constants;
+import frc.robot.generated.TunerConstantsWrapper;
 import java.util.Queue;
 
 /**
@@ -94,6 +95,8 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
   private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5);
 
+  private TunerConstantsWrapper robotConstants = new TunerConstantsWrapper(Constants.currentMode);
+
   public ModuleIOTalonFX(
       SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
           constants) {
@@ -103,9 +106,12 @@ public class ModuleIOTalonFX implements ModuleIO {
       e.printStackTrace();
     }
     this.constants = constants;
-    driveTalon = new TalonFX(constants.DriveMotorId, TunerConstants.DrivetrainConstants.CANBusName);
-    turnTalon = new TalonFX(constants.SteerMotorId, TunerConstants.DrivetrainConstants.CANBusName);
-    cancoder = new CANcoder(constants.EncoderId, TunerConstants.DrivetrainConstants.CANBusName);
+    driveTalon =
+        new TalonFX(constants.DriveMotorId, robotConstants.getDrivetrainConstants().CANBusName);
+    turnTalon =
+        new TalonFX(constants.SteerMotorId, robotConstants.getDrivetrainConstants().CANBusName);
+    cancoder =
+        new CANcoder(constants.EncoderId, robotConstants.getDrivetrainConstants().CANBusName);
 
     // Configure drive motor
     var driveConfig = constants.DriveMotorInitialConfigs;
