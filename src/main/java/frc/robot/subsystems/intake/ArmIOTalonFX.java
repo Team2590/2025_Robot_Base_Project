@@ -15,11 +15,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.units.measure.Angle;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
-
 
 public class ArmIOTalonFX implements ArmIO {
 

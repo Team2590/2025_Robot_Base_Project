@@ -23,11 +23,11 @@ public class IntakeIOSim implements IntakeIO {
   }
 
   @Override
-public void setVoltage(double volts) {
+  public void setVoltage(double volts) {
     appliedVoltage = MathUtil.clamp(volts, -12.0, 12.0); // Assuming MathUtil.clamp exists
     System.out.println("I am in setVoltage");
-    sim.setInputVoltage(appliedVoltage); 
-}
+    sim.setInputVoltage(appliedVoltage);
+  }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
