@@ -112,6 +112,74 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
+  /**
+   * This constructor assumes all Modules are of type ModuleIOTalonFX
+   *
+   * @param gyroIO
+   */
+  public Drive(GyroIO gyroIO) {
+    this.gyroIO = gyroIO;
+    if (Constants.currentMode == Constants.simMode) {
+      modules[0] = new Module(new ModuleIOSim(moduleConstants[0]), 0, moduleConstants[0]);
+      modules[1] = new Module(new ModuleIOSim(moduleConstants[1]), 1, moduleConstants[1]);
+      modules[2] = new Module(new ModuleIOSim(moduleConstants[2]), 2, moduleConstants[2]);
+      modules[3] = new Module(new ModuleIOSim(moduleConstants[3]), 3, moduleConstants[3]);
+    } else {
+      modules[0] = new Module(new ModuleIOTalonFX(moduleConstants[0]), 0, moduleConstants[0]);
+      modules[1] = new Module(new ModuleIOTalonFX(moduleConstants[1]), 1, moduleConstants[1]);
+      modules[2] = new Module(new ModuleIOTalonFX(moduleConstants[2]), 2, moduleConstants[2]);
+      modules[3] = new Module(new ModuleIOTalonFX(moduleConstants[3]), 3, moduleConstants[3]);
+    }
+
+    // Usage reporting for swerve template
+    HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_AdvantageKit);
+
+    // Start odometry thread
+    PhoenixOdometryThread.getInstance().start();
+
+    // Configure AutoBuilder for PathPlanner
+    AutoBuilder.configure(
+        this::getPose,
+        this::setPose,
+        this::getChassisSpeeds,
+        this::runVelocity,
+        new PPHolonomicDriveController(
+            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+        PP_CONFIG,
+        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+        this);
+    Pathfinding.setPathfinder(new LocalADStarAK());
+    PathPlannerLogging.setLogActivePathCallback(
+        (activePath) -> {
+          Logger.recordOutput(
+              "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+        });
+    PathPlannerLogging.setLogTargetPoseCallback(
+        (targetPose) -> {
+          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+        });
+
+    // Configure SysId
+    sysId =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                null,
+                null,
+                (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+  }
+
+  /**
+   * use this constructor for default case in RobotContainer.java
+   *
+   * @param gyroIO
+   * @param flModuleIO
+   * @param frModuleIO
+   * @param blModuleIO
+   * @param brModuleIO
+   */
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,

@@ -33,8 +33,6 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
-import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.vision.Vision;
@@ -72,13 +70,7 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case KRONOS:
         // Real robot, instantiate hardware IO implementations
-        drive =
-            new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOTalonFX(moduleConstants[0]),
-                new ModuleIOTalonFX(moduleConstants[1]),
-                new ModuleIOTalonFX(moduleConstants[2]),
-                new ModuleIOTalonFX(moduleConstants[3]));
+        drive = new Drive(new GyroIOPigeon2());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -93,13 +85,7 @@ public class RobotContainer {
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(moduleConstants[0]),
-                new ModuleIOSim(moduleConstants[1]),
-                new ModuleIOSim(moduleConstants[2]),
-                new ModuleIOSim(moduleConstants[3]));
+        drive = new Drive(new GyroIO() {});
         vision =
             new Vision(
                 drive::addVisionMeasurement,
