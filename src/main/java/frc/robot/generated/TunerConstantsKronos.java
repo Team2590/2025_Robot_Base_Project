@@ -25,7 +25,7 @@ public class TunerConstantsKronos {
 
   // The steer motor uses any SwerveModule.SteerRequestType control request with the
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
-  
+
   private static final Slot0Configs steerGains =
       new Slot0Configs()
           .withKP(steerkp.get())

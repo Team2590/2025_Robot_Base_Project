@@ -8,11 +8,13 @@ import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
   private final IntakeIO io;
-  protected final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+  private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private final Alert disconnected;
+  private final IntakeElevatorIO intakeElevatorIO;
 
-  public Intake(IntakeIO io) {
+  public Intake(IntakeIO io, IntakeElevatorIO intakeElevatorIO) {
     this.io = io;
+    this.intakeElevatorIO = intakeElevatorIO;
     disconnected = new Alert("Intake motor disconnected!", Alert.AlertType.kWarning);
   }
 
@@ -35,5 +37,15 @@ public class Intake extends SubsystemBase {
               io.stop();
             })
         .withName("Run Intake");
+  }
+
+  @AutoLogOutput
+  public Command setIntakeCoralPosition() {
+    return runOnce(() -> intakeElevatorIO.setPosition(0));
+  }
+
+  @AutoLogOutput
+  public Command setIntakeAlgaePosition() {
+    return runOnce(() -> intakeElevatorIO.setPosition(1));
   }
 }
