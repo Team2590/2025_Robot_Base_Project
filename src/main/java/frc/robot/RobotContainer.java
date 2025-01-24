@@ -82,10 +82,8 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
                     List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3))));
+                        new CameraConfig(leftCamName, robotToLeftCam),
+                        new CameraConfig(rightCamName, robotToRightCam))));
         intake = null;
         break;
 
@@ -103,10 +101,8 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(
                     List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3)),
+                        new CameraConfig(leftCamName, robotToLeftCam),
+                        new CameraConfig(rightCamName, robotToRightCam)),
                     drive::getPose));
         intake = new Intake(new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1));
         break;
@@ -145,7 +141,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
-    configureButtonBindings();
+    // configureButtonBindings();
   }
 
   /**
@@ -164,10 +160,7 @@ public class RobotContainer {
             () -> -rightJoystick.getX()));
 
     // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.driveToPose(new Pose2d()));
+    controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
 
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

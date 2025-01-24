@@ -20,6 +20,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
@@ -35,6 +36,7 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+  private Pose3d lastAcceptedPose = new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0));
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -159,6 +161,7 @@ public class Vision extends SubsystemBase {
       Logger.recordOutput(
           "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
           robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
+
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);
       allRobotPosesAccepted.addAll(robotPosesAccepted);
@@ -176,6 +179,13 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput(
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
+    // if (allRobotPosesAccepted.size() >= 1) {
+    //   lastAcceptedPose = allRobotPosesAccepted.get(allRobotPosesAccepted.size() - 1);
+    // }
+    // if (lastAcceptedPose != null) {
+    //   Logger.recordOutput("Vision/Summary/LastAcceptedPose", lastAcceptedPose.toString());
+    // }
+    // // Logger.recordOutput("Vision/Summary/LastAcceptedPose", lastAcceptedPose.toString());
   }
 
   @FunctionalInterface
