@@ -1,107 +1,83 @@
 package frc.robot.subsystems.led;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.LEDPattern.GradientType;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Map;
 
-/**
- * @author Dhruv Shah
- */
 public class NemesisLED extends SubsystemBase {
-  private AddressableLED led;
-  private AddressableLEDBuffer buffer;
+  private final AddressableLED led;
+  private final AddressableLEDBuffer buffer;
+  private LEDPattern basePattern;
 
   public NemesisLED(int port, int length) {
+    // Initialize the LED hardware
     led = new AddressableLED(port);
     buffer = new AddressableLEDBuffer(length);
-
     led.setLength(length);
-    led.setData(buffer);
     led.start();
+
+    basePattern = LEDPattern.kOff;
+
+    setDefaultCommand(runOnce(() -> LEDPattern.kOff.applyTo(buffer)));
   }
 
-  public Command stop() {
-    return runOnce(led::stop);
-  }
+  @Override
+  public void periodic() {
+    basePattern.applyTo(buffer);
 
-  public Command start() {
-    return runOnce(led::start);
-  }
-
-  public Command setOff() {
-    LEDPattern.kOff.applyTo(buffer);
-    return runOnce(() -> led.setData(buffer));
-  }
-
-  public void off() {
-    LEDPattern.kOff.applyTo(buffer);
     led.setData(buffer);
-  }
-
-  // public Command rainbow() {
-  //     Distance LedSpacing = Meters.of(1 / 120);
-  //     LEDPattern rainbow = LEDPattern.rainbow(255,
-  // 128).scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LedSpacing);
-  //     rainbow.applyTo(buffer);
-  //     return runOnce(() -> led.setData(buffer));
-  // }
-
-  public Command setRainbowFlow() {
-    Distance LedSpacing = Meters.of(1 / 120);
-    LEDPattern rainbow =
-        LEDPattern.rainbow(255, 128).scrollAtAbsoluteSpeed(MetersPerSecond.of(1), LedSpacing);
-    rainbow.applyTo(buffer);
-    return runOnce(() -> led.setData(buffer))
-        .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
   }
 
   public Command setNemesisFlow() {
-    Distance ledSpacing = Meters.of(1 / 120.0);
-    LEDPattern base = LEDPattern.gradient(GradientType.kDiscontinuous, Color.kRed, Color.kWhite);
-    LEDPattern pattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(25));
-    LEDPattern absolute = base.scrollAtAbsoluteSpeed(Centimeters.per(Second).of(12.5), ledSpacing);
-
-    pattern.applyTo(buffer);
-    led.setData(buffer);
-
+    var scrollSpeed = MetersPerSecond.of(3);
+    var stripLength = Meters.of(0.05);
+    var scrollingPattern = LEDPattern.gradient(GradientType.kContinuous, Color.kRed, Color.kWhite);
+    basePattern = scrollingPattern.scrollAtAbsoluteSpeed(scrollSpeed, stripLength);
     return Commands.none();
   }
 
   public Command setColor(Color color) {
-    LEDPattern pattern = LEDPattern.solid(color);
-    pattern.applyTo(buffer);
-
-    return runOnce(() -> led.setData(buffer))
-        .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+    basePattern = LEDPattern.solid(color);
+    return Commands.none();
   }
 
-  public Command setBlinking(Color color, double seconds, double interval) {
-    double startTime = Timer.getFPGATimestamp();
-    AtomicReference<Double> lastTimeStamp = new AtomicReference<Double>(startTime);
+  public Command setBlink(Color color, double onTime) {
+    basePattern = LEDPattern.solid(color).blink(Seconds.of(onTime));
+    return Commands.none();
+  }
 
-    return run(() -> {
-          double currentTime = Timer.getFPGATimestamp();
-          if (lastTimeStamp.get() + interval > currentTime) {
-            off();
-          } else {
-            LEDPattern.solid(color).applyTo(buffer);
-            led.setData(buffer);
-          }
+  public Command setAuraRizz() {
+    Map<Double, Color> maskSteps = Map.of(0.0, Color.kWhite, 0.5, Color.kBlack);
+    var stripLength = Meters.of(0.05);
+    var scrollSpeed = MetersPerSecond.of(3);
+    var base = LEDPattern.gradient(GradientType.kContinuous, Color.kRed, Color.kWhite);
+    var mask = LEDPattern.steps(maskSteps).scrollAtAbsoluteSpeed(scrollSpeed, stripLength);
 
-          lastTimeStamp.set(Timer.getFPGATimestamp());
-        })
-        .until(() -> Timer.getFPGATimestamp() >= startTime + seconds)
-        .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+    basePattern = base.mask(mask);
+    return Commands.none();
+  }
+
+  private double progressMaskCount = 0;
+
+  public Command setProgressMask(Color color) {
+    var progressMask =
+        LEDPattern.progressMaskLayer(
+            () -> {
+              progressMaskCount += 0.01;
+              return Math.abs(Math.cos(progressMaskCount));
+            });
+    var pattern = LEDPattern.solid(color);
+    basePattern = pattern.mask(progressMask);
+    return Commands.none();
   }
 }

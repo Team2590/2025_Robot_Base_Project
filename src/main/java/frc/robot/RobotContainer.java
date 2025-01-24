@@ -152,8 +152,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    joystick.button(1).onTrue(led.setColor(Color.kRed));
-    joystick.button(2).onTrue(led.setColor(Color.kBlue));
+    led.setProgressMask(Color.kRed);
   }
 
   /**
