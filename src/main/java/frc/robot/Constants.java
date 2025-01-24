@@ -14,7 +14,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
-
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -28,19 +27,18 @@ public final class Constants {
   public static final boolean tuningMode = true;
   public static final double loopPeriodSecs = 0.02;
 
-  public static class DriveToPoseConstraints{
-    public static double maxVelocityMPS= 0;
+  public static class DriveToPoseConstraints {
+    public static double maxVelocityMPS = 0;
     public static double maxAccelerationMPSSq = 0;
     public static double maxAngularVelocityRadPerSec = 0;
     public static double maxAngularAccelerationRadPerSecSq = 0;
 
-    public static PathConstraints pathConstraints = 
-    new PathConstraints(
-      maxVelocityMPS, 
-      maxAccelerationMPSSq, 
-      maxAngularVelocityRadPerSec,
-      maxAngularAccelerationRadPerSecSq
-      );
+    public static PathConstraints pathConstraints =
+        new PathConstraints(
+            maxVelocityMPS,
+            maxAccelerationMPSSq,
+            maxAngularVelocityRadPerSec,
+            maxAngularAccelerationRadPerSecSq);
   }
 
   public static enum Mode {
