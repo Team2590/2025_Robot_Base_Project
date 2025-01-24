@@ -2,13 +2,10 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -21,14 +18,14 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.util.LoggedTunableNumber;
 
-public class IntakeElevatorIOTalonFX implements IntakeElevatorIO {
+public class IntakeArmIOTalonFX implements IntakeArmIO {
   private TalonFX leader;
-  private LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 16);
-  private LoggedTunableNumber kI = new LoggedTunableNumber("Arm/kI", 0);
-  private LoggedTunableNumber kD = new LoggedTunableNumber("Arm/kD", 0);
-  private LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS", 0);
-  private LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0.1);
-  private LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", -0.011);
+  private LoggedTunableNumber kP = new LoggedTunableNumber("IntakeArm/kP", 16);
+  private LoggedTunableNumber kI = new LoggedTunableNumber("IntakeArm/kI", 0);
+  private LoggedTunableNumber kD = new LoggedTunableNumber("IntakeArm/kD", 0);
+  private LoggedTunableNumber kS = new LoggedTunableNumber("IntakeArm/kS", 0);
+  private LoggedTunableNumber kV = new LoggedTunableNumber("IntakeArm/kV", 0.1);
+  private LoggedTunableNumber kG = new LoggedTunableNumber("IntakeArm/kG", -0.011);
   private LoggedTunableNumber cruiseVelocity =
       new LoggedTunableNumber("IntakeArm/cruiseVelocity", 0);
   private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 0);
@@ -43,11 +40,8 @@ public class IntakeElevatorIOTalonFX implements IntakeElevatorIO {
   private StatusSignal<Current> torqueCurrent;
   private StatusSignal<Temperature> tempCelsius;
   private double reduction;
-  private CANcoder cancoder;
-  private final StatusSignal<Angle> cancoderPosition;
-  private final StatusSignal<Angle> cancoderAbsPosition;
 
-  public IntakeElevatorIOTalonFX(
+  public IntakeArmIOTalonFX(
       int canID,
       String canBus,
       int currentLimitAmps,
@@ -55,15 +49,6 @@ public class IntakeElevatorIOTalonFX implements IntakeElevatorIO {
       boolean brake,
       double reduction) {
     leader = new TalonFX(canID, canBus);
-
-    var mag = new MagnetSensorConfigs();
-
-    var cancoderConfig = new CANcoderConfiguration();
-    cancoderConfig.withMagnetSensor(mag);
-    cancoder.getConfigurator().apply(cancoderConfig);
-
-    cancoderPosition = cancoder.getPosition();
-    cancoderAbsPosition = cancoder.getAbsolutePosition();
 
     talonFXConfig.MotorOutput.Inverted =
         invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
@@ -94,21 +79,12 @@ public class IntakeElevatorIOTalonFX implements IntakeElevatorIO {
     this.reduction = reduction;
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0,
-        position,
-        velocity,
-        appliedVoltage,
-        supplyCurrent,
-        torqueCurrent,
-        tempCelsius,
-        cancoderPosition,
-        cancoderAbsPosition);
+        50.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
     leader.optimizeBusUtilization(0, 1);
-    cancoder.optimizeBusUtilization(0, 1);
   }
 
   @Override
-  public void updateInputs(IntakeElevatorIOInputs inputs) {
+  public void updateInputs(IntakeArmIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(
                 position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius)
@@ -124,61 +100,55 @@ public class IntakeElevatorIOTalonFX implements IntakeElevatorIO {
 
   @Override
   public void updateTunableNumbers() {
-    boolean applyConfig = false;
-
     if (kP.hasChanged(0)) {
       slot0Configs.kP = kP.get();
-      applyConfig = true;
+      leader.getConfigurator().apply(talonFXConfig);
     }
 
     if (kI.hasChanged(0)) {
       slot0Configs.kI = kI.get();
-      applyConfig = true;
+      leader.getConfigurator().apply(talonFXConfig);
     }
 
     if (kD.hasChanged(0)) {
       slot0Configs.kD = kD.get();
-      applyConfig = true;
+      leader.getConfigurator().apply(talonFXConfig);
     }
 
     if (kS.hasChanged(0)) {
       slot0Configs.kS = kS.get();
-      applyConfig = true;
+      leader.getConfigurator().apply(talonFXConfig);
     }
 
     if (kV.hasChanged(0)) {
       slot0Configs.kV = kV.get();
-      applyConfig = true;
+      leader.getConfigurator().apply(talonFXConfig);
     }
 
     if (kG.hasChanged(0)) {
       slot0Configs.kG = kG.get();
-      applyConfig = true;
+      leader.getConfigurator().apply(talonFXConfig);
     }
 
     if (cruiseVelocity.hasChanged(0)) {
       motionMagicConfigs.MotionMagicCruiseVelocity = cruiseVelocity.get();
-      applyConfig = true;
+      leader.getConfigurator().apply(talonFXConfig);
     }
 
     if (acceleration.hasChanged(0)) {
       motionMagicConfigs.MotionMagicAcceleration = acceleration.get();
-      applyConfig = true;
+      leader.getConfigurator().apply(talonFXConfig);
     }
 
     if (jerk.hasChanged(0)) {
       motionMagicConfigs.MotionMagicJerk = jerk.get();
-      applyConfig = true;
-    }
-
-    if (applyConfig) {
       leader.getConfigurator().apply(talonFXConfig);
     }
   }
 
   @Override
   public void setPosition(double position) {
-    var request = new MotionMagicVoltage(0);
+    var request = new MotionMagicDutyCycle(0);
     if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {
       leader.setControl(request);
     } else {

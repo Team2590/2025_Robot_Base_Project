@@ -3,9 +3,9 @@ package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface IntakeElevatorIO {
+public interface IntakeArmIO {
   @AutoLog
-  public static class IntakeElevatorIOInputs {
+  public static class IntakeArmIOInputs {
     public boolean connected = false;
     public double positionRads = 0.0;
     public double velocityRadsPerSec = 0.0;
@@ -16,7 +16,7 @@ public interface IntakeElevatorIO {
     public double rotationCount = 0.0;
   }
 
-  public void updateInputs(IntakeElevatorIOInputs io);
+  public void updateInputs(IntakeArmIOInputs io);
 
   public void updateTunableNumbers();
 
