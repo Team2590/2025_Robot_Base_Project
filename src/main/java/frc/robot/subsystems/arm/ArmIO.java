@@ -1,16 +1,18 @@
 package frc.robot.subsystems.arm;
 
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ArmIO {
   @AutoLog
-  public static class ArmIOInputs {
+  public class ArmIOInputs {
     public double velDegreesPerSecond = 0.0;
     public double currentAmps = 0.0;
     public double appliedVoltage = 0.0;
     public double appliedPercent = 0.0;
     public double armabspos = 0.0;
     public double armpos = 0.0;
+    public boolean connected;
   }
 
   /** Updates the set of loggable inputs */
@@ -30,4 +32,10 @@ public interface ArmIO {
 
   /** Updates tunable numbers */
   public default void updateTunableNumbers() {}
+
+  public void setPosition(double setpoint);
+
+  public void setPower(DutyCycleOut power);
+
+  public void stop();
 }

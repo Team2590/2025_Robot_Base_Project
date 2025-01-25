@@ -8,7 +8,7 @@ import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
-  private ArmIOTalonFX arm = new ArmIOTalonFX();
+  private ArmIO arm;
   private ArmStates state;
   private double armSetpoint;
   private double tolerance = .005;
@@ -19,6 +19,11 @@ public class Arm extends SubsystemBase {
 
   private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
+  public Arm(ArmIO io) {
+    state = ArmStates.STOPPED;
+    arm = io;
+  }
+
   public static enum ArmStates {
     STOPPED,
     MANUAL,
@@ -27,15 +32,6 @@ public class Arm extends SubsystemBase {
     REEF, /*STOWED, */
     APPROACHING_HOME,
     HOME,
-  }
-
-  /**
-   * Creates a new Flywheel.
-   *
-   * @param armIOTalonFX
-   */
-  public Arm(ArmIOTalonFX armIOTalonFX) {
-    state = ArmStates.STOPPED;
   }
 
   @Override
@@ -84,8 +80,7 @@ public class Arm extends SubsystemBase {
   }
 
   private boolean isArmAtSetPointPosition(double setPoint) {
-    return HelperFn.isWithinTolerance(
-        arm.armCancoder.getAbsolutePosition().getValueAsDouble(), setPoint, tolerance);
+    return HelperFn.isWithinTolerance(inputs.armabspos, setPoint, tolerance);
   }
 
   /** Run open loop at the specified voltage. */
@@ -144,7 +139,7 @@ public class Arm extends SubsystemBase {
   }
 
   public double getAbsolutePosition() {
-    return arm.armCancoder.getAbsolutePosition().getValueAsDouble();
+    return inputs.armabspos;
   }
 
   public ArmStates getState() {
