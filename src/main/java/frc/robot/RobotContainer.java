@@ -151,7 +151,7 @@ public class RobotContainer {
     rightJoystick.button(1).whileTrue(intake.runIntake(4));
     rightJoystick.button(2).onTrue(intake.setIntakeCoralPosition());
     rightJoystick.button(3).onTrue(intake.setIntakeAlgaePosition());
-    rightJoystick.button(4).onTrue(intake.resetRotationCount());
+    rightJoystick.button(4).onTrue(intake.resetArmRotationCount());
 
     // Reset gyro to 0° when B button is pressed
     // controller

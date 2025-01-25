@@ -9,26 +9,49 @@ public class Intake extends SubsystemBase {
   private final IntakeIO intakeIO;
   private final IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
   private final Alert intakeDisconnected;
-  private final Alert intakeArmDisconnected;
-  private final IntakeArmIO intakeElevatorIO;
-  private final IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
+  private final IntakeArm intakeArm;
 
   public Intake(IntakeIO intakeIO, IntakeArmIO intakeArmIO) {
     this.intakeIO = intakeIO;
-    this.intakeElevatorIO = intakeArmIO;
     intakeDisconnected = new Alert("Intake motor disconnected!", Alert.AlertType.kWarning);
-    intakeArmDisconnected = new Alert("Intake Arm motor disconnected!", Alert.AlertType.kWarning);
+    intakeArm = new IntakeArm(intakeArmIO);
   }
 
   @Override
   public void periodic() {
     intakeIO.updateInputs(intakeInputs);
     Logger.processInputs("Intake", intakeInputs);
-    intakeElevatorIO.updateInputs(intakeArmInputs);
-    intakeElevatorIO.updateTunableNumbers();
-    Logger.processInputs("IntakeArm", intakeArmInputs);
     intakeDisconnected.set(!intakeInputs.connected);
-    intakeArmDisconnected.set(!intakeArmInputs.connected);
+  }
+
+  private class IntakeArm extends SubsystemBase {
+    private final Alert intakeArmDisconnected;
+    private final IntakeArmIO intakeArmIO;
+    private final IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
+
+    public IntakeArm(IntakeArmIO intakeArmIO) {
+      this.intakeArmIO = intakeArmIO;
+      Logger.processInputs("IntakeArm", intakeArmInputs);
+      intakeArmDisconnected = new Alert("Intake Arm motor disconnected!", Alert.AlertType.kWarning);  
+    }
+
+    public void periodic() {
+      intakeArmIO.updateInputs(intakeArmInputs);
+      intakeArmIO.updateTunableNumbers();
+      intakeArmDisconnected.set(!intakeArmInputs.connected);
+    }
+    
+    public Command setIntakeCoralPosition() {
+      return runOnce(() -> intakeArmIO.setPosition(10)).withName("Set intake coral position");
+    }
+  
+    public Command setIntakeAlgaePosition() {
+      return runOnce(() -> intakeArmIO.setPosition(0)).withName("Set intake algae position");
+    }
+  
+    public Command resetRotationCount() {
+      return runOnce(() -> intakeArmIO.resetRotationCount()).withName("Set intake coral position");
+    }
   }
 
   public Command runIntake(double voltage) {
@@ -45,14 +68,14 @@ public class Intake extends SubsystemBase {
   }
 
   public Command setIntakeCoralPosition() {
-    return runOnce(() -> intakeElevatorIO.setPosition(10));
+    return intakeArm.setIntakeCoralPosition();
   }
 
   public Command setIntakeAlgaePosition() {
-    return runOnce(() -> intakeElevatorIO.setPosition(0));
+    return intakeArm.setIntakeAlgaePosition();
   }
 
-  public Command resetRotationCount() {
-    return runOnce(() -> intakeElevatorIO.resetRotationCount());
+  public Command resetArmRotationCount() {
+    return intakeArm.resetRotationCount();
   }
 }
