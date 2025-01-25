@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
     public IntakeArm(IntakeArmIO intakeArmIO) {
       this.intakeArmIO = intakeArmIO;
       Logger.processInputs("IntakeArm", intakeArmInputs);
-      intakeArmDisconnected = new Alert("Intake Arm motor disconnected!", Alert.AlertType.kWarning);  
+      intakeArmDisconnected = new Alert("Intake Arm motor disconnected!", Alert.AlertType.kWarning);
     }
 
     public void periodic() {
@@ -40,15 +40,15 @@ public class Intake extends SubsystemBase {
       intakeArmIO.updateTunableNumbers();
       intakeArmDisconnected.set(!intakeArmInputs.connected);
     }
-    
+
     public Command setIntakeCoralPosition() {
       return runOnce(() -> intakeArmIO.setPosition(10)).withName("Set intake coral position");
     }
-  
+
     public Command setIntakeAlgaePosition() {
       return runOnce(() -> intakeArmIO.setPosition(0)).withName("Set intake algae position");
     }
-  
+
     public Command resetRotationCount() {
       return runOnce(() -> intakeArmIO.resetRotationCount()).withName("Set intake coral position");
     }
