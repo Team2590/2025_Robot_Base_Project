@@ -50,14 +50,6 @@ public class FRCPolygon {
     path.transform(at);
   }
 
-  public void scale(double sx, double sy) {
-    Rectangle2D bounds = path.getBounds2D();
-    double centerX = bounds.getCenterX();
-    double centerY = bounds.getCenterY();
-    AffineTransform at = AffineTransform.getScaleInstance(sx, sy);
-    path.transform(at);
-  }
-
   public void transform(AffineTransform at) {
     path.transform(at);
   }

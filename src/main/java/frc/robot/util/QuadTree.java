@@ -65,7 +65,6 @@ public class QuadTree {
     double x = bounds.getX();
     double y = bounds.getY();
 
-    // Create a new array of QuadTree<T>
     QuadTree[] newNodes = new QuadTree[4];
     newNodes[0] =
         new QuadTree(level + 1, new Rectangle2D.Double(x + subWidth, y, subWidth, subHeight));
@@ -76,7 +75,6 @@ public class QuadTree {
         new QuadTree(
             level + 1, new Rectangle2D.Double(x + subWidth, y + subHeight, subWidth, subHeight));
 
-    // Assign the new array to nodes
     nodes = newNodes;
   }
 
