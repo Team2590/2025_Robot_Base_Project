@@ -211,6 +211,7 @@ public class Drive extends SubsystemBase {
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      Logger.recordOutput("Odometry/zoneOfField", Constants.locator.getZoneOfField(poseEstimator.getEstimatedPosition()));
     }
 
     // Update gyro alert
