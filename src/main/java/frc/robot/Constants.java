@@ -17,11 +17,11 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.util.FRCPolygon;
+import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.PolygonLocator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-import frc.robot.util.LoggedTunableNumber;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -51,22 +51,22 @@ public final class Constants {
   private static List<FRCPolygon> polygons = new ArrayList<>();
   private static Rectangle2D fieldBounds = new Rectangle2D.Double(0, 0, 15, 15);
   /*
- * 
- * The ordering of points matters. I went mad trying to debug at one point, turns out it was in a bowtie and not a square
- * Bowtie shape (incorrect rectangle):
- * 
- *     (0,2)---(2,2)
- *      / \   / \
- *     /   \ /   \
- *    (0,0)---(2,0)
- * 
- * Square shape (correct rectangle):
- * 
- *    (0,2)---(2,2)
- *     |       |
- *     |       |
- *    (0,0)---(2,0) 
- */
+   *
+   * The ordering of points matters. I went mad trying to debug at one point, turns out it was in a bowtie and not a square
+   * Bowtie shape (incorrect rectangle):
+   *
+   *     (0,2)---(2,2)
+   *      / \   / \
+   *     /   \ /   \
+   *    (0,0)---(2,0)
+   *
+   * Square shape (correct rectangle):
+   *
+   *    (0,2)---(2,2)
+   *     |       |
+   *     |       |
+   *    (0,0)---(2,0)
+   */
   public static final FRCPolygon playBox =
       new FRCPolygon(
           "playBox",
