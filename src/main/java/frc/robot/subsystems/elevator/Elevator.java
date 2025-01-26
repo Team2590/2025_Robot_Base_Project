@@ -43,11 +43,11 @@ public class Elevator extends SubsystemBase {
 
   @AutoLogOutput
   public Command raise() {
-    return runOnce(() -> io.setPosition(inputs.rotationCount + 1));
+    return runEnd(() -> io.setPosition(inputs.rotationCount + 1), io::stop);
   }
 
   @AutoLogOutput
   public Command lower() {
-    return runOnce(() -> io.setPosition(inputs.rotationCount - 1));
+    return runEnd(() -> io.setPosition(inputs.rotationCount - 1), io::stop);
   }
 }

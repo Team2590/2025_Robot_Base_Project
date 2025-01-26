@@ -16,7 +16,6 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,7 +32,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -58,6 +57,8 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    elevator =
+        new Elevator(new ElevatorIOTalonFX(0, "Takeover", 20, true, true, 1, 0, null, 0, 0, 0));
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -68,9 +69,6 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        elevator =
-            new Elevator(
-                new ElevatorIOSim(DCMotor.getKrakenX60(1), 1, 5, 0.25, 0, 10, true, 0, null));
         break;
 
       case SIM:
@@ -82,10 +80,6 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        elevator =
-            new Elevator(
-                new ElevatorIOSim(
-                    DCMotor.getKrakenX60(1), 1, 5, 0.25, 0, 10, true, 0, new double[] {0.1, 0.1}));
         break;
 
       default:
@@ -97,9 +91,6 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        elevator =
-            new Elevator(
-                new ElevatorIOSim(DCMotor.getKrakenX60(1), 1, 5, 0.25, 0, 10, true, 0, null));
         break;
     }
 
@@ -158,12 +149,9 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    joystick.button(1).onTrue(elevator.setPosition(5));
-
-    // joystick.button(1).whileTrue(Commands.runOnce(elevator::raise, elevator));
-    // joystick.button(2).whileTrue(Commands.runOnce(elevator::lower, elevator));
-    // joystick.button(3).onTrue(Commands.runOnce(() -> elevator.setPosition(10), elevator));
-    // joystick.button(4).onTrue(Commands.runOnce(elevator::stop, elevator));
+    joystick.button(1).onTrue(elevator.setPosition(14));
+    joystick.button(2).onTrue(elevator.setPosition(28.5));
+    joystick.button(3).onTrue(elevator.setPosition(48.5));
   }
 
   /**

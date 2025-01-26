@@ -2,15 +2,11 @@ package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
@@ -32,9 +28,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 4.8);
   private LoggedTunableNumber kI = new LoggedTunableNumber("Arm/kI", 0);
   private LoggedTunableNumber kD = new LoggedTunableNumber("Arm/kD", 0.1);
-  private LoggedTunableNumber cruiseVelocity = new LoggedTunableNumber("Arm/cruiseVelocity", 0);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Arm/acceleration", 0);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("Arm/jerk", 0);
+  private LoggedTunableNumber cruiseVelocity = new LoggedTunableNumber("Arm/cruiseVelocity", 25);
+  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Arm/acceleration", 50);
+  private LoggedTunableNumber jerk = new LoggedTunableNumber("Arm/jerk", 75);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
@@ -45,9 +41,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private StatusSignal<Current> torqueCurrent;
   private StatusSignal<Temperature> tempCelsius;
   private double reduction;
-  private CANcoder cancoder;
-  private final StatusSignal<Angle> cancoderPosition;
-  private final StatusSignal<Angle> cancoderAbsPosition;
+  // private CANcoder cancoder;
+  // private final StatusSignal<Angle> cancoderPosition;
+  // private final StatusSignal<Angle> cancoderAbsPosition;
 
   public ElevatorIOTalonFX(
       int canID,
@@ -62,21 +58,21 @@ public class ElevatorIOTalonFX implements ElevatorIO {
       double rotorToSensorRatio,
       int feedbackRemoteSensorID) {
     leader = new TalonFX(canID, canBus);
-    cancoder = new CANcoder(cancoderCanID, cancoderCanBus);
+    // cancoder = new CANcoder(cancoderCanID, cancoderCanBus);
 
-    var mag = new MagnetSensorConfigs();
-    mag.MagnetOffset = elevatorMagOffset;
+    // var mag = new MagnetSensorConfigs();
+    // mag.MagnetOffset = elevatorMagOffset;
 
-    var cancoderConfig = new CANcoderConfiguration();
-    cancoderConfig.withMagnetSensor(mag);
-    cancoder.getConfigurator().apply(cancoderConfig);
+    // var cancoderConfig = new CANcoderConfiguration();
+    // cancoderConfig.withMagnetSensor(mag);
+    // cancoder.getConfigurator().apply(cancoderConfig);
 
-    talonFXConfig.Feedback.FeedbackRemoteSensorID = cancoderCanID;
-    talonFXConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    talonFXConfig.Feedback.RotorToSensorRatio = elevatorMagOffset;
+    // talonFXConfig.Feedback.FeedbackRemoteSensorID = cancoderCanID;
+    // talonFXConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    // talonFXConfig.Feedback.RotorToSensorRatio = elevatorMagOffset;
 
-    cancoderPosition = cancoder.getPosition();
-    cancoderAbsPosition = cancoder.getAbsolutePosition();
+    // cancoderPosition = cancoder.getPosition();
+    // cancoderAbsPosition = cancoder.getAbsolutePosition();
 
     talonFXConfig.MotorOutput.Inverted =
         invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
@@ -106,17 +102,12 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     this.reduction = reduction;
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0,
-        position,
-        velocity,
-        appliedVoltage,
-        supplyCurrent,
-        torqueCurrent,
-        tempCelsius,
-        cancoderPosition,
-        cancoderAbsPosition);
+        50.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius
+        // cancoderPosition,
+        // cancoderAbsPosition
+        );
     leader.optimizeBusUtilization(0, 1);
-    cancoder.optimizeBusUtilization(0, 1);
+    // cancoder.optimizeBusUtilization(0, 1);
   }
 
   @Override
