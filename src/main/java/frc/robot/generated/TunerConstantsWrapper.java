@@ -43,7 +43,7 @@ public class TunerConstantsWrapper {
         FrontLeft = TunerConstantsKronos.FrontLeft;
         FrontRight = TunerConstantsKronos.FrontRight;
         BackLeft = TunerConstantsKronos.BackLeft;
-        BackRight = TunerConstantsKronos.FrontRight;
+        BackRight = TunerConstantsKronos.BackRight;
         driveBaseRadius =
             Math.max(
                 Math.max(
@@ -53,7 +53,7 @@ public class TunerConstantsWrapper {
                     Math.hypot(BackLeft.LocationX, BackLeft.LocationY),
                     Math.hypot(BackRight.LocationX, BackRight.LocationY)));
         odometryFrequency = new CANBus(kCANBus.getName()).isNetworkFD() ? 250.0 : 100.0;
-        pigeonCanbusName= TunerConstantsKronos.kCANBus;
+        pigeonCanbusName = TunerConstantsKronos.kCANBus;
         break;
       case LARRY:
         kCANBus = TunerConstantsLarry.kCANBus;
@@ -62,7 +62,7 @@ public class TunerConstantsWrapper {
         FrontLeft = TunerConstantsLarry.FrontLeft;
         FrontRight = TunerConstantsLarry.FrontRight;
         BackLeft = TunerConstantsLarry.BackLeft;
-        BackRight = TunerConstantsLarry.FrontRight;
+        BackRight = TunerConstantsLarry.BackRight;
         driveBaseRadius =
             Math.max(
                 Math.max(
@@ -80,7 +80,7 @@ public class TunerConstantsWrapper {
         FrontLeft = TunerConstantsLarry.FrontLeft;
         FrontRight = TunerConstantsLarry.FrontRight;
         BackLeft = TunerConstantsLarry.BackLeft;
-        BackRight = TunerConstantsLarry.FrontRight;
+        BackRight = TunerConstantsLarry.BackRight;
         odometryFrequency = new CANBus(kCANBus.getName()).isNetworkFD() ? 250.0 : 100.0;
         break;
       default:
