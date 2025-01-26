@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.generated.TunerConstantsKronos;
+import frc.robot.generated.TunerConstantsLarry;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -39,7 +39,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import java.util.List;
@@ -73,19 +72,19 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstantsKronos.FrontLeft),
-                new ModuleIOTalonFX(TunerConstantsKronos.FrontRight),
-                new ModuleIOTalonFX(TunerConstantsKronos.BackLeft),
-                new ModuleIOTalonFX(TunerConstantsKronos.BackRight));
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3))));
+                new ModuleIOTalonFX(TunerConstantsLarry.FrontLeft),
+                new ModuleIOTalonFX(TunerConstantsLarry.FrontRight),
+                new ModuleIOTalonFX(TunerConstantsLarry.BackLeft),
+                new ModuleIOTalonFX(TunerConstantsLarry.BackRight));
+        vision = null;
+        // new Vision(
+        //     drive::addVisionMeasurement,
+        //     new VisionIOPhotonVision(
+        //         List.of(
+        //             new CameraConfig(camera0Name, robotToCamera0),
+        //             new CameraConfig(camera1Name, robotToCamera1),
+        //             new CameraConfig(camera2Name, robotToCamera2),
+        //             new CameraConfig(camera3Name, robotToCamera3))));
         intake = null;
         break;
 
@@ -117,7 +116,7 @@ public class RobotContainer {
             new Drive(
                 new GyroIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {},
+                new ModuleIO() {}, // .11530, .82629
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
@@ -145,7 +144,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
-    // configureButtonBindings();
+    configureButtonBindings();
   }
 
   /**
@@ -168,7 +167,7 @@ public class RobotContainer {
 
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    controller.b().whileTrue(intake.runIntake(4));
+    // controller.b().whileTrue(intake.runIntake(4));
 
     // Reset gyro to 0° when B button is pressed
     controller
