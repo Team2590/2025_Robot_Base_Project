@@ -27,8 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.generated.TunerConstants;
-import frc.robot.generated.TunerConstantsKronos;
+import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -56,6 +55,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final Intake intake;
+  public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(2);
@@ -67,16 +67,18 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
     switch (Constants.currentMode) {
       case KRONOS:
         // Real robot, instantiate hardware IO implementations
         drive =
             new Drive(
                 new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstantsKronos.FrontLeft),
-                new ModuleIOTalonFX(TunerConstantsKronos.FrontRight),
-                new ModuleIOTalonFX(TunerConstantsKronos.BackLeft),
-                new ModuleIOTalonFX(TunerConstantsKronos.BackRight));
+                new ModuleIOTalonFX(constantsWrapper.FrontLeft, constantsWrapper),
+                new ModuleIOTalonFX(constantsWrapper.FrontRight, constantsWrapper),
+                new ModuleIOTalonFX(constantsWrapper.BackLeft, constantsWrapper),
+                new ModuleIOTalonFX(constantsWrapper.BackRight, constantsWrapper),
+                constantsWrapper);
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -94,10 +96,11 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIO() {},
-                new ModuleIOSim(TunerConstants.FrontLeft),
-                new ModuleIOSim(TunerConstants.FrontRight),
-                new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
+                new ModuleIOSim(constantsWrapper.FrontLeft, constantsWrapper),
+                new ModuleIOSim(constantsWrapper.FrontRight, constantsWrapper),
+                new ModuleIOSim(constantsWrapper.BackLeft, constantsWrapper),
+                new ModuleIOSim(constantsWrapper.BackRight, constantsWrapper),
+                constantsWrapper);
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -119,7 +122,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {});
+                new ModuleIO() {},
+                constantsWrapper);
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         intake = null;
         break;
