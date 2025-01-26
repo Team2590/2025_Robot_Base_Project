@@ -2,7 +2,6 @@ package frc.robot.subsystems.intake;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -25,6 +24,36 @@ public class Intake extends SubsystemBase {
     intakeDisconnected.set(!intakeInputs.connected);
   }
 
+  private class IntakeArm extends SubsystemBase {
+    private final Alert intakeArmDisconnected;
+    private final IntakeArmIO intakeArmIO;
+    private final IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
+
+    public IntakeArm(IntakeArmIO intakeArmIO) {
+      this.intakeArmIO = intakeArmIO;
+      Logger.processInputs("IntakeArm", intakeArmInputs);
+      intakeArmDisconnected = new Alert("Intake Arm motor disconnected!", Alert.AlertType.kWarning);
+    }
+
+    public void periodic() {
+      intakeArmIO.updateInputs(intakeArmInputs);
+      intakeArmIO.updateTunableNumbers();
+      intakeArmDisconnected.set(!intakeArmInputs.connected);
+    }
+
+    public Command setIntakeCoralPosition() {
+      return runOnce(() -> intakeArmIO.setPosition(10));
+    }
+
+    public Command setIntakeAlgaePosition() {
+      return runOnce(() -> intakeArmIO.setPosition(0));
+    }
+
+    public Command resetRotationCount() {
+      return runOnce(() -> intakeArmIO.resetRotationCount());
+    }
+  }
+
   public Command runIntake(double voltage) {
     return runEnd(
             () -> {
@@ -39,17 +68,14 @@ public class Intake extends SubsystemBase {
   }
 
   public Command setIntakeCoralPosition() {
-    return Commands.runOnce(() -> intakeArm.setIntakeCoralPosition(), intakeArm)
-        .withName("Set intake coral position");
+    return intakeArm.setIntakeCoralPosition();
   }
 
   public Command setIntakeAlgaePosition() {
-    return Commands.runOnce(() -> intakeArm.setIntakeAlgaePosition(), intakeArm)
-        .withName("Set intake algae position");
+    return intakeArm.setIntakeAlgaePosition();
   }
 
   public Command resetArmRotationCount() {
-    return Commands.runOnce(() -> intakeArm.resetRotationCount(), intakeArm)
-        .withName("Set intake coral position");
+    return intakeArm.resetRotationCount();
   }
 }

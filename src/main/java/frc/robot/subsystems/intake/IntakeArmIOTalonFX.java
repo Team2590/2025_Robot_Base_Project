@@ -149,7 +149,8 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
   @Override
   public void setPosition(double position) {
     var request = new MotionMagicDutyCycle(0);
-    if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {
+    // less than 0.05 because when set to 0, it is never exactly zero
+    if (leader.getPosition().getValueAsDouble() < -0.05 || position < 0) {
       leader.setControl(request);
     } else {
       leader.setControl(request.withPosition(position));
