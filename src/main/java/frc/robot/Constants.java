@@ -66,23 +66,56 @@ public final class Constants {
  *     |       |
  *    (0,0)---(2,0) 
  */
-  public static final FRCPolygon playBox =
-      new FRCPolygon(
-          "playBox",
-          new Translation2d(0, 0),
-          new Translation2d(2, 0),
-          new Translation2d(2, 2),
-          new Translation2d(0, 2));
 
+ public static final String REEF_BLUE_POLYGON = "reefBluePolygon";
+ 
+ public static final FRCPolygon reefBluePolygon = 
+      new FRCPolygon(
+        REEF_BLUE_POLYGON,
+        new Translation2d(3.389, 3.324),
+        new Translation2d(4.497, 2.655),
+        new Translation2d(5.690, 3.324),
+        new Translation2d(5.690, 4.705),
+        new Translation2d(4.497, 5.332),
+        new Translation2d(3.389, 4.705));
+  
+  public static final String REEF_RED_POLYGON = "reefRedPolygon";
+ 
+  public static final FRCPolygon reefRedPolygon = 
+      new FRCPolygon(
+        REEF_RED_POLYGON,
+        new Translation2d(14.224, 4.663),
+        new Translation2d(13.095, 5.332),
+        new Translation2d(11.902, 4.663),
+        new Translation2d(11.902, 3.303),
+        new Translation2d(13.095, 2.655),
+        new Translation2d(14.224, 3.303));
+
+  public static final String BARGE_BLUE_POLYGON = "bargeBluePolygon";
+ 
+  public static final FRCPolygon bargeBluePolygon = 
+      new FRCPolygon(
+        BARGE_BLUE_POLYGON,
+        new Translation2d(8.221, 4.370),
+        new Translation2d(9.371, 4.370),
+        new Translation2d(9.371, 7.968),
+        new Translation2d(8.221, 7.968));
+  
+  public static final String BARGE_RED_POLYGON = "bargeRedPolygon";
+ 
+  public static final FRCPolygon bargeRedPolygon = 
+      new FRCPolygon(
+        BARGE_RED_POLYGON,
+        new Translation2d(9.371, 3.680),
+        new Translation2d(8.221, 3.680),
+        new Translation2d(8.221, 0.032),
+        new Translation2d(9.371, 0.032));
   // Two ways to instantiate the polygons, this static initialization box is necessary
   static {
-    polygons.add(playBox);
-    polygons.add(
-        new FRCPolygon(
-            "triangle",
-            new Translation2d(5, 5),
-            new Translation2d(6, 5),
-            new Translation2d(5.5, 6)));
+    polygons.add(reefBluePolygon);
+    polygons.add(reefRedPolygon);
+    polygons.add(bargeBluePolygon);
+    polygons.add(bargeRedPolygon);
   }
 
   public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
