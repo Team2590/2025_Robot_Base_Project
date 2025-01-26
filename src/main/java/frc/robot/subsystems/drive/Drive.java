@@ -48,12 +48,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.FieldConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import frc.robot.FieldConstants.ZONES;
+import java.awt.geom.Path2D;
 
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
@@ -375,4 +378,59 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
   }
+
+
+//zone of field and pose of robot for zone
+@AutoLogOutput(key = "Odometry/CurrentZone")
+public ZONES getFieldZone() {
+    //robot position
+    Pose2d currentPose = getPose();
+    Translation2d position = currentPose.getTranslation();
+
+    //reef zone
+    if (FieldConstants.ReefPolygon.contains(position)) {
+        return ZONES.REEF;
+    }
+
+    // red and blue zone check
+    boolean isRedAlliance = DriverStation.getAlliance().isPresent() && 
+                          DriverStation.getAlliance().get() == Alliance.Red;
+                          
+    Path2D relevantBargeBounds = isRedAlliance ? 
+        FieldConstants.BargeBoundsRED : 
+        FieldConstants.BargeBoundsBLUE;
+        
+    if (relevantBargeBounds.contains(position.getX(), position.getY())) {
+        return ZONES.BARGE;
+    }
+
+    //return note
+    return ZONES.NOTE;
+}
+//which zone check
+public boolean isInZone(ZONES zone) {
+  return getFieldZone() == zone;
+}
+
+//bleu side of field, used half of field width?
+public boolean isOnBlueSide() {
+  return getPose().getTranslation().getY() < 4.02; 
+}
+
+//normalized position
+public Pose2d getAllianceRelativePose() {
+  Pose2d currentPose = getPose();
+  boolean isRedAlliance = DriverStation.getAlliance().isPresent() && 
+                        DriverStation.getAlliance().get() == Alliance.Red;
+  
+  if (isRedAlliance) {
+      return new Pose2d(
+          new Translation2d(
+              16.54 - currentPose.getX(), 
+              8.02 - currentPose.getY()),
+          currentPose.getRotation().plus(new Rotation2d(Math.PI))
+      );
+  }
+  return currentPose;
+}
 }
