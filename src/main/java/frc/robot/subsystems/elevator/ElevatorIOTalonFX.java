@@ -182,7 +182,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   @Override
   public void setPosition(double position) {
     var request = new MotionMagicVoltage(0);
-    if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {
+    if (leader.getPosition().getValueAsDouble() < -0.05 || position < 0) {
       leader.setControl(request);
     } else {
       leader.setControl(request.withPosition(position));

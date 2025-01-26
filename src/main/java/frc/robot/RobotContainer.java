@@ -15,13 +15,15 @@ package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -37,7 +39,8 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeArmIOTalonFX;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
@@ -66,10 +69,20 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
+  private class BS extends SubsystemBase {}
+
+  private final BS bs = new BS();
+  private final TalonFX endEffector = new TalonFX(2, "Takeover");
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     elevator =
-        new Elevator(new ElevatorIOTalonFX(0, "Takeover", 20, true, true, 1, 0, null, 0, 0, 0));
+        new Elevator(new ElevatorIOTalonFX(1, "Takeover", 20, true, true, 1, 0, null, 0, 0, 0));
+    intake =
+        new Intake(
+            new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
+            new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1));
+
     switch (Constants.currentMode) {
       case KRONOS:
         // Real robot, instantiate hardware IO implementations
@@ -89,7 +102,6 @@ public class RobotContainer {
         //             new CameraConfig(camera1Name, robotToCamera1),
         //             new CameraConfig(camera2Name, robotToCamera2),
         //             new CameraConfig(camera3Name, robotToCamera3))));
-        intake = null;
         break;
 
       case SIM:
@@ -111,7 +123,6 @@ public class RobotContainer {
                         new CameraConfig(camera2Name, robotToCamera2),
                         new CameraConfig(camera3Name, robotToCamera3)),
                     drive::getPose));
-        intake = new Intake(new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1));
         break;
 
       default:
@@ -124,7 +135,6 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        intake = null;
         break;
     }
 
@@ -159,32 +169,32 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDrive(
-    //         drive,
-    //         () -> -leftJoystick.getY(),
-    //         () -> -leftJoystick.getX(),
-    //         () -> -rightJoystick.getX()));
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -leftJoystick.getY(),
+            () -> -leftJoystick.getX(),
+            () -> -rightJoystick.getX()));
 
     // Lock to 0° when A button is held
-    controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
+    // controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
 
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
     // controller.b().whileTrue(intake.runIntake(4));
 
     // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // controller
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
     rightJoystick
-        .button(5)
+        .button(8)
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -192,19 +202,32 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    rightJoystick
-        .button(5)
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // rightJoystick
+    //     .button(5)
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
 
-    rightJoystick.button(1).onTrue(elevator.setPosition(14));
-    rightJoystick.button(2).onTrue(elevator.setPosition(28.5));
-    rightJoystick.button(3).onTrue(elevator.setPosition(48.5));
+    rightJoystick.button(3).onTrue(elevator.setPosition(14));
+    rightJoystick.button(4).onTrue(elevator.setPosition(28.5));
+    rightJoystick.button(5).onTrue(elevator.setPosition(4));
+
+    leftJoystick.button(1).whileTrue(intake.runIntake(4));
+    leftJoystick.button(2).onTrue(intake.setIntakeCoralPosition());
+
+    leftJoystick.button(3).onTrue(intake.setIntakeAlgaePosition());
+
+    rightJoystick
+        .button(1)
+        .whileTrue(Commands.runEnd(() -> endEffector.set(0.3), () -> endEffector.stopMotor(), bs));
+    rightJoystick
+        .button(2)
+        .whileTrue(
+            Commands.runEnd(() -> endEffector.set(-0.75), () -> endEffector.stopMotor(), bs));
   }
 
   /**
