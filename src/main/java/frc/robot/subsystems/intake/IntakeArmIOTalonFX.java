@@ -20,7 +20,7 @@ import frc.robot.util.LoggedTunableNumber;
 
 public class IntakeArmIOTalonFX implements IntakeArmIO {
   private TalonFX leader;
-  private LoggedTunableNumber kP = new LoggedTunableNumber("IntakeArm/kP", 16);
+  private LoggedTunableNumber kP = new LoggedTunableNumber("IntakeArm/kP", 2);
   private LoggedTunableNumber kI = new LoggedTunableNumber("IntakeArm/kI", 0);
   private LoggedTunableNumber kD = new LoggedTunableNumber("IntakeArm/kD", 0);
   private LoggedTunableNumber kS = new LoggedTunableNumber("IntakeArm/kS", 0);
@@ -28,8 +28,8 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
   private LoggedTunableNumber kG = new LoggedTunableNumber("IntakeArm/kG", -0.011);
   private LoggedTunableNumber cruiseVelocity =
       new LoggedTunableNumber("IntakeArm/cruiseVelocity", 25);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 525);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("IntakeArm/jerk", 0);
+  private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 50);
+  private LoggedTunableNumber jerk = new LoggedTunableNumber("IntakeArm/jerk", 75);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
