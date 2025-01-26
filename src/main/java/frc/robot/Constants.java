@@ -50,22 +50,22 @@ public final class Constants {
   private static List<FRCPolygon> polygons = new ArrayList<>();
   private static Rectangle2D fieldBounds = new Rectangle2D.Double(0, 0, 15, 15);
   /*
- * 
- * The ordering of points matters. I went mad trying to debug at one point, turns out it was in a bowtie and not a square
- * Bowtie shape (incorrect rectangle):
- * 
- *     (0,2)---(2,2)
- *      / \   / \
- *     /   \ /   \
- *    (0,0)---(2,0)
- * 
- * Square shape (correct rectangle):
- * 
- *    (0,2)---(2,2)
- *     |       |
- *     |       |
- *    (0,0)---(2,0) 
- */
+   *
+   * The ordering of points matters. I went mad trying to debug at one point, turns out it was in a bowtie and not a square
+   * Bowtie shape (incorrect rectangle):
+   *
+   *     (0,2)---(2,2)
+   *      / \   / \
+   *     /   \ /   \
+   *    (0,0)---(2,0)
+   *
+   * Square shape (correct rectangle):
+   *
+   *    (0,2)---(2,2)
+   *     |       |
+   *     |       |
+   *    (0,0)---(2,0)
+   */
   public static final FRCPolygon playBox =
       new FRCPolygon(
           "playBox",
