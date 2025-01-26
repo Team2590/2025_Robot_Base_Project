@@ -29,6 +29,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstantsKronos;
+import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -56,6 +58,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final Intake intake;
+  private final Climb climb;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(2);
@@ -87,6 +90,7 @@ public class RobotContainer {
                         new CameraConfig(camera2Name, robotToCamera2),
                         new CameraConfig(camera3Name, robotToCamera3))));
         intake = null;
+        climb = null;
         break;
 
       case SIM:
@@ -109,6 +113,9 @@ public class RobotContainer {
                         new CameraConfig(camera3Name, robotToCamera3)),
                     drive::getPose));
         intake = new Intake(new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1));
+        climb =
+            new Climb(
+                new ClimbIOSim(DCMotor.getFalcon500(1), 0.0000168, 1, new double[] {0.1, 0.1}));
         break;
 
       default:
@@ -122,6 +129,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         intake = null;
+        climb = null;
         break;
     }
 
@@ -189,6 +197,8 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    rightJoystick.button(1).onTrue(climb.run(4));
   }
 
   /**

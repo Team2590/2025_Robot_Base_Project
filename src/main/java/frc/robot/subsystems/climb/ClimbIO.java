@@ -1,8 +1,7 @@
 package frc.robot.subsystems.climb;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface ClimbIO {
   @AutoLog

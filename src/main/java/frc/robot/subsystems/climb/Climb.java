@@ -1,15 +1,15 @@
 package frc.robot.subsystems.climb;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class Climb extends SubsystemBase {
   private ClimbIO io;
   private ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
 
-  private Climb(ClimbIO io) {
+  public Climb(ClimbIO io) {
     this.io = io;
     io.setNeutralMode(NeutralModeValue.Brake);
   }
@@ -17,6 +17,7 @@ public class Climb extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    Logger.processInputs("Climb", inputs);
   }
 
   public Command stop() {
