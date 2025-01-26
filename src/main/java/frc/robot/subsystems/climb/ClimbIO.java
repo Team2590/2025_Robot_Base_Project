@@ -23,10 +23,6 @@ public interface ClimbIO {
 
   public void setVoltage(double voltage);
 
-  public void raise();
-
-  public void lower();
-
   public void stop();
 
   public void resetRotationCount();
