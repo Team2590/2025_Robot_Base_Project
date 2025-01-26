@@ -36,7 +36,7 @@ public class ControllerApp extends Application {
     EventHandler<ActionEvent> buttonHandler = event -> onButtonPress(event);
 
     // Create a Pane for the compass buttons
-Pane compassPane = new Pane();
+    Pane compassPane = new Pane();
 
     // Define the center coordinates and radius
     double centerX = 300;
@@ -82,7 +82,7 @@ Pane compassPane = new Pane();
     // Create the Scene and set it to the stage
     Scene scene = new Scene(root, 600, 600);
     primaryStage.setScene(scene);
-    // primaryStage.setMaximized(true);
+    primaryStage.setFullScreen(true);
 
     // Add the on close handler
     primaryStage.setOnCloseRequest(

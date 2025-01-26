@@ -43,17 +43,6 @@ dependencies {
     implementation group: "us.hebi.quickbuf", name: "quickbuf-runtime", version: wpi.versions.quickbufVersion.get();
 }
 
-// shadowJar {
-//     archiveBaseName = "TestApplication"
-//     archiveVersion = ""
-//     exclude("module-info.class")
-//     archiveClassifier.set(wpilibTools.currentPlatform.platformName)
-// }
-
-// wrapper {
-//     gradleVersion = '8.11'
-// }
-
 javafx {
     version = "17.0.8"
     modules = ['javafx.controls']
