@@ -13,9 +13,12 @@
 
 package frc.robot;
 
+import static frc.robot.subsystems.vision.VisionConstants.*;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.generated.TunerConstantsLarry;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -33,6 +37,13 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -44,13 +55,14 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final Vision vision;
+  private final Intake intake;
   private final Elevator elevator;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
-
-  // joystick
-  private final CommandJoystick joystick = new CommandJoystick(1);
+  private final CommandJoystick leftJoystick = new CommandJoystick(0);
+  private final CommandJoystick rightJoystick = new CommandJoystick(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -60,15 +72,25 @@ public class RobotContainer {
     elevator =
         new Elevator(new ElevatorIOTalonFX(0, "Takeover", 20, true, true, 1, 0, null, 0, 0, 0));
     switch (Constants.currentMode) {
-      case REAL:
+      case KRONOS:
         // Real robot, instantiate hardware IO implementations
         drive =
             new Drive(
                 new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
+                new ModuleIOTalonFX(TunerConstantsLarry.FrontLeft),
+                new ModuleIOTalonFX(TunerConstantsLarry.FrontRight),
+                new ModuleIOTalonFX(TunerConstantsLarry.BackLeft),
+                new ModuleIOTalonFX(TunerConstantsLarry.BackRight));
+        vision = null;
+        // new Vision(
+        //     drive::addVisionMeasurement,
+        //     new VisionIOPhotonVision(
+        //         List.of(
+        //             new CameraConfig(camera0Name, robotToCamera0),
+        //             new CameraConfig(camera1Name, robotToCamera1),
+        //             new CameraConfig(camera2Name, robotToCamera2),
+        //             new CameraConfig(camera3Name, robotToCamera3))));
+        intake = null;
         break;
 
       case SIM:
@@ -80,6 +102,17 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(
+                    List.of(
+                        new CameraConfig(camera0Name, robotToCamera0),
+                        new CameraConfig(camera1Name, robotToCamera1),
+                        new CameraConfig(camera2Name, robotToCamera2),
+                        new CameraConfig(camera3Name, robotToCamera3)),
+                    drive::getPose));
+        intake = new Intake(new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1));
         break;
 
       default:
@@ -88,9 +121,11 @@ public class RobotContainer {
             new Drive(
                 new GyroIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {},
+                new ModuleIO() {}, // .11530, .82629
                 new ModuleIO() {},
                 new ModuleIO() {});
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        intake = null;
         break;
     }
 
@@ -128,15 +163,16 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -leftJoystick.getY(),
+            () -> -leftJoystick.getX(),
+            () -> -rightJoystick.getX()));
 
     // Lock to 0° when A button is held
     controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.b().whileTrue(intake.runIntake(4));
 
     // Reset gyro to 0° when B button is pressed
     controller
@@ -148,10 +184,28 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+    rightJoystick
+        .button(5)
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
+    rightJoystick
+        .button(5)
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
 
-    joystick.button(1).onTrue(elevator.setPosition(14));
-    joystick.button(2).onTrue(elevator.setPosition(28.5));
-    joystick.button(3).onTrue(elevator.setPosition(48.5));
+    rightJoystick.button(1).onTrue(elevator.setPosition(14));
+    rightJoystick.button(2).onTrue(elevator.setPosition(28.5));
+    rightJoystick.button(3).onTrue(elevator.setPosition(48.5));
   }
 
   /**
