@@ -11,6 +11,7 @@ import lombok.Getter;
 
 public class TunerConstantsWrapper {
   @Getter public CANBus kCANBus;
+  @Getter public CANBus pigeonCanbusName;
   @Getter public LinearVelocity kSpeedAt12Volts;
   @Getter public SwerveDrivetrainConstants DrivetrainConstants;
 
@@ -52,6 +53,7 @@ public class TunerConstantsWrapper {
                     Math.hypot(BackLeft.LocationX, BackLeft.LocationY),
                     Math.hypot(BackRight.LocationX, BackRight.LocationY)));
         odometryFrequency = new CANBus(kCANBus.getName()).isNetworkFD() ? 250.0 : 100.0;
+        pigeonCanbusName= TunerConstantsKronos.kCANBus;
         break;
       case LARRY:
         kCANBus = TunerConstantsLarry.kCANBus;
@@ -70,6 +72,7 @@ public class TunerConstantsWrapper {
                     Math.hypot(BackLeft.LocationX, BackLeft.LocationY),
                     Math.hypot(BackRight.LocationX, BackRight.LocationY)));
         odometryFrequency = new CANBus(kCANBus.getName()).isNetworkFD() ? 250.0 : 100.0;
+        pigeonCanbusName = new CANBus("rio");
       case SIM:
         kCANBus = TunerConstantsLarry.kCANBus;
         kSpeedAt12Volts = TunerConstantsLarry.kSpeedAt12Volts;

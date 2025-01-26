@@ -30,7 +30,7 @@ public class GyroIOPigeon2 implements GyroIO {
   private final Pigeon2 pigeon =
       new Pigeon2(
           RobotContainer.constantsWrapper.DrivetrainConstants.Pigeon2Id,
-          RobotContainer.constantsWrapper.DrivetrainConstants.CANBusName);
+          RobotContainer.constantsWrapper.pigeonCanbusName);
   private final StatusSignal<Angle> yaw = pigeon.getYaw();
   private final Queue<Double> yawPositionQueue;
   private final Queue<Double> yawTimestampQueue;
