@@ -37,7 +37,7 @@ public class VisionConstants {
           Units.inchesToMeters(7.5),
           Units.inchesToMeters(11),
           Units.inchesToMeters(6),
-          new Rotation3d(0.0, -Math.toRadians(23), 0.0));
+          new Rotation3d(Math.PI, -Math.toRadians(25), 0));
 
   // Back side camera (camera1)
   public static Transform3d robotToRightCam =
@@ -45,7 +45,7 @@ public class VisionConstants {
           Units.inchesToMeters(7.5),
           -Units.inchesToMeters(11),
           Units.inchesToMeters(6),
-          new Rotation3d(0.0, -Math.toRadians(23), 0));
+          new Rotation3d(Math.PI, -Math.toRadians(25), 0));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
