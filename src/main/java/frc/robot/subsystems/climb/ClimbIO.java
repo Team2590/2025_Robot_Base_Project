@@ -7,7 +7,14 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 public interface ClimbIO {
   @AutoLog
   public class ClimbIOInputs {
-    public double positionRotations = 0.0;
+    public boolean connected = false;
+    public double positionRads = 0.0;
+    public double velocityRadsPerSec = 0.0;
+    public double appliedVoltage = 0.0;
+    public double supplyCurrentAmps = 0.0;
+    public double torqueCurrentAmps = 0.0;
+    public double tempCelsius = 0.0;
+    public double rotationCount = 0.0;
   }
 
   public void updateInputs(ClimbIOInputs inputs);
