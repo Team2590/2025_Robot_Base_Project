@@ -22,7 +22,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -160,12 +159,12 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -leftJoystick.getY(),
-            () -> -leftJoystick.getX(),
-            () -> -rightJoystick.getX()));
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDrive(
+    //         drive,
+    //         () -> -leftJoystick.getY(),
+    //         () -> -leftJoystick.getX(),
+    //         () -> -rightJoystick.getX()));
 
     // Lock to 0° when A button is held
     controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
