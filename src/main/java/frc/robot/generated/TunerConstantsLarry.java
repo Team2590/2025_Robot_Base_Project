@@ -31,6 +31,7 @@ import frc.robot.util.LoggedTunableNumber;
 public class TunerConstantsLarry {
 
   private static LoggedTunableNumber steerkp = new LoggedTunableNumber("SteerkPLarry", 85);
+  private static LoggedTunableNumber drivekp = new LoggedTunableNumber("DrivekP", .1);
   private static final Slot0Configs steerGains =
       new Slot0Configs()
           .withKP(steerkp.get())
@@ -43,7 +44,7 @@ public class TunerConstantsLarry {
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
   private static final Slot0Configs driveGains =
-      new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKS(.11530).withKV(0.82629);
+      new Slot0Configs().withKP(drivekp.get()).withKI(0).withKD(0).withKS(.11530).withKV(0.82629);
 
   // The closed-loop output type to use for the steer motors;
   // This affects the PID/FF gains for the steer motors
@@ -91,7 +92,7 @@ public class TunerConstantsLarry {
 
   // CAN bus that the devices are located on;
   // All swerve devices must share the same CAN bus
-  public static final CANBus kCANBus = new CANBus("", "./logs/example.hoot");
+  public static final CANBus kCANBus = new CANBus("Takeover", "./logs/example.hoot");
 
   // Theoretical free speed (m/s) at 12 V applied output;
   // This needs to be tuned to your individual robot
@@ -108,7 +109,7 @@ public class TunerConstantsLarry {
   private static final boolean kInvertLeftSide = false;
   private static final boolean kInvertRightSide = true;
 
-  private static final int kPigeonId = 1;
+  private static final int kPigeonId = 0;
 
   // These are only used for simulation
   private static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.01);
