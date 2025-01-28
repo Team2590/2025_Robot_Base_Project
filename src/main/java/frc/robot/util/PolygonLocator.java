@@ -32,11 +32,8 @@ public class PolygonLocator {
 
   @AutoLogOutput(key = "Odometry/zoneOfField") // this isn't freaking working
   public String getZoneOfField(Pose2d robotPose) {
-    if (((PolygonLocator) Constants.locator).findContainingPolygon(robotPose.getTranslation())
-        != null) {
-      return ((PolygonLocator) Constants.locator)
-          .findContainingPolygon(robotPose.getTranslation())
-          .getName();
+    if (Constants.locator.findContainingPolygon(robotPose.getTranslation()) != null) {
+      return Constants.locator.findContainingPolygon(robotPose.getTranslation()).getName();
     }
     return "General Field";
   }

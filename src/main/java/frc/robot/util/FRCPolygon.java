@@ -1,13 +1,10 @@
 package frc.robot.util;
 
 import edu.wpi.first.math.geometry.Translation2d;
-
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.nio.file.Path;
 
 public class FRCPolygon {
 
@@ -26,13 +23,17 @@ public class FRCPolygon {
     }
   }
 
-  public FRCPolygon(String polygonName, Path2D path, boolean isOnBlueSide) {
-    
-    if (!isOnBlueSide){
-        path=flipPathSide(path);
-    }
+  public FRCPolygon(String polygonName, Path2D path) {
     this.path = new Path2D.Double(path);
     this.name = polygonName;
+  }
+
+  public FRCPolygon (String polygonName, String pathPlannername){
+
+    
+    this.name=polygonName;
+    this.path=null;
+
   }
 
   public FRCPolygon(String polygonName, FRCPolygon frcPolygon) {
@@ -59,6 +60,16 @@ public class FRCPolygon {
 
   public void transform(AffineTransform at) {
     path.transform(at);
+  }
+
+  public void scale(double scaleFactor) {
+    AffineTransform at = AffineTransform.getScaleInstance(scaleFactor, scaleFactor);
+    path.transform(at);
+  }
+
+  public void scale(double xScaleFactor, double yScaleFactor) {
+      AffineTransform at = AffineTransform.getScaleInstance(xScaleFactor, yScaleFactor);
+      path.transform(at);
   }
 
   public Rectangle2D getBounds2D() {
@@ -95,18 +106,6 @@ public class FRCPolygon {
 
   public Rectangle2D getBoundingRect() {
     return path.getBounds2D();
-  }
-
-  public Path2D flipPathSide(Path2D path){
-    
-   
-        AffineTransform t = new AffineTransform();
-        t = AffineTransform.getQuadrantRotateInstance(2, 8.785, 4.02);
-        Shape flipped = path.createTransformedShape(t);
-    
-    return new Path2D.Double(flipped);
-      
-    
   }
 
   public boolean contains(Translation2d translation) {
