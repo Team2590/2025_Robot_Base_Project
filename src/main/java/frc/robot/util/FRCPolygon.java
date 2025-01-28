@@ -60,8 +60,8 @@ public class FRCPolygon {
   }
 
   public void scale(double xScaleFactor, double yScaleFactor) {
-      AffineTransform at = AffineTransform.getScaleInstance(xScaleFactor, yScaleFactor);
-      path.transform(at);
+    AffineTransform at = AffineTransform.getScaleInstance(xScaleFactor, yScaleFactor);
+    path.transform(at);
   }
 
   public Rectangle2D getBounds2D() {
