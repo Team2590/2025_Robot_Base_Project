@@ -23,13 +23,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.generated.TunerConstants;
+// import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstantsKronos;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
-import frc.robot.subsystems.drive.ModuleIO;
-import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeArmIOTalonFX;
@@ -62,43 +59,43 @@ public class RobotContainer {
             new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
             new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1));
 
-    switch (Constants.currentMode) {
-      case KRONOS:
-        // Real robot, instantiate hardware IO implementations
-        drive =
-            new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstantsKronos.FrontLeft),
-                new ModuleIOTalonFX(TunerConstantsKronos.FrontRight),
-                new ModuleIOTalonFX(TunerConstantsKronos.BackLeft),
-                new ModuleIOTalonFX(TunerConstantsKronos.BackRight));
-        // intake = null;
-        break;
+    drive =
+        new Drive(
+            new GyroIOPigeon2(),
+            new ModuleIOTalonFX(TunerConstantsKronos.FrontLeft),
+            new ModuleIOTalonFX(TunerConstantsKronos.FrontRight),
+            new ModuleIOTalonFX(TunerConstantsKronos.BackLeft),
+            new ModuleIOTalonFX(TunerConstantsKronos.BackRight));
+    // switch (Constants.currentMode) {
+    //   case KRONOS:
+    //     // Real robot, instantiate hardware IO implementations
+    //     // intake = null;
+    //     break;
 
-      case SIM:
-        // Sim robot, instantiate physics sim IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(TunerConstants.FrontLeft),
-                new ModuleIOSim(TunerConstants.FrontRight),
-                new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
-        // intake = new Intake(new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1));
-        break;
+    //   case SIM:
+    //     // Sim robot, instantiate physics sim IO implementations
+    //     drive =
+    //         new Drive(
+    //             new GyroIO() {},
+    //             new ModuleIOSim(TunerConstants.FrontLeft),
+    //             new ModuleIOSim(TunerConstants.FrontRight),
+    //             new ModuleIOSim(TunerConstants.BackLeft),
+    //             new ModuleIOSim(TunerConstants.BackRight));
+    //     // intake = new Intake(new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1));
+    //     break;
 
-      default:
-        // Replayed robot, disable IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
-        // intake = null;
-        break;
-    }
+    //   default:
+    //     // Replayed robot, disable IO implementations
+    //     drive =
+    //         new Drive(
+    //             new GyroIO() {},
+    //             new ModuleIO() {},
+    //             new ModuleIO() {},
+    //             new ModuleIO() {},
+    //             new ModuleIO() {});
+    //     // intake = null;
+    //     break;
+    // }
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -151,7 +148,9 @@ public class RobotContainer {
     rightJoystick.button(1).whileTrue(intake.runIntake(4));
     rightJoystick.button(2).onTrue(intake.setIntakeCoralPosition());
     rightJoystick.button(3).onTrue(intake.setIntakeAlgaePosition());
-    rightJoystick.button(4).onTrue(intake.resetArmRotationCount());
+    rightJoystick.button(4).onTrue(intake.setPosition(2.38));
+    rightJoystick.button(8).onTrue(intake.resetArmRotationCount());
+    rightJoystick.button(5).whileTrue(intake.runIntake(-2));
 
     // Reset gyro to 0° when B button is pressed
     // controller

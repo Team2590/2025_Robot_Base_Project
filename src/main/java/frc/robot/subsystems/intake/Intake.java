@@ -52,6 +52,10 @@ public class Intake extends SubsystemBase {
     public Command resetRotationCount() {
       return runOnce(() -> intakeArmIO.resetRotationCount());
     }
+
+    public Command setPosition(double position) {
+      return runOnce(() -> intakeArmIO.setPosition(position));
+    }
   }
 
   public Command runIntake(double voltage) {
@@ -73,6 +77,10 @@ public class Intake extends SubsystemBase {
 
   public Command setIntakeAlgaePosition() {
     return intakeArm.setIntakeAlgaePosition();
+  }
+
+  public Command setPosition(double position) {
+    return intakeArm.setPosition(position);
   }
 
   public Command resetArmRotationCount() {

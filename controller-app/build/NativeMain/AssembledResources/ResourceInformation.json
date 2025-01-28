@@ -1,0 +1,39 @@
+{
+  "versions": [
+    "wpimath-cpp-2025.1.1-windowsx86-64.zip -\u003e wpimath-cpp-2025.1.1-windowsx86-64 (edu.wpi.first.wpimath:wpimath-cpp:2025.1.1)",
+    "wpinet-cpp-2025.1.1-windowsx86-64.zip -\u003e wpinet-cpp-2025.1.1-windowsx86-64 (edu.wpi.first.wpinet:wpinet-cpp:2025.1.1)",
+    "wpiutil-cpp-2025.1.1-windowsx86-64.zip -\u003e wpiutil-cpp-2025.1.1-windowsx86-64 (edu.wpi.first.wpiutil:wpiutil-cpp:2025.1.1)",
+    "ntcore-cpp-2025.1.1-windowsx86-64.zip -\u003e ntcore-cpp-2025.1.1-windowsx86-64 (edu.wpi.first.ntcore:ntcore-cpp:2025.1.1)",
+    "opencv-cpp-4.10.0-3-windowsx86-64.zip -\u003e opencv-cpp-4.10.0-3-windowsx86-64 (edu.wpi.first.thirdparty.frc2025.opencv:opencv-cpp:4.10.0-3)"
+  ],
+  "windows": {
+    "x86-64": [
+      "/windows/x86-64/shared/ntcore.dll",
+      "/windows/x86-64/shared/ntcorejni.dll",
+      "/windows/x86-64/shared/opencv_aruco4100.dll",
+      "/windows/x86-64/shared/opencv_calib3d4100.dll",
+      "/windows/x86-64/shared/opencv_core4100.dll",
+      "/windows/x86-64/shared/opencv_dnn4100.dll",
+      "/windows/x86-64/shared/opencv_features2d4100.dll",
+      "/windows/x86-64/shared/opencv_flann4100.dll",
+      "/windows/x86-64/shared/opencv_gapi4100.dll",
+      "/windows/x86-64/shared/opencv_highgui4100.dll",
+      "/windows/x86-64/shared/opencv_imgcodecs4100.dll",
+      "/windows/x86-64/shared/opencv_imgproc4100.dll",
+      "/windows/x86-64/shared/opencv_java4100.dll",
+      "/windows/x86-64/shared/opencv_ml4100.dll",
+      "/windows/x86-64/shared/opencv_objdetect4100.dll",
+      "/windows/x86-64/shared/opencv_photo4100.dll",
+      "/windows/x86-64/shared/opencv_stitching4100.dll",
+      "/windows/x86-64/shared/opencv_video4100.dll",
+      "/windows/x86-64/shared/opencv_videoio4100.dll",
+      "/windows/x86-64/shared/wpimath.dll",
+      "/windows/x86-64/shared/wpimathjni.dll",
+      "/windows/x86-64/shared/wpinet.dll",
+      "/windows/x86-64/shared/wpinetjni.dll",
+      "/windows/x86-64/shared/wpiutil.dll",
+      "/windows/x86-64/shared/wpiutiljni.dll"
+    ]
+  },
+  "hash": "4858013715a6a7c3121130e9021ce66f"
+}
