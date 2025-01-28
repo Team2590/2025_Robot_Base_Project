@@ -30,7 +30,7 @@ import java.util.List;
  */
 public final class Constants {
   public static final Mode simMode = Mode.SIM;
-  public static final Mode currentMode = RobotBase.isReal() ? Mode.KRONOS : simMode;
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.LARRY : simMode;
   public static final boolean tuningMode = true;
   public static final double loopPeriodSecs = 0.02;
 
@@ -114,7 +114,7 @@ public final class Constants {
 
     KRONOS,
 
-    LEO,
+    LARRY,
 
     /** Running a physics simulator. */
     SIM,

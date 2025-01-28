@@ -54,6 +54,16 @@ public class FRCPolygon {
     path.transform(at);
   }
 
+  public void scale(double scaleFactor) {
+    AffineTransform at = AffineTransform.getScaleInstance(scaleFactor, scaleFactor);
+    path.transform(at);
+  }
+
+  public void scale(double xScaleFactor, double yScaleFactor) {
+      AffineTransform at = AffineTransform.getScaleInstance(xScaleFactor, yScaleFactor);
+      path.transform(at);
+  }
+
   public Rectangle2D getBounds2D() {
     return path.getBounds2D();
   }
