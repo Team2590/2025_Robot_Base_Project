@@ -23,16 +23,16 @@ public class ArmIOTalonFX implements ArmIO {
 
   TalonFX arm = new TalonFX(Constants.ArmConstants.ARM, Constants.CANBUS);
   CANcoder armCancoder = new CANcoder(Constants.ArmConstants.ARM_CANCODER_ID, Constants.CANBUS);
-  LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 16);
+  LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 16); // 16
   LoggedTunableNumber kI = new LoggedTunableNumber("Arm/kI", 0);
   LoggedTunableNumber kD = new LoggedTunableNumber("Arm/kD", 0);
   LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS", 0);
-  LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0.1);
-  LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", -0.011);
+  LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0.1); // 0.1
+  LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", -0.011); // -0.011
   LoggedTunableNumber MotionMagicCruiseVelocity1 =
-      new LoggedTunableNumber("Arm/MotionMagicCruiseVelocity", 1500);
+      new LoggedTunableNumber("Arm/MotionMagicCruiseVelocity", 1500); // 1500
   LoggedTunableNumber MotionMagicAcceleration1 =
-      new LoggedTunableNumber("Arm/MotionMagicAcceleration", 500);
+      new LoggedTunableNumber("Arm/MotionMagicAcceleration", 500); // 500
   LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", 2000);
   LoggedTunableNumber ff = new LoggedTunableNumber("Arm/Feedforward", 0);
   Slot0Configs slot0;
@@ -41,6 +41,8 @@ public class ArmIOTalonFX implements ArmIO {
   MotionMagicDutyCycle mmv;
   private final StatusSignal<Angle> armpos = armCancoder.getPosition();
   private final StatusSignal<Angle> armabspos = armCancoder.getAbsolutePosition();
+  LoggedTunableNumber armTunableNumber = new LoggedTunableNumber("Arm/ArmTunableNumber", 0);
+  LoggedTunableNumber enableBreak = new LoggedTunableNumber("Arm/EnableBreak", 0);
 
   public ArmIOTalonFX() {
     /* configurations for the arm motor */
@@ -141,6 +143,14 @@ public class ArmIOTalonFX implements ArmIO {
     }
     if (ff.hasChanged(0)) {
       mmv.FeedForward = ff.get();
+    }
+
+    if (enableBreak.hasChanged(0)) {
+      if (enableBreak.get() == 0) {
+        arm.setNeutralMode(NeutralModeValue.Coast);
+      } else {
+        arm.setNeutralMode(NeutralModeValue.Brake);
+      }
     }
   }
 

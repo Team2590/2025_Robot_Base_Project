@@ -95,9 +95,12 @@ public final class Constants {
     // Fill in
     public static final double HOME_SETPOINT = homeSetpoint.get();
     public static final double CLIMB_SETPOINT = .198;
-    public static final double INTAKE_SETPOINT = homeSetpoint.get();
-    public static double REEF_1_SETPOINT = -0.27;
-    public static double REEF_2_SETPOINT = -0.32;
+    public static final double GROUND_INTAKE_SETPOINT = 0;
+    public static final double CORAL_STATION_INTAKE_SETPOINT = -0.1;
+    public static final double REEF_1_SETPOINT = 0.01;
+    public static final double REEF_2_3_SETPOINT = 0.06;
+    public static final double REEF_4_SETPOINT = 0.15;
+    public static final double BARGE = -0.15;
     public static final int ARM = 45;
     public static final int ARM_CANCODER_ID = 44;
     public static final double ARM_GEAR_RATIO = 266.67;
