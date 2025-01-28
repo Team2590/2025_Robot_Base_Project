@@ -17,7 +17,7 @@ public class FieldConstants {
   public static double[] Reef_x = {2.16, 6.61, 2.16, 6.61};
   public static double[] Reef_y = {6.08, 6.08, 1.57, 1.56};
   public static Path2D ReefBounds = create_zone(Reef_x, Reef_y);
-  public static FRCPolygon ReefPolygon= new FRCPolygon("REEF", ReefBounds,false); 
+  //public static FRCPolygon ReefPolygon= new FRCPolygon("REEF", ReefBounds,false); 
 
 
 

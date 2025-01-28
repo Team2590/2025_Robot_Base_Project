@@ -5,6 +5,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FRCPolygon {
 
@@ -28,11 +30,26 @@ public class FRCPolygon {
     this.name = polygonName;
   }
 
-  public FRCPolygon (String polygonName, String pathPlannername){
+  public FRCPolygon(String polygonName, String pathPlannername){
 
+    PathPlannerPath ppath=PathPlannerPath.fromPathFile(pathPlannername);
+    List <Translation2d> translations = new ArrayList<>();
+    for( Waypoint w : ppath.getWaypoints()){
+      translations.add(w.anchor());
+
+    }
+    this.path = new Path2D.Double();
+    this.name = polygonName;
+    if (translations.length > 0) {
+      this.path.moveTo(translations[0].getX(), translations[0].getY());
+      for (int i = 1; i < translations.length; i++) {
+        this.path.lineTo(translations[i].getX(), translations[i].getY());
+      }
+      this.path.closePath();
+    }
     
-    this.name=polygonName;
-    this.path=null;
+
+
 
   }
 
@@ -44,6 +61,16 @@ public class FRCPolygon {
   public void translate(double x, double y) {
     AffineTransform at = AffineTransform.getTranslateInstance(x, y);
     path.transform(at);
+  }
+
+  public void flipSide(boolean blueside){
+
+    if (!blueside){
+      AffineTransform at =AffineTransform.getQuadrantRotateInstance(2, 8.756,4);
+      path.transform(at);
+      
+
+    }
   }
 
   public void translate(Translation2d translation) {
