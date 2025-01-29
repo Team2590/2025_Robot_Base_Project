@@ -15,38 +15,28 @@ package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.GenericHID;
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.arm.ArmIOTalonFX;
-import frc.robot.util.LoggedTunableNumber;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.TunerConstantsWrapper;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import java.util.List;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
-import com.pathplanner.lib.auto.AutoBuilder;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -59,7 +49,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final Arm arm;
-  private final Intake intake;
+  // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
 
   // Controller
@@ -93,7 +83,7 @@ public class RobotContainer {
                         new CameraConfig(camera1Name, robotToCamera1),
                         new CameraConfig(camera2Name, robotToCamera2),
                         new CameraConfig(camera3Name, robotToCamera3))));
-        intake = null;
+        // intake = null;
         arm = null;
         break;
       case LARRY:
@@ -115,7 +105,7 @@ public class RobotContainer {
                         new CameraConfig(camera1Name, robotToCamera1),
                         new CameraConfig(camera2Name, robotToCamera2),
                         new CameraConfig(camera3Name, robotToCamera3))));
-        intake = null;
+        // intake = null;
         arm = null;
         break;
 
@@ -139,7 +129,7 @@ public class RobotContainer {
                         new CameraConfig(camera2Name, robotToCamera2),
                         new CameraConfig(camera3Name, robotToCamera3)),
                     drive::getPose));
-        intake = new Intake(new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1));
+        // intake = new Intake(new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1));
         arm = null;
         break;
 
@@ -154,7 +144,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 constantsWrapper);
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        intake = null;
+        // intake = null;
         arm = null;
         break;
     }
