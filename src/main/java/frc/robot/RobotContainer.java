@@ -16,16 +16,19 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstantsWrapper;
-import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -33,7 +36,14 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -45,14 +55,14 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  //   private final Vision vision;
+  private final Vision vision;
+  // private final Intake intake;
   private final Elevator elevator;
 
-  // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(2);
+  private final CommandXboxController controller = new CommandXboxController(0);
   private final CommandJoystick leftJoystick = new CommandJoystick(0);
   private final CommandJoystick rightJoystick = new CommandJoystick(1);
 
@@ -61,15 +71,6 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    elevator =
-        new Elevator(
-            new ElevatorIOTalonFX(
-                ElevatorConstants.canID,
-                ElevatorConstants.canBus,
-                ElevatorConstants.currentLimitAmps,
-                ElevatorConstants.invert,
-                ElevatorConstants.brake,
-                ElevatorConstants.reduction));
 
     switch (Constants.currentMode) {
       case KRONOS:
@@ -82,17 +83,20 @@ public class RobotContainer {
                 new ModuleIOTalonFX(constantsWrapper.BackLeft, constantsWrapper),
                 new ModuleIOTalonFX(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOPhotonVision(
-        //             List.of(
-        //                 new CameraConfig(camera0Name, robotToCamera0),
-        //                 new CameraConfig(camera1Name, robotToCamera1),
-        //                 new CameraConfig(camera2Name, robotToCamera2),
-        //                 new CameraConfig(camera3Name, robotToCamera3))));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(
+                    List.of(
+                        new CameraConfig(camera0Name, robotToCamera0),
+                        new CameraConfig(camera1Name, robotToCamera1),
+                        new CameraConfig(camera2Name, robotToCamera2),
+                        new CameraConfig(camera3Name, robotToCamera3))));
+        elevator =
+            new Elevator(
+                new ElevatorIOSim(
+                    DCMotor.getKrakenX60(1), 1, 1, 0.25, 0, 100, true, 0, new double[] {0.5, 0.5}));
         // intake = null;
-        arm = null;
         break;
       case LARRY:
         // Real robot, instantiate hardware IO implementations
@@ -104,17 +108,25 @@ public class RobotContainer {
                 new ModuleIOTalonFX(constantsWrapper.BackLeft, constantsWrapper),
                 new ModuleIOTalonFX(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOPhotonVision(
-        //             List.of(
-        //                 new CameraConfig(camera0Name, robotToCamera0),
-        //                 new CameraConfig(camera1Name, robotToCamera1),
-        //                 new CameraConfig(camera2Name, robotToCamera2),
-        //                 new CameraConfig(camera3Name, robotToCamera3))));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(
+                    List.of(
+                        new CameraConfig(camera0Name, robotToCamera0),
+                        new CameraConfig(camera1Name, robotToCamera1),
+                        new CameraConfig(camera2Name, robotToCamera2),
+                        new CameraConfig(camera3Name, robotToCamera3))));
         // intake = null;
-        arm = null;
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    ElevatorConstantsLarry.canID,
+                    ElevatorConstantsLarry.canBus,
+                    ElevatorConstantsLarry.currentLimitAmps,
+                    ElevatorConstantsLarry.invert,
+                    ElevatorConstantsLarry.brake,
+                    ElevatorConstantsLarry.reduction));
         break;
 
       case SIM:
@@ -127,18 +139,21 @@ public class RobotContainer {
                 new ModuleIOSim(constantsWrapper.BackLeft, constantsWrapper),
                 new ModuleIOSim(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOPhotonVisionSim(
-        //             List.of(
-        //                 new CameraConfig(camera0Name, robotToCamera0),
-        //                 new CameraConfig(camera1Name, robotToCamera1),
-        //                 new CameraConfig(camera2Name, robotToCamera2),
-        //                 new CameraConfig(camera3Name, robotToCamera3)),
-        //             drive::getPose));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(
+                    List.of(
+                        new CameraConfig(camera0Name, robotToCamera0),
+                        new CameraConfig(camera1Name, robotToCamera1),
+                        new CameraConfig(camera2Name, robotToCamera2),
+                        new CameraConfig(camera3Name, robotToCamera3)),
+                    drive::getPose));
+        elevator =
+            new Elevator(
+                new ElevatorIOSim(
+                    DCMotor.getKrakenX60(1), 1, 1, 0.25, 0, 100, true, 0, new double[] {0.5, 0.5}));
         // intake = new Intake(new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1));
-        arm = null;
         break;
 
       default:
@@ -147,13 +162,16 @@ public class RobotContainer {
             new Drive(
                 new GyroIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {},
+                new ModuleIO() {}, // .11530, .82629
                 new ModuleIO() {},
                 new ModuleIO() {},
                 constantsWrapper);
-        // vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        elevator =
+            new Elevator(
+                new ElevatorIOSim(
+                    DCMotor.getKrakenX60(1), 1, 1, 0.25, 0, 100, true, 0, new double[] {0.5, 0.5}));
         // intake = null;
-        arm = null;
         break;
     }
 
@@ -188,44 +206,48 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDrive(
-    //         drive,
-    //         () -> -leftJoystick.getY(),
-    //         () -> -leftJoystick.getX(),
-    //         () -> -rightJoystick.getX()));
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -leftJoystick.getY(),
+            () -> -leftJoystick.getX(),
+            () -> -rightJoystick.getX()));
 
-    // // Lock to 0° when A button is held
-    // controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
+    // Lock to 0° when A button is held
+    controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
 
-    // // Switch to X pattern when X button is pressed
-    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    // // controller.b().whileTrue(intake.runIntake(4));
+    // Switch to X pattern when X button is pressed
+    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.b().whileTrue(intake.runIntake(4));
 
-    // // Reset gyro to 0° when B button is pressed
-    // controller
-    //     .b()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-    //                 drive)
-    //             .ignoringDisable(true));
-    // rightJoystick
-    //     .button(5)
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-    //                 drive)
-    //             .ignoringDisable(true));
-    rightJoystick.button(1).whileTrue(elevator.raise());
-    rightJoystick.button(2).whileTrue(elevator.lower());
-    rightJoystick.button(3).onTrue(elevator.setPosition(20));
-    rightJoystick.button(4).onTrue(elevator.setPosition(30));
-    rightJoystick.button(5).onTrue(elevator.setPosition(40));
+    // Reset gyro to 0° when B button is pressed
+    controller
+        .b()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
+    rightJoystick
+        .button(5)
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
+    rightJoystick
+        .button(5)
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
   }
 
   /**

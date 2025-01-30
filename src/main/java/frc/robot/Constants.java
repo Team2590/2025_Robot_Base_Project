@@ -48,7 +48,16 @@ public final class Constants {
             maxAngularAccelerationRadPerSecSq);
   }
 
-  public static class ElevatorConstants {
+  public static class ElevatorConstantsLarry {
+    static int canID = 1;
+    static String canBus = "Takeover";
+    static int currentLimitAmps = 20;
+    static boolean invert = true;
+    static boolean brake = true;
+    static double reduction = 1;
+  }
+
+  public static class ElevatorConstantsSim {
     static int canID = 1;
     static String canBus = "Takeover";
     static int currentLimitAmps = 20;
