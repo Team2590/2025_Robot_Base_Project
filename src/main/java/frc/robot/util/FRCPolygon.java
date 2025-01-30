@@ -5,8 +5,14 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.json.simple.parser.ParseException;
+
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 
 public class FRCPolygon {
 
@@ -31,8 +37,17 @@ public class FRCPolygon {
   }
 
   public FRCPolygon(String polygonName, String pathPlannername){
+    PathPlannerPath ppath=null;
+    try{
+       ppath=PathPlannerPath.fromPathFile(pathPlannername);
+    }
+    catch(IOException e){ System.out.println("Error reading File:"+ e);
+  }
+  catch (ParseException e){System.out.println("Error Parsing File" + e);}
+  
+    
 
-    PathPlannerPath ppath=PathPlannerPath.fromPathFile(pathPlannername);
+
     List <Translation2d> translations = new ArrayList<>();
     for( Waypoint w : ppath.getWaypoints()){
       translations.add(w.anchor());
@@ -40,10 +55,10 @@ public class FRCPolygon {
     }
     this.path = new Path2D.Double();
     this.name = polygonName;
-    if (translations.length > 0) {
-      this.path.moveTo(translations[0].getX(), translations[0].getY());
-      for (int i = 1; i < translations.length; i++) {
-        this.path.lineTo(translations[i].getX(), translations[i].getY());
+    if (translations.size() > 0) {
+      this.path.moveTo(translations.get(0).getX(), translations.get(0).getY());
+      for (int i = 1; i < translations.size(); i++) {
+        this.path.lineTo(translations.get(i).getX(), translations.get(i).getY());
       }
       this.path.closePath();
     }

@@ -15,6 +15,8 @@ package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.util.FRCPolygon;
 import frc.robot.util.PolygonLocator;
@@ -80,18 +82,17 @@ public final class Constants {
   public static final FRCPolygon BargeBoundsTop= new FRCPolygon("BargeTop", "BargeTop");
   public static final FRCPolygon BargeBoundsBot= new FRCPolygon("BargeBot", "BargeBot");
   public static final FRCPolygon PresetAlgae= new FRCPolygon("PresetAlgae", "FloatingAlgae");
-  public static final FRCPolygon Processor= new FRCPolygon("Processor", "Processor").flipSide(flipside);;
+  public static final FRCPolygon Processor= new FRCPolygon("Processor", "Processor");
   
 
   // Two ways to instantiate the polygons, this static initialization box is necessary
   static {
     polygons.add(playBox);
-    polygons.add(
-        new FRCPolygon(
-            "triangle",
-            new Translation2d(5, 5),
-            new Translation2d(6, 5),
-            new Translation2d(5.5, 6)));
+    polygons.add(reefBounds);
+    polygons.add(BargeBoundsTop);
+    polygons.add(BargeBoundsBot);
+    polygons.add(PresetAlgae);
+    polygons.add(Processor);
   }
 
   public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
