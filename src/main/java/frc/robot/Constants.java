@@ -119,6 +119,15 @@ public final class Constants {
     public static final double ARM_MAX = -0.35; // -.3
   }
 
+  public static class ElevatorConstantsLarry {
+    static int canID = 1;
+    static String canBus = "Takeover";
+    static int currentLimitAmps = 40;
+    static boolean invert = true;
+    static boolean brake = true;
+    static double reduction = 1;
+  }
+
   public static enum Mode {
     /** Running on a real robot. */
     COMP,

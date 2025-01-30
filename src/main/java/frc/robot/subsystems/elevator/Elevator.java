@@ -1,5 +1,6 @@
 package frc.robot.subsystems.elevator;
 
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -44,10 +45,21 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command raise() {
-    return runEnd(() -> io.setPosition(inputs.rotationCount + 1), io::stop);
+    return runEnd(
+      () -> io.setPosition(inputs.rotationCount + 1), () -> io.setPosition(inputs.rotationCount));
   }
 
   public Command lower() {
-    return runEnd(() -> io.setPosition(inputs.rotationCount - 1), io::stop);
+    return runEnd(
+      () -> io.setPosition(inputs.rotationCount - 1), () -> io.setPosition(inputs.rotationCount));
   }
+
+    public void setVoltage(double volts) {
+    io.setVoltage(new VoltageOut(volts));
+  }
+
+    /** Returns the current velocity in radians per second. */
+  public double getCharacterizationVelocity() {
+      return inputs.velocityRadsPerSec;
+    }
 }

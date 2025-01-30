@@ -25,7 +25,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
@@ -34,6 +36,8 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -53,6 +57,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final Arm arm;
+  private final Elevator elevator;
   // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
 
@@ -89,6 +94,7 @@ public class RobotContainer {
                         new CameraConfig(camera3Name, robotToCamera3))));
         // intake = null;
         arm = null;
+        elevator = null;
         break;
       case LARRY:
         // Real robot, instantiate hardware IO implementations
@@ -111,6 +117,15 @@ public class RobotContainer {
                         new CameraConfig(camera3Name, robotToCamera3))));
         // intake = null;
         arm = null;
+                elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    ElevatorConstantsLarry.canID,
+                    ElevatorConstantsLarry.canBus,
+                    ElevatorConstantsLarry.currentLimitAmps,
+                    ElevatorConstantsLarry.invert,
+                    ElevatorConstantsLarry.brake,
+                    ElevatorConstantsLarry.reduction));
         break;
 
       case SIM:
@@ -135,6 +150,7 @@ public class RobotContainer {
                     drive::getPose));
         // intake = new Intake(new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1));
         arm = null;
+        elevator = null;
         break;
 
       default:
@@ -150,6 +166,7 @@ public class RobotContainer {
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         // intake = null;
         arm = null;
+        elevator = null;
         break;
     }
 
@@ -171,6 +188,11 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+            autoChooser.addOption(
+        "Flywheel FF Characterization",
+        new FeedForwardCharacterization(
+            elevator, elevator::setVoltage, elevator::getCharacterizationVelocity));
 
     // Configure the button bindings
     configureButtonBindings();
