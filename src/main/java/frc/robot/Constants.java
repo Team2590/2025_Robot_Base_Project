@@ -17,6 +17,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.util.FRCPolygon;
+import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.PolygonLocator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import java.util.List;
  */
 public final class Constants {
   public static final Mode simMode = Mode.SIM;
-  public static final Mode currentMode = RobotBase.isReal() ? Mode.KRONOS : simMode;
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.LARRY : simMode;
   public static final boolean tuningMode = true;
   public static final double loopPeriodSecs = 0.02;
 
@@ -86,6 +87,26 @@ public final class Constants {
   }
 
   public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
+  public static LoggedTunableNumber homeSetpoint =
+      new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
+  public static final String CANBUS = "Takeover";
+
+  public final class ArmConstants {
+    // Fill in
+    public static final double HOME_SETPOINT = homeSetpoint.get();
+    public static final double CLIMB_SETPOINT = .198;
+    public static final double GROUND_INTAKE_SETPOINT = 0;
+    public static final double CORAL_STATION_INTAKE_SETPOINT = -0.1;
+    public static final double REEF_1_SETPOINT = 0.01;
+    public static final double REEF_2_3_SETPOINT = 0.06;
+    public static final double REEF_4_SETPOINT = 0.15;
+    public static final double BARGE = -0.15;
+    public static final int ARM = 45;
+    public static final int ARM_CANCODER_ID = 44;
+    public static final double ARM_GEAR_RATIO = 266.67;
+    public static final double MAG_OFFSET = -.156;
+    public static final double ARM_MAX = -0.35; // -.3
+  }
 
   public static enum Mode {
     /** Running on a real robot. */
@@ -93,7 +114,7 @@ public final class Constants {
 
     KRONOS,
 
-    LEO,
+    LARRY,
 
     /** Running a physics simulator. */
     SIM,
