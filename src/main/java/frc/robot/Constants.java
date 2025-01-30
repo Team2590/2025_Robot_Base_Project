@@ -74,9 +74,27 @@ public final class Constants {
           new Translation2d(2, 2),
           new Translation2d(0, 2));
 
+  public static final FRCPolygon blueBarge =
+      new FRCPolygon(
+          "blueBarge",
+          new Translation2d(8.234, 7.894),
+          new Translation2d(9.331, 7.894),
+          new Translation2d(9.331, 4.303),
+          new Translation2d(8.234, 4.303));
+
+  public static final FRCPolygon redBarge =
+      new FRCPolygon(
+          "redBarge",
+          new Translation2d(8.234, 3.657),
+          new Translation2d(9.331, 3.657),
+          new Translation2d(9.331, 0),
+          new Translation2d(8.234, 0));
+
   // Two ways to instantiate the polygons, this static initialization box is necessary
   static {
     polygons.add(playBox);
+    polygons.add(blueBarge);
+    polygons.add(redBarge);
     polygons.add(
         new FRCPolygon(
             "triangle",
