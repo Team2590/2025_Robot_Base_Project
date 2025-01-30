@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Translation2d;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
@@ -8,11 +10,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.json.simple.parser.ParseException;
-
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
 
 public class FRCPolygon {
 
@@ -36,22 +34,19 @@ public class FRCPolygon {
     this.name = polygonName;
   }
 
-  public FRCPolygon(String polygonName, String pathPlannername){
-    PathPlannerPath ppath=null;
-    try{
-       ppath=PathPlannerPath.fromPathFile(pathPlannername);
+  public FRCPolygon(String polygonName, String pathPlannername) {
+    PathPlannerPath ppath = null;
+    try {
+      ppath = PathPlannerPath.fromPathFile(pathPlannername);
+    } catch (IOException e) {
+      System.out.println("Error reading File:" + e);
+    } catch (ParseException e) {
+      System.out.println("Error Parsing File" + e);
     }
-    catch(IOException e){ System.out.println("Error reading File:"+ e);
-  }
-  catch (ParseException e){System.out.println("Error Parsing File" + e);}
-  
-    
 
-
-    List <Translation2d> translations = new ArrayList<>();
-    for( Waypoint w : ppath.getWaypoints()){
+    List<Translation2d> translations = new ArrayList<>();
+    for (Waypoint w : ppath.getWaypoints()) {
       translations.add(w.anchor());
-
     }
     this.path = new Path2D.Double();
     this.name = polygonName;
@@ -62,10 +57,6 @@ public class FRCPolygon {
       }
       this.path.closePath();
     }
-    
-
-
-
   }
 
   public FRCPolygon(String polygonName, FRCPolygon frcPolygon) {
@@ -78,13 +69,11 @@ public class FRCPolygon {
     path.transform(at);
   }
 
-  public void flipSide(boolean blueside){
+  public void flipSide(boolean blueside) {
 
-    if (!blueside){
-      AffineTransform at =AffineTransform.getQuadrantRotateInstance(2, 8.756,4);
+    if (!blueside) {
+      AffineTransform at = AffineTransform.getQuadrantRotateInstance(2, 8.756, 4);
       path.transform(at);
-      
-
     }
   }
 

@@ -76,14 +76,15 @@ public final class Constants {
           new Translation2d(2, 2),
           new Translation2d(0, 2));
 
-  public static final boolean flipside=DriverStation.getAlliance().isPresent()
-  && DriverStation.getAlliance().get() == Alliance.Red;
-  public static final FRCPolygon reefBounds= new FRCPolygon("reef", "Reefbounds");
-  public static final FRCPolygon BargeBoundsTop= new FRCPolygon("BargeTop", "BargeTop");
-  public static final FRCPolygon BargeBoundsBot= new FRCPolygon("BargeBot", "BargeBot");
-  public static final FRCPolygon PresetAlgae= new FRCPolygon("PresetAlgae", "FloatingAlgae");
-  public static final FRCPolygon Processor= new FRCPolygon("Processor", "Processor");
-  
+  public static final boolean flipside =
+      DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+  public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
+  public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTop");
+  public static final FRCPolygon BargeBoundsBot = new FRCPolygon("BargeBot", "BargeBot");
+  //public static final FRCPolygon PresetAlgae = new FRCPolygon("PresetAlgae", "FloatingAlgae");
+  public static final FRCPolygon Processor = new FRCPolygon("Processor", "Processor");
+  public static final FRCPolygon FeederStationTop= new FRCPolygon("FeederStationTop", "Station1");
+  public static final FRCPolygon FeederStationBot = new FRCPolygon("FeederStationBot","Station2");
 
   // Two ways to instantiate the polygons, this static initialization box is necessary
   static {
@@ -91,7 +92,7 @@ public final class Constants {
     polygons.add(reefBounds);
     polygons.add(BargeBoundsTop);
     polygons.add(BargeBoundsBot);
-    polygons.add(PresetAlgae);
+   // polygons.add(PresetAlgae);
     polygons.add(Processor);
   }
 
@@ -111,6 +112,4 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
-
-
 }

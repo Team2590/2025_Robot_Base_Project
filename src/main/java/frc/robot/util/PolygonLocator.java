@@ -15,7 +15,7 @@ public class PolygonLocator {
   public PolygonLocator(List<FRCPolygon> polygons, Rectangle2D bounds) {
     quadtree = new QuadTree(bounds);
     for (FRCPolygon polygon : polygons) {
-      //polygon.flipSide(Constants.flipside);
+      // polygon.flipSide(Constants.flipside);
       quadtree.insert(polygon, polygon.getBoundingRect());
     }
   }
@@ -35,7 +35,7 @@ public class PolygonLocator {
   @AutoLogOutput(key = "Odometry/zoneOfField") // this isn't freaking working
   public String getZoneOfField(Pose2d robotPose) {
     if (Constants.locator.findContainingPolygon(robotPose.getTranslation()) != null) {
-      String zone= Constants.locator.findContainingPolygon(robotPose.getTranslation()).getName();
+      String zone = Constants.locator.findContainingPolygon(robotPose.getTranslation()).getName();
 
       Logger.recordOutput("FieldZone", zone);
       return zone;
