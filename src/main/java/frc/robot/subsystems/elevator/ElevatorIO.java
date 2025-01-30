@@ -1,5 +1,6 @@
 package frc.robot.subsystems.elevator;
 
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -27,4 +28,7 @@ public interface ElevatorIO {
   public void resetRotationCount();
 
   public void setNeutralMode(NeutralModeValue mode);
+
+  /** Run open loop at the specified voltage. */
+  public default void setVoltage(VoltageOut volts) {}
 }

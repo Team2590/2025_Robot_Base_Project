@@ -1,11 +1,13 @@
 package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -23,15 +25,16 @@ import frc.robot.util.LoggedTunableNumber;
  */
 public class ElevatorIOTalonFX implements ElevatorIO {
   private TalonFX leader;
-  private LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS", 0.25);
-  private LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0.12);
-  private LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", 0.01);
-  private LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 4.8);
-  private LoggedTunableNumber kI = new LoggedTunableNumber("Arm/kI", 0);
-  private LoggedTunableNumber kD = new LoggedTunableNumber("Arm/kD", 0.1);
-  private LoggedTunableNumber cruiseVelocity = new LoggedTunableNumber("Arm/cruiseVelocity", 25);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Arm/acceleration", 50);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("Arm/jerk", 75);
+  private LoggedTunableNumber kS = new LoggedTunableNumber("Elevator/kS", 0.25);
+  private LoggedTunableNumber kV = new LoggedTunableNumber("Elevator/kV", 0.12);
+  private LoggedTunableNumber kG = new LoggedTunableNumber("Elevator/kG", 0.01);
+  private LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP", 4.8);
+  private LoggedTunableNumber kI = new LoggedTunableNumber("Elevator/kI", 0);
+  private LoggedTunableNumber kD = new LoggedTunableNumber("Elevator/kD", 0.1);
+  private LoggedTunableNumber cruiseVelocity =
+      new LoggedTunableNumber("Elevator/cruiseVelocity", 25);
+  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Elevator/acceleration", 50);
+  private LoggedTunableNumber jerk = new LoggedTunableNumber("Elevator/jerk", 75);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
@@ -52,12 +55,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
       int currentLimitAmps,
       boolean invert,
       boolean brake,
-      double reduction,
-      int cancoderCanID,
-      String cancoderCanBus,
-      double elevatorMagOffset,
-      double rotorToSensorRatio,
-      int feedbackRemoteSensorID) {
+      double reduction) {
     leader = new TalonFX(canID, canBus);
     // cancoder = new CANcoder(cancoderCanID, cancoderCanBus);
 
@@ -204,5 +202,10 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   @Override
   public void setNeutralMode(NeutralModeValue mode) {
     leader.setNeutralMode(mode);
+  }
+
+  @Override
+  public void setVoltage(VoltageOut volts) {
+    leader.setControl(volts);
   }
 }
