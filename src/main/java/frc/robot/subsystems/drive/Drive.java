@@ -326,16 +326,6 @@ public class Drive extends SubsystemBase {
     return poseEstimator.getEstimatedPosition();
   }
 
-  /*  Mapping Field Goal. Define bounds for certain areas of the field.
-  Create an ENUM of different FIELD ZONES
-  Create function called getFieldZone
-  Define Polygon with given zones
-  Take current pose, break down into x,y coordinates
-  check if is in
-
-
-   */
-
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return getPose().getRotation();
