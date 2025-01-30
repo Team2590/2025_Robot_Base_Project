@@ -53,6 +53,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import frc.robot.FieldConstants.ZONES;
+import java.awt.geom.Path2D;
 
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
@@ -325,6 +327,16 @@ public class Drive extends SubsystemBase {
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
+
+  /*  Mapping Field Goal. Define bounds for certain areas of the field.
+  Create an ENUM of different FIELD ZONES
+  Create function called getFieldZone
+  Define Polygon with given zones
+  Take current pose, break down into x,y coordinates
+  check if is in
+
+
+   */
 
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
