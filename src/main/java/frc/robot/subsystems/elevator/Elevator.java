@@ -3,11 +3,14 @@ package frc.robot.subsystems.elevator;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.NemesisMathUtil;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
   private ElevatorIO io;
   private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+  private double setpointTolerance = 0.05;
 
   public Elevator(ElevatorIO io) {
     this.io = io;
@@ -26,6 +29,10 @@ public class Elevator extends SubsystemBase {
 
   public Command setPosition(double position) {
     return runOnce(() -> io.setPosition(position));
+  }
+
+  public Command setPositionBlocking(double position) {
+    return runEnd(() -> io.setPosition(position), () -> io.setPosition(position)).until(() -> NemesisMathUtil.isApprox(inputs.rotationCount, setpointTolerance, position));
   }
 
   public Command resetRotationCount() {

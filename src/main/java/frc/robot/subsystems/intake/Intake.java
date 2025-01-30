@@ -3,6 +3,8 @@ package frc.robot.subsystems.intake;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.NemesisMathUtil;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -28,6 +30,7 @@ public class Intake extends SubsystemBase {
     private final Alert intakeArmDisconnected;
     private final IntakeArmIO intakeArmIO;
     private final IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
+    private double setpointTolerance = 0.05;
 
     public IntakeArm(IntakeArmIO intakeArmIO) {
       this.intakeArmIO = intakeArmIO;
@@ -56,6 +59,10 @@ public class Intake extends SubsystemBase {
     public Command setPosition(double position) {
       return runOnce(() -> intakeArmIO.setPosition(position));
     }
+
+    public Command setPositionBlocking(double position) {
+      return runEnd(() -> intakeArmIO.setPosition(position), () -> intakeArmIO.setPosition(position)).until(() -> NemesisMathUtil.isApprox(intakeArmInputs.positionRads, setpointTolerance, position));
+    }
   }
 
   public Command runIntake(double voltage) {
@@ -78,11 +85,15 @@ public class Intake extends SubsystemBase {
   public Command setIntakeAlgaePosition() {
     return intakeArm.setIntakeAlgaePosition();
   }
-
+  
   public Command setPosition(double position) {
     return intakeArm.setPosition(position);
   }
 
+  public Command setPositionBlocking(double position) {
+    return intakeArm.setPositionBlocking(position);
+  }
+  
   public Command resetArmRotationCount() {
     return intakeArm.resetRotationCount();
   }

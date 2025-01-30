@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstantsWrapper;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -91,6 +92,7 @@ public class RobotContainer {
         //                 new CameraConfig(camera2Name, robotToCamera2),
         //                 new CameraConfig(camera3Name, robotToCamera3))));
         // intake = null;
+        arm = null;
         break;
       case LARRY:
         // Real robot, instantiate hardware IO implementations
@@ -112,6 +114,7 @@ public class RobotContainer {
         //                 new CameraConfig(camera2Name, robotToCamera2),
         //                 new CameraConfig(camera3Name, robotToCamera3))));
         // intake = null;
+        arm = null;
         break;
 
       case SIM:
@@ -135,6 +138,7 @@ public class RobotContainer {
         //                 new CameraConfig(camera3Name, robotToCamera3)),
         //             drive::getPose));
         // intake = new Intake(new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1));
+        arm = null;
         break;
 
       default:
@@ -149,6 +153,7 @@ public class RobotContainer {
                 constantsWrapper);
         // vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         // intake = null;
+        arm = null;
         break;
     }
 
