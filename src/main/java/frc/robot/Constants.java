@@ -47,6 +47,15 @@ public final class Constants {
             maxAngularAccelerationRadPerSecSq);
   }
 
+  public static class ElevatorConstants {
+    static int canID = 1;
+    static String canBus = "Takeover";
+    static int currentLimitAmps = 20;
+    static boolean invert = true;
+    static boolean brake = true;
+    static double reduction = 1;
+  }
+
   private static List<FRCPolygon> polygons = new ArrayList<>();
   private static Rectangle2D fieldBounds = new Rectangle2D.Double(0, 0, 15, 15);
   /*

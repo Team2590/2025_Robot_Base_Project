@@ -23,15 +23,16 @@ import frc.robot.util.LoggedTunableNumber;
  */
 public class ElevatorIOTalonFX implements ElevatorIO {
   private TalonFX leader;
-  private LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS", 0.25);
-  private LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0.12);
-  private LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", 0.01);
-  private LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 4.8);
-  private LoggedTunableNumber kI = new LoggedTunableNumber("Arm/kI", 0);
-  private LoggedTunableNumber kD = new LoggedTunableNumber("Arm/kD", 0.1);
-  private LoggedTunableNumber cruiseVelocity = new LoggedTunableNumber("Arm/cruiseVelocity", 25);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Arm/acceleration", 50);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("Arm/jerk", 75);
+  private LoggedTunableNumber kS = new LoggedTunableNumber("Elevator/kS", 0.25);
+  private LoggedTunableNumber kV = new LoggedTunableNumber("Elevator/kV", 0.12);
+  private LoggedTunableNumber kG = new LoggedTunableNumber("Elevator/kG", 0.01);
+  private LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP", 4.8);
+  private LoggedTunableNumber kI = new LoggedTunableNumber("Elevator/kI", 0);
+  private LoggedTunableNumber kD = new LoggedTunableNumber("Elevator/kD", 0.1);
+  private LoggedTunableNumber cruiseVelocity =
+      new LoggedTunableNumber("Elevator/cruiseVelocity", 25);
+  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Elevator/acceleration", 50);
+  private LoggedTunableNumber jerk = new LoggedTunableNumber("Elevator/jerk", 75);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
@@ -42,9 +43,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private StatusSignal<Current> torqueCurrent;
   private StatusSignal<Temperature> tempCelsius;
   private double reduction;
-  // private CANcoder cancoder;
-  // private final StatusSignal<Angle> cancoderPosition;
-  // private final StatusSignal<Angle> cancoderAbsPosition;
 
   public ElevatorIOTalonFX(
       int canID,
@@ -52,29 +50,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
       int currentLimitAmps,
       boolean invert,
       boolean brake,
-      double reduction,
-      int cancoderCanID,
-      String cancoderCanBus,
-      double elevatorMagOffset,
-      double rotorToSensorRatio,
-      int feedbackRemoteSensorID) {
+      double reduction) {
     leader = new TalonFX(canID, canBus);
-    // cancoder = new CANcoder(cancoderCanID, cancoderCanBus);
-
-    // var mag = new MagnetSensorConfigs();
-    // mag.MagnetOffset = elevatorMagOffset;
-
-    // var cancoderConfig = new CANcoderConfiguration();
-    // cancoderConfig.withMagnetSensor(mag);
-    // cancoder.getConfigurator().apply(cancoderConfig);
-
-    // talonFXConfig.Feedback.FeedbackRemoteSensorID = cancoderCanID;
-    // talonFXConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    // talonFXConfig.Feedback.RotorToSensorRatio = elevatorMagOffset;
-
-    // cancoderPosition = cancoder.getPosition();
-    // cancoderAbsPosition = cancoder.getAbsolutePosition();
-
     talonFXConfig.MotorOutput.Inverted =
         invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
     talonFXConfig.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
@@ -104,12 +81,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     this.reduction = reduction;
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius
-        // cancoderPosition,
-        // cancoderAbsPosition
-        );
+        50.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
     leader.optimizeBusUtilization(0, 1);
-    // cancoder.optimizeBusUtilization(0, 1);
   }
 
   @Override
