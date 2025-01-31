@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -23,16 +24,16 @@ import frc.robot.util.LoggedTunableNumber;
  */
 public class ElevatorIOTalonFX implements ElevatorIO {
   private TalonFX leader;
-  private LoggedTunableNumber kS = new LoggedTunableNumber("Elevator/kS", 0.25);
-  private LoggedTunableNumber kV = new LoggedTunableNumber("Elevator/kV", 0.12);
-  private LoggedTunableNumber kG = new LoggedTunableNumber("Elevator/kG", 0.01);
-  private LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP", 4.8);
+  private LoggedTunableNumber kS = new LoggedTunableNumber("Elevator/kS", 0.28021);
+  private LoggedTunableNumber kV = new LoggedTunableNumber("Elevator/kV", 0.02265);
+  private LoggedTunableNumber kG = new LoggedTunableNumber("Elevator/kG", 0.18);
+  private LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP", 16);
   private LoggedTunableNumber kI = new LoggedTunableNumber("Elevator/kI", 0);
-  private LoggedTunableNumber kD = new LoggedTunableNumber("Elevator/kD", 0.1);
+  private LoggedTunableNumber kD = new LoggedTunableNumber("Elevator/kD", 0);
   private LoggedTunableNumber cruiseVelocity =
-      new LoggedTunableNumber("Elevator/cruiseVelocity", 25);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Elevator/acceleration", 50);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("Elevator/jerk", 75);
+      new LoggedTunableNumber("Elevator/cruiseVelocity", 4000);
+  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Elevator/acceleration", 100);
+  private LoggedTunableNumber jerk = new LoggedTunableNumber("Elevator/jerk", 4000);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
@@ -177,5 +178,10 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   @Override
   public void setNeutralMode(NeutralModeValue mode) {
     leader.setNeutralMode(mode);
+  }
+
+  @Override
+  public void setVoltage(VoltageOut volts) {
+    leader.setControl(volts);
   }
 }
