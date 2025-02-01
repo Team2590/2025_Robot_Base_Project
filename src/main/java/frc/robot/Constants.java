@@ -101,4 +101,13 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+
+  public static class ElevatorConstantsLarry {
+    static int canID = 1;
+    static String canBus = "Takeover";
+    static int currentLimitAmps = 40;
+    static boolean invert = true;
+    static boolean brake = true;
+    static double reduction = 1;
+  }
 }

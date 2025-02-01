@@ -18,6 +18,7 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.drive.Drive;
@@ -33,6 +35,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -51,13 +56,14 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
+  private final Elevator elevator;
   // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(2);
-  private final CommandJoystick leftJoystick = new CommandJoystick(0);
-  private final CommandJoystick rightJoystick = new CommandJoystick(1);
+  private final CommandJoystick leftJoystick = new CommandJoystick(1);
+  private final CommandJoystick rightJoystick = new CommandJoystick(0);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -85,6 +91,15 @@ public class RobotContainer {
                         new CameraConfig(camera1Name, robotToCamera1),
                         new CameraConfig(camera2Name, robotToCamera2),
                         new CameraConfig(camera3Name, robotToCamera3))));
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    ElevatorConstantsLarry.canID,
+                    ElevatorConstantsLarry.canBus,
+                    ElevatorConstantsLarry.currentLimitAmps,
+                    ElevatorConstantsLarry.invert,
+                    ElevatorConstantsLarry.brake,
+                    ElevatorConstantsLarry.reduction));
         // intake = null;
         break;
       case LARRY:
@@ -106,6 +121,15 @@ public class RobotContainer {
                         new CameraConfig(camera1Name, robotToCamera1),
                         new CameraConfig(camera2Name, robotToCamera2),
                         new CameraConfig(camera3Name, robotToCamera3))));
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    ElevatorConstantsLarry.canID,
+                    ElevatorConstantsLarry.canBus,
+                    ElevatorConstantsLarry.currentLimitAmps,
+                    ElevatorConstantsLarry.invert,
+                    ElevatorConstantsLarry.brake,
+                    ElevatorConstantsLarry.reduction));
         // intake = null;
         break;
 
@@ -129,6 +153,19 @@ public class RobotContainer {
                         new CameraConfig(camera2Name, robotToCamera2),
                         new CameraConfig(camera3Name, robotToCamera3)),
                     drive::getPose));
+        elevator =
+            new Elevator(
+                new ElevatorIOSim(
+                    new DCMotor(12.5, 2.5, 2.5, 4.5, 7.5, 1),
+                    0.5,
+                    0.5,
+                    1,
+                    0,
+                    100,
+                    true,
+                    0,
+                    0.5,
+                    0.5));
         // intake = new Intake(new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1));
         break;
 
@@ -143,6 +180,15 @@ public class RobotContainer {
                 new ModuleIO() {},
                 constantsWrapper);
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    ElevatorConstantsLarry.canID,
+                    ElevatorConstantsLarry.canBus,
+                    ElevatorConstantsLarry.currentLimitAmps,
+                    ElevatorConstantsLarry.invert,
+                    ElevatorConstantsLarry.brake,
+                    ElevatorConstantsLarry.reduction));
         // intake = null;
         break;
     }
@@ -211,6 +257,9 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    rightJoystick.button(3).onTrue(elevator.setPositionBlocking(10));
+    rightJoystick.button(4).onTrue(elevator.setPositionBlocking(5));
   }
 
   /**

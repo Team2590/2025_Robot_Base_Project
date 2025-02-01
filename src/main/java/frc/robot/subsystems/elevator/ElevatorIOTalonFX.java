@@ -52,12 +52,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
       int currentLimitAmps,
       boolean invert,
       boolean brake,
-      double reduction,
-      int cancoderCanID,
-      String cancoderCanBus,
-      double elevatorMagOffset,
-      double rotorToSensorRatio,
-      int feedbackRemoteSensorID) {
+      double reduction) {
     leader = new TalonFX(canID, canBus);
     // cancoder = new CANcoder(cancoderCanID, cancoderCanBus);
 
