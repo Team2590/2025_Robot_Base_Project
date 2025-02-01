@@ -30,7 +30,7 @@ import frc.robot.util.LoggedTunableNumber;
 
 public class TunerConstantsLarry {
 
-  private static LoggedTunableNumber steerkp = new LoggedTunableNumber("SteerkPLarry", 85);
+  private static LoggedTunableNumber steerkp = new LoggedTunableNumber("SteerkPLarry", 5);
   private static LoggedTunableNumber drivekp = new LoggedTunableNumber("DrivekP", .1);
   private static final Slot0Configs steerGains =
       new Slot0Configs()
