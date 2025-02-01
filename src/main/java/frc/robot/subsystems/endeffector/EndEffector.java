@@ -1,37 +1,32 @@
 package frc.robot.subsystems.endeffector;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class EndEffector extends SubsystemBase {
-    private final TalonFX motor = new TalonFX(2);
-    private final XboxController controller = new XboxController(2);
+    private final EndEffectorIO io;
+    private final EndEffectorIO.EndEffectorIOInputs inputs = new EndEffectorIO.EndEffectorIOInputs();
     private boolean isRunning = false;
+
+    public EndEffector(EndEffectorIO io) {
+        this.io = io;
+    }
 
     @Override
     public void periodic() {
-        //curent logging
-        double current = motor.getStatorCurrent().getValueAsDouble();
-        Logger.recordOutput("EndEffector/Current", current);
-        
-        //ported to A on xbox
-        if (controller.getAButtonPressed()) {
-            toggleMotor();
-        }
-        
-//testing purposes, log motor even running
+        io.updateInputs(inputs);
+        Logger.processInputs("EndEffector", inputs);
         Logger.recordOutput("EndEffector/MotorRunning", isRunning);
     }
 
     public void runMotor() {
-        motor.set(0.5); // 50% power
+        io.setMotor(0.5);
         isRunning = true;
     }
 
     public void stopMotor() {
-        motor.set(0);
+        io.stopMotor();
         isRunning = false;
     }
 
@@ -41,5 +36,9 @@ public class EndEffector extends SubsystemBase {
         } else {
             runMotor();
         }
+    }
+
+    public double getCurrentAmps() {
+        return inputs.statorCurrentAmps;
     }
 }
