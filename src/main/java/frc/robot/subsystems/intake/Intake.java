@@ -65,7 +65,7 @@ public class Intake extends SubsystemBase {
           .until(
               () ->
                   NemesisMathUtil.isApprox(
-                      intakeArmInputs.positionRads, setpointTolerance, position));
+                      intakeArmInputs.leaderPositionRads, setpointTolerance, position));
     }
   }
 
