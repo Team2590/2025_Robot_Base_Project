@@ -111,6 +111,9 @@ public class ModuleIOTalonFX implements ModuleIO {
         new TalonFX(constants.SteerMotorId, constantsWrapper.DrivetrainConstants.CANBusName);
     cancoder = new CANcoder(constants.EncoderId, constantsWrapper.DrivetrainConstants.CANBusName);
 
+    driveTalon.clearStickyFaults();
+    turnTalon.clearStickyFaults();
+
     // Configure drive motor
     var driveConfig = constants.DriveMotorInitialConfigs;
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
