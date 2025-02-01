@@ -33,11 +33,9 @@ public class Climb extends SubsystemBase {
   }
 
   public Command run(double voltage) {
-    boolean leaderOutOfBounds = Math.abs(inputs.leaderRotationCount) > 153;
-    boolean followerOutOfBounds = Math.abs(inputs.followerRotationCount) > 153;
-    
+    boolean motorOutOfBounds = Math.abs(inputs.rotationCount) > 153;
 
-    return runEnd(() -> io.setVoltage(voltage), io::stop).until(() -> leaderOutOfBounds);
+    return runEnd(() -> io.setVoltage(voltage), io::stop).until(() -> motorOutOfBounds);
   }
 
   public Command raise() {

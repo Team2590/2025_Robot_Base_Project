@@ -17,7 +17,7 @@ public class ClimbIOTalonFX implements ClimbIO {
 
   @Override
   public void updateInputs(ClimbIOInputs inputs) {
-    inputs.leaderRotationCount = motor.getPosition().getValueAsDouble();
+    inputs.rotationCount = motor.getPosition().getValueAsDouble();
     Logger.recordOutput("Climb Position", getRotationCount());
   }
 

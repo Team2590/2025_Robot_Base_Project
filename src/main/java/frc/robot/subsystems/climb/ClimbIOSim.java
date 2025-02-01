@@ -34,9 +34,9 @@ public class ClimbIOSim implements ClimbIO {
   @Override
   public void updateInputs(ClimbIOInputs io) {
     climbSim.update(Constants.loopPeriodSecs);
-    io.leaderRotationCount = rotationCount;
+    io.rotationCount = rotationCount;
     io.connected = true;
-    io.leaderPositionRads = Units.rotationsToRadians(rotationCount);
+    io.positionRads = Units.rotationsToRadians(rotationCount);
     io.velocityRadsPerSec = climbSim.getAngularVelocityRadPerSec();
     io.appliedVoltage = climbSim.getCurrentDrawAmps();
     io.supplyCurrentAmps = climbSim.getCurrentDrawAmps();

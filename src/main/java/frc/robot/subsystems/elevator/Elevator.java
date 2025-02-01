@@ -32,7 +32,7 @@ public class Elevator extends SubsystemBase {
 
   public Command setPositionBlocking(double position) {
     return runEnd(() -> io.setPosition(position), () -> io.setPosition(position))
-        .until(() -> NemesisMathUtil.isApprox(inputs.leaderRotationCount, setpointTolerance, position));
+        .until(() -> NemesisMathUtil.isApprox(inputs.rotationCount, setpointTolerance, position));
   }
 
   public Command resetRotationCount() {
@@ -44,10 +44,10 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command raise() {
-    return runEnd(() -> io.setPosition(inputs.leaderRotationCount + 1), io::stop);
+    return runEnd(() -> io.setPosition(inputs.rotationCount + 1), io::stop);
   }
 
   public Command lower() {
-    return runEnd(() -> io.setPosition(inputs.leaderRotationCount - 1), io::stop);
+    return runEnd(() -> io.setPosition(inputs.rotationCount - 1), io::stop);
   }
 }
