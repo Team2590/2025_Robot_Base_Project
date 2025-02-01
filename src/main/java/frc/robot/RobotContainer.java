@@ -43,12 +43,7 @@ import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeArmIOTalonFX;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
-import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import java.util.List;
+import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -60,7 +55,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Vision vision;
+  //   private final Vision vision;
   //   private final Arm arm;
   private final Elevator elevator;
   private final Intake intake;
@@ -95,6 +90,10 @@ public class RobotContainer {
     }
   }
 
+  LoggedTunableNumber L2 = new LoggedTunableNumber("L2", 14);
+  LoggedTunableNumber L3 = new LoggedTunableNumber("L3", 28);
+  LoggedTunableNumber L4 = new LoggedTunableNumber("L4", 40);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
@@ -114,16 +113,16 @@ public class RobotContainer {
                 new ModuleIOTalonFX(constantsWrapper.BackLeft, constantsWrapper),
                 new ModuleIOTalonFX(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3))));
-        // intake = null;
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOPhotonVision(
+        //             List.of(
+        //                 new CameraConfig(camera0Name, robotToCamera0),
+        //                 new CameraConfig(camera1Name, robotToCamera1),
+        //                 new CameraConfig(camera2Name, robotToCamera2),
+        //                 new CameraConfig(camera3Name, robotToCamera3))));
+        // // intake = null;
         // arm = null;
         elevator = null;
         break;
@@ -137,16 +136,15 @@ public class RobotContainer {
                 new ModuleIOTalonFX(constantsWrapper.BackLeft, constantsWrapper),
                 new ModuleIOTalonFX(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3))));
-        // intake = null;
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOPhotonVision(
+        //             List.of(
+        //                 new CameraConfig(camera0Name, robotToCamera0),
+        //                 new CameraConfig(camera1Name, robotToCamera1),
+        //                 new CameraConfig(camera2Name, robotToCamera2),
+        //                 new CameraConfig(camera3Name, robotToCamera3))));
         // arm = null;
         elevator =
             new Elevator(
@@ -169,16 +167,16 @@ public class RobotContainer {
                 new ModuleIOSim(constantsWrapper.BackLeft, constantsWrapper),
                 new ModuleIOSim(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
-                    List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3)),
-                    drive::getPose));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOPhotonVisionSim(
+        //             List.of(
+        //                 new CameraConfig(camera0Name, robotToCamera0),
+        //                 new CameraConfig(camera1Name, robotToCamera1),
+        //                 new CameraConfig(camera2Name, robotToCamera2),
+        //                 new CameraConfig(camera3Name, robotToCamera3)),
+        //             drive::getPose));
         // intake = new Intake(new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1));
         // arm = null;
         elevator = null;
@@ -194,7 +192,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 constantsWrapper);
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        // vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         // intake = null;
         // arm = null;
         elevator = null;
@@ -280,13 +278,20 @@ public class RobotContainer {
     //     .button(3)
     //     .whileTrue(arm.setPosition(Constants.ArmConstants.CORAL_STATION_INTAKE_SETPOINT));
 
-    // rightJoystick.button(4).whileTrue(endEffector.intake());
-    // rightJoystick.button(5).whileTrue(endEffector.outtake());
-    rightJoystick.button(1).onTrue(elevator.setPosition(10));
+    rightJoystick.button(1).onTrue((intake.setIntakeAlgaePosition())); // Trigger left
+    rightJoystick.button(2).onTrue(intake.setIntakeCoralPosition()); // Bottom Button
+
+    rightJoystick.button(3).whileTrue(endEffector.intake()); // Left Button
+    rightJoystick.button(4).whileTrue(endEffector.outtake()); // Right Button
+
+    leftJoystick.button(1).onTrue(elevator.setPosition(17)); // l2 - Trigger left
+    leftJoystick.button(2).onTrue(elevator.setPosition(30)); // l3 - bottom button
+    leftJoystick.button(3).onTrue(elevator.setPosition(45)); // l4 - left Button
+    leftJoystick.button(4).onTrue(elevator.setPosition(0)); // Home - Right Button
   }
 
   /**
-   * null Use this to pass the autonomous command to the main {@link Robot} class.
+   * null Use this to pass the autonomous command to the main {@link Robot} class. )
    *
    * @return the command to run in autonomous
    */
