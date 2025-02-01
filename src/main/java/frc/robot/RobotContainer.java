@@ -15,6 +15,7 @@ package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -38,6 +40,9 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeArmIOTalonFX;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -58,8 +63,9 @@ public class RobotContainer {
   private final Vision vision;
   private final Arm arm;
   private final Elevator elevator;
-  // private final Intake intake;
+  private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
+  private final EndEffector endEffector = new EndEffector();
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(2);
@@ -69,8 +75,24 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
+  private class EndEffector extends SubsystemBase {
+    private TalonFX motor = new TalonFX(2, "Takeover");
+
+    public void intake() {
+        motor.set(0.3);
+    }
+
+    public void outtake() {
+        motor.set(-0.75);
+    }
+  }
+    
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    intake = new Intake(
+            new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
+            new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1));
 
     switch (Constants.currentMode) {
       case KRONOS:
