@@ -1,7 +1,6 @@
 package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -25,16 +24,16 @@ import frc.robot.util.LoggedTunableNumber;
  */
 public class ElevatorIOTalonFX implements ElevatorIO {
   private TalonFX leader;
-  private LoggedTunableNumber kS = new LoggedTunableNumber("Elevator/kS", 0.25);
-  private LoggedTunableNumber kV = new LoggedTunableNumber("Elevator/kV", 0.12);
-  private LoggedTunableNumber kG = new LoggedTunableNumber("Elevator/kG", 0.01);
-  private LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP", 4.8);
+  private LoggedTunableNumber kS = new LoggedTunableNumber("Elevator/kS", 0.28021);
+  private LoggedTunableNumber kV = new LoggedTunableNumber("Elevator/kV", 0.02265);
+  private LoggedTunableNumber kG = new LoggedTunableNumber("Elevator/kG", 0.18);
+  private LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP", 16);
   private LoggedTunableNumber kI = new LoggedTunableNumber("Elevator/kI", 0);
-  private LoggedTunableNumber kD = new LoggedTunableNumber("Elevator/kD", 0.1);
+  private LoggedTunableNumber kD = new LoggedTunableNumber("Elevator/kD", 0);
   private LoggedTunableNumber cruiseVelocity =
-      new LoggedTunableNumber("Elevator/cruiseVelocity", 25);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Elevator/acceleration", 50);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("Elevator/jerk", 75);
+      new LoggedTunableNumber("Elevator/cruiseVelocity", 4000);
+  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Elevator/acceleration", 100);
+  private LoggedTunableNumber jerk = new LoggedTunableNumber("Elevator/jerk", 4000);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
@@ -45,9 +44,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private StatusSignal<Current> torqueCurrent;
   private StatusSignal<Temperature> tempCelsius;
   private double reduction;
-  // private CANcoder cancoder;
-  // private final StatusSignal<Angle> cancoderPosition;
-  // private final StatusSignal<Angle> cancoderAbsPosition;
 
   public ElevatorIOTalonFX(
       int canID,
@@ -57,22 +53,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
       boolean brake,
       double reduction) {
     leader = new TalonFX(canID, canBus);
-    // cancoder = new CANcoder(cancoderCanID, cancoderCanBus);
-
-    // var mag = new MagnetSensorConfigs();
-    // mag.MagnetOffset = elevatorMagOffset;
-
-    // var cancoderConfig = new CANcoderConfiguration();
-    // cancoderConfig.withMagnetSensor(mag);
-    // cancoder.getConfigurator().apply(cancoderConfig);
-
-    // talonFXConfig.Feedback.FeedbackRemoteSensorID = cancoderCanID;
-    // talonFXConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    // talonFXConfig.Feedback.RotorToSensorRatio = elevatorMagOffset;
-
-    // cancoderPosition = cancoder.getPosition();
-    // cancoderAbsPosition = cancoder.getAbsolutePosition();
-
     talonFXConfig.MotorOutput.Inverted =
         invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
     talonFXConfig.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
@@ -102,12 +82,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     this.reduction = reduction;
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius
-        // cancoderPosition,
-        // cancoderAbsPosition
-        );
+        50.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
     leader.optimizeBusUtilization(0, 1);
-    // cancoder.optimizeBusUtilization(0, 1);
   }
 
   @Override
