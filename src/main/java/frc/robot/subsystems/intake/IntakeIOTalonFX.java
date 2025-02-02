@@ -78,4 +78,8 @@ public class IntakeIOTalonFX implements IntakeIO {
     inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
     inputs.tempCelsius = tempCelsius.getValueAsDouble();
   }
+
+  public void setNeutralMode(NeutralModeValue mode) {
+    talon.setNeutralMode(mode);
+  }
 }
