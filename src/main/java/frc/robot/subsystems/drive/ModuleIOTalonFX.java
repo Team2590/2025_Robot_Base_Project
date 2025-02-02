@@ -42,7 +42,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.RobotContainer;
 import frc.robot.generated.TunerConstantsWrapper;
-import frc.robot.util.TalonFXUtil;
+import frc.robot.util.StickyFaultUtil;
 
 import java.util.Queue;
 
@@ -112,9 +112,9 @@ public class ModuleIOTalonFX implements ModuleIO {
     turnTalon =
         new TalonFX(constants.SteerMotorId, constantsWrapper.DrivetrainConstants.CANBusName);
     cancoder = new CANcoder(constants.EncoderId, constantsWrapper.DrivetrainConstants.CANBusName);
-    TalonFXUtil.clearCancoderStickyFaults(cancoder, "Drive Cancoder");
-    TalonFXUtil.clearMotorStickyFaults(turnTalon, "Turn Drive Motor");
-    TalonFXUtil.clearMotorStickyFaults(driveTalon, "Drive Motor");
+    StickyFaultUtil.clearCancoderStickyFaults(cancoder, "Drive Cancoder");
+    StickyFaultUtil.clearMotorStickyFaults(turnTalon, "Turn Drive Motor");
+    StickyFaultUtil.clearMotorStickyFaults(driveTalon, "Drive Motor");
 
 
     // Configure drive motor

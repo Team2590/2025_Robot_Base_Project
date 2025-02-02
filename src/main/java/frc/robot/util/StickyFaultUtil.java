@@ -7,7 +7,7 @@ import org.apache.commons.math3.analysis.function.Constant;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-public class TalonFXUtil {
+public class StickyFaultUtil {
 
     public static void clearCancoderStickyFaults(CANcoder cancoder, String cancoderName){
         int faulted = cancoder.getStickyFaultField().getValue();

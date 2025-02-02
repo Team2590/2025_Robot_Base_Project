@@ -18,7 +18,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
-import frc.robot.util.TalonFXUtil;
+import frc.robot.util.StickyFaultUtil;
 
 public class ArmIOTalonFX implements ArmIO {
 
@@ -46,8 +46,8 @@ public class ArmIOTalonFX implements ArmIO {
   LoggedTunableNumber enableBreak = new LoggedTunableNumber("Arm/EnableBreak", 0);
 
   public ArmIOTalonFX() {
-    TalonFXUtil.clearCancoderStickyFaults(armCancoder, "Arm Cancoder");
-    TalonFXUtil.clearMotorStickyFaults(arm, "Arm Motor");
+    StickyFaultUtil.clearCancoderStickyFaults(armCancoder, "Arm Cancoder");
+    StickyFaultUtil.clearMotorStickyFaults(arm, "Arm Motor");
     /* configurations for the arm motor */
     cfg = new TalonFXConfiguration();
     // cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
