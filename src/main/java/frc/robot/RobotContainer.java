@@ -196,7 +196,8 @@ public class RobotContainer {
 controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
 
 // Use B button to toggle endeffector motor
-controller.b().onTrue(Commands.runOnce(() -> endEffector.toggleMotor(), endEffector));
+controller.b().whileTrue(endEffector.runReverse(8));
+controller.b().whileTrue(endEffector.runReverse(3.6));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

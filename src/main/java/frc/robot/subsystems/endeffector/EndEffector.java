@@ -1,5 +1,6 @@
 package frc.robot.subsystems.endeffector;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -20,19 +21,25 @@ public class EndEffector extends SubsystemBase {
         Logger.recordOutput("EndEffector/MotorRunning", isRunning);
     }
 
-    public void runForward() {
-        io.setMotor(0.5); 
+    public Command runForward(double voltage) {
         isRunning = true;
+        return runEnd(() -> io.setVoltage(voltage), () -> {
+            io.stopMotor();
+            isRunning = false;
+        });
     }
 
-    public void runReverse() {
-        io.setMotor(-0.5);  
+    public Command runReverse(double voltage) {
         isRunning = true;
+        return runEnd(() -> io.setVoltage(-voltage), () -> {
+            io.stopMotor();
+            isRunning = false;
+        });
     }
 
-    public void stop() {
-        io.stopMotor();
+    public Command stop() {
         isRunning = false;
+        return runOnce(io::stopMotor);
     }
 
     public boolean isRunning() {
