@@ -15,17 +15,18 @@ package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstantsLarry;
@@ -35,13 +36,11 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import java.util.List;
+import frc.robot.subsystems.intake.IntakeArmIOTalonFX;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -53,8 +52,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Vision vision;
+  // private final Vision vision;
   private final Intake intake;
+  private final Elevator elevator;
+  private final EndEffector endEffector = new EndEffector();
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(2);
@@ -64,8 +65,43 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
+  private class EndEffector extends SubsystemBase {
+    private TalonFX motor = new TalonFX(2, "Takeover");
+
+    public EndEffector() {
+      motor.setNeutralMode(NeutralModeValue.Brake);
+    }
+
+    public Command intake() {
+      return runEnd(() -> motor.set(0.3), this::stop);
+    }
+
+    public Command outtake() {
+      return runEnd(() -> motor.set(-0.75), this::stop);
+    }
+
+    public void stop() {
+      motor.stopMotor();
+    }
+  }
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    intake =
+        new Intake(
+            new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
+            new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1));
+
+    elevator =
+        new Elevator(
+            new ElevatorIOTalonFX(
+                ElevatorConstantsLarry.canID,
+                ElevatorConstantsLarry.canBus,
+                ElevatorConstantsLarry.currentLimitAmps,
+                ElevatorConstantsLarry.invert,
+                ElevatorConstantsLarry.brake,
+                ElevatorConstantsLarry.reduction));
+
     switch (Constants.currentMode) {
       case KRONOS:
         // Real robot, instantiate hardware IO implementations
@@ -76,7 +112,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstantsLarry.FrontRight),
                 new ModuleIOTalonFX(TunerConstantsLarry.BackLeft),
                 new ModuleIOTalonFX(TunerConstantsLarry.BackRight));
-        vision = null;
+        // vision = null;
         // new Vision(
         //     drive::addVisionMeasurement,
         //     new VisionIOPhotonVision(
@@ -85,9 +121,27 @@ public class RobotContainer {
         //             new CameraConfig(camera1Name, robotToCamera1),
         //             new CameraConfig(camera2Name, robotToCamera2),
         //             new CameraConfig(camera3Name, robotToCamera3))));
-        intake = null;
         break;
-
+      case LARRY:
+        // Real robot, instantiate hardware IO implementations
+        drive =
+            new Drive(
+                new GyroIOPigeon2(),
+                new ModuleIOTalonFX(TunerConstantsLarry.FrontLeft),
+                new ModuleIOTalonFX(TunerConstantsLarry.FrontRight),
+                new ModuleIOTalonFX(TunerConstantsLarry.BackLeft),
+                new ModuleIOTalonFX(TunerConstantsLarry.BackRight));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOPhotonVision(
+        //             List.of(
+        //                 new CameraConfig(camera0Name, robotToCamera0),
+        //                 new CameraConfig(camera1Name, robotToCamera1),
+        //                 new CameraConfig(camera2Name, robotToCamera2),
+        //                 new CameraConfig(camera3Name, robotToCamera3))));
+        // arm = null;
+        break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
         drive =
@@ -97,17 +151,16 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
-                    List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3)),
-                    drive::getPose));
-        intake = new Intake(new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOPhotonVisionSim(
+        //             List.of(
+        //                 new CameraConfig(camera0Name, robotToCamera0),
+        //                 new CameraConfig(camera1Name, robotToCamera1),
+        //                 new CameraConfig(camera2Name, robotToCamera2),
+        //                 new CameraConfig(camera3Name, robotToCamera3)),
+        //             drive::getPose));
         break;
 
       default:
@@ -119,8 +172,7 @@ public class RobotContainer {
                 new ModuleIO() {}, // .11530, .82629
                 new ModuleIO() {},
                 new ModuleIO() {});
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        intake = null;
+        // vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
 
@@ -170,24 +222,34 @@ public class RobotContainer {
     // controller.b().whileTrue(intake.runIntake(4));
 
     // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
-    rightJoystick
-        .button(5)
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // controller
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
+    // rightJoystick
+    //     .button(5)
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
+    rightJoystick.button(1).onTrue((intake.setIntakeAlgaePosition())); // Trigger left
+    rightJoystick.button(2).onTrue(intake.setIntakeCoralPosition()); // Bottom Button
+
+    rightJoystick.button(3).whileTrue(endEffector.intake()); // Left Button
+    rightJoystick.button(4).whileTrue(endEffector.outtake()); // Right Button
+
+    leftJoystick.button(1).onTrue(elevator.setPosition(17)); // l2 - Trigger left
+    leftJoystick.button(2).onTrue(elevator.setPosition(30)); // l3 - bottom button
+    leftJoystick.button(3).onTrue(elevator.setPosition(45)); // l4 - left Button
+    leftJoystick.button(4).onTrue(elevator.setPosition(0)); // Home - Right Button
   }
 
   /**

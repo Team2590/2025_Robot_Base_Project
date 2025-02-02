@@ -15,8 +15,11 @@ package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.util.FRCPolygon;
+import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.PolygonLocator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -29,7 +32,7 @@ import java.util.List;
  */
 public final class Constants {
   public static final Mode simMode = Mode.SIM;
-  public static final Mode currentMode = RobotBase.isReal() ? Mode.KRONOS : simMode;
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.LARRY : simMode;
   public static final boolean tuningMode = true;
   public static final double loopPeriodSecs = 0.02;
 
@@ -50,22 +53,22 @@ public final class Constants {
   private static List<FRCPolygon> polygons = new ArrayList<>();
   private static Rectangle2D fieldBounds = new Rectangle2D.Double(0, 0, 15, 15);
   /*
- * 
- * The ordering of points matters. I went mad trying to debug at one point, turns out it was in a bowtie and not a square
- * Bowtie shape (incorrect rectangle):
- * 
- *     (0,2)---(2,2)
- *      / \   / \
- *     /   \ /   \
- *    (0,0)---(2,0)
- * 
- * Square shape (correct rectangle):
- * 
- *    (0,2)---(2,2)
- *     |       |
- *     |       |
- *    (0,0)---(2,0) 
- */
+   *
+   * The ordering of points matters. I went mad trying to debug at one point, turns out it was in a bowtie and not a square
+   * Bowtie shape (incorrect rectangle):
+   *
+   *     (0,2)---(2,2)
+   *      / \   / \
+   *     /   \ /   \
+   *    (0,0)---(2,0)
+   *
+   * Square shape (correct rectangle):
+   *
+   *    (0,2)---(2,2)
+   *     |       |
+   *     |       |
+   *    (0,0)---(2,0)
+   */
   public static final FRCPolygon playBox =
       new FRCPolygon(
           "playBox",
@@ -74,18 +77,56 @@ public final class Constants {
           new Translation2d(2, 2),
           new Translation2d(0, 2));
 
+  public static final boolean flipside =
+      DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+  public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
+  public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTop");
+  public static final FRCPolygon BargeBoundsBot = new FRCPolygon("BargeBot", "BargeBot");
+  // public static final FRCPolygon PresetAlgae = new FRCPolygon("PresetAlgae", "FloatingAlgae");
+  public static final FRCPolygon Processor = new FRCPolygon("Processor", "Processor");
+  public static final FRCPolygon FeederStationTop = new FRCPolygon("FeederStationTop", "Station1");
+  public static final FRCPolygon FeederStationBot = new FRCPolygon("FeederStationBot", "Station2");
+
   // Two ways to instantiate the polygons, this static initialization box is necessary
   static {
     polygons.add(playBox);
-    polygons.add(
-        new FRCPolygon(
-            "triangle",
-            new Translation2d(5, 5),
-            new Translation2d(6, 5),
-            new Translation2d(5.5, 6)));
+    polygons.add(reefBounds);
+    polygons.add(BargeBoundsTop);
+    polygons.add(BargeBoundsBot);
+    // polygons.add(PresetAlgae);
+    polygons.add(Processor);
   }
 
   public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
+  public static LoggedTunableNumber homeSetpoint =
+      new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
+  public static final String CANBUS = "Takeover";
+
+  public final class ArmConstants {
+    // Fill in
+    public static final double HOME_SETPOINT = homeSetpoint.get();
+    public static final double CLIMB_SETPOINT = .198;
+    public static final double GROUND_INTAKE_SETPOINT = 0;
+    public static final double CORAL_STATION_INTAKE_SETPOINT = -0.1;
+    public static final double REEF_1_SETPOINT = 0.01;
+    public static final double REEF_2_3_SETPOINT = 0.06;
+    public static final double REEF_4_SETPOINT = 0.15;
+    public static final double BARGE = -0.15;
+    public static final int ARM = 45;
+    public static final int ARM_CANCODER_ID = 44;
+    public static final double ARM_GEAR_RATIO = 266.67;
+    public static final double MAG_OFFSET = -.156;
+    public static final double ARM_MAX = -0.35; // -.3
+  }
+
+  public static class ElevatorConstantsLarry {
+    static int canID = 1;
+    static String canBus = "Takeover";
+    static int currentLimitAmps = 40;
+    static boolean invert = true;
+    static boolean brake = true;
+    static double reduction = 1;
+  }
 
   public static enum Mode {
     /** Running on a real robot. */
@@ -93,7 +134,7 @@ public final class Constants {
 
     KRONOS,
 
-    LEO,
+    LARRY,
 
     /** Running a physics simulator. */
     SIM,
