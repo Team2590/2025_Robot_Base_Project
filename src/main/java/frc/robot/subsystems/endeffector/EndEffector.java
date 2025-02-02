@@ -8,6 +8,8 @@ public class EndEffector extends SubsystemBase {
   private final EndEffectorIO io;
   private final EndEffectorIO.EndEffectorIOInputs inputs = new EndEffectorIO.EndEffectorIOInputs();
   private boolean isRunning = false;
+  
+  private final double CURRENT_THRESHOLD = 45.0;
 
   public EndEffector(EndEffectorIO io) {
     this.io = io;
@@ -17,9 +19,15 @@ public class EndEffector extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
 
-    // current tracking
+    // stopping
+    if (isRunning && inputs.statorCurrentAmps >= CURRENT_THRESHOLD) {
+      io.stopMotor();
+      isRunning = false;
+    }
+
     Logger.recordOutput("EndEffector/StatorCurrent", inputs.statorCurrentAmps);
     Logger.recordOutput("EndEffector/IsRunning", isRunning);
+    Logger.recordOutput("EndEffector/CurrentThreshold", CURRENT_THRESHOLD);
   }
 
   public Command runIntake() {
@@ -28,7 +36,10 @@ public class EndEffector extends SubsystemBase {
           io.setVoltage(6.0);
           isRunning = true;
         },
-        io::stopMotor);
+        () -> {
+          io.stopMotor();
+          isRunning = false;
+        });
   }
 
   public Command stopIntake() {
