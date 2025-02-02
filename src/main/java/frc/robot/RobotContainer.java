@@ -15,17 +15,20 @@ package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstantsLarry;
@@ -35,8 +38,11 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeArmIOTalonFX;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
@@ -55,6 +61,8 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final Intake intake;
+  private final Elevator elevator;
+  private final EndEffector endEffector = new EndEffector();
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(2);
@@ -64,8 +72,43 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
+  private class EndEffector extends SubsystemBase {
+    private TalonFX motor = new TalonFX(2, "Takeover");
+
+    public EndEffector() {
+      motor.setNeutralMode(NeutralModeValue.Brake);
+    }
+
+    public Command intake() {
+      return runEnd(() -> motor.set(0.5), this::stop);
+    }
+
+    public Command outtake() {
+      return runEnd(() -> motor.set(-0.75), this::stop);
+    }
+
+    public void stop() {
+      motor.stopMotor();
+    }
+  }
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    intake =
+        new Intake(
+            new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
+            new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1));
+
+    elevator =
+        new Elevator(
+            new ElevatorIOTalonFX(
+                ElevatorConstantsLarry.canID,
+                ElevatorConstantsLarry.canBus,
+                ElevatorConstantsLarry.currentLimitAmps,
+                ElevatorConstantsLarry.invert,
+                ElevatorConstantsLarry.brake,
+                ElevatorConstantsLarry.reduction));
+
     switch (Constants.currentMode) {
       case KRONOS:
         // Real robot, instantiate hardware IO implementations
@@ -85,7 +128,6 @@ public class RobotContainer {
         //             new CameraConfig(camera1Name, robotToCamera1),
         //             new CameraConfig(camera2Name, robotToCamera2),
         //             new CameraConfig(camera3Name, robotToCamera3))));
-        intake = null;
         break;
 
       case SIM:
@@ -107,7 +149,6 @@ public class RobotContainer {
                         new CameraConfig(camera2Name, robotToCamera2),
                         new CameraConfig(camera3Name, robotToCamera3)),
                     drive::getPose));
-        intake = new Intake(new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1));
         break;
 
       default:
@@ -120,7 +161,6 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        intake = null;
         break;
     }
 
@@ -188,6 +228,21 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    leftJoystick.pov(0).onTrue(elevator.setPosition(5));
+    leftJoystick.pov(90).onTrue(elevator.setPosition(17));
+    leftJoystick.pov(180).onTrue(elevator.setPosition(30));
+    leftJoystick.pov(270).onTrue(elevator.setPosition(48));
+    leftJoystick.button(5).onTrue(elevator.resetRotationCount());
+    leftJoystick.button(4).onTrue(elevator.setPosition(0));
+
+    rightJoystick.button(1).whileTrue(endEffector.intake());
+    leftJoystick.button(1).whileTrue(endEffector.outtake());
+
+    leftJoystick.button(2).whileTrue(intake.runIntake(-2));
+    rightJoystick.button(2).onTrue(intake.setIntakeCoralPosition());
+    rightJoystick.button(2).whileTrue(intake.runIntake(8));
+    rightJoystick.button(2).onFalse(intake.setIntakeAlgaePosition());
   }
 
   /**
