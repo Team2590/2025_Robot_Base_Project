@@ -1,6 +1,7 @@
 package frc.robot.subsystems.endeffector;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -8,8 +9,8 @@ public class EndEffector extends SubsystemBase {
   private final EndEffectorIO io;
   private final EndEffectorIO.EndEffectorIOInputs inputs = new EndEffectorIO.EndEffectorIOInputs();
   private boolean isRunning = false;
-  
-  private final double CURRENT_THRESHOLD = 45.0;
+
+  private final double CURRENT_THRESHOLD = 75.0;
 
   public EndEffector(EndEffectorIO io) {
     this.io = io;
@@ -21,7 +22,7 @@ public class EndEffector extends SubsystemBase {
 
     // stopping
     if (isRunning && inputs.statorCurrentAmps >= CURRENT_THRESHOLD) {
-      io.stopMotor();
+      stopIntake().schedule();
       isRunning = false;
     }
 
@@ -32,14 +33,15 @@ public class EndEffector extends SubsystemBase {
 
   public Command runIntake() {
     return runEnd(
-        () -> {
-          io.setVoltage(6.0);
-          isRunning = true;
-        },
-        () -> {
-          io.stopMotor();
-          isRunning = false;
-        });
+            () -> {
+              io.setVoltage(6.0);
+              isRunning = true;
+            },
+            () -> {
+              io.stopMotor();
+              isRunning = false;
+            })
+        .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
   }
 
   public Command stopIntake() {
