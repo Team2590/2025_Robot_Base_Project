@@ -17,32 +17,22 @@ public class EndEffector extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         
-        Logger.recordOutput("EndEffector/Current", inputs.statorCurrentAmps);
-        Logger.recordOutput("EndEffector/MotorRunning", isRunning);
+        //current tracking
+        Logger.recordOutput("EndEffector/StatorCurrent", inputs.statorCurrentAmps);
+        Logger.recordOutput("EndEffector/IsRunning", isRunning);
     }
 
-    public Command runForward(double voltage) {
-        isRunning = true;
-        return runEnd(() -> io.setVoltage(voltage), () -> {
-            io.stopMotor();
-            isRunning = false;
+    public Command runIntake() {
+        return run(() -> {
+            io.setVoltage(6.0); 
+            isRunning = true;
         });
     }
 
-    public Command runReverse(double voltage) {
-        isRunning = true;
-        return runEnd(() -> io.setVoltage(-voltage), () -> {
+    public Command stopIntake() {
+        return runOnce(() -> {
             io.stopMotor();
             isRunning = false;
         });
-    }
-
-    public Command stop() {
-        isRunning = false;
-        return runOnce(io::stopMotor);
-    }
-
-    public boolean isRunning() {
-        return isRunning;
     }
 }

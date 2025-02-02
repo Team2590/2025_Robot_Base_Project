@@ -195,9 +195,9 @@ public class RobotContainer {
 // Lock to 0° when A button is held
 controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
 
-// Use B button to toggle endeffector motor
-controller.b().whileTrue(endEffector.runReverse(8));
-controller.b().whileTrue(endEffector.runReverse(3.6));
+//endeffector motor running, button B
+    controller.b().whileTrue(endEffector.runIntake())
+                 .whileFalse(endEffector.stopIntake());
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
