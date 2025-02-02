@@ -277,8 +277,12 @@ public class RobotContainer {
     leftJoystick.button(2).whileTrue(intake.runIntake(-2));
     rightJoystick.button(2).onTrue(intake.setIntakeCoralPosition());
     rightJoystick.button(2).whileTrue(intake.runIntake(8));
-    rightJoystick.button(2).onFalse(intake.setIntakeAlgaePosition());
     rightJoystick.button(5).onTrue(intake.resetArmRotationCount());
+    rightJoystick.button(2).onFalse(intake.setPosition(0));
+    rightJoystick.button(3).onTrue(intake.setIntakeAlgaePosition());
+    rightJoystick.button(3).whileTrue(intake.runIntake(-8));
+    rightJoystick.button(3).onFalse(intake.setPosition(0));
+    rightJoystick.button(4).whileTrue(intake.runIntake(4));
     // rightJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_1_SETPOINT));
     // leftJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_2_3_SETPOINT));
     // rightJoystick.button(2).whileTrue(arm.setPosition(Constants.ArmConstants.BARGE));
