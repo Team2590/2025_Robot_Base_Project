@@ -250,6 +250,7 @@ public class RobotContainer {
     leftJoystick.button(2).onTrue(elevator.setPosition(30)); // l3 - bottom button
     leftJoystick.button(3).onTrue(elevator.setPosition(45)); // l4 - left Button
     leftJoystick.button(4).onTrue(elevator.setPosition(0)); // Home - Right Button
+    leftJoystick.button(5).onTrue(elevator.resetRotationCount()); // reset elevator encoder
   }
 
   /**
