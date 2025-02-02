@@ -55,8 +55,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-  private final EndEffector endEffector;  // Add this line
-
+  private final EndEffector endEffector = new EndEffector(new EndEffectorIOTalonFX());
   
   
   // private final Intake intake;
@@ -193,10 +192,11 @@ public class RobotContainer {
             () -> -leftJoystick.getX(),
             () -> -rightJoystick.getX()));
 
-    // Lock to 0° when A button is held
-    controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
-    // Example button binding
-controller.a().whileTrue(Commands.runOnce(EndEffectorIO.toggleMotor()));
+// Lock to 0° when A button is held
+controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
+
+// Use B button to toggle endeffector motor
+controller.b().onTrue(Commands.runOnce(() -> endEffector.toggleMotor(), endEffector));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

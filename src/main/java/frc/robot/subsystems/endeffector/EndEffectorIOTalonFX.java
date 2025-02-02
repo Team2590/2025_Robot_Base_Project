@@ -7,19 +7,19 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
     private final TalonFX motor;
 
     public EndEffectorIOTalonFX() {
-        motor = new TalonFX(2);  // Motor ID 2
+        motor = new TalonFX(2); 
         motor.setNeutralMode(NeutralModeValue.Brake);
     }
 
     @Override
     public void updateInputs(EndEffectorIOInputs inputs) {
         inputs.statorCurrentAmps = motor.getStatorCurrent().getValueAsDouble();
-        inputs.appliedVolts = motor.getMotorVoltage().getValueAsDouble();
+        inputs.motorSpeed = motor.get();
     }
 
     @Override
-    public void setMotor(double percentOutput) {
-        motor.set(percentOutput);
+    public void setMotor(double speed) {
+        motor.set(speed);
     }
 
     @Override

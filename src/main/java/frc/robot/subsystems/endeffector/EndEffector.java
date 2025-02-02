@@ -2,7 +2,6 @@ package frc.robot.subsystems.endeffector;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class EndEffector extends SubsystemBase {
     private final EndEffectorIO io;
@@ -16,29 +15,27 @@ public class EndEffector extends SubsystemBase {
     @Override
     public void periodic() {
         io.updateInputs(inputs);
-        Logger.processInputs("EndEffector", inputs);
+        
+        Logger.recordOutput("EndEffector/Current", inputs.statorCurrentAmps);
         Logger.recordOutput("EndEffector/MotorRunning", isRunning);
     }
 
-    public void runMotor() {
-        io.setMotor(0.5);
+    public void runForward() {
+        io.setMotor(0.5); 
         isRunning = true;
     }
 
-    public void stopMotor() {
+    public void runReverse() {
+        io.setMotor(-0.5);  
+        isRunning = true;
+    }
+
+    public void stop() {
         io.stopMotor();
         isRunning = false;
     }
 
-    public void toggleMotor() {
-        if (isRunning) {
-            stopMotor();
-        } else {
-            runMotor();
-        }
-    }
-
-    public double getCurrentAmps() {
-        return inputs.statorCurrentAmps;
+    public boolean isRunning() {
+        return isRunning;
     }
 }
