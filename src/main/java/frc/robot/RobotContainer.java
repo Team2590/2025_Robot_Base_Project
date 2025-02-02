@@ -34,7 +34,6 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.endeffector.EndEffector;
-import frc.robot.subsystems.endeffector.EndEffectorIO;
 import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
@@ -43,7 +42,6 @@ import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -56,8 +54,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final EndEffector endEffector = new EndEffector(new EndEffectorIOTalonFX());
-  
-  
+
   // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
 
@@ -192,12 +189,11 @@ public class RobotContainer {
             () -> -leftJoystick.getX(),
             () -> -rightJoystick.getX()));
 
-// Lock to 0° when A button is held
-controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
+    // Lock to 0° when A button is held
+    controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
 
-//endeffector motor running, button B
-    controller.b().whileTrue(endEffector.runIntake())
-                 .whileFalse(endEffector.stopIntake());
+    // endeffector motor running, button B
+    controller.b().whileTrue(endEffector.runIntake());
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
