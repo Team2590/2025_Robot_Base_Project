@@ -112,8 +112,8 @@ public class ModuleIOTalonFX implements ModuleIO {
     turnTalon =
         new TalonFX(constants.SteerMotorId, constantsWrapper.DrivetrainConstants.CANBusName);
     cancoder = new CANcoder(constants.EncoderId, constantsWrapper.DrivetrainConstants.CANBusName);
-    StickyFaultUtil.clearCancoderStickyFaults(cancoder, "Drive Cancoder");
-    StickyFaultUtil.clearMotorStickyFaults(turnTalon, "Turn Drive Motor");
+    StickyFaultUtil.clearCancoderStickyFaults(cancoder, "Drive Cancoder" + constants.DriveMotorId);
+    StickyFaultUtil.clearMotorStickyFaults(turnTalon, "Turn Drive Motor" + constants.SteerMotorId);
     StickyFaultUtil.clearMotorStickyFaults(driveTalon, "Drive Motor");
 
 
