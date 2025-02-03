@@ -1,10 +1,10 @@
 package frc.robot.subsystems.intake;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.NemesisMathUtil;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -17,6 +17,7 @@ public class Intake extends SubsystemBase {
     this.intakeIO = intakeIO;
     intakeDisconnected = new Alert("Intake motor disconnected!", Alert.AlertType.kWarning);
     intakeArm = new IntakeArm(intakeArmIO);
+    intakeIO.setNeutralMode(NeutralModeValue.Brake);
   }
 
   @Override
@@ -49,7 +50,7 @@ public class Intake extends SubsystemBase {
     }
 
     public Command setIntakeAlgaePosition() {
-      return runOnce(() -> intakeArmIO.setPosition(0));
+      return runOnce(() -> intakeArmIO.setPosition(4));
     }
 
     public Command resetRotationCount() {
@@ -61,7 +62,12 @@ public class Intake extends SubsystemBase {
     }
 
     public Command setPositionBlocking(double position) {
-      return runEnd(() -> intakeArmIO.setPosition(position), () -> intakeArmIO.setPosition(position)).until(() -> NemesisMathUtil.isApprox(intakeArmInputs.positionRads, setpointTolerance, position));
+      return runEnd(
+              () -> intakeArmIO.setPosition(position), () -> intakeArmIO.setPosition(position))
+          .until(
+              () ->
+                  NemesisMathUtil.isApprox(
+                      intakeArmInputs.positionRads, setpointTolerance, position));
     }
   }
 
@@ -85,7 +91,7 @@ public class Intake extends SubsystemBase {
   public Command setIntakeAlgaePosition() {
     return intakeArm.setIntakeAlgaePosition();
   }
-  
+
   public Command setPosition(double position) {
     return intakeArm.setPosition(position);
   }
@@ -93,7 +99,7 @@ public class Intake extends SubsystemBase {
   public Command setPositionBlocking(double position) {
     return intakeArm.setPositionBlocking(position);
   }
-  
+
   public Command resetArmRotationCount() {
     return intakeArm.resetRotationCount();
   }
