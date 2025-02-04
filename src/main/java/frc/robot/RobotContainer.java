@@ -43,6 +43,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeArmIOSim;
@@ -104,16 +105,6 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    elevator =
-        new Elevator(
-            new ElevatorIOTalonFX(
-                ElevatorConstantsLarry.canID,
-                ElevatorConstantsLarry.canBus,
-                ElevatorConstantsLarry.currentLimitAmps,
-                ElevatorConstantsLarry.invert,
-                ElevatorConstantsLarry.brake,
-                ElevatorConstantsLarry.reduction));
-
     switch (Constants.currentMode) {
       case KRONOS:
         // Real robot, instantiate hardware IO implementations
@@ -138,15 +129,18 @@ public class RobotContainer {
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
                 new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1));
-                arm = new Arm(new ArmIOTalonFX(Constants.ArmConstantsKronos.ARM_CAN_ID, 
+        arm =
+            new Arm(
+                new ArmIOTalonFX(
+                    Constants.ArmConstantsKronos.ARM_CAN_ID,
                     Constants.ArmConstantsKronos.CANBUS,
-                    Constants.ArmConstantsKronos.CURRENT_LIMIT, 
+                    Constants.ArmConstantsKronos.CURRENT_LIMIT,
                     Constants.ArmConstantsKronos.INVERT,
                     Constants.ArmConstantsKronos.BRAKE,
                     Constants.ArmConstantsKronos.REDUCTION,
                     Constants.ArmConstantsKronos.ARM_CANCODER_ID,
                     Constants.ArmConstantsKronos.MAG_OFFSET));
-        // elevator = null;
+        elevator = null;
         break;
       case LARRY:
         // Real robot, instantiate hardware IO implementations
@@ -171,14 +165,26 @@ public class RobotContainer {
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
                 new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1));
-        arm = new Arm(new ArmIOTalonFX(Constants.ArmConstantsLarry.ARM_CAN_ID, 
-        Constants.ArmConstantsLarry.CANBUS,
-        Constants.ArmConstantsLarry.CURRENT_LIMIT, 
-        Constants.ArmConstantsLarry.INVERT,
-        Constants.ArmConstantsLarry.BRAKE,
-        Constants.ArmConstantsLarry.REDUCTION,
-        Constants.ArmConstantsLarry.ARM_CANCODER_ID,
-        Constants.ArmConstantsLarry.MAG_OFFSET));
+        arm =
+            new Arm(
+                new ArmIOTalonFX(
+                    Constants.ArmConstantsLarry.ARM_CAN_ID,
+                    Constants.ArmConstantsLarry.CANBUS,
+                    Constants.ArmConstantsLarry.CURRENT_LIMIT,
+                    Constants.ArmConstantsLarry.INVERT,
+                    Constants.ArmConstantsLarry.BRAKE,
+                    Constants.ArmConstantsLarry.REDUCTION,
+                    Constants.ArmConstantsLarry.ARM_CANCODER_ID,
+                    Constants.ArmConstantsLarry.MAG_OFFSET));
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    ElevatorConstantsLarry.canID,
+                    ElevatorConstantsLarry.canBus,
+                    ElevatorConstantsLarry.currentLimitAmps,
+                    ElevatorConstantsLarry.invert,
+                    ElevatorConstantsLarry.brake,
+                    ElevatorConstantsLarry.reduction));
         break;
 
       case SIM:
@@ -206,7 +212,8 @@ public class RobotContainer {
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
                 new IntakeArmIOSim(DCMotor.getFalcon500(1), 4, .1));
         arm = new Arm(new ArmIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 1, true, 1));
-        // elevator = null;
+        elevator =
+            new Elevator(new ElevatorIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 1, false, 1));
         break;
 
       default:
@@ -233,7 +240,7 @@ public class RobotContainer {
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
                 new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1));
         arm = new Arm(null);
-        // elevator = null;
+        elevator = null;
         break;
     }
 

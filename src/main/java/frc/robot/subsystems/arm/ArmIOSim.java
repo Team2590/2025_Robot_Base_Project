@@ -4,7 +4,6 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
@@ -52,7 +51,7 @@ public class ArmIOSim implements ArmIO {
     io.connected = true;
     io.appliedVoltage = armSim.getCurrentDrawAmps();
     io.positionRads = Units.rotationsToRadians(armSim.getAngleRads());
-    io.velocityRadsPerSec =armSim.getVelocityRadPerSec();
+    io.velocityRadsPerSec = armSim.getVelocityRadPerSec();
     io.supplyCurrentAmps = armSim.getCurrentDrawAmps();
     io.tempCelsius = 30;
     if (holding) armSim.setState(requestedPositionMeters, cruiseVelocity.get());

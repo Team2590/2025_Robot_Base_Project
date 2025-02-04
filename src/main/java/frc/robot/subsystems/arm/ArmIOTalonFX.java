@@ -16,14 +16,12 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 
 public class ArmIOTalonFX implements ArmIO {
@@ -55,15 +53,14 @@ public class ArmIOTalonFX implements ArmIO {
   private StatusSignal<Temperature> tempCelsius;
 
   public ArmIOTalonFX(
-    int motorCanID,
-    String canBus,
-    int currentLimitAmps,
-    boolean invert,
-    boolean brake,
-    double reduction,
-    int cancoderID,
-    double magOffset
-    ) {
+      int motorCanID,
+      String canBus,
+      int currentLimitAmps,
+      boolean invert,
+      boolean brake,
+      double reduction,
+      int cancoderID,
+      double magOffset) {
 
     this.reduction = reduction;
     arm = new TalonFX(motorCanID, canBus);
@@ -113,11 +110,20 @@ public class ArmIOTalonFX implements ArmIO {
     tempCelsius = arm.getDeviceTemp();
     armabspos = armCancoder.getAbsolutePosition();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(50.0, armabspos, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0,
+        armabspos,
+        position,
+        velocity,
+        appliedVoltage,
+        supplyCurrent,
+        torqueCurrent,
+        tempCelsius);
   }
 
   public void updateInputs(ArmIOInputs inputs) {
-    BaseStatusSignal.refreshAll(armabspos, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
+    BaseStatusSignal.refreshAll(
+        armabspos, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
     inputs.armabspos = armabspos.getValueAsDouble();
     inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble()) / reduction;
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble()) / reduction;
