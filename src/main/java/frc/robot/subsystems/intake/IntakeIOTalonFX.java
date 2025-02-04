@@ -3,7 +3,6 @@ package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -18,7 +17,6 @@ import edu.wpi.first.units.measure.Voltage;
 public class IntakeIOTalonFX implements IntakeIO {
   private final TalonFX talon;
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
-  private final NeutralOut neutralOut = new NeutralOut();
   private final double reduction;
 
   private final StatusSignal<Angle> position;
@@ -59,7 +57,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   }
 
   public void stop() {
-    talon.setControl(neutralOut);
+    talon.setControl(voltageOut.withOutput(0));
   }
 
   public void setVoltage(double voltage) {
@@ -77,5 +75,9 @@ public class IntakeIOTalonFX implements IntakeIO {
     inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
     inputs.tempCelsius = tempCelsius.getValueAsDouble();
+  }
+
+  public void setNeutralMode(NeutralModeValue mode) {
+    talon.setNeutralMode(mode);
   }
 }

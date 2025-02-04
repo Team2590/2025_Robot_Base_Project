@@ -82,10 +82,10 @@ public final class Constants {
   public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
   public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTop");
   public static final FRCPolygon BargeBoundsBot = new FRCPolygon("BargeBot", "BargeBot");
-  //public static final FRCPolygon PresetAlgae = new FRCPolygon("PresetAlgae", "FloatingAlgae");
+  // public static final FRCPolygon PresetAlgae = new FRCPolygon("PresetAlgae", "FloatingAlgae");
   public static final FRCPolygon Processor = new FRCPolygon("Processor", "Processor");
-  public static final FRCPolygon FeederStationTop= new FRCPolygon("FeederStationTop", "Station1");
-  public static final FRCPolygon FeederStationBot = new FRCPolygon("FeederStationBot","Station2");
+  public static final FRCPolygon FeederStationTop = new FRCPolygon("FeederStationTop", "Station1");
+  public static final FRCPolygon FeederStationBot = new FRCPolygon("FeederStationBot", "Station2");
 
   // Two ways to instantiate the polygons, this static initialization box is necessary
   static {
@@ -93,7 +93,7 @@ public final class Constants {
     polygons.add(reefBounds);
     polygons.add(BargeBoundsTop);
     polygons.add(BargeBoundsBot);
-   // polygons.add(PresetAlgae);
+    // polygons.add(PresetAlgae);
     polygons.add(Processor);
   }
 

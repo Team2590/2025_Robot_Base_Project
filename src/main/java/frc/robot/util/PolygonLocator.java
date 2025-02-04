@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class PolygonLocator {
@@ -32,7 +31,6 @@ public class PolygonLocator {
     return null;
   }
 
- 
   public String getZoneOfField(Pose2d robotPose) {
     if (Constants.locator.findContainingPolygon(robotPose.getTranslation()) != null) {
       String zone = Constants.locator.findContainingPolygon(robotPose.getTranslation()).getName();

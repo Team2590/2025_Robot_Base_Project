@@ -26,15 +26,12 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.util.LoggedTunableNumber;
 
 public class TunerConstantsLarry {
 
-  private static LoggedTunableNumber steerkp = new LoggedTunableNumber("SteerkPLarry", 85);
-  private static LoggedTunableNumber drivekp = new LoggedTunableNumber("DrivekP", .1);
   private static final Slot0Configs steerGains =
       new Slot0Configs()
-          .withKP(steerkp.get())
+          .withKP(85)
           .withKI(0)
           .withKD(0.5)
           .withKS(0.1)
@@ -44,7 +41,7 @@ public class TunerConstantsLarry {
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
   private static final Slot0Configs driveGains =
-      new Slot0Configs().withKP(drivekp.get()).withKI(0).withKD(0).withKS(.11530).withKV(0.82629);
+      new Slot0Configs().withKP(.1).withKI(0).withKD(0).withKS(.11530).withKV(0.82629);
 
   // The closed-loop output type to use for the steer motors;
   // This affects the PID/FF gains for the steer motors
