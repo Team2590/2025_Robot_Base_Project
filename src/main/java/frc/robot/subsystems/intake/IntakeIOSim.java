@@ -44,6 +44,5 @@ public class IntakeIOSim implements IntakeIO {
   @Override
   public void setNeutralMode(NeutralModeValue mode) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setNeutralMode'");
   }
 }
