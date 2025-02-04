@@ -82,6 +82,14 @@ public class TunerConstantsWrapper {
         BackLeft = TunerConstantsLarry.BackLeft;
         BackRight = TunerConstantsLarry.BackRight;
         odometryFrequency = new CANBus(kCANBus.getName()).isNetworkFD() ? 250.0 : 100.0;
+        driveBaseRadius =
+            Math.max(
+                Math.max(
+                    Math.hypot(FrontLeft.LocationX, FrontLeft.LocationY),
+                    Math.hypot(FrontRight.LocationX, FrontRight.LocationY)),
+                Math.max(
+                    Math.hypot(BackLeft.LocationX, BackLeft.LocationY),
+                    Math.hypot(BackRight.LocationX, BackRight.LocationY)));
         break;
       default:
         break;

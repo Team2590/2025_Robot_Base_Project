@@ -29,8 +29,7 @@ public class ArmIOSim implements ArmIO {
       double minHeightMeters,
       double maxHeightMeters,
       boolean simulateGravity,
-      double startingHeightMeters,
-      double... measurementStdDevs) {
+      double startingHeightMeters) {
     this.gearBox = gearbox;
     this.drumRadiusMeters = drumRadiusMeters;
     this.gearing = gearing;
@@ -44,8 +43,7 @@ public class ArmIOSim implements ArmIO {
             minHeightMeters,
             maxHeightMeters,
             simulateGravity,
-            startingHeightMeters,
-            measurementStdDevs);
+            startingHeightMeters);
   }
 
   @Override
