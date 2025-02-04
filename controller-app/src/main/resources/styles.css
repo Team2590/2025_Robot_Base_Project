@@ -1,0 +1,21 @@
+.button {
+    -fx-background-color: #3182ce;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.button:hover {
+    -fx-background-color: #2675b3;
+}
+
+.button:pressed {
+    -fx-background-color: #1e5b8b;
+}
+
+.button:selected {
+    -fx-background-color: #174467;  /* Darker color when selected */
+    -fx-text-fill: #fff;             /* Ensure the text color is white */
+}
