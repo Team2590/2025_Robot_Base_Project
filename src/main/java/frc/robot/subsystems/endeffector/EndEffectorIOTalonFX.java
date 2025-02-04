@@ -13,7 +13,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
   public EndEffectorIOTalonFX() {
-    motor = new TalonFX(14, "Takeover");
+    motor = new TalonFX(2, "Takeover");
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     motor.getConfigurator().apply(talonFXConfig);
     motor.setNeutralMode(NeutralModeValue.Brake);
@@ -33,5 +33,10 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
   @Override
   public void stopMotor() {
     motor.set(0);
+  }
+
+  @Override
+  public void setVelocity(double velocity) {
+    motor.set(velocity);
   }
 }

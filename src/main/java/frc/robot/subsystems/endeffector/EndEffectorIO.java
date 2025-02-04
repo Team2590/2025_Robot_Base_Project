@@ -13,5 +13,7 @@ public interface EndEffectorIO {
 
   public default void setVoltage(double voltage) {}
 
+  public default void setVelocity(double velocity) {}
+
   public default void stopMotor() {}
 }
