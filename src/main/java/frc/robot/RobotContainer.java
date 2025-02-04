@@ -35,6 +35,7 @@ import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOSim;
+import frc.robot.subsystems.arm.ArmIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -137,7 +138,14 @@ public class RobotContainer {
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
                 new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1));
-        arm = new Arm(null);
+                arm = new Arm(new ArmIOTalonFX(Constants.ArmConstantsKronos.ARM_CAN_ID, 
+                    Constants.ArmConstantsKronos.CANBUS,
+                    Constants.ArmConstantsKronos.CURRENT_LIMIT, 
+                    Constants.ArmConstantsKronos.INVERT,
+                    Constants.ArmConstantsKronos.BRAKE,
+                    Constants.ArmConstantsKronos.REDUCTION,
+                    Constants.ArmConstantsKronos.ARM_CANCODER_ID,
+                    Constants.ArmConstantsKronos.MAG_OFFSET));
         // elevator = null;
         break;
       case LARRY:
@@ -163,7 +171,14 @@ public class RobotContainer {
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
                 new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1));
-        arm = new Arm(null);
+        arm = new Arm(new ArmIOTalonFX(Constants.ArmConstantsLarry.ARM_CAN_ID, 
+        Constants.ArmConstantsLarry.CANBUS,
+        Constants.ArmConstantsLarry.CURRENT_LIMIT, 
+        Constants.ArmConstantsLarry.INVERT,
+        Constants.ArmConstantsLarry.BRAKE,
+        Constants.ArmConstantsLarry.REDUCTION,
+        Constants.ArmConstantsLarry.ARM_CANCODER_ID,
+        Constants.ArmConstantsLarry.MAG_OFFSET));
         break;
 
       case SIM:
