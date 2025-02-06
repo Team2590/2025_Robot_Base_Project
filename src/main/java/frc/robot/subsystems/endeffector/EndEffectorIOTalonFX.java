@@ -1,42 +1,112 @@
 package frc.robot.subsystems.endeffector;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
 import frc.robot.util.LoggedTunableNumber;
 
 public class EndEffectorIOTalonFX implements EndEffectorIO {
-  private final TalonFX motor;
+  private final TalonFX leader;
   private LoggedTunableNumber voltageTunableNumber =
-      new LoggedTunableNumber("EndEffector/voltage", 0);
-  private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
+      new LoggedTunableNumber("EndEffector/voltage", 6);
+  LoggedTunableNumber MotionMagicCruiseVelocity1 =
+      new LoggedTunableNumber("Arm/MotionMagicCruiseVelocity", 1500); // 1500
+  LoggedTunableNumber MotionMagicAcceleration1 =
+      new LoggedTunableNumber("Arm/MotionMagicAcceleration", 500); // 500
+  LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", 2000);
+  LoggedTunableNumber ff = new LoggedTunableNumber("Arm/Feedforward", 0);
+  Slot0Configs slot0;
+  TalonFXConfiguration cfg;
+  MotionMagicConfigs mm;
+  MotionMagicDutyCycle mmv;
+  private double reduction;
+  private StatusSignal<Angle> position;
+  private StatusSignal<AngularVelocity> velocity;
+  private StatusSignal<Voltage> appliedVoltage;
+  private StatusSignal<Current> supplyCurrent;
+  private StatusSignal<Current> torqueCurrent;
+  private StatusSignal<Temperature> tempCelsius;
+  private double statorCurrentAmps;
 
-  public EndEffectorIOTalonFX() {
-    motor = new TalonFX(2, "Takeover");
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    motor.getConfigurator().apply(talonFXConfig);
-    motor.setNeutralMode(NeutralModeValue.Brake);
+  public EndEffectorIOTalonFX(
+    int canID,
+    String canBus,
+    int currentLimitAmps,
+    boolean invert,
+    boolean brake,
+    double reduction
+  ) {
+    leader = new TalonFX(canID, canBus);
+
+    cfg.MotorOutput.Inverted =
+        invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+    cfg.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+    cfg.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
+    cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+    mm = cfg.MotionMagic;
+    mm.MotionMagicCruiseVelocity = MotionMagicCruiseVelocity1.get();
+    mm.MotionMagicAcceleration = MotionMagicAcceleration1.get();
+    mm.MotionMagicJerk = MotionMagicJerk1.get();
+    leader.getConfigurator().apply(cfg);
+
+    position = leader.getPosition();
+    velocity = leader.getVelocity();
+    appliedVoltage = leader.getMotorVoltage();
+    supplyCurrent = leader.getSupplyCurrent();
+    torqueCurrent = leader.getTorqueCurrent();
+    tempCelsius = leader.getDeviceTemp();
+    statorCurrentAmps = leader.getStatorCurrent().getValueAsDouble();
+    this.reduction = reduction;
+
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius
+        // cancoderPosition,
+        // cancoderAbsPosition
+        );
+    leader.optimizeBusUtilization(0, 1);
   }
 
   @Override
   public void updateInputs(EndEffectorIOInputs inputs) {
-    inputs.statorCurrentAmps = motor.getStatorCurrent().getValueAsDouble();
-    inputs.motorSpeed = motor.get();
+    inputs.connected =
+        BaseStatusSignal.refreshAll(
+                position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius)
+            .isOK();
+    inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble()) / reduction;
+    inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble()) / reduction;
+    inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
+    inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
+    inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
+    inputs.tempCelsius = tempCelsius.getValueAsDouble();
+    inputs.rotationCount = leader.getPosition().getValueAsDouble();
+    statorCurrentAmps = leader.getStatorCurrent().getValueAsDouble();
   }
 
   @Override
   public void setVoltage(double voltage) {
-    motor.setVoltage(voltageTunableNumber.get());
+    leader.setVoltage(voltageTunableNumber.get());
   }
 
   @Override
   public void stopMotor() {
-    motor.set(0);
+    leader.set(0);
   }
 
   @Override
   public void setVelocity(double velocity) {
-    motor.set(velocity);
+    leader.set(velocity);
   }
 }

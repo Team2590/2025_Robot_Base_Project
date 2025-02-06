@@ -99,7 +99,14 @@ public class RobotContainer {
         //                 new CameraConfig(camera3Name, robotToCamera3))));
         // intake = null;
 
-        endEffector = new EndEffector(new EndEffectorIOTalonFX());
+        endEffector = new EndEffector(new EndEffectorIOTalonFX(
+            2,
+            "Takeover",
+            40,
+            false,
+            true,
+            1
+        ));
         break;
 
       case SIM:
@@ -184,7 +191,7 @@ public class RobotContainer {
     // controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
 
     // endeffector motor running, button B
-    controller.b().whileTrue(endEffector.runOuttake());
+    controller.b().onTrue(endEffector.runOuttake());
     controller.a().whileTrue(endEffector.runIntake());
 
     // Switch to X pattern when X button is pressed

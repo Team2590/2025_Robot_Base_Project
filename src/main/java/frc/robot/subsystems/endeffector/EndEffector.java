@@ -13,7 +13,8 @@ public class EndEffector extends SubsystemBase {
   private boolean isRunning = false;
   private LoggedTunableNumber CURRENT_THRESHOLD =
       new LoggedTunableNumber("EndEffector/CURRENT_THRESHOLD", 200);
-  private LinearFilter filter = LinearFilter.singlePoleIIR(0.1, 0.02);
+  private LinearFilter filter = LinearFilter.movingAverage(30);
+  double filtered_data;
 
   public EndEffector(EndEffectorIO io) {
     this.io = io;
@@ -22,12 +23,7 @@ public class EndEffector extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    double filtered_data = filter.calculate(inputs.statorCurrentAmps);
-    // stopping
-    if (isRunning && filtered_data >= 120 && inputs.statorCurrentAmps > filtered_data) {
-      stopIntake().schedule();
-      isRunning = false;
-    }
+    filtered_data = filter.calculate(inputs.statorCurrentAmps);
 
     Logger.recordOutput("EndEffector/StatorCurrent", inputs.statorCurrentAmps);
     Logger.recordOutput("EndEffector/IsRunning", isRunning);
@@ -45,6 +41,7 @@ public class EndEffector extends SubsystemBase {
               io.stopMotor();
               isRunning = false;
             })
+        .until(() -> filtered_data >= CURRENT_THRESHOLD.get())
         .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
   }
 
@@ -58,6 +55,7 @@ public class EndEffector extends SubsystemBase {
               io.stopMotor();
               isRunning = false;
             })
+        .until(() -> isRunning && filtered_data >= CURRENT_THRESHOLD.get())
         .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
   }
 
