@@ -27,6 +27,7 @@ public class StickyFaultUtil {
             if (cancoder.getStickyFault_UnlicensedFeatureInUse().getValue()){
                 System.out.println("Clearing Sticky Fault - Unlicensed Feature In Use on " + cancoderName);
             }
+            cancoder.clearStickyFaults();
 
         }
 
@@ -108,6 +109,9 @@ public class StickyFaultUtil {
             if (motor.getStickyFault_UsingFusedCANcoderWhileUnlicensed().getValue()){
                 System.out.println("Clearing Sticky Fault - Using Fused CANcoder While Unlicensed on " + motorName);
             }
+            motor.clearStickyFaults();
+
+
         }
     }
 }
