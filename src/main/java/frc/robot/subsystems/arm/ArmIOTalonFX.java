@@ -23,6 +23,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.StickyFaultUtil;
 
 public class ArmIOTalonFX implements ArmIO {
   private TalonFX arm;
@@ -65,6 +66,8 @@ public class ArmIOTalonFX implements ArmIO {
     this.reduction = reduction;
     arm = new TalonFX(motorCanID, canBus);
     armCancoder = new CANcoder(cancoderID, canBus);
+    StickyFaultUtil.clearCancoderStickyFaults(armCancoder, "Arm Cancoder");
+    StickyFaultUtil.clearMotorStickyFaults(arm, "Arm Motor");
     /* configurations for the arm motor */
     cfg = new TalonFXConfiguration();
     // cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
