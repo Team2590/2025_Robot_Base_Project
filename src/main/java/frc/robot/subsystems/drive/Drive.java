@@ -29,6 +29,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -263,6 +264,16 @@ public class Drive extends SubsystemBase {
     }
     kinematics.resetHeadings(headings);
     stop();
+  }
+
+  public Double distToTarget(Pose2d targetPose){
+    Transform2d diff= targetPose.minus((getPose()));
+    return Math.sqrt(Math.pow(diff.getX(), 2) + Math.pow(diff.getY(), 2));
+    
+
+
+
+
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */

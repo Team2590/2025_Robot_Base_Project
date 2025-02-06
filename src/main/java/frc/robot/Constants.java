@@ -14,10 +14,13 @@
 package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.util.FRCPolygon;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.PolygonLocator;
@@ -128,6 +131,28 @@ public final class Constants {
     static double reduction = 1;
   }
 
+
+
+    public class RobotState {
+      //init variables
+      public static Gamepiece currGamepiece=Gamepiece.NONE;
+      public static String currFieldZone="General Field";
+      public static Pose2d targetPose= new Pose2d(); //set in controller
+
+      public static String drivecontrolMode= "manual"; //manual, or auto
+      public static ArrayList<Subsystem> currentSystems=new ArrayList<>();
+      public static Gamepiece targetGamepiece= Gamepiece.ALGAE;
+
+
+
+
+    }
+
+
+
+
+  
+
   public static enum Mode {
     /** Running on a real robot. */
     COMP,
@@ -141,5 +166,13 @@ public final class Constants {
 
     /** Replaying from a log file. */
     REPLAY
+  }
+
+
+  public static enum Gamepiece{
+    CORAL,
+    ALGAE,
+    NONE
+
   }
 }
