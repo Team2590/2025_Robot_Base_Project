@@ -102,7 +102,7 @@ public final class Constants {
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
   public static final String CANBUS = "Takeover";
 
-  public final class ArmConstants {
+  public final class ArmConstantsLarry {
     // Fill in
     public static final double HOME_SETPOINT = homeSetpoint.get();
     public static final double CLIMB_SETPOINT = .198;
@@ -112,11 +112,38 @@ public final class Constants {
     public static final double REEF_2_3_SETPOINT = 0.06;
     public static final double REEF_4_SETPOINT = 0.15;
     public static final double BARGE = -0.15;
-    public static final int ARM = 45;
+    public static final int ARM_CAN_ID = 45;
     public static final int ARM_CANCODER_ID = 44;
     public static final double ARM_GEAR_RATIO = 266.67;
     public static final double MAG_OFFSET = -.156;
     public static final double ARM_MAX = -0.35; // -.3
+    public static final String CANBUS = "Takeover";
+    public static final int CURRENT_LIMIT = 40;
+    public static final boolean INVERT = true;
+    public static final boolean BRAKE = true;
+    public static final double REDUCTION = 1;
+  }
+
+  public final class ArmConstantsKronos {
+    // Fill in, these are the same as Larry. Once update, please delete this comment
+    public static final double HOME_SETPOINT = homeSetpoint.get();
+    public static final double CLIMB_SETPOINT = .198;
+    public static final double GROUND_INTAKE_SETPOINT = 0;
+    public static final double CORAL_STATION_INTAKE_SETPOINT = -0.1;
+    public static final double REEF_1_SETPOINT = 0.01;
+    public static final double REEF_2_3_SETPOINT = 0.06;
+    public static final double REEF_4_SETPOINT = 0.15;
+    public static final double BARGE = -0.15;
+    public static final int ARM_CAN_ID = 45;
+    public static final int ARM_CANCODER_ID = 44;
+    public static final double ARM_GEAR_RATIO = 266.67;
+    public static final double MAG_OFFSET = -.156;
+    public static final double ARM_MAX = -0.35; // -.3
+    public static final String CANBUS = "Takeover";
+    public static final int CURRENT_LIMIT = 40;
+    public static final boolean INVERT = true;
+    public static final boolean BRAKE = true;
+    public static final double REDUCTION = 1;
   }
 
   public static class ElevatorConstantsLarry {
