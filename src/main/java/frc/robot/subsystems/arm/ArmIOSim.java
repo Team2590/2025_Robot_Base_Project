@@ -4,17 +4,15 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 
 public class ArmIOSim implements ArmIO {
-  private ElevatorSim elevatorSim;
+  private SingleJointedArmSim armSim;
   private double drumRadiusMeters;
   private double gearing;
   private LoggedTunableNumber cruiseVelocity = new LoggedTunableNumber("Arm/cruiseVelocity", 10);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Arm/acceleration", 15);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("Arm/jerk", 20);
   private NeutralModeValue neutralMode;
   private double armabspos;
   private DCMotor gearBox;
@@ -34,8 +32,8 @@ public class ArmIOSim implements ArmIO {
     this.drumRadiusMeters = drumRadiusMeters;
     this.gearing = gearing;
 
-    elevatorSim =
-        new ElevatorSim(
+    armSim =
+        new SingleJointedArmSim(
             gearbox,
             gearing,
             carriageMassKg,
@@ -48,18 +46,15 @@ public class ArmIOSim implements ArmIO {
 
   @Override
   public void updateInputs(ArmIOInputs io) {
-    elevatorSim.update(Constants.loopPeriodSecs);
-    armabspos = Math.cos(positionToRotations(elevatorSim.getPositionMeters()));
-
-    io.armabspos = armabspos;
+    armSim.update(Constants.loopPeriodSecs);
+    io.armabspos = armSim.getAngleRads();
     io.connected = true;
-    io.velDegreesPerSecond =
-        Units.rotationsToDegrees(velocityToRotations(elevatorSim.getVelocityMetersPerSecond()));
-    io.appliedVoltage = elevatorSim.getCurrentDrawAmps();
-    io.currentAmps = elevatorSim.getCurrentDrawAmps();
-    // io.torqueCurrentAmps = elevatorSim.getCurrentDrawAmps();
-    // io.tempCelsius = 30;
-    if (holding) elevatorSim.setState(requestedPositionMeters, cruiseVelocity.get());
+    io.appliedVoltage = armSim.getCurrentDrawAmps();
+    io.positionRads = Units.rotationsToRadians(armSim.getAngleRads());
+    io.velocityRadsPerSec = armSim.getVelocityRadPerSec();
+    io.supplyCurrentAmps = armSim.getCurrentDrawAmps();
+    io.tempCelsius = 30;
+    if (holding) armSim.setState(requestedPositionMeters, cruiseVelocity.get());
   }
 
   @Override
@@ -71,15 +66,15 @@ public class ArmIOSim implements ArmIO {
 
     requestedPositionMeters = positionMeters;
 
-    elevatorSim.setState(positionMeters, 0);
+    armSim.setState(positionMeters, 0);
   }
 
   @Override
   public void stop() {
-    double currentPositionMeters = elevatorSim.getPositionMeters();
+    double currentAngleRad = armSim.getAngleRads();
 
     if (neutralMode == NeutralModeValue.Brake) {
-      elevatorSim.setState(currentPositionMeters, 0.0);
+      armSim.setState(currentAngleRad, 0.0);
     } else {
       holding = false;
     }
@@ -88,14 +83,6 @@ public class ArmIOSim implements ArmIO {
   @Override
   public void setPower(DutyCycleOut power) {
 
-    elevatorSim.setInputVoltage(power.Output);
-  }
-
-  private double positionToRotations(double positionMeters) {
-    return positionMeters / (2 * Math.PI * drumRadiusMeters / gearing);
-  }
-
-  private double velocityToRotations(double velocityMeters) {
-    return velocityMeters / (drumRadiusMeters / gearing);
+    armSim.setInputVoltage(power.Output);
   }
 }
