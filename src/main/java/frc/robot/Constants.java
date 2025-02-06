@@ -14,6 +14,9 @@
 package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.util.FRCPolygon;
@@ -21,6 +24,7 @@ import frc.robot.util.PolygonLocator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import com.pathplanner.lib.util.GeometryUtil;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -67,58 +71,30 @@ public final class Constants {
  *    (0,0)---(2,0) 
  */
 
- public static final String REEF_BLUE_POLYGON = "reefBluePolygon";
- 
- public static final FRCPolygon reefBluePolygon = 
-      new FRCPolygon(
-        REEF_BLUE_POLYGON,
-        new Translation2d(3.389, 3.324),
-        new Translation2d(4.497, 2.655),
-        new Translation2d(5.690, 3.324),
-        new Translation2d(5.690, 4.705),
-        new Translation2d(4.497, 5.332),
-        new Translation2d(3.389, 4.705));
-  
-  public static final String REEF_RED_POLYGON = "reefRedPolygon";
- 
-  public static final FRCPolygon reefRedPolygon = 
-      new FRCPolygon(
-        REEF_RED_POLYGON,
-        new Translation2d(14.224, 4.663),
-        new Translation2d(13.095, 5.332),
-        new Translation2d(11.902, 4.663),
-        new Translation2d(11.902, 3.303),
-        new Translation2d(13.095, 2.655),
-        new Translation2d(14.224, 3.303));
+  //public static final Pose2d origin = new Pose2d();
 
-  public static final String BARGE_BLUE_POLYGON = "bargeBluePolygon";
- 
-  public static final FRCPolygon bargeBluePolygon = 
-      new FRCPolygon(
-        BARGE_BLUE_POLYGON,
-        new Translation2d(8.221, 4.370),
-        new Translation2d(9.371, 4.370),
-        new Translation2d(9.371, 7.968),
-        new Translation2d(8.221, 7.968));
-  
-  public static final String BARGE_RED_POLYGON = "bargeRedPolygon";
- 
-  public static final FRCPolygon bargeRedPolygon = 
-      new FRCPolygon(
-        BARGE_RED_POLYGON,
-        new Translation2d(9.371, 3.680),
-        new Translation2d(8.221, 3.680),
-        new Translation2d(8.221, 0.032),
-        new Translation2d(9.371, 0.032));
-  // Two ways to instantiate the polygons, this static initialization box is necessary
-  static {
-    polygons.add(reefBluePolygon);
-    polygons.add(reefRedPolygon);
-    polygons.add(bargeBluePolygon);
-    polygons.add(bargeRedPolygon);
-  }
+  // ReefSide1 is the closest to the driver's station and is numbered clockwise from there
+  public static final Pose2d ReefSide1 = new Pose2d(new Translation2d(2.662,4.054), Rotation2d.fromDegrees(0));
+  public static final Pose2d ReefSide2 = new Pose2d(new Translation2d(3.5,5.585), Rotation2d.fromDegrees(302.125));
+  public static final Pose2d ReefSide3 = new Pose2d(new Translation2d(5.489,5.595), Rotation2d.fromDegrees(237.089));
+  public static final Pose2d ReefSide4 = new Pose2d(new Translation2d(6.397, 3.950), Rotation2d.fromDegrees(180));
+  public static final Pose2d ReefSide5 = new Pose2d(new Translation2d(5.438, 2.415), Rotation2d.fromDegrees(122.005));
+  public static final Pose2d ReefSide6 = new Pose2d(new Translation2d(3.520, 2.426), Rotation2d.fromDegrees(59.194));
 
-  public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
+  public static final Pose2d Barge = new Pose2d(new Translation2d(7.576,6.150), Rotation2d.fromDegrees(0));
+
+  public static final Pose2d CageShallow = new Pose2d(new Translation2d(8.023,6.146), Rotation2d.fromDegrees(0));
+
+  public static final Pose2d CageDeepLeft = new Pose2d(new Translation2d(8.023, 7.253), Rotation2d.fromDegrees(0));
+
+  public static final Pose2d CageDeepRight = new Pose2d(new Translation2d(8.023,5.059), Rotation2d.fromDegrees(0));
+
+  public static final Pose2d CoralStationRight = new Pose2d(new Translation2d(1.567,6.579), Rotation2d.fromDegrees(125.538));
+
+  public static final Pose2d CoralStationLeft = new Pose2d(new Translation2d(1.567,1.424), Rotation2d.fromDegrees(231.639));
+
+  public static final Pose2d Processor = new Pose2d(new Translation2d(10.760,7.023), Rotation2d.fromDegrees(90));
+
 
   public static enum Mode {
     /** Running on a real robot. */
