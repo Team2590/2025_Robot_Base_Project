@@ -16,6 +16,7 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -35,6 +36,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
+  private Joystick joystick;
 
   public Robot() {
     // Record metadata
@@ -59,7 +61,7 @@ public class Robot extends LoggedRobot {
     switch (Constants.currentMode) {
       case KRONOS:
         // Running on a real robot, log to a USB stick ("/U/logs")
-        //Logger.addDataReceiver(new WPILOGWriter());
+        // Logger.addDataReceiver(new WPILOGWriter());
         Logger.addDataReceiver(new NT4Publisher());
         break;
       case LARRY:
@@ -157,11 +159,22 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+
+    joystick = new Joystick(0);
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    if (joystick.getRawButton(1)) {
+      System.out.println(
+          "Zone of field (west): " + Constants.locator.getZoneOfField(Constants.ReefSideWest));
+    }
+    if (joystick.getRawButton(2)) {
+      System.out.println(
+          "Zone of field (east): " + Constants.locator.getZoneOfField(Constants.ReefSideEast));
+    }
+  }
 
   /** This function is called once when test mode is enabled. */
   @Override

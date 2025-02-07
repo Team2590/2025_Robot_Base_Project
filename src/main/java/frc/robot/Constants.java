@@ -14,6 +14,8 @@
 package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -98,6 +100,11 @@ public final class Constants {
   }
 
   public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
+
+  public static final Pose2d ReefSideWest =
+      new Pose2d(new Translation2d(2.662, 4.054), Rotation2d.fromDegrees(0));
+  public static final Pose2d ReefSideEast =
+      new Pose2d(new Translation2d(6.397, 3.950), Rotation2d.fromDegrees(180));
   public static LoggedTunableNumber homeSetpoint =
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
   public static final String CANBUS = "Takeover";
