@@ -91,7 +91,7 @@ public class TunerConstantsWrapper {
                     Math.hypot(BackLeft.LocationX, BackLeft.LocationY),
                     Math.hypot(BackRight.LocationX, BackRight.LocationY)));
         odometryFrequency = new CANBus(kCANBus.getName()).isNetworkFD() ? 250.0 : 100.0;
-        pigeonCanbusName = new CANBus("rio");
+        pigeonCanbusName = new CANBus("Takeover");
         break;
       case SIM:
         kCANBus = TunerConstantsLarry.kCANBus;

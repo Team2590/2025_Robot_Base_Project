@@ -119,11 +119,11 @@ public class RobotContainer {
       case LOKI:
         drive =
             new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(constantsWrapper.FrontLeft, constantsWrapper),
-                new ModuleIOSim(constantsWrapper.FrontRight, constantsWrapper),
-                new ModuleIOSim(constantsWrapper.BackLeft, constantsWrapper),
-                new ModuleIOSim(constantsWrapper.BackRight, constantsWrapper),
+                new GyroIOPigeon2() {},
+                new ModuleIOTalonFX(constantsWrapper.FrontLeft, constantsWrapper),
+                new ModuleIOTalonFX(constantsWrapper.FrontRight, constantsWrapper),
+                new ModuleIOTalonFX(constantsWrapper.BackLeft, constantsWrapper),
+                new ModuleIOTalonFX(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
         break;
       case SIM:
