@@ -300,14 +300,14 @@ public class RobotContainer {
             () -> -leftJoystick.getX(),
             () -> -rightJoystick.getX()));
 
-    // // Lock to 0° when A button is held
-    // controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
+    // Lock to 0° when A button is held
+    controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
 
-    // // Switch to X pattern when X button is pressed
-    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    // // controller.b().whileTrue(intake.runIntake(4));
+    // Switch to X pattern when X button is pressed
+    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    controller.b().whileTrue(intake.runIntake(4));
 
-    // // Reset gyro to 0° when B button is pressed
+    // Reset gyro to 0° when B button is pressed
     controller
         .b()
         .onTrue(
