@@ -34,8 +34,12 @@ public class Arm extends SubsystemBase {
     return runOnce(() -> arm.setPower(request));
   }
 
-  /** Stops the flywheel. */
   public Command stop() {
     return runOnce(arm::stop);
+  }
+
+  /** Returns the current velocity in radians per second. */
+  public double getCharacterizationVelocity() {
+    return inputs.velocityRadsPerSec;
   }
 }
