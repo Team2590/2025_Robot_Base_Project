@@ -43,7 +43,6 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.robot.RobotContainer;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.util.StickyFaultUtil;
-
 import java.util.Queue;
 
 /**
@@ -116,7 +115,6 @@ public class ModuleIOTalonFX implements ModuleIO {
     StickyFaultUtil.clearMotorStickyFaults(turnTalon, "Turn Drive Motor " + constants.SteerMotorId);
     StickyFaultUtil.clearMotorStickyFaults(driveTalon, "Drive Motor " + constants.DriveMotorId);
 
-
     // Configure drive motor
     var driveConfig = constants.DriveMotorInitialConfigs;
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -143,6 +141,8 @@ public class ModuleIOTalonFX implements ModuleIO {
           case RemoteCANcoder -> FeedbackSensorSourceValue.RemoteCANcoder;
           case FusedCANcoder -> FeedbackSensorSourceValue.FusedCANcoder;
           case SyncCANcoder -> FeedbackSensorSourceValue.SyncCANcoder;
+          default -> throw new IllegalStateException(
+              "Unexpected value: " + constants.FeedbackSource);
         };
     turnConfig.Feedback.RotorToSensorRatio = constants.SteerMotorGearRatio;
     turnConfig.MotionMagic.MotionMagicCruiseVelocity = 100.0 / constants.SteerMotorGearRatio;
