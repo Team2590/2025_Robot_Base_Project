@@ -18,6 +18,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.StickyFaultUtil;
 
 /**
  * @author Dhruv Shah, copied a bit from Vidur's 2024 code ngl
@@ -58,6 +59,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     talonFXConfig.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     talonFXConfig.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
     talonFXConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    StickyFaultUtil.clearMotorStickyFaults(leader, "Elevator Motor");
 
     slot0Configs.kS = kS.get();
     slot0Configs.kV = kV.get();
