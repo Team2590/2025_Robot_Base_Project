@@ -122,6 +122,7 @@ public final class Constants {
     public static final boolean INVERT = true;
     public static final boolean BRAKE = true;
     public static final double REDUCTION = 1;
+    public static final double SENSOR_REDUCTION = 1;
   }
 
   public final class ArmConstantsKronos {
@@ -144,6 +145,7 @@ public final class Constants {
     public static final boolean INVERT = true;
     public static final boolean BRAKE = true;
     public static final double REDUCTION = 1;
+    public static final double SENSOR_REDUCTION = 1;
   }
 
   public static class ElevatorConstantsLarry {
