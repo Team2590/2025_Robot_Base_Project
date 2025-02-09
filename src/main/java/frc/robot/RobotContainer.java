@@ -267,11 +267,14 @@ public class RobotContainer {
         "Elevator FF Characterization",
         new FeedForwardCharacterization(
             elevator, elevator::setVoltage, elevator::getCharacterizationVelocity));
-
     autoChooser.addOption(
         "Arm FF Characterization",
         new FeedForwardCharacterization(
             arm, arm::setVoltage, arm::getCharacterizationVelocity));
+    autoChooser.addOption(
+        "Intake FF Characterization",
+        new FeedForwardCharacterization(
+            intake, intake::setVoltage, intake::getCharacterizationVelocity));
 
     // Configure the button bindings
     configureButtonBindings();
