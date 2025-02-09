@@ -176,15 +176,15 @@ public class RobotContainer {
                     Constants.ArmConstantsLarry.REDUCTION,
                     Constants.ArmConstantsLarry.ARM_CANCODER_ID,
                     Constants.ArmConstantsLarry.MAG_OFFSET));
-            elevator =
-              new Elevator(
-                  new ElevatorIOTalonFX(
-                      ElevatorConstantsLarry.canID,
-                      ElevatorConstantsLarry.canBus,
-                      ElevatorConstantsLarry.currentLimitAmps,
-                      ElevatorConstantsLarry.invert,
-                      ElevatorConstantsLarry.brake,
-                      ElevatorConstantsLarry.reduction));
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    ElevatorConstantsLarry.canID,
+                    ElevatorConstantsLarry.canBus,
+                    ElevatorConstantsLarry.currentLimitAmps,
+                    ElevatorConstantsLarry.invert,
+                    ElevatorConstantsLarry.brake,
+                    ElevatorConstantsLarry.reduction));
         break;
       case LOKI:
         drive =
@@ -276,10 +276,10 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    autoChooser.addOption(
-        "Flywheel FF Characterization",
-        new FeedForwardCharacterization(
-            elevator, elevator::setVoltage, elevator::getCharacterizationVelocity));
+    // autoChooser.addOption(
+    //     "Flywheel FF Characterization",
+    //     new FeedForwardCharacterization(
+    //         elevator, elevator::setVoltage, elevator::getCharacterizationVelocity));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -305,7 +305,7 @@ public class RobotContainer {
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    controller.b().whileTrue(intake.runIntake(4));
+    // controller.b().whileTrue(intake.runIntake(4));
 
     // Reset gyro to 0° when B button is pressed
     controller
@@ -326,6 +326,8 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+   /**  the following button binds work on Larry:
     leftJoystick.pov(0).onTrue(elevator.setPosition(5));
     leftJoystick.pov(90).onTrue(elevator.setPosition(17));
     leftJoystick.pov(180).onTrue(elevator.setPosition(30));
@@ -343,6 +345,10 @@ public class RobotContainer {
     rightJoystick.button(3).whileTrue(intake.runIntake(-8));
     rightJoystick.button(3).onFalse(intake.setPosition(0));
     rightJoystick.button(4).whileTrue(intake.runIntake(4));
+    */
+
+
+
     // rightJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_1_SETPOINT));
     // leftJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_2_3_SETPOINT));
     // rightJoystick.button(2).whileTrue(arm.setPosition(Constants.ArmConstants.BARGE));
