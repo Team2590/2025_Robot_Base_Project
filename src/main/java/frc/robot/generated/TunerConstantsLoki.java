@@ -150,7 +150,7 @@ public class TunerConstantsLoki {
   private static final int kFrontRightDriveMotorId = 13;
   private static final int kFrontRightSteerMotorId = 11;
   private static final int kFrontRightEncoderId = 12;
-  private static final Angle kFrontRightEncoderOffset = Rotations.of(0.269311328125);
+  private static final Angle kFrontRightEncoderOffset = Rotations.of(.782); // .782, 0.269311328125
   private static final boolean kFrontRightSteerMotorInverted = true;
   private static final boolean kFrontRightEncoderInverted = false;
 
@@ -203,7 +203,7 @@ public class TunerConstantsLoki {
               kFrontRightEncoderOffset,
               kFrontRightXPos,
               kFrontRightYPos,
-              false,
+              true,
               kFrontRightSteerMotorInverted,
               kFrontRightEncoderInverted);
   public static final SwerveModuleConstants<
