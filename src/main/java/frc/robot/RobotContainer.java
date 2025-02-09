@@ -326,7 +326,19 @@ public class RobotContainer {
     //////////////////////////////////////////////////////
     /// Examples of using commands from command factories.
     //////////////////////////////////////////////////////
-    //controller.a().whileTrue(DriveFactory.driveToPose(this, new Pose2d()));
+    /// 
+    /// 
+    // example of how we might change some of the above to using the elevator factory
+    //leftJoystick.pov(0).onTrue(ElevatorFactory.setPosition(this, 5));
+    //leftJoystick.pov(90).onTrue(ElevatorFactory.setPosition(this, 17));
+    //leftJoystick.pov(180).onTrue(ElevatorFactory.setPosition(this, 30));
+    //leftJoystick.pov(270).onTrue(ElevatorFactory.setPosition(this, 48));
+    //leftJoystick.button(5).onTrue(ElevatorFactory.resetRotationCount(this));
+    //leftJoystick.button(4).onTrue(ElevatorFactory.setPosition(this, 0));
+    //leftJoystick.button(1).whileTrue(endEffector.intake());
+
+    // Example of going to a specific pose using a command 
+    //leftJoystick.butotn(2).onTrue(DriveFactory.driveToPose(this, new Pose2d()));
 
     // Example of intake commands using controller buttons and factory pattern
     //leftJoystick.button(1).whileTrue(IntakeFactory.runIntake(this, () -> 8));
@@ -361,12 +373,15 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    leftJoystick.pov(0).onTrue(ElevatorFactory.setPosition(this, 5));
-    leftJoystick.pov(90).onTrue(ElevatorFactory.setPosition(this, 17));
-    leftJoystick.pov(180).onTrue(ElevatorFactory.setPosition(this, 30));
-    leftJoystick.pov(270).onTrue(ElevatorFactory.setPosition(this, 48));
-    leftJoystick.button(5).onTrue(ElevatorFactory.resetRotationCount(this));
-    leftJoystick.button(4).onTrue(ElevatorFactory.setPosition(this, 0));
+
+                leftJoystick.pov(0).onTrue(elevator.setPosition(5));
+                leftJoystick.pov(90).onTrue(elevator.setPosition(17));
+                leftJoystick.pov(180).onTrue(elevator.setPosition(30));
+                leftJoystick.pov(270).onTrue(elevator.setPosition(48));
+                leftJoystick.button(5).onTrue(elevator.resetRotationCount());
+                leftJoystick.button(4).onTrue(elevator.setPosition(0));
+                rightJoystick.button(1).whileTrue(endEffector.intake());
+
     leftJoystick.button(1).whileTrue(endEffector.intake());
     leftJoystick.button(1).whileTrue(endEffector.outtake());
     leftJoystick.button(2).whileTrue(intake.runIntake(-2));
