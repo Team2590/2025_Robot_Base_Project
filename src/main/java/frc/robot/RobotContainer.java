@@ -304,8 +304,16 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Default drive command
-    drive.setDefaultCommand(DriveFactory.joystickDrive(this));
+    // Default command, normal field-relative drive
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -leftJoystick.getY(),
+            () -> -leftJoystick.getX(),
+            () -> -rightJoystick.getX()));
+
+    // Default drive command using new factory method, replacement for above ^^.
+    //drive.setDefaultCommand(DriveFactory.joystickDrive(this));
 
     // Drive commands
     controller.a().whileTrue(DriveFactory.driveToPose(this, new Pose2d()));
@@ -318,15 +326,15 @@ public class RobotContainer {
     // controller.b().whileTrue(intake.runIntake(4));
 
     // Example of intake commands using controller buttons and factory pattern
-    leftJoystick.button(1).whileTrue(IntakeFactory.runIntake(this, () -> 8));
-    leftJoystick.button(2).whileTrue(IntakeFactory.runIntake(this, () -> -8));
-    leftJoystick.button(3).onTrue(IntakeFactory.setIntakeCoralPosition(this));
-    leftJoystick.button(4).onTrue(IntakeFactory.setIntakeAlgaePosition(this));
+    //leftJoystick.button(1).whileTrue(IntakeFactory.runIntake(this, () -> 8));
+    //leftJoystick.button(2).whileTrue(IntakeFactory.runIntake(this, () -> -8));
+    //leftJoystick.button(3).onTrue(IntakeFactory.setIntakeCoralPosition(this));
+    //leftJoystick.button(4).onTrue(IntakeFactory.setIntakeAlgaePosition(this));
 
     // Example of scoring commands using controller buttons
-    leftJoystick.button(6).onTrue(ScoringFactory.scoreHigh(this));
-    leftJoystick.button(7).onTrue(ScoringFactory.scoreMid(this));
-    leftJoystick.button(8).onTrue(ScoringFactory.stow(this));
+    //leftJoystick.button(6).onTrue(ScoringFactory.scoreHigh(this));
+    //leftJoystick.button(7).onTrue(ScoringFactory.scoreMid(this));
+    //leftJoystick.button(8).onTrue(ScoringFactory.stow(this));
 
     // Reset gyro to 0° when B button is pressed
     controller
@@ -351,7 +359,6 @@ public class RobotContainer {
     leftJoystick.pov(90).onTrue(ElevatorFactory.setPosition(this, 17));
     leftJoystick.pov(180).onTrue(ElevatorFactory.setPosition(this, 30));
     leftJoystick.pov(270).onTrue(ElevatorFactory.setPosition(this, 48));
-    /*temporary removal
     leftJoystick.button(5).onTrue(ElevatorFactory.resetRotationCount(this));
     leftJoystick.button(4).onTrue(ElevatorFactory.setPosition(this, 0));
     leftJoystick.button(1).whileTrue(endEffector.intake());
@@ -359,7 +366,6 @@ public class RobotContainer {
     leftJoystick.button(2).whileTrue(intake.runIntake(-2));
     rightJoystick.button(2).onFalse(intake.setPosition(0));
     rightJoystick.button(4).whileTrue(intake.runIntake(4));
-    */
     // rightJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_1_SETPOINT));
     // leftJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_2_3_SETPOINT));
     // rightJoystick.button(2).whileTrue(arm.setPosition(Constants.ArmConstants.BARGE));
