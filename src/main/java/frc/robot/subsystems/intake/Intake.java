@@ -11,6 +11,7 @@ public class Intake extends SubsystemBase {
   private final IntakeIO intakeIO;
   private final IntakeArmIO intakeArmIO;
   private final IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
+  private final IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
   private final Alert intakeDisconnected;
   private final IntakeArm intakeArm;
 
@@ -108,5 +109,10 @@ public class Intake extends SubsystemBase {
 
   public void setVoltage(double volts){
     intakeArmIO.setVoltage(volts);
+  }
+
+  /** Returns the current velocity in radians per second. */
+  public double getCharacterizationVelocity() {
+    return intakeArmInputs.velocityRadsPerSec;
   }
 }

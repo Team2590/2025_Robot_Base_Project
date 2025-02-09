@@ -264,9 +264,17 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     autoChooser.addOption(
-        "Flywheel FF Characterization",
+        "Elevator FF Characterization",
         new FeedForwardCharacterization(
             elevator, elevator::setVoltage, elevator::getCharacterizationVelocity));
+    autoChooser.addOption(
+        "Arm FF Characterization",
+        new FeedForwardCharacterization(
+            arm, arm::setVoltage, arm::getCharacterizationVelocity));
+    autoChooser.addOption(
+        "Intake FF Characterization",
+        new FeedForwardCharacterization(
+            intake, intake::setVoltage, intake::getCharacterizationVelocity));
 
     // Configure the button bindings
     configureButtonBindings();
