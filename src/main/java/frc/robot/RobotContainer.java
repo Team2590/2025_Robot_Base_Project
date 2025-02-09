@@ -315,15 +315,18 @@ public class RobotContainer {
     // Default drive command using new factory method, replacement for above ^^.
     //drive.setDefaultCommand(DriveFactory.joystickDrive(this));
 
-    // Drive commands
-    controller.a().whileTrue(DriveFactory.driveToPose(this, new Pose2d()));
-
     // Lock to 0° when A button is held
     controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
     // controller.b().whileTrue(intake.runIntake(4));
+
+
+    //////////////////////////////////////////////////////
+    /// Examples of using commands from command factories.
+    //////////////////////////////////////////////////////
+    //controller.a().whileTrue(DriveFactory.driveToPose(this, new Pose2d()));
 
     // Example of intake commands using controller buttons and factory pattern
     //leftJoystick.button(1).whileTrue(IntakeFactory.runIntake(this, () -> 8));
@@ -335,6 +338,9 @@ public class RobotContainer {
     //leftJoystick.button(6).onTrue(ScoringFactory.scoreHigh(this));
     //leftJoystick.button(7).onTrue(ScoringFactory.scoreMid(this));
     //leftJoystick.button(8).onTrue(ScoringFactory.stow(this));
+    //////////////////////////////////////////////////////
+    /// End of examples using command factories
+    //////////////////////////////////////////////////////
 
     // Reset gyro to 0° when B button is pressed
     controller
