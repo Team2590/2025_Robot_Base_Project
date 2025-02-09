@@ -42,4 +42,8 @@ public class Arm extends SubsystemBase {
   public double getCharacterizationVelocity() {
     return inputs.velocityRadsPerSec;
   }
+
+  public void setVoltage(double volts){
+    arm.setVoltage(volts);
+  }
 }
