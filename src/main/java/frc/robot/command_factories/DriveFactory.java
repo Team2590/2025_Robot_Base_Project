@@ -13,6 +13,7 @@ import frc.robot.commands.DriveCommands;
 public class DriveFactory {
   /**
    * Creates a command for joystick-controlled driving.
+   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @return Command for joystick driving
@@ -28,6 +29,7 @@ public class DriveFactory {
 
   /**
    * Creates a command to drive to a specific pose.
+   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @param targetPose The target pose to drive to

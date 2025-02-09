@@ -19,11 +19,19 @@ public class Arm extends SubsystemBase {
     arm.updateTunableNumbers();
     arm.updateInputs(inputs);
     Logger.processInputs("Arm", inputs);
+
+    // Log current position and target position
+    Logger.recordOutput("Arm/CurrentPosition", inputs.positionRads);
+    Logger.recordOutput("Arm/TargetPosition", arm.getSetpoint());
   }
 
   /** Run open loop at the specified voltage. */
   public Command setPosition(double setpoint) {
     return runOnce(() -> arm.setPosition(setpoint));
+  }
+
+  public double getSetpoint() {
+    return arm.getSetpoint();
   }
 
   public Command resetarm() {

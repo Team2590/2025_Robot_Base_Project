@@ -6,6 +6,7 @@ import java.util.function.DoubleSupplier;
 
 /**
  * Factory class for creating commands related to the intake subsystem.
+   * NOTE: this may be a nonsense method.  Replace with what makes sense.
  *
  * <p>This class provides methods to create commands for controlling the intake mechanism.
  */
@@ -23,6 +24,7 @@ public class IntakeFactory {
 
   /**
    * Creates a command to set the intake to the coral position.
+   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @return Command to set intake to coral position
@@ -33,6 +35,7 @@ public class IntakeFactory {
 
   /**
    * Creates a command to set the intake to the algae position.
+   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @return Command to set intake to algae position

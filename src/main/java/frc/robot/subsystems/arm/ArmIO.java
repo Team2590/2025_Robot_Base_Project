@@ -38,6 +38,8 @@ public interface ArmIO {
 
   public void setPosition(double setpoint);
 
+  public double getSetpoint();
+
   public void setPower(DutyCycleOut power);
 
   public void stop();

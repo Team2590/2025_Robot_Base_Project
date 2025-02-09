@@ -12,6 +12,7 @@ import frc.robot.RobotContainer;
 public class ElevatorFactory {
   /**
    * Creates a command to move the elevator to a specific position.
+   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @param position The target position in rotation counts
@@ -24,6 +25,7 @@ public class ElevatorFactory {
   /**
    * Creates a command to move the elevator to a specific position and wait until it reaches the
    * target.
+   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @param position The target position in rotation counts
@@ -38,6 +40,7 @@ public class ElevatorFactory {
 
   /**
    * Creates a command to reset the elevator's rotation count.
+   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @return Command to reset rotation count
@@ -48,6 +51,7 @@ public class ElevatorFactory {
 
   /**
    * Creates a command to set the elevator's neutral mode.
+   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @param mode The neutral mode to set
@@ -59,6 +63,7 @@ public class ElevatorFactory {
 
   /**
    * Creates a command to raise the elevator by one rotation count.
+   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @return Command to raise elevator
@@ -69,6 +74,7 @@ public class ElevatorFactory {
 
   /**
    * Creates a command to lower the elevator by one rotation count.
+   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @return Command to lower elevator

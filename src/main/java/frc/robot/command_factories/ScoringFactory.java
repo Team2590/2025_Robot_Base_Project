@@ -14,6 +14,7 @@ import frc.robot.RobotContainer;
 public class ScoringFactory {
   /**
    * Creates a command sequence for scoring at a high position.
+   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @return Command sequence for high scoring
@@ -33,6 +34,7 @@ public class ScoringFactory {
 
   /**
    * Creates a command sequence for scoring at a mid position.
+   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @return Command sequence for mid scoring
@@ -52,6 +54,7 @@ public class ScoringFactory {
 
   /**
    * Creates a command to prepare for scoring by moving both elevator and arm simultaneously.
+   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @param elevatorPosition Target elevator position
@@ -68,6 +71,7 @@ public class ScoringFactory {
 
   /**
    * Creates a command to stow the scoring mechanism.
+   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @return Command sequence for stowing

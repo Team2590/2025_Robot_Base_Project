@@ -168,6 +168,11 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   }
 
   @Override
+  public double getTargetPosition() {
+    return leader.getPosition().getValueAsDouble();
+  }
+
+  @Override
   public void stop() {
     leader.stopMotor();
   }

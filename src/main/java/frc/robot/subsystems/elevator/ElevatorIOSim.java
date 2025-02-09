@@ -76,6 +76,11 @@ public class ElevatorIOSim implements ElevatorIO {
   }
 
   @Override
+  public double getTargetPosition() {
+    return requestedPositionMeters;
+  }
+
+  @Override
   public void stop() {
     double currentPositionMeters = elevatorSim.getPositionMeters();
 

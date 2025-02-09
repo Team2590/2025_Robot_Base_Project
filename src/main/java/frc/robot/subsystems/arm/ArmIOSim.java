@@ -69,6 +69,10 @@ public class ArmIOSim implements ArmIO {
     armSim.setState(positionMeters, 0);
   }
 
+  public double getSetpoint() {
+    return requestedPositionMeters;
+  }
+
   @Override
   public void stop() {
     double currentAngleRad = armSim.getAngleRads();
