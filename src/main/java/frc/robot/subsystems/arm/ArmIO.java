@@ -41,4 +41,6 @@ public interface ArmIO {
   public void setPower(DutyCycleOut power);
 
   public void stop();
+
+  public default void setVoltage(double volts) {}
 }
