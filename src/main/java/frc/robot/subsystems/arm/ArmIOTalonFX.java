@@ -10,6 +10,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -196,5 +197,10 @@ public class ArmIOTalonFX implements ArmIO {
 
   public void setPower(DutyCycleOut power) {
     arm.setControl(power);
+  }
+
+  @Override
+  public void setVoltage(double volts) {
+    arm.setControl(new VoltageOut(volts));
   }
 }
