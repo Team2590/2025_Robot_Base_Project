@@ -30,6 +30,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
+import frc.robot.command_factories.DriveFactory;
+import frc.robot.command_factories.ElevatorFactory;
+import frc.robot.command_factories.IntakeFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
@@ -66,6 +69,27 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+
+  public Drive getDrive() {
+    return drive;
+  }
+
+  public Elevator getElevator() {
+    return elevator;
+  }
+
+  public Intake getIntake() {
+    return intake;
+  }
+
+  public CommandJoystick getLeftJoystick() {
+    return leftJoystick;
+  }
+
+  public CommandJoystick getRightJoystick() {
+    return rightJoystick;
+  }
+
   private final Vision vision;
   private final Arm arm;
   private final Elevator elevator;
@@ -279,13 +303,17 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -leftJoystick.getY(),
-            () -> -leftJoystick.getX(),
-            () -> -rightJoystick.getX()));
+    // Default drive command
+    drive.setDefaultCommand(DriveFactory.joystickDrive(this));
+
+    // Intake commands
+    rightJoystick.button(2).whileTrue(IntakeFactory.runIntake(this, () -> 8));
+    rightJoystick.button(3).whileTrue(IntakeFactory.runIntake(this, () -> -8));
+    rightJoystick.button(2).onTrue(IntakeFactory.setIntakeCoralPosition(this));
+    rightJoystick.button(3).onTrue(IntakeFactory.setIntakeAlgaePosition(this));
+
+    // Drive commands
+    controller.a().whileTrue(DriveFactory.driveToPose(this, new Pose2d()));
 
     // Lock to 0° when A button is held
     controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
@@ -294,7 +322,7 @@ public class RobotContainer {
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
     // controller.b().whileTrue(intake.runIntake(4));
 
-    // Reset gyro to 0° when B button is pressed
+    // Reset gyro to 0° when B button is pressed
     controller
         .b()
         .onTrue(
@@ -313,22 +341,16 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    leftJoystick.pov(0).onTrue(elevator.setPosition(5));
-    leftJoystick.pov(90).onTrue(elevator.setPosition(17));
-    leftJoystick.pov(180).onTrue(elevator.setPosition(30));
-    leftJoystick.pov(270).onTrue(elevator.setPosition(48));
-    leftJoystick.button(5).onTrue(elevator.resetRotationCount());
-    leftJoystick.button(4).onTrue(elevator.setPosition(0));
-    rightJoystick.button(1).whileTrue(endEffector.intake());
+    leftJoystick.pov(0).onTrue(ElevatorFactory.setPosition(this, 5));
+    leftJoystick.pov(90).onTrue(ElevatorFactory.setPosition(this, 17));
+    leftJoystick.pov(180).onTrue(ElevatorFactory.setPosition(this, 30));
+    leftJoystick.pov(270).onTrue(ElevatorFactory.setPosition(this, 48));
+    leftJoystick.button(5).onTrue(ElevatorFactory.resetRotationCount(this));
+    leftJoystick.button(4).onTrue(ElevatorFactory.setPosition(this, 0));
+    leftJoystick.button(1).whileTrue(endEffector.intake());
     leftJoystick.button(1).whileTrue(endEffector.outtake());
     leftJoystick.button(2).whileTrue(intake.runIntake(-2));
-    rightJoystick.button(2).onTrue(intake.setIntakeCoralPosition());
-    rightJoystick.button(2).whileTrue(intake.runIntake(8));
-    rightJoystick.button(5).onTrue(intake.resetArmRotationCount());
     rightJoystick.button(2).onFalse(intake.setPosition(0));
-    rightJoystick.button(3).onTrue(intake.setIntakeAlgaePosition());
-    rightJoystick.button(3).whileTrue(intake.runIntake(-8));
-    rightJoystick.button(3).onFalse(intake.setPosition(0));
     rightJoystick.button(4).whileTrue(intake.runIntake(4));
     // rightJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_1_SETPOINT));
     // leftJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_2_3_SETPOINT));
@@ -348,5 +370,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public Arm getArm() {
+    return arm;
   }
 }
