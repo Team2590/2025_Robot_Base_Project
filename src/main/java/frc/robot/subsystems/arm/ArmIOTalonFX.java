@@ -62,7 +62,8 @@ public class ArmIOTalonFX implements ArmIO {
       boolean brake,
       double reduction,
       int cancoderID,
-      double magOffset) {
+      double magOffset,
+      double sensor_reduction) {
 
     this.reduction = reduction;
     arm = new TalonFX(motorCanID, canBus);
@@ -94,7 +95,7 @@ public class ArmIOTalonFX implements ArmIO {
     slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
     FeedbackConfigs fdb = cfg.Feedback;
-    fdb.RotorToSensorRatio = reduction;
+    fdb.RotorToSensorRatio = sensor_reduction;
     fdb.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     fdb.FeedbackRemoteSensorID = cancoderID;
     MagnetSensorConfigs mag = new MagnetSensorConfigs();

@@ -139,7 +139,8 @@ public class RobotContainer {
                     Constants.ArmConstantsKronos.BRAKE,
                     Constants.ArmConstantsKronos.REDUCTION,
                     Constants.ArmConstantsKronos.ARM_CANCODER_ID,
-                    Constants.ArmConstantsKronos.MAG_OFFSET));
+                    Constants.ArmConstantsKronos.MAG_OFFSET,
+                    Constants.ArmConstantsKronos.SENSOR_REDUCTION));
         elevator = null;
         break;
       case LARRY:
@@ -175,7 +176,8 @@ public class RobotContainer {
                     Constants.ArmConstantsLarry.BRAKE,
                     Constants.ArmConstantsLarry.REDUCTION,
                     Constants.ArmConstantsLarry.ARM_CANCODER_ID,
-                    Constants.ArmConstantsLarry.MAG_OFFSET));
+                    Constants.ArmConstantsLarry.MAG_OFFSET,
+                    Constants.ArmConstantsLarry.SENSOR_REDUCTION));
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
