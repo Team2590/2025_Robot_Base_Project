@@ -374,14 +374,13 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-                leftJoystick.pov(0).onTrue(elevator.setPosition(5));
-                leftJoystick.pov(90).onTrue(elevator.setPosition(17));
-                leftJoystick.pov(180).onTrue(elevator.setPosition(30));
-                leftJoystick.pov(270).onTrue(elevator.setPosition(48));
-                leftJoystick.button(5).onTrue(elevator.resetRotationCount());
-                leftJoystick.button(4).onTrue(elevator.setPosition(0));
-                rightJoystick.button(1).whileTrue(endEffector.intake());
-
+    leftJoystick.pov(0).onTrue(elevator.setPosition(5));
+    leftJoystick.pov(90).onTrue(elevator.setPosition(17));
+    leftJoystick.pov(180).onTrue(elevator.setPosition(30));
+    leftJoystick.pov(270).onTrue(elevator.setPosition(48));
+    leftJoystick.button(5).onTrue(elevator.resetRotationCount());
+    leftJoystick.button(4).onTrue(elevator.setPosition(0));
+    rightJoystick.button(1).whileTrue(endEffector.intake());
     leftJoystick.button(1).whileTrue(endEffector.intake());
     leftJoystick.button(1).whileTrue(endEffector.outtake());
     leftJoystick.button(2).whileTrue(intake.runIntake(-2));
