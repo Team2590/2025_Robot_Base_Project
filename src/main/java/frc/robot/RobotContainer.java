@@ -33,6 +33,7 @@ import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.IntakeFactory;
+import frc.robot.command_factories.ScoringFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
@@ -322,6 +323,11 @@ public class RobotContainer {
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
     // controller.b().whileTrue(intake.runIntake(4));
 
+    // Example of scoring commands using controller buttons
+    // controller.a().onTrue(ScoringFactory.scoreHigh(this));
+    // controller.b().onTrue(ScoringFactory.scoreMid(this));
+    // controller.c().onTrue(ScoringFactory.stow(this));
+
     // Reset gyro to 0° when B button is pressed
     controller
         .b()
@@ -361,6 +367,11 @@ public class RobotContainer {
     // rightJoystick
     //     .button(3)
     //     .whileTrue(arm.setPosition(Constants.ArmConstants.CORAL_STATION_INTAKE_SETPOINT));
+
+    // Scoring commands
+    controller.y().onTrue(ScoringFactory.scoreHigh(this));
+    controller.x().onTrue(ScoringFactory.scoreMid(this));
+    controller.b().onTrue(ScoringFactory.stow(this));
   }
 
   /**
