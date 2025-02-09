@@ -120,7 +120,9 @@ public class VisionIOPhotonVision implements VisionIO {
                 }
 
                 latestTagIds.addAll(multitagResult.fiducialIDsUsed);
-
+                if (latestPoseObservations.size() >= MAX_POSE_OBSERVATIONS) {
+                  latestPoseObservations.remove(0); // Remove the oldest observation
+                }
                 latestPoseObservations.add(
                     new PoseObservation(
                         result.getTimestampSeconds(),

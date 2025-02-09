@@ -28,6 +28,7 @@ public class VisionConstants {
   public static String camera1Name = "camera_1";
   public static String camera2Name = "camera_2";
   public static String camera3Name = "camera_3";
+  public static int MAX_POSE_OBSERVATIONS = 100;
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
