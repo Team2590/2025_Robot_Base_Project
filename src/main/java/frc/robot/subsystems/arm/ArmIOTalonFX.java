@@ -23,7 +23,11 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.NemesisMathUtil;
 import frc.robot.util.StickyFaultUtil;
 
 public class ArmIOTalonFX implements ArmIO {
@@ -141,7 +145,31 @@ public class ArmIOTalonFX implements ArmIO {
   }
 
   public void setPosition(double position) {
-    arm.setControl(mmv.withPosition(position));
+    // need to check the target position
+    boolean withinAcceptedRange = NemesisMathUtil.isBetweenInclusive(
+      position, 
+      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MIN_POS, 
+      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MAX_POS
+    );
+
+    /**
+     * if (its not between accepted setpoints){
+     * if (elevator isn't in the right position){
+     * sout(can't move)}
+     * } else{
+     * then you can move }
+     * 
+     * if (not within accepted setpoints and elevator isn't right )
+     * 
+     * if (within accepted or elevator is right )
+     */
+
+     if (withinAcceptedRange || checkElevator()){
+      arm.setControl(mmv.withPosition(position));
+     }
+     else{
+      System.out.println("CAN'T MOVE ARM, elevator not in valid position. ");
+     }
   }
 
   public double getAbsolutePosition() {
@@ -202,6 +230,22 @@ public class ArmIOTalonFX implements ArmIO {
 
   @Override
   public void setVoltage(double volts) {
-    arm.setControl(new VoltageOut(volts));
+    boolean withinAcceptedRange = NemesisMathUtil.isBetweenInclusive(
+      getAbsolutePosition(), 
+      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MIN_POS, 
+      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MAX_POS
+    );
+
+    if (withinAcceptedRange || checkElevator()){
+      arm.setControl(new VoltageOut(volts));
+     }
+     else{
+      System.out.println("CAN'T MOVE ARM, elevator not in valid position. ");
+     }
   }
+
+  private boolean checkElevator(){
+    return Robot.getRobotContainerInstance().getElevator().getRotationCount() > Constants.ElevatorConstantsLoki.ARM_FACTORY_MIN_POS;
+  }
+
 }
