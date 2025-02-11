@@ -2,7 +2,9 @@ package frc.robot.command_factories;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.util.NemesisMathUtil;
 
 /**
  * Factory class for creating commands related to the elevator subsystem.
@@ -19,7 +21,12 @@ public class ElevatorFactory {
    * @return Command to move elevator to position
    */
   public static Command setPosition(RobotContainer container, double position) {
-    return container.getElevator().setPosition(position).withName("Set Elevator Position");
+    return container.getElevator().setPosition(position).withName("Set Elevator Position")
+    .onlyIf(() -> NemesisMathUtil.isBetweenInclusive(
+      container.getArm().getSetpoint(), 
+      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MIN_POS, 
+      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MAX_POS
+    ));
   }
 
   /**
@@ -69,7 +76,12 @@ public class ElevatorFactory {
    * @return Command to raise elevator
    */
   public static Command raise(RobotContainer container) {
-    return container.getElevator().raise().withName("Raise Elevator");
+    return container.getElevator().raise().withName("Raise Elevator")
+    .onlyIf(() -> NemesisMathUtil.isBetweenInclusive(
+      container.getArm().getSetpoint(), 
+      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MIN_POS, 
+      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MAX_POS
+    ));
   }
 
   /**
@@ -80,6 +92,11 @@ public class ElevatorFactory {
    * @return Command to lower elevator
    */
   public static Command lower(RobotContainer container) {
-    return container.getElevator().lower().withName("Lower Elevator");
+    return container.getElevator().lower().withName("Lower Elevator")
+    .onlyIf(() -> NemesisMathUtil.isBetweenInclusive(
+      container.getArm().getSetpoint(), 
+      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MIN_POS, 
+      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MAX_POS
+    ));
   }
 }

@@ -2,6 +2,7 @@ package frc.robot.command_factories;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 /** Factory class for creating commands related to the arm subsystem. */
@@ -15,7 +16,8 @@ public class ArmFactory {
    * @return Command to set arm position
    */
   public static Command setPosition(RobotContainer container, double position) {
-    return container.getArm().setPosition(position).withName("Set Arm Position");
+    return container.getArm().setPosition(position).withName("Set Arm Position")
+    .onlyIf(() -> container.getElevator().getRotationCount() > Constants.ElevatorConstantsLoki.ARM_FACTORY_MIN_POS);
   }
 
   /**
@@ -27,7 +29,8 @@ public class ArmFactory {
    * @return Command for manual arm control
    */
   public static Command manualControl(RobotContainer container, double power) {
-    return container.getArm().manual(new DutyCycleOut(power)).withName("Manual Arm Control");
+    return container.getArm().manual(new DutyCycleOut(power)).withName("Manual Arm Control")
+    .onlyIf(() -> container.getElevator().getRotationCount() > Constants.ElevatorConstantsLoki.ARM_FACTORY_MIN_POS);
   }
 
   /**
