@@ -73,10 +73,6 @@ public class ControllerApp extends Application {
     });
 
     primaryStage.show();
-}
-
-  private void connect() {
-    client.connect();
   }
 
   public static void main(String[] args) {
