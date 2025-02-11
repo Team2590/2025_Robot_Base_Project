@@ -53,6 +53,7 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
+import lombok.Getter;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -65,12 +66,20 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
+  @Getter
   private final Drive drive;
+  @Getter
   private final Vision vision;
+  @Getter
   private final Arm arm;
+  @Getter
   private final Elevator elevator;
+  @Getter
   private final Intake intake;
+  @Getter
   private final EndEffector endEffector = new EndEffector();
+
+
 
   // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
