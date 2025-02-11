@@ -88,6 +88,24 @@ public class FieldConstants {
     public static final Pose2d p10 =
         new Pose2d(new Translation2d(12.47, 5.253), new Rotation2d(-60));
   }
+
+    public static final Pose2d Barge =
+    new Pose2d(new Translation2d(7.576, 6.150), Rotation2d.fromDegrees(0));
+
+    public static final Pose2d CageShallow =
+    new Pose2d(new Translation2d(8.023, 6.146), Rotation2d.fromDegrees(0));
+
+    public static final Pose2d CageDeepLeft =
+    new Pose2d(new Translation2d(8.023, 7.253), Rotation2d.fromDegrees(0));
+
+    public static final Pose2d CageDeepRight =
+    new Pose2d(new Translation2d(8.023, 5.059), Rotation2d.fromDegrees(0));
+
+    public static final Pose2d CoralStationRight =
+    new Pose2d(new Translation2d(1.567, 6.579), Rotation2d.fromDegrees(125.538));
+
+    public static final Pose2d CoralStationLeft =
+    new Pose2d(new Translation2d(1.567, 1.424), Rotation2d.fromDegrees(231.639));
 }
 
 // porcesor barge feeding station
