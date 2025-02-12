@@ -26,12 +26,18 @@ public class ControllerApp extends Application {
   private static final String SELECTED_LEVEL_STYLE = "-fx-background-color: blue";
   private static final String SIDE_BUTTON_STYLE = "-fx-background-color: lightgray";
   private static final String SELECTED_SIDE_STYLE = "-fx-background-color: darkgray";
+  private static final String GO_BUTTON_STYLE =
+      "-fx-background-color: #90EE90; -fx-font-size: 18; -fx-font-weight: bold";
+  private static final String GO_BUTTON_PRESSED_STYLE =
+      "-fx-background-color: #32CD32; -fx-font-size: 18; -fx-font-weight: bold";
 
   private final NetworkTableClient client = NetworkTableClient.getInstance();
   private final Map<String, Button> buttonMap = new HashMap<>();
   private final Map<String, Button> levelButtonMap = new HashMap<>();
   private ToggleButton leftButton;
   private ToggleButton rightButton;
+  private Button goButton;
+  private String pendingCommand = null;
 
   private String selectedDirection = null;
   private String selectedSide = "left";
@@ -125,7 +131,7 @@ public class ControllerApp extends Application {
           selectedSide = "left";
           leftButton.setStyle(SELECTED_SIDE_STYLE);
           rightButton.setStyle(SIDE_BUTTON_STYLE);
-          updateNetworkTables();
+          updatePendingCommand();
         });
 
     rightButton.setOnAction(
@@ -133,7 +139,7 @@ public class ControllerApp extends Application {
           selectedSide = "right";
           rightButton.setStyle(SELECTED_SIDE_STYLE);
           leftButton.setStyle(SIDE_BUTTON_STYLE);
-          updateNetworkTables();
+          updatePendingCommand();
         });
 
     sideBox.getChildren().addAll(leftButton, rightButton);
@@ -149,24 +155,30 @@ public class ControllerApp extends Application {
           e -> {
             selectedLevel = level;
             updateLevelButtons();
-            updateNetworkTables();
+            updatePendingCommand();
           });
 
       levelBox.getChildren().add(levelButton);
     }
     levelBox.setAlignment(Pos.CENTER);
 
-    box.getChildren().addAll(sideBox, levelBox);
+    // GO button
+    goButton = new Button("GO");
+    goButton.setPrefWidth(100);
+    goButton.setPrefHeight(40);
+    goButton.setStyle(GO_BUTTON_STYLE);
+    goButton.setOnAction(e -> sendToNetworkTables());
+
+    box.getChildren().addAll(sideBox, levelBox, goButton);
+    box.setAlignment(Pos.CENTER);
     return box;
   }
 
   private void resetSelections() {
-    // default left
     selectedSide = "left";
     leftButton.setStyle(SELECTED_SIDE_STYLE);
     rightButton.setStyle(SIDE_BUTTON_STYLE);
 
-    // defalt l4
     selectedLevel = "L4";
     updateLevelButtons();
   }
@@ -178,12 +190,10 @@ public class ControllerApp extends Application {
     Button button = (Button) event.getSource();
     selectedDirection = button.getText();
 
-    // resetting b4 next selection
     resetSelections();
-
     updateCompassButtons();
     showSelectionBox(button);
-    updateNetworkTables();
+    updatePendingCommand();
   }
 
   private void showSelectionBox(Button sourceButton) {
@@ -224,10 +234,32 @@ public class ControllerApp extends Application {
     }
   }
 
-  private void updateNetworkTables() {
+  private void updatePendingCommand() {
     if (selectedDirection != null) {
-      String command = String.format("%s_%s_%s", selectedDirection, selectedSide, selectedLevel);
-      client.publish("moveTo", command);
+      pendingCommand = String.format("%s_%s_%s", selectedDirection, selectedSide, selectedLevel);
+    }
+  }
+
+  private void sendToNetworkTables() {
+    if (pendingCommand != null) {
+      client.publish("moveTo", pendingCommand);
+      selectionBox.setVisible(false);
+
+      // Visual feedback
+      goButton.setStyle(GO_BUTTON_PRESSED_STYLE);
+      new Thread(
+              () -> {
+                try {
+                  Thread.sleep(200);
+                  javafx.application.Platform.runLater(
+                      () -> {
+                        goButton.setStyle(GO_BUTTON_STYLE);
+                      });
+                } catch (InterruptedException e) {
+                  e.printStackTrace();
+                }
+              })
+          .start();
     }
   }
 
@@ -241,6 +273,7 @@ public class ControllerApp extends Application {
         selectedDirection = parts[0];
         selectedSide = parts[1];
         selectedLevel = parts[2];
+        pendingCommand = moveTo;
 
         updateCompassButtons();
         updateLevelButtons();
