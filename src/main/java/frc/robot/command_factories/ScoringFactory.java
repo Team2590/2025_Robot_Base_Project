@@ -19,16 +19,16 @@ public class ScoringFactory {
    * @param container The RobotContainer instance
    * @return Command sequence for high scoring
    */
-  public static Command scoreHigh(RobotContainer container) {
+  public static Command scoreHigh() {
     return new SequentialCommandGroup(
             // First, move elevator to high position
-            ElevatorFactory.setPosition(container, 48),
+            ElevatorFactory.setPosition(48),
 
             // Then, extend arm to scoring position
-            ArmFactory.setPosition(container, 90),
+            ArmFactory.setPosition(90),
 
             // Finally, run intake to release game piece
-            IntakeFactory.runIntake(container, () -> -6))
+            IntakeFactory.runIntake(() -> -6))
         .withName("Score High");
   }
 
@@ -39,16 +39,16 @@ public class ScoringFactory {
    * @param container The RobotContainer instance
    * @return Command sequence for mid scoring
    */
-  public static Command scoreMid(RobotContainer container) {
+  public static Command scoreMid() {
     return new SequentialCommandGroup(
             // First, move elevator to mid position
-            ElevatorFactory.setPosition(container, 30),
+            ElevatorFactory.setPosition(30),
 
             // Then, extend arm to scoring position
-            ArmFactory.setPosition(container, 60),
+            ArmFactory.setPosition(60),
 
             // Finally, run intake to release game piece
-            IntakeFactory.runIntake(container, () -> -6))
+            IntakeFactory.runIntake(() -> -6))
         .withName("Score Mid");
   }
 
@@ -64,8 +64,8 @@ public class ScoringFactory {
   public static Command prepareForScoring(
       RobotContainer container, double elevatorPosition, double armPosition) {
     return new ParallelCommandGroup(
-            ElevatorFactory.setPosition(container, elevatorPosition),
-            ArmFactory.setPosition(container, armPosition))
+            ElevatorFactory.setPosition(elevatorPosition),
+            ArmFactory.setPosition(armPosition))
         .withName("Prepare For Scoring");
   }
 
@@ -79,10 +79,10 @@ public class ScoringFactory {
   public static Command stow(RobotContainer container) {
     return new SequentialCommandGroup(
             // First, retract arm
-            ArmFactory.setPosition(container, 0),
+            ArmFactory.setPosition(0),
 
             // Then, lower elevator
-            ElevatorFactory.setPosition(container, 0))
+            ElevatorFactory.setPosition(0))
         .withName("Stow Mechanism");
   }
 }

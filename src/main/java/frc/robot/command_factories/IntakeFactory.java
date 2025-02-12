@@ -1,6 +1,7 @@
 package frc.robot.command_factories;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import java.util.function.DoubleSupplier;
 
@@ -11,6 +12,7 @@ import java.util.function.DoubleSupplier;
  * <p>This class provides methods to create commands for controlling the intake mechanism.
  */
 public class IntakeFactory {
+  private static RobotContainer container = Robot.getRobotContainerInstance();
   /**
    * Creates a command to run the intake at a specified speed.
    *
@@ -18,7 +20,7 @@ public class IntakeFactory {
    * @param intakeSpeed Supplier for the intake speed
    * @return Command to run the intake
    */
-  public static Command runIntake(RobotContainer container, DoubleSupplier intakeSpeed) {
+  public static Command runIntake(DoubleSupplier intakeSpeed) {
     return container.getIntake().runIntake(intakeSpeed.getAsDouble()).withName("Run Intake");
   }
 
@@ -29,7 +31,7 @@ public class IntakeFactory {
    * @param container The RobotContainer instance
    * @return Command to set intake to coral position
    */
-  public static Command setIntakeCoralPosition(RobotContainer container) {
+  public static Command setIntakeCoralPosition() {
     return container.getIntake().setIntakeCoralPosition().withName("Set Intake Coral Position");
   }
 
@@ -40,7 +42,7 @@ public class IntakeFactory {
    * @param container The RobotContainer instance
    * @return Command to set intake to algae position
    */
-  public static Command setIntakeAlgaePosition(RobotContainer container) {
+  public static Command setIntakeAlgaePosition() {
     return container.getIntake().setIntakeAlgaePosition().withName("Set Intake Algae Position");
   }
 }

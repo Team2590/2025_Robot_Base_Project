@@ -2,6 +2,7 @@ package frc.robot.command_factories;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.commands.DriveCommands;
 
@@ -11,6 +12,7 @@ import frc.robot.commands.DriveCommands;
  * <p>This class provides methods to create commands for controlling the robot's movement.
  */
 public class DriveFactory {
+  private static RobotContainer container = Robot.getRobotContainerInstance();
   /**
    * Creates a command for joystick-controlled driving.
    * NOTE: this may be a nonsense method.  Replace with what makes sense.
@@ -18,7 +20,7 @@ public class DriveFactory {
    * @param container The RobotContainer instance
    * @return Command for joystick driving
    */
-  public static Command joystickDrive(RobotContainer container) {
+  public static Command joystickDrive() {
     return DriveCommands.joystickDrive(
             container.getDrive(),
             () -> -container.getLeftJoystick().getY(),
@@ -35,7 +37,7 @@ public class DriveFactory {
    * @param targetPose The target pose to drive to
    * @return Command to drive to pose
    */
-  public static Command driveToPose(RobotContainer container, Pose2d targetPose) {
+  public static Command driveToPose(Pose2d targetPose) {
     return DriveCommands.driveToPose(targetPose).withName("Drive To Pose");
   }
 }

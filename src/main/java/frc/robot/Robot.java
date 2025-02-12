@@ -34,7 +34,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  */
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
-  private RobotContainer robotContainer;
+  private static RobotContainer robotContainer;
 
   public Robot() {
     // Record metadata
@@ -181,4 +181,8 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+  public static RobotContainer getRobotContainerInstance(){
+    return robotContainer;
+  }
 }

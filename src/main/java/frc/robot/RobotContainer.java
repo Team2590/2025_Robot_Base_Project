@@ -313,7 +313,7 @@ public class RobotContainer {
             () -> -rightJoystick.getX()));
 
     // Default drive command using new factory method, replacement for above ^^.
-    //drive.setDefaultCommand(DriveFactory.joystickDrive(this));
+    //drive.setDefaultCommand(DriveFactory.joystickDrive());
 
     // Lock to 0° when A button is held
     controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
@@ -329,27 +329,27 @@ public class RobotContainer {
     /// 
     /// 
     // example of how we might change some of the above to using the elevator factory
-    //leftJoystick.pov(0).onTrue(ElevatorFactory.setPosition(this, 5));
-    //leftJoystick.pov(90).onTrue(ElevatorFactory.setPosition(this, 17));
-    //leftJoystick.pov(180).onTrue(ElevatorFactory.setPosition(this, 30));
-    //leftJoystick.pov(270).onTrue(ElevatorFactory.setPosition(this, 48));
-    //leftJoystick.button(5).onTrue(ElevatorFactory.resetRotationCount(this));
-    //leftJoystick.button(4).onTrue(ElevatorFactory.setPosition(this, 0));
+    //leftJoystick.pov(0).onTrue(ElevatorFactory.setPosition(5));
+    //leftJoystick.pov(90).onTrue(ElevatorFactory.setPosition(17));
+    //leftJoystick.pov(180).onTrue(ElevatorFactory.setPosition(30));
+    //leftJoystick.pov(270).onTrue(ElevatorFactory.setPosition(48));
+    //leftJoystick.button(5).onTrue(ElevatorFactory.resetRotationCount());
+    //leftJoystick.button(4).onTrue(ElevatorFactory.setPosition(0));
     //leftJoystick.button(1).whileTrue(endEffector.intake());
 
     // Example of going to a specific pose using a command 
-    //leftJoystick.butotn(2).onTrue(DriveFactory.driveToPose(this, new Pose2d()));
+    //leftJoystick.butotn(2).onTrue(DriveFactory.driveToPose(new Pose2d()));
 
     // Example of intake commands using controller buttons and factory pattern
-    //leftJoystick.button(1).whileTrue(IntakeFactory.runIntake(this, () -> 8));
-    //leftJoystick.button(2).whileTrue(IntakeFactory.runIntake(this, () -> -8));
-    //leftJoystick.button(3).onTrue(IntakeFactory.setIntakeCoralPosition(this));
-    //leftJoystick.button(4).onTrue(IntakeFactory.setIntakeAlgaePosition(this));
+    //leftJoystick.button(1).whileTrue(IntakeFactory.runIntake(() -> 8));
+    //leftJoystick.button(2).whileTrue(IntakeFactory.runIntake(() -> -8));
+    //leftJoystick.button(3).onTrue(IntakeFactory.setIntakeCoralPosition());
+    //leftJoystick.button(4).onTrue(IntakeFactory.setIntakeAlgaePosition());
 
     // Example of scoring commands using controller buttons
-    //leftJoystick.button(6).onTrue(ScoringFactory.scoreHigh(this));
-    //leftJoystick.button(7).onTrue(ScoringFactory.scoreMid(this));
-    //leftJoystick.button(8).onTrue(ScoringFactory.stow(this));
+    //leftJoystick.button(6).onTrue(ScoringFactory.scoreHigh());
+    //leftJoystick.button(7).onTrue(ScoringFactory.scoreMid());
+    //leftJoystick.button(8).onTrue(ScoringFactory.stow());
     //////////////////////////////////////////////////////
     /// End of examples using command factories
     //////////////////////////////////////////////////////
