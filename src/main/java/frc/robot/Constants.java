@@ -161,10 +161,11 @@ public final class Constants {
     public static double ELEVATOR_FACTORY_MIN_POS = 5; // TODO: change to actual value
     public static double ELEVATOR_FACTORY_MAX_POS = 10; // TODO: change to actual value
   }
+
   public static class ElevatorConstantsLoki {
     public static double ARM_FACTORY_MIN_POS = 5; // TODO: change to actual value
+    public static double ARM_FACTORY_MAX_POS = 10; // TODO: change to actual value
   }
-  
 
   public static enum Mode {
     /** Running on a real robot. */
