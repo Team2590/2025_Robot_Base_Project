@@ -43,7 +43,7 @@ public class ControllerApp extends Application {
   private String selectedSide = "left";
   private String selectedLevel = "L4";
 
-  private static final String[] compassPoints = {"E", "SE", "S", "SW", "W", "NW", "N", "NE"};
+  private static final String[] compassPoints = {"S", "SW", "NW", "N", "NE", "SE"};
   private static final String[] levels = {"L1", "L2", "L3", "L4"};
 
   private VBox selectionBox;
@@ -246,6 +246,8 @@ public class ControllerApp extends Application {
       client.publish("controller_app_request", pendingCommand);
       System.out.println(pendingCommand);
       selectionBox.setVisible(false);
+
+      System.out.println(pendingCommand);
 
       // Visual feedback
       goButton.setStyle(GO_BUTTON_PRESSED_STYLE);
