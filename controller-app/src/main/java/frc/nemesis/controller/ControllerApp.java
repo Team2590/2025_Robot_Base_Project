@@ -97,10 +97,11 @@ public class ControllerApp extends Application {
     double centerX = 400;
     double centerY = 300;
     double radius = 200;
-    double angleStep = Math.PI / 4;
+    double angleStep = Math.PI / 3;
+    double startAngle = Math.PI / 2; 
 
     for (int i = 0; i < compassPoints.length; i++) {
-      double angle = i * angleStep;
+      double angle = i * angleStep + startAngle;
       double x = centerX + radius * Math.cos(angle);
       double y = centerY + radius * Math.sin(angle);
 
@@ -236,13 +237,14 @@ public class ControllerApp extends Application {
 
   private void updatePendingCommand() {
     if (selectedDirection != null) {
-      pendingCommand = String.format("%s_%s_%s", selectedDirection, selectedSide, selectedLevel);
+      pendingCommand = selectedDirection+selectedSide+"_"+selectedLevel;
     }
   }
 
   private void sendToNetworkTables() {
     if (pendingCommand != null) {
-      client.publish("moveTo", pendingCommand);
+      client.publish("controller_app_request", pendingCommand);
+      System.out.println(pendingCommand);
       selectionBox.setVisible(false);
 
       // Visual feedback
