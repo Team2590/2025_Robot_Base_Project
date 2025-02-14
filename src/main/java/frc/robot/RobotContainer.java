@@ -31,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOSim;
@@ -71,6 +70,7 @@ public class RobotContainer {
   private final Elevator elevator;
   private final Intake intake;
   private final EndEffector endEffector = new EndEffector();
+  private final ControllerOrchestrator controllerApp = new ControllerOrchestrator();
 
   // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
@@ -203,7 +203,8 @@ public class RobotContainer {
         intake = null;
         break;
       case SIM:
-        // Sim robot, instantiate physics sim IO implementations
+      
+        
         drive =
             new Drive(
                 new GyroIO() {},
@@ -337,27 +338,26 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-   /**  the following button binds work on Larry:
-    leftJoystick.pov(0).onTrue(elevator.setPosition(5));
-    leftJoystick.pov(90).onTrue(elevator.setPosition(17));
-    leftJoystick.pov(180).onTrue(elevator.setPosition(30));
-    leftJoystick.pov(270).onTrue(elevator.setPosition(48));
-    leftJoystick.button(5).onTrue(elevator.resetRotationCount());
-    leftJoystick.button(4).onTrue(elevator.setPosition(0));
-    rightJoystick.button(1).whileTrue(endEffector.intake());
-    leftJoystick.button(1).whileTrue(endEffector.outtake());
-    leftJoystick.button(2).whileTrue(intake.runIntake(-2));
-    rightJoystick.button(2).onTrue(intake.setIntakeCoralPosition());
-    rightJoystick.button(2).whileTrue(intake.runIntake(8));
-    rightJoystick.button(5).onTrue(intake.resetArmRotationCount());
-    rightJoystick.button(2).onFalse(intake.setPosition(0));
-    rightJoystick.button(3).onTrue(intake.setIntakeAlgaePosition());
-    rightJoystick.button(3).whileTrue(intake.runIntake(-8));
-    rightJoystick.button(3).onFalse(intake.setPosition(0));
-    rightJoystick.button(4).whileTrue(intake.runIntake(4));
-    */
-
-
+    /**
+     * the following button binds work on Larry:
+     * leftJoystick.pov(0).onTrue(elevator.setPosition(5));
+     * leftJoystick.pov(90).onTrue(elevator.setPosition(17));
+     * leftJoystick.pov(180).onTrue(elevator.setPosition(30));
+     * leftJoystick.pov(270).onTrue(elevator.setPosition(48));
+     * leftJoystick.button(5).onTrue(elevator.resetRotationCount());
+     * leftJoystick.button(4).onTrue(elevator.setPosition(0));
+     * rightJoystick.button(1).whileTrue(endEffector.intake());
+     * leftJoystick.button(1).whileTrue(endEffector.outtake());
+     * leftJoystick.button(2).whileTrue(intake.runIntake(-2));
+     * rightJoystick.button(2).onTrue(intake.setIntakeCoralPosition());
+     * rightJoystick.button(2).whileTrue(intake.runIntake(8));
+     * rightJoystick.button(5).onTrue(intake.resetArmRotationCount());
+     * rightJoystick.button(2).onFalse(intake.setPosition(0));
+     * rightJoystick.button(3).onTrue(intake.setIntakeAlgaePosition());
+     * rightJoystick.button(3).whileTrue(intake.runIntake(-8));
+     * rightJoystick.button(3).onFalse(intake.setPosition(0));
+     * rightJoystick.button(4).whileTrue(intake.runIntake(4));
+     */
 
     // rightJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_1_SETPOINT));
     // leftJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_2_3_SETPOINT));
