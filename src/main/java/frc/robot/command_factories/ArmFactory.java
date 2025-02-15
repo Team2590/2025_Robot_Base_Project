@@ -11,7 +11,6 @@ public class ArmFactory {
   private static RobotContainer container = Robot.getRobotContainerInstance();
   /**
    * Creates a command to set the arm position.
-   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @param position Target position in degrees
@@ -24,7 +23,6 @@ public class ArmFactory {
 
   /**
    * Creates a command for manual arm control.
-   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @param power Power level (-1 to 1)
@@ -37,7 +35,6 @@ public class ArmFactory {
 
   /**
    * Creates a command to stop the arm.
-   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param container The RobotContainer instance
    * @return Command to stop arm

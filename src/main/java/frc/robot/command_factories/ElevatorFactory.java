@@ -18,7 +18,6 @@ public class ElevatorFactory {
 
   /**
    * Creates a command to move the elevator to a specific position.
-   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param position The target position in rotation counts
    * @return Command to move elevator to position
@@ -35,7 +34,6 @@ public class ElevatorFactory {
   /**
    * Creates a command to move the elevator to a specific position and wait until it reaches the
    * target.
-   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param position The target position in rotation counts
    * @return Command to move elevator to position and wait
@@ -49,7 +47,6 @@ public class ElevatorFactory {
 
   /**
    * Creates a command to reset the elevator's rotation count.
-   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @return Command to reset rotation count
    */
@@ -59,7 +56,6 @@ public class ElevatorFactory {
 
   /**
    * Creates a command to set the elevator's neutral mode.
-   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @param mode The neutral mode to set
    * @return Command to set neutral mode
@@ -70,7 +66,6 @@ public class ElevatorFactory {
 
   /**
    * Creates a command to raise the elevator by one rotation count.
-   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @return Command to raise elevator
    */
@@ -85,7 +80,6 @@ public class ElevatorFactory {
 
   /**
    * Creates a command to lower the elevator by one rotation count.
-   * NOTE: this may be a nonsense method.  Replace with what makes sense.
    *
    * @return Command to lower elevator
    */
