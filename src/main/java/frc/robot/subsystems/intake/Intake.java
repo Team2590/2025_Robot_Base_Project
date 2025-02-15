@@ -107,7 +107,7 @@ public class Intake extends SubsystemBase {
     return intakeArm.resetRotationCount();
   }
 
-  public void setVoltage(double volts){
+  public void setVoltage(double volts) {
     intakeArmIO.setVoltage(volts);
   }
 

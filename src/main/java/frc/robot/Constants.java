@@ -166,6 +166,15 @@ public final class Constants {
     public static double ARM_FACTORY_MIN_POS = 5; // TODO: change to actual value
     public static double ARM_FACTORY_MAX_POS = 10; // TODO: change to actual value
   }
+  
+  public static class IntakeConstantsLarry {
+    static int canID = 60;
+    static int currentLimitAmps = 40;
+    static String canBus = "Takeover";
+    static boolean invert = false;
+    static double reduction = 1;
+    static boolean brake = true;
+  }
 
   public static enum Mode {
     /** Running on a real robot. */

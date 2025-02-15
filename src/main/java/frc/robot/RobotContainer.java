@@ -25,13 +25,13 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOSim;
@@ -45,6 +45,8 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.endeffector.EndEffector;
+import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeArmIOSim;
 import frc.robot.subsystems.intake.IntakeArmIOTalonFX;
@@ -77,7 +79,7 @@ public class RobotContainer {
   @Getter
   private final Intake intake;
   @Getter
-  private final EndEffector endEffector = new EndEffector();
+  private final EndEffector endEffector;
 
 
 
@@ -91,26 +93,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-
-  private class EndEffector extends SubsystemBase {
-    private TalonFX motor = new TalonFX(2, "Takeover");
-
-    public EndEffector() {
-      motor.setNeutralMode(NeutralModeValue.Brake);
-    }
-
-    public Command intake() {
-      return runEnd(() -> motor.set(0.5), this::stop);
-    }
-
-    public Command outtake() {
-      return runEnd(() -> motor.set(-0.75), this::stop);
-    }
-
-    public void stop() {
-      motor.stopMotor();
-    }
-  }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -151,6 +133,7 @@ public class RobotContainer {
                     Constants.ArmConstantsKronos.MAG_OFFSET,
                     Constants.ArmConstantsKronos.SENSOR_REDUCTION));
         elevator = null;
+        endEffector = null;
         break;
       case LARRY:
         // Real robot, instantiate hardware IO implementations
@@ -196,6 +179,7 @@ public class RobotContainer {
                     ElevatorConstantsLarry.invert,
                     ElevatorConstantsLarry.brake,
                     ElevatorConstantsLarry.reduction));
+        endEffector = new EndEffector(new EndEffectorIOTalonFX(0, camera0Name, 120, false, true, angularStdDevBaseline));
         break;
       case LOKI:
         drive =
@@ -210,6 +194,7 @@ public class RobotContainer {
         elevator = null;
         vision = null;
         intake = null;
+        endEffector = new EndEffector(new EndEffectorIOTalonFX(0, camera0Name, 120, false, true, angularStdDevBaseline));
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -237,7 +222,8 @@ public class RobotContainer {
                 new IntakeArmIOSim(DCMotor.getFalcon500(1), 4, .1));
         arm = new Arm(new ArmIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 1, true, 1));
         elevator =
-            new Elevator(new ElevatorIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 1, false, 1));
+            new Elevator(new ElevatorIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 10, false, 1));
+        endEffector = null;
         break;
 
       default:
@@ -265,6 +251,7 @@ public class RobotContainer {
                 new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1));
         arm = new Arm(null);
         elevator = null;
+        endEffector = null;
         break;
     }
 
@@ -346,27 +333,26 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-   /**  the following button binds work on Larry:
-    leftJoystick.pov(0).onTrue(elevator.setPosition(5));
-    leftJoystick.pov(90).onTrue(elevator.setPosition(17));
-    leftJoystick.pov(180).onTrue(elevator.setPosition(30));
-    leftJoystick.pov(270).onTrue(elevator.setPosition(48));
-    leftJoystick.button(5).onTrue(elevator.resetRotationCount());
-    leftJoystick.button(4).onTrue(elevator.setPosition(0));
-    rightJoystick.button(1).whileTrue(endEffector.intake());
-    leftJoystick.button(1).whileTrue(endEffector.outtake());
-    leftJoystick.button(2).whileTrue(intake.runIntake(-2));
-    rightJoystick.button(2).onTrue(intake.setIntakeCoralPosition());
-    rightJoystick.button(2).whileTrue(intake.runIntake(8));
-    rightJoystick.button(5).onTrue(intake.resetArmRotationCount());
-    rightJoystick.button(2).onFalse(intake.setPosition(0));
-    rightJoystick.button(3).onTrue(intake.setIntakeAlgaePosition());
-    rightJoystick.button(3).whileTrue(intake.runIntake(-8));
-    rightJoystick.button(3).onFalse(intake.setPosition(0));
-    rightJoystick.button(4).whileTrue(intake.runIntake(4));
-    */
-
-
+    /**
+     * the following button binds work on Larry:
+     * leftJoystick.pov(0).onTrue(elevator.setPosition(5));
+     * leftJoystick.pov(90).onTrue(elevator.setPosition(17));
+     * leftJoystick.pov(180).onTrue(elevator.setPosition(30));
+     * leftJoystick.pov(270).onTrue(elevator.setPosition(48));
+     * leftJoystick.button(5).onTrue(elevator.resetRotationCount());
+     * leftJoystick.button(4).onTrue(elevator.setPosition(0));
+     * rightJoystick.button(1).whileTrue(endEffector.intake());
+     * leftJoystick.button(1).whileTrue(endEffector.outtake());
+     * leftJoystick.button(2).whileTrue(intake.runIntake(-2));
+     * rightJoystick.button(2).onTrue(intake.setIntakeCoralPosition());
+     * rightJoystick.button(2).whileTrue(intake.runIntake(8));
+     * rightJoystick.button(5).onTrue(intake.resetArmRotationCount());
+     * rightJoystick.button(2).onFalse(intake.setPosition(0));
+     * rightJoystick.button(3).onTrue(intake.setIntakeAlgaePosition());
+     * rightJoystick.button(3).whileTrue(intake.runIntake(-8));
+     * rightJoystick.button(3).onFalse(intake.setPosition(0));
+     * rightJoystick.button(4).whileTrue(intake.runIntake(4));
+     */
 
     // rightJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_1_SETPOINT));
     // leftJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_2_3_SETPOINT));
