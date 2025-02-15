@@ -24,7 +24,7 @@ public class ArmFactory {
         .onlyIf(
             () ->
                 container.getElevator().getRotationCount()
-                    > Constants.ArmConstantsLeonidas.ARM_FACTORY_MIN_POS);
+                    > Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS);
   }
 
   public static Command setPositionBlocking(double position) {
@@ -35,7 +35,7 @@ public class ArmFactory {
         .onlyIf(
             () ->
                 container.getElevator().getRotationCount()
-                    > Constants.ArmConstantsLeonidas.ARM_FACTORY_MIN_POS);
+                    > Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS);
   }
 
   /**
@@ -53,7 +53,7 @@ public class ArmFactory {
         .onlyIf(
             () ->
                 container.getElevator().getRotationCount()
-                    > Constants.ArmConstantsLeonidas.ARM_FACTORY_MIN_POS);
+                    > Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS);
   }
 
   /**
