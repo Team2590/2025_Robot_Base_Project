@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
+import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
@@ -53,7 +54,6 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -208,16 +208,17 @@ public class RobotContainer {
                 new ModuleIOSim(constantsWrapper.BackLeft, constantsWrapper),
                 new ModuleIOSim(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
-                    List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3)),
-                    drive::getPose));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOPhotonVisionSim(
+        //             List.of(
+        //                 new CameraConfig(camera0Name, robotToCamera0),
+        //                 new CameraConfig(camera1Name, robotToCamera1),
+        //                 new CameraConfig(camera2Name, robotToCamera2),
+        //                 new CameraConfig(camera3Name, robotToCamera3)),
+        //             drive::getPose));
+        vision = null;
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
@@ -319,6 +320,11 @@ public class RobotContainer {
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    leftJoystick.button(0).onTrue(Commands.runOnce(drive::stopWithX, drive));
+    controller
+        .y()
+        .whileTrue(
+            ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS));
     // controller.b().whileTrue(intake.runIntake(4));
 
     //////////////////////////////////////////////////////

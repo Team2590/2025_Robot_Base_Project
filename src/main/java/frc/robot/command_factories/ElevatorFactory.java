@@ -13,7 +13,10 @@ import frc.robot.util.NemesisMathUtil;
  * <p>This class provides methods to create commands for controlling the elevator mechanism.
  */
 public class ElevatorFactory {
-  private static RobotContainer container = Robot.getRobotContainerInstance();
+
+  private static RobotContainer getContainer() {
+    return Robot.getRobotContainerInstance();
+  }
 
   /**
    * Creates a command to move the elevator to a specific position.
@@ -22,14 +25,14 @@ public class ElevatorFactory {
    * @return Command to move elevator to position
    */
   public static Command setPosition(double position) {
-    return container
+    return getContainer()
         .getElevator()
         .setPosition(position)
         .withName("Set Elevator Position")
         .onlyIf(
             () ->
                 NemesisMathUtil.isBetweenInclusive(
-                    container.getArm().getSetpoint(),
+                    getContainer().getArm().getSetpoint(),
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
   }
@@ -42,7 +45,7 @@ public class ElevatorFactory {
    * @return Command to move elevator to position and wait
    */
   public static Command setPositionBlocking(double position) {
-    return container
+    return getContainer()
         .getElevator()
         .setPositionBlocking(position)
         .withName("Set Elevator Position Blocking");
@@ -54,7 +57,10 @@ public class ElevatorFactory {
    * @return Command to reset rotation count
    */
   public static Command resetRotationCount() {
-    return container.getElevator().resetRotationCount().withName("Reset Elevator Rotation Count");
+    return getContainer()
+        .getElevator()
+        .resetRotationCount()
+        .withName("Reset Elevator Rotation Count");
   }
 
   /**
@@ -64,7 +70,7 @@ public class ElevatorFactory {
    * @return Command to set neutral mode
    */
   public static Command setNeutralMode(NeutralModeValue mode) {
-    return container.getElevator().setNeutralMode(mode).withName("Set Elevator Neutral Mode");
+    return getContainer().getElevator().setNeutralMode(mode).withName("Set Elevator Neutral Mode");
   }
 
   /**
@@ -73,14 +79,14 @@ public class ElevatorFactory {
    * @return Command to raise elevator
    */
   public static Command raise() {
-    return container
+    return getContainer()
         .getElevator()
         .raise()
         .withName("Raise Elevator")
         .onlyIf(
             () ->
                 NemesisMathUtil.isBetweenInclusive(
-                    container.getArm().getSetpoint(),
+                    getContainer().getArm().getSetpoint(),
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
   }
@@ -91,14 +97,14 @@ public class ElevatorFactory {
    * @return Command to lower elevator
    */
   public static Command lower() {
-    return container
+    return getContainer()
         .getElevator()
         .lower()
         .withName("Lower Elevator")
         .onlyIf(
             () ->
                 NemesisMathUtil.isBetweenInclusive(
-                    container.getArm().getSetpoint(),
+                    getContainer().getArm().getSetpoint(),
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
   }

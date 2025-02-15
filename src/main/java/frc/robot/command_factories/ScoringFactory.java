@@ -66,9 +66,12 @@ public class ScoringFactory {
    */
   public static Command scoreL1() {
     return new SequentialCommandGroup(
-            IntakeFactory.setHomePosition(),
-            NemesisTimedCommand.generateTimedCommand(IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED), 1)
-        .withName("Score L1"));
+        IntakeFactory.setHomePosition(),
+        NemesisTimedCommand.generateTimedCommand(
+                IntakeFactory.runIntake(
+                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED),
+                1)
+            .withName("Score L1"));
   }
 
   /**

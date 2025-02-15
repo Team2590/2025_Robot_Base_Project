@@ -38,6 +38,7 @@ public class Robot extends LoggedRobot {
 
   public Robot() {
     // Record metadata
+
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
@@ -89,7 +90,7 @@ public class Robot extends LoggedRobot {
     // Start AdvantageKit logger
     Logger.start();
 
-    robotContainer = new RobotContainer();
+    // robotContainer = new RobotContainer();
 
     // Check for valid swerve config
     var modules =
@@ -140,6 +141,7 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    robotContainer = getRobotContainerInstance();
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -188,6 +190,9 @@ public class Robot extends LoggedRobot {
   public void simulationPeriodic() {}
 
   public static RobotContainer getRobotContainerInstance() {
+    if (robotContainer == null) {
+      robotContainer = new RobotContainer();
+    }
     return robotContainer;
   }
 }
