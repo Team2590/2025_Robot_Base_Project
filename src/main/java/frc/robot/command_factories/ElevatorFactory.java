@@ -48,6 +48,11 @@ public class ElevatorFactory {
         .withName("Set Elevator Position Blocking");
   }
 
+  public static boolean elevatorCommandFinished(){
+
+    return container.getElevator().getCharacterizationVelocity()==0; //Whatever Score Positon For
+  }
+
   /**
    * Creates a command to reset the elevator's rotation count.
    *

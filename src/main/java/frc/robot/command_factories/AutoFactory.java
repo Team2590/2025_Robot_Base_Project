@@ -32,35 +32,116 @@ public static Command followPath(String PathFileName){
 }
 
 
-public static Command followPathdropL1(){
+// public static Command followPathdropL1(){
 
 
-    try{
+//     try{
 
-        PathPlannerPath path=
+//         PathPlannerPath path=
+//     }
+// }
+
+
+public static Command holdThenL4= new Command() {
+    public void execute() {
+        
+        ScoringFactory.scoreL4().onlyIf(()->Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef")).withName("HoldThenScoreL4").execute();
+
+
+    };
+    public boolean isFinished() {
+        return Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef") && ElevatorFactory.elevatorCommandFinished() && EndEffectorFactory.endEffectorCommandFinished();
+        
+
+        
+    };
+
+    public void end(boolean interrupted) {
+
+        System.out.println("Command Done, stow while next driving");
+    };
+};
+
+
+public static Command holdThenL3= new Command() {
+    public void execute() {
+        
+        ScoringFactory.scoreL3().onlyIf(()->Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef")).withName("HoldThenScoreL3").execute();
+
+
+    };
+    public boolean isFinished() {
+        return Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef") && ElevatorFactory.elevatorCommandFinished() && EndEffectorFactory.endEffectorCommandFinished();
+        
+
+        
+    };
+};
+
+public static Command holdThenL2= new Command() {
+        public void execute() {
+            
+            ScoringFactory.scoreL2().onlyIf(()->Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef")).withName("HoldThenScorel2").execute();
+    
+    
+        };
+        public boolean isFinished() {
+            return Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef") && ElevatorFactory.elevatorCommandFinished() && EndEffectorFactory.endEffectorCommandFinished();
+            
+    
+            
+        };
+    
+        public void end(boolean interrupted) {
+    
+            System.out.println("Command Done, stow while next driving");
+        };
+    };
+
+    public void end(boolean interrupted) {
+
+        System.out.println("Command Done, stow while next driving");
+    };
+
+
+public static Command holdThenL1 = new Command(){
+
+    public void execute() {};
+    public boolean isFinished() {
+        return null;
+    };
+    
+    public void end(boolean interrupted) {
+        
     }
-}
 
-public static Command holdThenScoreL() {
+};
+
+
+
+};
+
+
+// public static Command holdThenScoreL4() {
 
     
-    RobotContainer.factoryCommands.add("HoldThenScoreL4");
-    return ScoringFactory.scoreL4().onlyIf(()->Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef")).withName("HoldThenScoreL4");
-}
+//    // RobotContainer.factoryCommands.add("HoldThenScoreL4");
+//     return ScoringFactory.scoreL4().onlyIf(()->Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef")).withName("HoldThenScoreL4").repeatedly();
+// }
 
-public static Command holdThenScoreL3() {
-    RobotContainer.factoryCommands.add("HoldThenScoreL3");
-    return ScoringFactory.scoreL3().onlyIf(()->Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef")).withName("HoldThenScoreL3");
-}
+// public static Command holdThenScoreL3() {
+//     //RobotContainer.factoryCommands.add("HoldThenScoreL3");
+//     return ScoringFactory.scoreL3().onlyIf(()->Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef")).withName("HoldThenScoreL3");
+// }
 
-public static Command holdThenScoreL2() {
-    RobotContainer.factoryCommands.add("HoldThenScoreL2");
-    return ScoringFactory.scoreL2().onlyIf(()->Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef")).withName("HoldThenScoreL2");
-}
-public static Command holdThenScoreL1() {
-    RobotContainer.factoryCommands.add("HoldThenScoreL1");
-    return ScoringFactory.scoreL1().onlyIf(()->Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef")).withName("HoldThenScoreL1");
-}
+// public static Command holdThenScoreL2() {
+//     //RobotContainer.factoryCommands.add("HoldThenScoreL2");
+//     return ScoringFactory.scoreL2().onlyIf(()->Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef")).withName("HoldThenScoreL2");
+// }
+// public static Command holdThenScoreL1() {
+//    // RobotContainer.factoryCommands.add("HoldThenScoreL1");
+//     return ScoringFactory.scoreL1().onlyIf(()->Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef")).withName("HoldThenScoreL1");
+// }
 
 
 
@@ -69,4 +150,3 @@ public static Command holdThenScoreL1() {
 //     followPath(PathFileName).andThen(Commands.run)
 // }
 
-}

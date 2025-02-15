@@ -24,7 +24,7 @@ public class ScoringFactory {
 
   public static Command scoreL4() {
 
-    RobotContainer.factoryCommands.add("ScoreL4");
+   // RobotContainer.factoryCommands.add("ScoreL4");
     return new SequentialCommandGroup(
       
             ElevatorFactory.setPositionBlocking(
@@ -41,7 +41,7 @@ public class ScoringFactory {
    * @return Command sequence for L3 scoring
    */
   public static Command scoreL3() {
-    RobotContainer.factoryCommands.add("ScoreL3");
+   // RobotContainer.factoryCommands.add("ScoreL3");
     return new SequentialCommandGroup(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS),
@@ -57,7 +57,7 @@ public class ScoringFactory {
    * @return Command sequence for L2 scoring
    */
   public static Command scoreL2() {
-    RobotContainer.factoryCommands.add("ScoreL2");
+   // RobotContainer.factoryCommands.add("ScoreL2");
     return new SequentialCommandGroup(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS),
@@ -73,7 +73,7 @@ public class ScoringFactory {
    * @return Command sequence for L1 scoring
    */
   public static Command scoreL1() {
-    RobotContainer.factoryCommands.add("ScoreL1");
+   // RobotContainer.factoryCommands.add("ScoreL1");
     return new SequentialCommandGroup(
         IntakeFactory.setHomePosition(),
         NemesisTimedCommand.generateTimedCommand(

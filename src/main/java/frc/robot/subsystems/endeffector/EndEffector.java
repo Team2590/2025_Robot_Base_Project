@@ -86,4 +86,8 @@ public class EndEffector extends SubsystemBase {
           isRunning = false;
         });
   }
+
+  public boolean isRunning(){
+    return isRunning;
+  }
 }

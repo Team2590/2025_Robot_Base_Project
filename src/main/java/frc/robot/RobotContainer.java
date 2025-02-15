@@ -427,16 +427,16 @@ public class RobotContainer {
 
 
   public static void registerCommands(){
-    NamedCommands.registerCommand("HoldL4", AutoFactory.holdThenScoreL());
-    NamedCommands.registerCommand("HoldL3", AutoFactory.holdThenScoreL());
-    NamedCommands.registerCommand("HoldL2", AutoFactory.holdThenScoreL());
-    NamedCommands.registerCommand("HoldL1", AutoFactory.holdThenScoreL());
+    NamedCommands.registerCommand("HoldL4", AutoFactory.holdThenL4);
+    NamedCommands.registerCommand("HoldL3", AutoFactory.holdThenL3);
+    NamedCommands.registerCommand("HoldL2", AutoFactory.holdThenL2);
+    NamedCommands.registerCommand("HoldL1", AutoFactory.holdThenL1);
 
-    NamedCommands.registerCommand("HoldL4", ScoringFactory.scoreL4());
-    NamedCommands.registerCommand("HoldL3", ScoringFactory.scoreL3());
-    NamedCommands.registerCommand("HoldL2", ScoringFactory.scoreL2());
-    NamedCommands.registerCommand("HoldL1", ScoringFactory.scoreL1());
-    NamedCommands.registerCommand("Stow Mechanism", ScoringFactory.stow());
+    NamedCommands.registerCommand("ScoreL4", ScoringFactory.scoreL4());
+    NamedCommands.registerCommand("ScoreL3", ScoringFactory.scoreL3());
+    NamedCommands.registerCommand("ScoreL2", ScoringFactory.scoreL2());
+    NamedCommands.registerCommand("ScoreL1", ScoringFactory.scoreL1());
+    NamedCommands.registerCommand("Stow-Mechanism", ScoringFactory.stow());
 
   }
 

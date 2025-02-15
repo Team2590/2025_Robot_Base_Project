@@ -28,4 +28,9 @@ public class EndEffectorFactory {
   public static Command runEndEffectorOuttake() {
     return container.getEndEffector().runEndEffectorOuttake().withName("Run Endeffector");
   }
+
+  public static boolean endEffectorCommandFinished(){
+
+    return !container.getEndEffector().isRunning();
+  }
 }
