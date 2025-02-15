@@ -1,6 +1,8 @@
 package frc.robot.subsystems.elevator;
 
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
@@ -13,14 +15,16 @@ public class ElevatorIOSim implements ElevatorIO {
   private ElevatorSim elevatorSim;
   private double drumRadiusMeters;
   private double gearing;
-  private LoggedTunableNumber cruiseVelocity = new LoggedTunableNumber("Arm/cruiseVelocity", 10);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Arm/acceleration", 15);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("Arm/jerk", 20);
+  private LoggedTunableNumber cruiseVelocity =
+      new LoggedTunableNumber("Elevator/cruiseVelocity", 2.0);
+  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Elevator/acceleration", 1.0);
   private NeutralModeValue neutralMode;
   private double rotationCount;
   private DCMotor gearBox;
-  private double requestedPositionMeters = 0;
-  private boolean holding = true;
+  private double targetPositionMeters = 0;
+  private double appliedVolts = 0.0;
+  private PIDController positionController = new PIDController(0.5, 0, 0);
+  private double maxVoltage = 12.0;
 
   public ElevatorIOSim(
       DCMotor gearbox,
@@ -47,22 +51,36 @@ public class ElevatorIOSim implements ElevatorIO {
             simulateGravity,
             startingHeightMeters,
             measurementStdDevs);
+
+    positionController.setTolerance(0.01); // 1 cm tolerance
   }
 
   @Override
   public void updateInputs(ElevatorIOInputs io) {
+    // Calculate control voltage based on position error
+    double currentPositionMeters = elevatorSim.getPositionMeters();
+    double controlVoltage =
+        positionController.calculate(currentPositionMeters, targetPositionMeters);
+
+    // Limit the voltage to motor capabilities
+    controlVoltage = Math.min(Math.max(controlVoltage, -maxVoltage), maxVoltage);
+
+    // Apply voltage to the simulation
+    elevatorSim.setInputVoltage(controlVoltage);
     elevatorSim.update(Constants.loopPeriodSecs);
+
+    // Update inputs
     rotationCount = positionToRotations(elevatorSim.getPositionMeters());
     io.rotationCount = rotationCount;
     io.connected = true;
     io.positionRads = Units.rotationsToRadians(rotationCount);
     io.velocityRadsPerSec =
         Units.rotationsToRadians(positionToRotations(elevatorSim.getVelocityMetersPerSecond()));
-    io.appliedVoltage = elevatorSim.getCurrentDrawAmps();
+    io.appliedVoltage = controlVoltage;
     io.supplyCurrentAmps = elevatorSim.getCurrentDrawAmps();
     io.torqueCurrentAmps = elevatorSim.getCurrentDrawAmps();
-    io.tempCelsius = 30;
-    if (holding) elevatorSim.setState(requestedPositionMeters, cruiseVelocity.get());
+    io.tempCelsius =
+        30 + Math.abs(elevatorSim.getCurrentDrawAmps()) * 0.1; // Simulate motor heating
   }
 
   @Override
@@ -71,12 +89,8 @@ public class ElevatorIOSim implements ElevatorIO {
   @Override
   public void setPosition(double position) {
     double armPos = Robot.getRobotContainerInstance().getArm().getAbsolutePosition();
-    double elevatorPos = this.rotationCount;
-
-    if (SafetyChecker.isElevatorMovementSafe(armPos, elevatorPos)) {
-      double positionMeters = position * 2 * Math.PI * drumRadiusMeters / gearing;
-      requestedPositionMeters = positionMeters;
-      elevatorSim.setState(positionMeters, cruiseVelocity.get());
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_ARM, armPos, position)) {
+      targetPositionMeters = position * 2 * Math.PI * drumRadiusMeters / gearing;
     } else {
       System.out.println("CAN'T MOVE ELEVATOR (SIM), arm not in valid position.");
     }
@@ -84,12 +98,11 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public void stop() {
-    double currentPositionMeters = elevatorSim.getPositionMeters();
-
     if (neutralMode == NeutralModeValue.Brake) {
-      elevatorSim.setState(currentPositionMeters, 0.0);
+      elevatorSim.setInputVoltage(0);
+      elevatorSim.setState(elevatorSim.getPositionMeters(), 0);
     } else {
-      holding = false;
+      elevatorSim.setInputVoltage(0);
     }
   }
 
@@ -101,6 +114,21 @@ public class ElevatorIOSim implements ElevatorIO {
   @Override
   public void setNeutralMode(NeutralModeValue mode) {
     neutralMode = mode;
+  }
+
+  @Override
+  public void setVoltage(VoltageOut volts) {
+    double armPos = Robot.getRobotContainerInstance().getArm().getAbsolutePosition();
+    double elevatorPos = this.rotationCount;
+
+    if (SafetyChecker.isElevatorMovementSafe(armPos, elevatorPos)) {
+      appliedVolts = volts.Output;
+      elevatorSim.setInputVoltage(appliedVolts);
+    } else {
+      System.out.println("CAN'T MOVE ELEVATOR (SIM), arm not in valid position");
+      appliedVolts = 0.0;
+      elevatorSim.setInputVoltage(0.0);
+    }
   }
 
   private double positionToRotations(double positionMeters) {

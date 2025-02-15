@@ -21,6 +21,7 @@ public class Elevator extends SubsystemBase {
     io.updateTunableNumbers();
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
+    Logger.recordOutput("Elevator/Position", getRotationCount());
   }
 
   public Command stop() {
@@ -28,6 +29,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command setPosition(double position) {
+    System.out.println("Going to position: " + position);
     return runOnce(() -> io.setPosition(position));
   }
 
