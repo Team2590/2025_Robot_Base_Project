@@ -20,7 +20,8 @@ public class ScoringFactory {
    */
   public static Command scoreL4() {
     return new SequentialCommandGroup(
-            ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
+            ElevatorFactory.setPositionBlocking(
+                Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
             ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L4_POS),
             EndEffectorFactory.runEndEffectorOuttake())
         .withName("Score L4");
@@ -34,7 +35,8 @@ public class ScoringFactory {
    */
   public static Command scoreL3() {
     return new SequentialCommandGroup(
-            ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS),
+            ElevatorFactory.setPositionBlocking(
+                Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS),
             ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L3_POS),
             EndEffectorFactory.runEndEffectorOuttake())
         .withName("Score L3");
@@ -48,7 +50,8 @@ public class ScoringFactory {
    */
   public static Command scoreL2() {
     return new SequentialCommandGroup(
-            ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS),
+            ElevatorFactory.setPositionBlocking(
+                Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS),
             ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L2_POS),
             EndEffectorFactory.runEndEffectorOuttake())
         .withName("Score L2");
@@ -63,7 +66,8 @@ public class ScoringFactory {
   public static Command scoreL1() {
     return new SequentialCommandGroup(
             IntakeFactory.setHomePosition(),
-            IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED))
+            IntakeFactory.runIntake(
+                () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED))
         .withName("Score L1");
   }
 
@@ -75,8 +79,7 @@ public class ScoringFactory {
    */
   public static Command stow(RobotContainer container) {
     return new SequentialCommandGroup(
-            ArmFactory.setPositionBlocking(0),
-            ElevatorFactory.setPositionBlocking(0))
+            ArmFactory.setPositionBlocking(0), ElevatorFactory.setPositionBlocking(0))
         .withName("Stow Mechanism");
   }
 }

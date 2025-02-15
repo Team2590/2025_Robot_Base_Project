@@ -170,7 +170,7 @@ public final class Constants {
     public static double ARM_FACTORY_MAX_POS = 10; // TODO: change to actual value
     public static double ARM_L2_POS = 6; // TODO: change to actual value
     public static double ARM_L3_POS = 7; // TODO: change to actual value
-    public static double ARM_L4_POS = 8; // TODO: change to actual value 
+    public static double ARM_L4_POS = 8; // TODO: change to actual value
   }
 
   public static class EndEffectorConstantsLeonidas {
