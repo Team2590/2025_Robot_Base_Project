@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.util.NemesisTimedCommand;
 
 /**
  * Factory class for creating complex scoring-related commands.
@@ -23,7 +24,7 @@ public class ScoringFactory {
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
             ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L4_POS),
-            EndEffectorFactory.runEndEffectorOuttake())
+            NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(), 1))
         .withName("Score L4");
   }
 
@@ -38,7 +39,7 @@ public class ScoringFactory {
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS),
             ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L3_POS),
-            EndEffectorFactory.runEndEffectorOuttake())
+            NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(), 1))
         .withName("Score L3");
   }
 
@@ -53,7 +54,7 @@ public class ScoringFactory {
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS),
             ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L2_POS),
-            EndEffectorFactory.runEndEffectorOuttake())
+            NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(), 1))
         .withName("Score L2");
   }
 
@@ -66,9 +67,8 @@ public class ScoringFactory {
   public static Command scoreL1() {
     return new SequentialCommandGroup(
             IntakeFactory.setHomePosition(),
-            IntakeFactory.runIntake(
-                () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED))
-        .withName("Score L1");
+            NemesisTimedCommand.generateTimedCommand(IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED), 1)
+        .withName("Score L1"));
   }
 
   /**
