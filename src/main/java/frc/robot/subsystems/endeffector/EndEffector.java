@@ -1,6 +1,7 @@
 package frc.robot.subsystems.endeffector;
 
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,6 +30,13 @@ public class EndEffector extends SubsystemBase {
     Logger.recordOutput("EndEffector/IsRunning", isRunning);
     Logger.recordOutput("EndEffector/CurrentThreshold", CURRENT_THRESHOLD);
     Logger.recordOutput("EndEffector/filter", filtered_data);
+  }
+  // This method is to check if we have a coral or not, if we don't have a coral the current will not spike 
+  public boolean currentSpiked(){
+    Timer t = new Timer();
+    
+    
+    return t.hasElapsed(.2) &&  isRunning && filtered_data >= CURRENT_THRESHOLD.get();
   }
 
   public Command runEndEffector() {
