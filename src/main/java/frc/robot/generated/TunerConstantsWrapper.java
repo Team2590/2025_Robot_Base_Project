@@ -73,6 +73,26 @@ public class TunerConstantsWrapper {
                     Math.hypot(BackRight.LocationX, BackRight.LocationY)));
         odometryFrequency = new CANBus(kCANBus.getName()).isNetworkFD() ? 250.0 : 100.0;
         pigeonCanbusName = new CANBus("rio");
+        break;
+      case Leonidas:
+        kCANBus = TunerConstantsLeonidas.kCANBus;
+        kSpeedAt12Volts = TunerConstantsLeonidas.kSpeedAt12Volts;
+        DrivetrainConstants = TunerConstantsLeonidas.DrivetrainConstants;
+        FrontLeft = TunerConstantsLeonidas.FrontLeft;
+        FrontRight = TunerConstantsLeonidas.FrontRight;
+        BackLeft = TunerConstantsLeonidas.BackLeft;
+        BackRight = TunerConstantsLeonidas.BackRight;
+        driveBaseRadius =
+            Math.max(
+                Math.max(
+                    Math.hypot(FrontLeft.LocationX, FrontLeft.LocationY),
+                    Math.hypot(FrontRight.LocationX, FrontRight.LocationY)),
+                Math.max(
+                    Math.hypot(BackLeft.LocationX, BackLeft.LocationY),
+                    Math.hypot(BackRight.LocationX, BackRight.LocationY)));
+        odometryFrequency = new CANBus(kCANBus.getName()).isNetworkFD() ? 250.0 : 100.0;
+        pigeonCanbusName = new CANBus("Takeover");
+        break;
       case SIM:
         kCANBus = TunerConstantsLarry.kCANBus;
         kSpeedAt12Volts = TunerConstantsLarry.kSpeedAt12Volts;

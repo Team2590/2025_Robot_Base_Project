@@ -17,8 +17,14 @@ public class ArmFactory {
    * @return Command to set arm position
    */
   public static Command setPosition(double position) {
-    return container.getArm().setPosition(position).withName("Set Arm Position")
-    .onlyIf(() -> container.getElevator().getRotationCount() > Constants.ElevatorConstantsLoki.ARM_FACTORY_MIN_POS);
+    return container
+        .getArm()
+        .setPosition(position)
+        .withName("Set Arm Position")
+        .onlyIf(
+            () ->
+                container.getElevator().getRotationCount()
+                    > Constants.ElevatorConstantsLeonidas.ARM_FACTORY_MIN_POS);
   }
 
   /**
@@ -29,8 +35,14 @@ public class ArmFactory {
    * @return Command for manual arm control
    */
   public static Command manualControl(double power) {
-    return container.getArm().manual(new DutyCycleOut(power)).withName("Manual Arm Control")
-    .onlyIf(() -> container.getElevator().getRotationCount() > Constants.ElevatorConstantsLoki.ARM_FACTORY_MIN_POS);
+    return container
+        .getArm()
+        .manual(new DutyCycleOut(power))
+        .withName("Manual Arm Control")
+        .onlyIf(
+            () ->
+                container.getElevator().getRotationCount()
+                    > Constants.ElevatorConstantsLeonidas.ARM_FACTORY_MIN_POS);
   }
 
   /**

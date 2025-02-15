@@ -67,6 +67,11 @@ public class Robot extends LoggedRobot {
         // Logger.addDataReceiver(new WPILOGWriter());
         Logger.addDataReceiver(new NT4Publisher());
         break;
+      case Leonidas:
+        // Running on a real robot, log to a USB stick ("/U/logs")
+        // Logger.addDataReceiver(new WPILOGWriter());
+        Logger.addDataReceiver(new NT4Publisher());
+        break;
       case SIM:
         // Running a physics simulator, log to NT
         Logger.addDataReceiver(new NT4Publisher());
@@ -182,7 +187,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void simulationPeriodic() {}
 
-  public static RobotContainer getRobotContainerInstance(){
+  public static RobotContainer getRobotContainerInstance() {
     return robotContainer;
   }
 }

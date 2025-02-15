@@ -11,7 +11,6 @@ import frc.robot.util.NemesisMathUtil;
  * Factory class for creating commands related to the elevator subsystem.
  *
  * <p>This class provides methods to create commands for controlling the elevator mechanism.
- * 
  */
 public class ElevatorFactory {
   private static RobotContainer container = Robot.getRobotContainerInstance();
@@ -23,12 +22,16 @@ public class ElevatorFactory {
    * @return Command to move elevator to position
    */
   public static Command setPosition(double position) {
-    return container.getElevator().setPosition(position).withName("Set Elevator Position")
-    .onlyIf(() -> NemesisMathUtil.isBetweenInclusive(
-      container.getArm().getSetpoint(), 
-      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MIN_POS, 
-      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MAX_POS
-    ));
+    return container
+        .getElevator()
+        .setPosition(position)
+        .withName("Set Elevator Position")
+        .onlyIf(
+            () ->
+                NemesisMathUtil.isBetweenInclusive(
+                    container.getArm().getSetpoint(),
+                    Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
+                    Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
   }
 
   /**
@@ -70,12 +73,16 @@ public class ElevatorFactory {
    * @return Command to raise elevator
    */
   public static Command raise() {
-    return container.getElevator().raise().withName("Raise Elevator")
-    .onlyIf(() -> NemesisMathUtil.isBetweenInclusive(
-      container.getArm().getSetpoint(), 
-      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MIN_POS, 
-      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MAX_POS
-    ));
+    return container
+        .getElevator()
+        .raise()
+        .withName("Raise Elevator")
+        .onlyIf(
+            () ->
+                NemesisMathUtil.isBetweenInclusive(
+                    container.getArm().getSetpoint(),
+                    Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
+                    Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
   }
 
   /**
@@ -84,11 +91,15 @@ public class ElevatorFactory {
    * @return Command to lower elevator
    */
   public static Command lower() {
-    return container.getElevator().lower().withName("Lower Elevator")
-    .onlyIf(() -> NemesisMathUtil.isBetweenInclusive(
-      container.getArm().getSetpoint(), 
-      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MIN_POS, 
-      Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MAX_POS
-    ));
+    return container
+        .getElevator()
+        .lower()
+        .withName("Lower Elevator")
+        .onlyIf(
+            () ->
+                NemesisMathUtil.isBetweenInclusive(
+                    container.getArm().getSetpoint(),
+                    Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
+                    Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
   }
 }

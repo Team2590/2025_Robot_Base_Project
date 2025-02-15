@@ -9,12 +9,15 @@ import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
   private final IntakeIO intakeIO;
+  private final IntakeArmIO intakeArmIO;
   private final IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
+  private final IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
   private final Alert intakeDisconnected;
   private final IntakeArm intakeArm;
 
   public Intake(IntakeIO intakeIO, IntakeArmIO intakeArmIO) {
     this.intakeIO = intakeIO;
+    this.intakeArmIO = intakeArmIO;
     intakeDisconnected = new Alert("Intake motor disconnected!", Alert.AlertType.kWarning);
     intakeArm = new IntakeArm(intakeArmIO);
     intakeIO.setNeutralMode(NeutralModeValue.Brake);
@@ -102,5 +105,14 @@ public class Intake extends SubsystemBase {
 
   public Command resetArmRotationCount() {
     return intakeArm.resetRotationCount();
+  }
+
+  public void setVoltage(double volts) {
+    intakeArmIO.setVoltage(volts);
+  }
+
+  /** Returns the current velocity in radians per second. */
+  public double getCharacterizationVelocity() {
+    return intakeArmInputs.velocityRadsPerSec;
   }
 }

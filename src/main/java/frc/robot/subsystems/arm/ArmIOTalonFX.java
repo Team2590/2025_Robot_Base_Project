@@ -10,6 +10,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -22,7 +23,9 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.Robot;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.SafetyChecker;
 import frc.robot.util.StickyFaultUtil;
 
 public class ArmIOTalonFX implements ArmIO {
@@ -61,7 +64,8 @@ public class ArmIOTalonFX implements ArmIO {
       boolean brake,
       double reduction,
       int cancoderID,
-      double magOffset) {
+      double magOffset,
+      double sensor_reduction) {
 
     this.reduction = reduction;
     arm = new TalonFX(motorCanID, canBus);
@@ -93,7 +97,7 @@ public class ArmIOTalonFX implements ArmIO {
     slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
     FeedbackConfigs fdb = cfg.Feedback;
-    fdb.RotorToSensorRatio = reduction;
+    fdb.RotorToSensorRatio = sensor_reduction;
     fdb.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     fdb.FeedbackRemoteSensorID = cancoderID;
     MagnetSensorConfigs mag = new MagnetSensorConfigs();
@@ -139,7 +143,13 @@ public class ArmIOTalonFX implements ArmIO {
   }
 
   public void setPosition(double position) {
-    arm.setControl(mmv.withPosition(position));
+    double elevatorPos = Robot.getRobotContainerInstance().getElevator().getRotationCount();
+
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_ELEVATOR, elevatorPos, position)) {
+      arm.setControl(mmv.withPosition(position));
+    } else {
+      System.out.println("CAN'T MOVE ARM, elevator not in valid position.");
+    }
   }
 
   public double getSetpoint() {
@@ -201,5 +211,17 @@ public class ArmIOTalonFX implements ArmIO {
 
   public void setPower(DutyCycleOut power) {
     arm.setControl(power);
+  }
+
+  @Override
+  public void setVoltage(double volts) {
+    double elevatorPos = Robot.getRobotContainerInstance().getElevator().getRotationCount();
+    double armPos = getAbsolutePosition();
+
+    if (SafetyChecker.isArmMovementSafe(elevatorPos, armPos)) {
+      arm.setControl(new VoltageOut(volts));
+    } else {
+      System.out.println("CAN'T MOVE ARM, elevator not in valid position.");
+    }
   }
 }

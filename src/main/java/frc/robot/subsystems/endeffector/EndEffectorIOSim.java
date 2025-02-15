@@ -1,17 +1,16 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.endeffector;
 
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Constants;
 
-public class IntakeIOSim implements IntakeIO {
+public class EndEffectorIOSim implements EndEffectorIO {
   private final DCMotorSim sim;
   private double appliedVoltage = 0;
 
-  public IntakeIOSim(DCMotor motorModel, double reduction, double inertia) {
+  public EndEffectorIOSim(DCMotor motorModel, double reduction, double inertia) {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(motorModel, inertia, reduction), motorModel);
@@ -19,7 +18,6 @@ public class IntakeIOSim implements IntakeIO {
 
   @Override
   public void stop() {
-    // TODO Auto-generated method stub
     setVoltage(0.0);
   }
 
@@ -30,18 +28,12 @@ public class IntakeIOSim implements IntakeIO {
   }
 
   @Override
-  public void updateInputs(IntakeIOInputs inputs) {
-    // TODO Auto-generated method stub
+  public void updateInputs(EndEffectorIOInputs inputs) {
     inputs.connected = true;
     sim.update(Constants.loopPeriodSecs);
     inputs.positionRads = sim.getAngularPositionRad();
     inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
     inputs.appliedVoltage = appliedVoltage;
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
-  }
-
-  @Override
-  public void setNeutralMode(NeutralModeValue mode) {
-    // TODO Auto-generated method stub
   }
 }

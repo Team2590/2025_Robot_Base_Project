@@ -17,7 +17,9 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.Robot;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.SafetyChecker;
 import frc.robot.util.StickyFaultUtil;
 
 /**
@@ -159,11 +161,16 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setPosition(double position) {
-    var request = new MotionMagicVoltage(0);
-    if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {
-      leader.setControl(request);
+    double armPos = Robot.getRobotContainerInstance().getArm().getAbsolutePosition();
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_ARM, armPos, position)) {
+      var request = new MotionMagicVoltage(0);
+      if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {
+        leader.setControl(request);
+      } else {
+        leader.setControl(request.withPosition(position));
+      }
     } else {
-      leader.setControl(request.withPosition(position));
+      System.out.println("CAN'T MOVE ELEVATOR, arm not in valid position");
     }
   }
 
@@ -189,6 +196,17 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setVoltage(VoltageOut volts) {
-    leader.setControl(volts);
+    double armPos = Robot.getRobotContainerInstance().getArm().getAbsolutePosition();
+    double elevatorPos = getRotationCounts();
+
+    if (SafetyChecker.isElevatorMovementSafe(armPos, elevatorPos)) {
+      leader.setControl(volts);
+    } else {
+      System.out.println("CAN'T MOVE ELEVATOR, arm not in valid position");
+    }
+  }
+
+  public double getRotationCounts() {
+    return leader.getPosition().getValueAsDouble();
   }
 }
