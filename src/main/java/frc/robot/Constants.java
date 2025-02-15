@@ -157,14 +157,20 @@ public final class Constants {
     static double reduction = 1;
   }
 
-  public static class ArmConstantsLeonidas {
+  public static class ElevatorConstantsLeonidas {
     public static double ELEVATOR_FACTORY_MIN_POS = 5; // TODO: change to actual value
     public static double ELEVATOR_FACTORY_MAX_POS = 10; // TODO: change to actual value
+    public static double ELEVATOR_L2_POS = 6; // TODO: change to actual value
+    public static double ELEVATOR_L3_POS = 7; // TODO: change to actual value
+    public static double ELEVATOR_L4_POS = 8; // TODO: change to actual value
   }
 
-  public static class ElevatorConstantsLeonidas {
+  public static class ArmConstantsLeonidas {
     public static double ARM_FACTORY_MIN_POS = 5; // TODO: change to actual value
     public static double ARM_FACTORY_MAX_POS = 10; // TODO: change to actual value
+    public static double ARM_L2_POS = 6; // TODO: change to actual value
+    public static double ARM_L3_POS = 7; // TODO: change to actual value
+    public static double ARM_L4_POS = 8; // TODO: change to actual value 
   }
 
   public static class EndEffectorConstantsLeonidas {
@@ -174,6 +180,14 @@ public final class Constants {
     static boolean invert = true; // TODO
     static boolean brake = true; // TODO
     static double reduction = 1; // TODO
+  }
+
+  public static class IntakeConstantsLeonidas {
+    public static double INTAKE_FACTORY_CORAL_POSITION = 10; // TODO: Find Actual Value
+    public static double INTAKE_FACTORY_ALGAE_POSITION = 4; // TODO: Find Actual Value
+    public static double INTAKE_FACTORY_HOME_POSITION = 0; // TODO: Find Actual Value
+    public static double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 2; // TODO: Find Actual Value
+    public static double INTAKE_CORAL_OUTTAKE_SPEED = -2; // TODO: Find Actual Value
   }
 
   public static class IntakeConstantsLarry {

@@ -30,8 +30,8 @@ public class ElevatorFactory {
             () ->
                 NemesisMathUtil.isBetweenInclusive(
                     container.getArm().getSetpoint(),
-                    Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
-                    Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
   }
 
   /**
@@ -81,8 +81,8 @@ public class ElevatorFactory {
             () ->
                 NemesisMathUtil.isBetweenInclusive(
                     container.getArm().getSetpoint(),
-                    Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
-                    Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
   }
 
   /**
@@ -99,7 +99,7 @@ public class ElevatorFactory {
             () ->
                 NemesisMathUtil.isBetweenInclusive(
                     container.getArm().getSetpoint(),
-                    Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
-                    Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
   }
 }

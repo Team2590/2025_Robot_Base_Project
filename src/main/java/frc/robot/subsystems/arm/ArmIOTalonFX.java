@@ -152,11 +152,6 @@ public class ArmIOTalonFX implements ArmIO {
     }
   }
 
-  public double getSetpoint() {
-    return armCancoder.getAbsolutePosition().getValueAsDouble();
-    // FIXME probably not right, just for illustrative purposes.
-  }
-
   public double getAbsolutePosition() {
     return armCancoder.getAbsolutePosition().getValueAsDouble();
   }

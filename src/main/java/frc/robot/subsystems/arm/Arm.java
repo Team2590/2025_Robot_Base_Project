@@ -9,6 +9,7 @@ import org.littletonrobotics.junction.Logger;
 public class Arm extends SubsystemBase {
   private ArmIO arm;
   private double setpointTolerance = 0.05;
+  private double setpoint;
 
   private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
@@ -23,8 +24,8 @@ public class Arm extends SubsystemBase {
     Logger.processInputs("Arm", inputs);
 
     // Log current position and target position
-    Logger.recordOutput("Arm/CurrentPosition", inputs.positionRads);
-    Logger.recordOutput("Arm/TargetPosition", arm.getSetpoint());
+    Logger.recordOutput("Arm/CurrentPosition", inputs.armabspos);
+    Logger.recordOutput("Arm/TargetPosition", setpoint);
   }
 
   /** Run open loop at the specified voltage. */
@@ -33,12 +34,9 @@ public class Arm extends SubsystemBase {
   }
 
   public Command setPositionBlocking(double setpoint) {
+    this.setpoint = setpoint;
     return runEnd(() -> arm.setPosition(setpoint), () -> arm.setPosition(setpoint))
-        .until(() -> NemesisMathUtil.isApprox(inputs.rotationCount, setpointTolerance, setpoint));
-  }
-
-  public double getSetpoint() {
-    return arm.getSetpoint();
+        .until(() -> NemesisMathUtil.isApprox(inputs.armabspos, setpointTolerance, setpoint));
   }
 
   public Command resetarm() {
@@ -64,5 +62,9 @@ public class Arm extends SubsystemBase {
 
   public double getAbsolutePosition() {
     return inputs.armabspos;
+  }
+
+  public double getSetpoint() {
+    return setpoint;
   }
 }

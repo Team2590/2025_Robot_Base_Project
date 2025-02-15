@@ -2,6 +2,7 @@ package frc.robot.command_factories;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 /**
@@ -15,57 +16,55 @@ public class ScoringFactory {
    * Creates a command sequence for scoring at L4.
    *
    * @param container The RobotContainer instance
-   * @return Command sequence for high scoring
+   * @return Command sequence for L4 scoring
    */
   public static Command scoreL4() {
     return new SequentialCommandGroup(
-            // First, move elevator to high position
-            ElevatorFactory.setPositionBlocking(48),
-
-            // Then, extend arm to scoring position
-            ArmFactory.setPositionBlocking(90),
-
-            // Finally, run intake to release game piece
-            IntakeFactory.runIntake(() -> -6))
-        .withName("Score High");
+            ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L4_POS),
+            EndEffectorFactory.runEndEffectorOuttake())
+        .withName("Score L4");
   }
 
   /**
    * Creates a command sequence for scoring at L3.
    *
    * @param container The RobotContainer instance
-   * @return Command sequence for mid scoring
+   * @return Command sequence for L3 scoring
    */
   public static Command scoreL3() {
     return new SequentialCommandGroup(
-            // First, move elevator to mid position
-            ElevatorFactory.setPositionBlocking(30),
-
-            // Then, extend arm to scoring position
-            ArmFactory.setPositionBlocking(60),
-
-            // Finally, run intake to release game piece
-            IntakeFactory.runIntake(() -> -6))
-        .withName("Score Mid");
+            ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS),
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L3_POS),
+            EndEffectorFactory.runEndEffectorOuttake())
+        .withName("Score L3");
   }
 
   /**
    * Creates a command sequence for scoring at L2.
    *
    * @param container The RobotContainer instance
-   * @return Command sequence for mid scoring
+   * @return Command sequence for L2 scoring
    */
   public static Command scoreL2() {
     return new SequentialCommandGroup(
-            // First, move elevator to mid position
-            ElevatorFactory.setPositionBlocking(30),
+            ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS),
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L2_POS),
+            EndEffectorFactory.runEndEffectorOuttake())
+        .withName("Score L2");
+  }
 
-            // Then, extend arm to scoring position
-            ArmFactory.setPositionBlocking(60),
-
-            // Finally, run intake to release game piece
-            IntakeFactory.runIntake(() -> -6))
-        .withName("Score Mid");
+  /**
+   * Creates a command sequence for scoring at L1.
+   *
+   * @param container The RobotContainer instance
+   * @return Command sequence for L1 scoring
+   */
+  public static Command scoreL1() {
+    return new SequentialCommandGroup(
+            IntakeFactory.setHomePosition(),
+            IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED))
+        .withName("Score L1");
   }
 
   /**
@@ -76,10 +75,7 @@ public class ScoringFactory {
    */
   public static Command stow(RobotContainer container) {
     return new SequentialCommandGroup(
-            // First, retract arm
             ArmFactory.setPositionBlocking(0),
-
-            // Then, lower elevator
             ElevatorFactory.setPositionBlocking(0))
         .withName("Stow Mechanism");
   }
