@@ -31,50 +31,50 @@ public class EndEffector extends SubsystemBase {
     Logger.recordOutput("EndEffector/filter", filtered_data);
   }
 
-  public Command runIntake() {
+  public Command runEndEffector() {
     return runEnd(
             () -> {
               io.setVoltage(6.0);
               isRunning = true;
             },
             () -> {
-              io.stopMotor();
+              io.stop();
               isRunning = false;
             })
         .until(() -> filtered_data >= CURRENT_THRESHOLD.get())
         .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
   }
 
-  public Command runOuttake() {
+  public Command runEndEffectorOuttake() {
     return runEnd(
             () -> {
               io.setVoltage(-6.0);
               isRunning = true;
             },
             () -> {
-              io.stopMotor();
+              io.stop();
               isRunning = false;
             })
         .until(() -> isRunning && filtered_data >= CURRENT_THRESHOLD.get())
         .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
   }
 
-  public Command runIntakeVelocity() {
+  public Command runEndEffectorVelocity() {
     return runEnd(
         () -> {
           io.setVelocity(1);
           isRunning = true;
         },
         () -> {
-          io.stopMotor();
+          io.stop();
           isRunning = false;
         });
   }
 
-  public Command stopIntake() {
+  public Command stopEndEffector() {
     return runOnce(
         () -> {
-          io.stopMotor();
+          io.stop();
           isRunning = false;
         });
   }

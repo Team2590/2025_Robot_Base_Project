@@ -92,7 +92,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
   }
 
   @Override
-  public void stopMotor() {
+  public void stop() {
     leader.set(0);
   }
 

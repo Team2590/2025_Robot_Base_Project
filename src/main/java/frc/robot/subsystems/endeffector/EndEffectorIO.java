@@ -22,5 +22,5 @@ public interface EndEffectorIO {
 
   public default void setVelocity(double velocity) {}
 
-  public default void stopMotor() {}
+  public default void stop() {}
 }
