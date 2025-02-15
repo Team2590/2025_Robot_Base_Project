@@ -3,6 +3,8 @@ package frc.robot.command_factories;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.util.NemesisTimedCommand;
+
 import java.util.function.DoubleSupplier;
 
 /**
@@ -20,7 +22,7 @@ public class IntakeFactory {
    * @return Command to run the intake
    */
   public static Command runIntake(DoubleSupplier intakeSpeed) {
-    return container.getIntake().runIntake(intakeSpeed.getAsDouble()).withName("Run Intake");
+    return NemesisTimedCommand.generateTimedCommand(container.getIntake().runIntake(intakeSpeed.getAsDouble()), 1).withName("Run Intake");
   }
 
   /**
