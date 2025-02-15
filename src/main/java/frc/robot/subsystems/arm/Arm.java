@@ -43,7 +43,11 @@ public class Arm extends SubsystemBase {
     return inputs.velocityRadsPerSec;
   }
 
-  public void setVoltage(double volts){
+  public void setVoltage(double volts) {
     arm.setVoltage(volts);
+  }
+
+  public double getAbsolutePosition(){
+    return inputs.armabspos;
   }
 }

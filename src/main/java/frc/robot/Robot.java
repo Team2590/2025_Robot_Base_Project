@@ -34,7 +34,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  */
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
-  private RobotContainer robotContainer;
+  private static RobotContainer robotContainer;
 
   public Robot() {
     // Record metadata
@@ -67,7 +67,7 @@ public class Robot extends LoggedRobot {
         // Logger.addDataReceiver(new WPILOGWriter());
         Logger.addDataReceiver(new NT4Publisher());
         break;
-      case LOKI:
+      case Leonidas:
         // Running on a real robot, log to a USB stick ("/U/logs")
         // Logger.addDataReceiver(new WPILOGWriter());
         Logger.addDataReceiver(new NT4Publisher());
@@ -186,4 +186,8 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+  public static RobotContainer getRobotContainerInstance(){
+    return robotContainer;
+  }
 }
