@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class RobotState extends SubsystemBase {
+    String currentZone;
     public RobotState() {
         // TODO: initalize instance variables and objects
     }
@@ -10,6 +11,7 @@ public class RobotState extends SubsystemBase {
     @Override
     public void periodic() {
         // TODO: check various states
+        currentZone = Constants.locator.getZoneOfField(Robot.getRobotContainerInstance().getDrive().getPose());
     }
 
     public boolean hasCoralIntake() {
@@ -26,4 +28,9 @@ public class RobotState extends SubsystemBase {
         // TODO: add logic based on intake
         return false;
     }
+
+    public String getCurrentZone() {
+        return currentZone;
+    }
+
 }
