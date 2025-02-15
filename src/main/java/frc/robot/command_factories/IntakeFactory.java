@@ -22,7 +22,7 @@ public class IntakeFactory {
    * @return Command to run the intake
    */
   public static Command runIntake(DoubleSupplier intakeSpeed) {
-    return NemesisTimedCommand.generateTimedCommand(container.getIntake().runIntake(intakeSpeed.getAsDouble()), 1).withName("Run Intake");
+    return container.getIntake().runIntake(intakeSpeed.getAsDouble()).withName("Run Intake");
   }
 
   /**
