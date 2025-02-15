@@ -20,10 +20,10 @@ public class ScoringFactory {
   public static Command scoreL4() {
     return new SequentialCommandGroup(
             // First, move elevator to high position
-            ElevatorFactory.setPosition(48),
+            ElevatorFactory.setPositionBlocking(48),
 
             // Then, extend arm to scoring position
-            ArmFactory.setPosition(90),
+            ArmFactory.setPositionBlocking(90),
 
             // Finally, run intake to release game piece
             IntakeFactory.runIntake(() -> -6))
@@ -39,10 +39,10 @@ public class ScoringFactory {
   public static Command scoreL3() {
     return new SequentialCommandGroup(
             // First, move elevator to mid position
-            ElevatorFactory.setPosition(30),
+            ElevatorFactory.setPositionBlocking(30),
 
             // Then, extend arm to scoring position
-            ArmFactory.setPosition(60),
+            ArmFactory.setPositionBlocking(60),
 
             // Finally, run intake to release game piece
             IntakeFactory.runIntake(() -> -6))
@@ -58,10 +58,10 @@ public class ScoringFactory {
   public static Command scoreL2() {
     return new SequentialCommandGroup(
             // First, move elevator to mid position
-            ElevatorFactory.setPosition(30),
+            ElevatorFactory.setPositionBlocking(30),
 
             // Then, extend arm to scoring position
-            ArmFactory.setPosition(60),
+            ArmFactory.setPositionBlocking(60),
 
             // Finally, run intake to release game piece
             IntakeFactory.runIntake(() -> -6))
@@ -77,10 +77,10 @@ public class ScoringFactory {
   public static Command stow(RobotContainer container) {
     return new SequentialCommandGroup(
             // First, retract arm
-            ArmFactory.setPosition(0),
+            ArmFactory.setPositionBlocking(0),
 
             // Then, lower elevator
-            ElevatorFactory.setPosition(0))
+            ElevatorFactory.setPositionBlocking(0))
         .withName("Stow Mechanism");
   }
 }

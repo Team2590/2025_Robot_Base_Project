@@ -3,10 +3,12 @@ package frc.robot.subsystems.arm;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.NemesisMathUtil;
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
   private ArmIO arm;
+  private double setpointTolerance = 0.05;
 
   private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
@@ -28,6 +30,11 @@ public class Arm extends SubsystemBase {
   /** Run open loop at the specified voltage. */
   public Command setPosition(double setpoint) {
     return runOnce(() -> arm.setPosition(setpoint));
+  }
+
+  public Command setPositionBlocking(double setpoint) {
+    return runEnd(() -> arm.setPosition(setpoint), () -> arm.setPosition(setpoint))
+        .until(() -> NemesisMathUtil.isApprox(inputs.rotationCount, setpointTolerance, setpoint));
   }
 
   public double getSetpoint() {

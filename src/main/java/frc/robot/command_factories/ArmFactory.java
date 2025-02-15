@@ -27,6 +27,17 @@ public class ArmFactory {
                     > Constants.ElevatorConstantsLeonidas.ARM_FACTORY_MIN_POS);
   }
 
+  public static Command setPositionBlocking(double position) {
+    return container
+        .getArm()
+        .setPositionBlocking(position)
+        .withName("Set Arm Position Blocking")
+        .onlyIf(
+            () ->
+                container.getElevator().getRotationCount()
+                    > Constants.ElevatorConstantsLeonidas.ARM_FACTORY_MIN_POS);
+  }
+
   /**
    * Creates a command for manual arm control.
    *
