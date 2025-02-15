@@ -166,6 +166,15 @@ public final class Constants {
     public static double ARM_FACTORY_MIN_POS = 5; // TODO: change to actual value
     public static double ARM_FACTORY_MAX_POS = 10; // TODO: change to actual value
   }
+
+  public static class EndEffectorConstantsLoki {
+    static int canID = 2; //TODO
+    static String canBus = "Takeover";
+    static int currentLimitAmps = 120; //TODO
+    static boolean invert = true; //TODO
+    static boolean brake = true; //TODO
+    static double reduction = 1; //TODO
+  }
   
   public static class IntakeConstantsLarry {
     static int canID = 60;
