@@ -32,7 +32,7 @@ import java.util.List;
  */
 public final class Constants {
   public static final Mode simMode = Mode.SIM;
-  public static final Mode currentMode = RobotBase.isReal() ? Mode.LOKI : simMode;
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.Leonidas : simMode;
   public static final boolean tuningMode = true;
   public static final double loopPeriodSecs = 0.02;
 
@@ -157,17 +157,17 @@ public final class Constants {
     static double reduction = 1;
   }
 
-  public static class ArmConstantsLoki {
+  public static class ArmConstantsLeonidas {
     public static double ELEVATOR_FACTORY_MIN_POS = 5; // TODO: change to actual value
     public static double ELEVATOR_FACTORY_MAX_POS = 10; // TODO: change to actual value
   }
 
-  public static class ElevatorConstantsLoki {
+  public static class ElevatorConstantsLeonidas {
     public static double ARM_FACTORY_MIN_POS = 5; // TODO: change to actual value
     public static double ARM_FACTORY_MAX_POS = 10; // TODO: change to actual value
   }
 
-  public static class EndEffectorConstantsLoki {
+  public static class EndEffectorConstantsLeonidas {
     static int canID = 2; //TODO
     static String canBus = "Takeover";
     static int currentLimitAmps = 120; //TODO
@@ -193,7 +193,7 @@ public final class Constants {
 
     LARRY,
 
-    LOKI,
+    Leonidas,
 
     /** Running a physics simulator. */
     SIM,

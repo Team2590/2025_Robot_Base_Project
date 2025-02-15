@@ -10,10 +10,10 @@ class SafetyCheckerTest {
   @BeforeEach
   void setup() {
     // Reset constants to default test values before each test
-    Constants.ElevatorConstantsLoki.ARM_FACTORY_MIN_POS = 1.0;
-    Constants.ElevatorConstantsLoki.ARM_FACTORY_MAX_POS = 3.0;
-    Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MIN_POS = 0.5;
-    Constants.ArmConstantsLoki.ELEVATOR_FACTORY_MAX_POS = 2.5;
+    Constants.ElevatorConstantsLeonidas.ARM_FACTORY_MIN_POS = 1.0;
+    Constants.ElevatorConstantsLeonidas.ARM_FACTORY_MAX_POS = 3.0;
+    Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS = 0.5;
+    Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS = 2.5;
   }
 
   @Test
