@@ -74,14 +74,14 @@ public class TunerConstantsWrapper {
         odometryFrequency = new CANBus(kCANBus.getName()).isNetworkFD() ? 250.0 : 100.0;
         pigeonCanbusName = new CANBus("rio");
         break;
-      case LOKI:
-        kCANBus = TunerConstantsLoki.kCANBus;
-        kSpeedAt12Volts = TunerConstantsLoki.kSpeedAt12Volts;
-        DrivetrainConstants = TunerConstantsLoki.DrivetrainConstants;
-        FrontLeft = TunerConstantsLoki.FrontLeft;
-        FrontRight = TunerConstantsLoki.FrontRight;
-        BackLeft = TunerConstantsLoki.BackLeft;
-        BackRight = TunerConstantsLoki.BackRight;
+      case Leonidas:
+        kCANBus = TunerConstantsLeonidas.kCANBus;
+        kSpeedAt12Volts = TunerConstantsLeonidas.kSpeedAt12Volts;
+        DrivetrainConstants = TunerConstantsLeonidas.DrivetrainConstants;
+        FrontLeft = TunerConstantsLeonidas.FrontLeft;
+        FrontRight = TunerConstantsLeonidas.FrontRight;
+        BackLeft = TunerConstantsLeonidas.BackLeft;
+        BackRight = TunerConstantsLeonidas.BackRight;
         driveBaseRadius =
             Math.max(
                 Math.max(

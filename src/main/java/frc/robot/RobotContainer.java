@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
-import frc.robot.Constants.EndEffectorConstantsLoki;
+import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
@@ -183,7 +183,7 @@ public class RobotContainer {
                     ElevatorConstantsLarry.reduction));
         endEffector = new EndEffector(new EndEffectorIOTalonFX(0, camera0Name, 120, false, true, angularStdDevBaseline));
         break;
-      case LOKI:
+      case Leonidas:
         drive =
             new Drive(
                 new GyroIOPigeon2() {},
@@ -196,7 +196,7 @@ public class RobotContainer {
         elevator = null;
         vision = null;
         intake = null;
-        endEffector = new EndEffector(new EndEffectorIOTalonFX(EndEffectorConstantsLoki.canID, EndEffectorConstantsLoki.canBus, EndEffectorConstantsLoki.currentLimitAmps, EndEffectorConstantsLoki.invert, EndEffectorConstantsLoki.brake, EndEffectorConstantsLoki.reduction));
+        endEffector = new EndEffector(new EndEffectorIOTalonFX(EndEffectorConstantsLeonidas.canID, EndEffectorConstantsLeonidas.canBus, EndEffectorConstantsLeonidas.currentLimitAmps, EndEffectorConstantsLeonidas.invert, EndEffectorConstantsLeonidas.brake, EndEffectorConstantsLeonidas.reduction));
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -225,7 +225,7 @@ public class RobotContainer {
         arm = new Arm(new ArmIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 1, true, 1));
         elevator =
             new Elevator(new ElevatorIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 10, false, 1));
-        endEffector = new EndEffector(new EndEffectorIOSim(DCMotor.getFalcon500(1), EndEffectorConstantsLoki.reduction, 1));
+        endEffector = new EndEffector(new EndEffectorIOSim(DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
         break;
 
       default:
