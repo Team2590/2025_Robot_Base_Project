@@ -368,10 +368,14 @@ public class RobotContainer {
     //     .whileTrue(arm.setPosition(Constants.ArmConstants.CORAL_STATION_INTAKE_SETPOINT));
 
     // Add elevator control bindings
-    leftJoystick.button(3).onTrue(elevator.setPosition(2)); // Move to position 5
-    leftJoystick.button(4).onTrue(elevator.setPosition(5)); // Move to position 10
-    leftJoystick.button(5).onTrue(elevator.setPosition(10)); // Move to position 10
-    leftJoystick.button(6).onTrue(elevator.setPosition(0)); // Return to home position
+    leftJoystick.button(3).onTrue(elevator.setPosition(5)); // Move to position 5
+    leftJoystick.button(4).onTrue(elevator.setPosition(10)); // Move to position 10
+    leftJoystick.button(5).onTrue(elevator.setPosition(0)); // Return to home position
+
+    // Add arm control bindings
+    leftJoystick.button(6).onTrue(arm.setPosition(30)); // Mid position
+    leftJoystick.button(7).onTrue(arm.setPosition(60)); // High position
+    leftJoystick.button(8).onTrue(arm.setPosition(0)); // Home position
   }
 
   /**
@@ -381,5 +385,12 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  private void periodic() {
+    // Update simulated elevator position
+    if (elevator != null && arm.getIO() instanceof ArmIOSim) {
+      ((ArmIOSim) arm.getIO()).setSimulatedElevatorPosition(elevator.getRotationCount());
+    }
   }
 }

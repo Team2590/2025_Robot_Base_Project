@@ -19,6 +19,7 @@ public class Arm extends SubsystemBase {
     arm.updateTunableNumbers();
     arm.updateInputs(inputs);
     Logger.processInputs("Arm", inputs);
+    Logger.recordOutput("Arm/Position", getAbsolutePosition());
   }
 
   /** Run open loop at the specified voltage. */
@@ -47,7 +48,11 @@ public class Arm extends SubsystemBase {
     arm.setVoltage(volts);
   }
 
-  public double getAbsolutePosition(){
+  public double getAbsolutePosition() {
     return inputs.armabspos;
+  }
+
+  public ArmIO getIO() {
+    return arm;
   }
 }
