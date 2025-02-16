@@ -173,9 +173,7 @@ public class RobotContainer {
                     ElevatorConstantsLarry.invert,
                     ElevatorConstantsLarry.brake,
                     ElevatorConstantsLarry.reduction));
-        endEffector =
-            new EndEffector(
-                new EndEffectorIOTalonFX(0, camera0Name, 120, false, true, angularStdDevBaseline));
+        endEffector = new EndEffector(new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
         break;
       case Leonidas:
         drive =
