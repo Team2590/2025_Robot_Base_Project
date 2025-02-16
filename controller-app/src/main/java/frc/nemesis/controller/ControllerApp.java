@@ -45,8 +45,8 @@ public class ControllerApp extends Application {
     Pane compassPane = new Pane();
 
     // Define the center coordinates and radius
-    double centerX = bounds.getWidth() / 2; 
-    double centerY = bounds.getHeight() / 2; 
+    double centerX = bounds.getWidth() / 2;
+    double centerY = bounds.getHeight() / 2;
     double radius = 200;
 
     // Create and position compass buttons
@@ -86,9 +86,9 @@ public class ControllerApp extends Application {
     root.setBottom(buttonBox);
 
     // Create the Scene and set it to the stage
-    Scene scene = new Scene(root, bounds.getWidth(), bounds.getHeight()); 
+    Scene scene = new Scene(root, bounds.getWidth(), bounds.getHeight());
     primaryStage.setScene(scene);
-    primaryStage.setX(bounds.getMinX()); 
+    primaryStage.setX(bounds.getMinX());
     primaryStage.setY(bounds.getMinY());
     primaryStage.setFullScreen(true);
 

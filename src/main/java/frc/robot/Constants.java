@@ -170,15 +170,15 @@ public final class Constants {
   }
 
   public final class EndEffectorConstantsLeonidas {
-    static int canID = 10; 
+    static int canID = 10;
     static String canBus = "Takeover";
-    static int currentLimitAmps = 120; //TODO
-    static boolean invert = true; //TODO
-    static boolean brake = true; //TODO
-    static double reduction = 1; //TODO
+    static int currentLimitAmps = 120; // TODO
+    static boolean invert = true; // TODO
+    static boolean brake = true; // TODO
+    static double reduction = 1; // TODO
   }
 
-  public final class IntakeConstantsLeonidas { 
+  public final class IntakeConstantsLeonidas {
     public static final int intakePivot_canID = 15;
     public static final int intakeRoll_canID = 24;
   }
@@ -186,7 +186,7 @@ public final class Constants {
   public final class ClimbConstantsLeonidas {
     public static final int climbWinch_canID = 14;
   }
-  
+
   public static class IntakeConstantsLarry {
     static int canID = 60;
     static int currentLimitAmps = 40;
