@@ -94,9 +94,9 @@ public class ScoringFactory {
         .withName("Stow Mechanism");
   }
 
-  public static Command intakeFromStation() {
-    return new SequentialCommandGroup(
-        ArmFactory.setPositionBlocking(ArmConstantsLeonidas.STATION_POS),
-        EndEffectorFactory.runEndEffector());
-  }
+  public static Command intakeFromStation(){
+    return new SequentialCommandGroup(ArmFactory.setPositionBlocking(ArmConstantsLeonidas.STATION_POS), EndEffectorFactory.runEndEffector());
+  
+
+}
 }

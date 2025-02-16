@@ -67,6 +67,7 @@ public class Drive extends SubsystemBase {
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
+  public RobotConfig PP_CONFIG;
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
@@ -105,7 +106,7 @@ public class Drive extends SubsystemBase {
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
 
-    RobotConfig PP_CONFIG =
+     PP_CONFIG =
         new RobotConfig(
             ROBOT_MASS_KG,
             ROBOT_MOI,
@@ -348,6 +349,10 @@ public class Drive extends SubsystemBase {
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
     return constantsWrapper.kSpeedAt12Volts.in(MetersPerSecond);
+  }
+
+  public RobotConfig getConfig(){
+    return PP_CONFIG;
   }
 
   /** Returns the maximum angular speed in radians per sec. */

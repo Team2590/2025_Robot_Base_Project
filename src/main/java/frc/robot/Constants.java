@@ -36,6 +36,8 @@ public final class Constants {
   public static final boolean tuningMode = true;
   public static final double loopPeriodSecs = 0.02;
 
+  public static final double endEffectOffset = .2921; // Offset of the end effector to the 
+
   public static class DriveToPoseConstraints {
     public static double maxVelocityMPS = 0;
     public static double maxAccelerationMPSSq = 0;
