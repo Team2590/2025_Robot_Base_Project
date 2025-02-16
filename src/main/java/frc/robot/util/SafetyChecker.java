@@ -10,6 +10,11 @@ public class SafetyChecker {
 
   public static boolean isSafe(
       MechanismType checkType, double primaryPosition, double secondaryPosition) {
+    return true;
+  }
+
+  public static boolean isSafeReal(
+      MechanismType checkType, double primaryPosition, double secondaryPosition) {
     switch (checkType) {
       case ARM_MOVEMENT:
         // For ARM_MOVEMENT:

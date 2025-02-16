@@ -223,9 +223,8 @@ public class RobotContainer {
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
                 new IntakeArmIOSim(DCMotor.getFalcon500(1), 4, .1));
-        arm = new Arm(new ArmIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 1, true, 1));
-        elevator =
-            new Elevator(new ElevatorIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 10, false, 1));
+        arm = new Arm(new ArmIOSim(DCMotor.getFalcon500(1), 100.0, 5.0, 1.0, true));
+        elevator = new Elevator(new ElevatorIOSim(DCMotor.getFalcon500(1), 100.0, 5.0, 0.05, true));
         endEffector =
             new EndEffector(
                 new EndEffectorIOSim(
@@ -404,6 +403,15 @@ public class RobotContainer {
     //     .button(3)
     //     .whileTrue(arm.setPosition(Constants.ArmConstants.CORAL_STATION_INTAKE_SETPOINT));
 
+    // Add elevator control bindings
+    leftJoystick.button(3).onTrue(elevator.setPosition(50)); // Move to position 5
+    leftJoystick.button(4).onTrue(elevator.setPosition(100)); // Move to position 10
+    leftJoystick.button(5).onTrue(elevator.setPosition(0)); // Return to home position
+
+    // Add arm control bindings
+    leftJoystick.button(6).onTrue(arm.setPosition(75)); // Mid position
+    leftJoystick.button(7).onTrue(arm.setPosition(144)); // High position
+    leftJoystick.button(8).onTrue(arm.setPosition(0)); // Home position
   }
 
   /**

@@ -32,14 +32,14 @@ public class ElevatorIOSim implements ElevatorIO {
       double gearing,
       double carriageMassKg,
       double drumRadiusMeters,
-      double minHeightMeters,
-      double maxHeightMeters,
-      boolean simulateGravity,
-      double startingHeightMeters,
-      double... measurementStdDevs) {
+      boolean simulateGravity) {
     this.gearBox = gearbox;
-    this.drumRadiusMeters = drumRadiusMeters;
     this.gearing = gearing;
+    this.drumRadiusMeters = drumRadiusMeters;
+
+    // Calculate min and max heights based on 0-100 rotations
+    double minHeightMeters = rotationsToMeters(0);
+    double maxHeightMeters = rotationsToMeters(100);
 
     elevatorSim =
         new ElevatorSim(
@@ -50,10 +50,10 @@ public class ElevatorIOSim implements ElevatorIO {
             minHeightMeters,
             maxHeightMeters,
             simulateGravity,
-            startingHeightMeters,
-            measurementStdDevs);
+            minHeightMeters // Start at bottom position
+            );
 
-    positionController.setTolerance(0.01); // 1 cm tolerance
+    positionController.setTolerance(0.01); // 1% tolerance
   }
 
   @Override
@@ -70,13 +70,13 @@ public class ElevatorIOSim implements ElevatorIO {
     elevatorSim.setInputVoltage(controlVoltage);
     elevatorSim.update(Constants.loopPeriodSecs);
 
-    // Update inputs
-    rotationCount = positionToRotations(elevatorSim.getPositionMeters());
+    // Update inputs with current state
+    rotationCount = metersToRotations(elevatorSim.getPositionMeters());
     io.rotationCount = rotationCount;
     io.connected = true;
     io.positionRads = Units.rotationsToRadians(rotationCount);
     io.velocityRadsPerSec =
-        Units.rotationsToRadians(positionToRotations(elevatorSim.getVelocityMetersPerSecond()));
+        Units.rotationsToRadians(metersToRotations(elevatorSim.getVelocityMetersPerSecond()));
     io.appliedVoltage = controlVoltage;
     io.supplyCurrentAmps = elevatorSim.getCurrentDrawAmps();
     io.torqueCurrentAmps = elevatorSim.getCurrentDrawAmps();
@@ -88,13 +88,18 @@ public class ElevatorIOSim implements ElevatorIO {
   public void updateTunableNumbers() {}
 
   @Override
-  public void setPosition(double position) {
+  public void setPosition(double positionRotations) {
+    // Constrain position to 0-100 rotations
+    double constrainedPosition = Math.min(Math.max(positionRotations, 0), 100);
+
     double armPos = RobotContainer.getArm().getAbsolutePosition();
     double elevatorPos = this.rotationCount;
 
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, elevatorPos, armPos)) {
-      double positionMeters = position * 2 * Math.PI * drumRadiusMeters / gearing;
+      // Convert rotations to meters for simulation
+      double positionMeters = rotationsToMeters(constrainedPosition);
       requestedPositionMeters = positionMeters;
+      targetPositionMeters = positionMeters;
       elevatorSim.setState(positionMeters, cruiseVelocity.get());
     } else {
       System.out.println("CAN'T MOVE ELEVATOR (SIM), arm not in valid position.");
@@ -103,7 +108,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public double getTargetPosition() {
-    return requestedPositionMeters;
+    return metersToRotations(requestedPositionMeters);
   }
 
   @Override
@@ -141,7 +146,11 @@ public class ElevatorIOSim implements ElevatorIO {
     }
   }
 
-  private double positionToRotations(double positionMeters) {
-    return positionMeters / (2 * Math.PI * drumRadiusMeters / gearing);
+  private double metersToRotations(double meters) {
+    return meters / (2 * Math.PI * drumRadiusMeters / gearing);
+  }
+
+  private double rotationsToMeters(double rotations) {
+    return rotations * (2 * Math.PI * drumRadiusMeters / gearing);
   }
 }
