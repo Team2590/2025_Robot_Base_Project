@@ -17,7 +17,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 import frc.robot.util.StickyFaultUtil;
@@ -161,7 +161,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setPosition(double position) {
-    double armPos = Robot.getRobotContainerInstance().getArm().getAbsolutePosition();
+    double armPos = RobotContainer.getArm().getAbsolutePosition();
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_ARM, armPos, position)) {
       var request = new MotionMagicVoltage(0);
       if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {
@@ -196,7 +196,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setVoltage(VoltageOut volts) {
-    double armPos = Robot.getRobotContainerInstance().getArm().getAbsolutePosition();
+    double armPos = RobotContainer.getArm().getAbsolutePosition();
     double elevatorPos = getRotationCounts();
 
     if (SafetyChecker.isElevatorMovementSafe(armPos, elevatorPos)) {

@@ -4,7 +4,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.util.NemesisMathUtil;
 
@@ -14,7 +13,6 @@ import frc.robot.util.NemesisMathUtil;
  * <p>This class provides methods to create commands for controlling the elevator mechanism.
  */
 public class ElevatorFactory {
-  private static RobotContainer container = Robot.getRobotContainerInstance();
 
   /**
    * Creates a command to move the elevator to a specific position.
@@ -24,14 +22,13 @@ public class ElevatorFactory {
    */
   public static Command setPosition(double position) {
     if (position < Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS) return Commands.none();
-    return container
-        .getElevator()
+    return RobotContainer.getElevator()
         .setPosition(position)
         .withName("Set Elevator Position")
         .onlyIf(
             () ->
                 !NemesisMathUtil.isBetweenInclusive(
-                    container.getArm().getSetpoint(),
+                    RobotContainer.getArm().getSetpoint(),
                     Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS,
                     Constants.ArmConstantsLeonidas.ARM_SAFETY_MAX_POS));
   }
@@ -45,8 +42,7 @@ public class ElevatorFactory {
    */
   public static Command setPositionBlocking(double position) {
     if (position < Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS) return Commands.none();
-    return container
-        .getElevator()
+    return RobotContainer.getElevator()
         .setPositionBlocking(position)
         .withName("Set Elevator Position Blocking");
   }
@@ -57,7 +53,9 @@ public class ElevatorFactory {
    * @return Command to reset rotation count
    */
   public static Command resetRotationCount() {
-    return container.getElevator().resetRotationCount().withName("Reset Elevator Rotation Count");
+    return RobotContainer.getElevator()
+        .resetRotationCount()
+        .withName("Reset Elevator Rotation Count");
   }
 
   /**
@@ -67,7 +65,7 @@ public class ElevatorFactory {
    * @return Command to set neutral mode
    */
   public static Command setNeutralMode(NeutralModeValue mode) {
-    return container.getElevator().setNeutralMode(mode).withName("Set Elevator Neutral Mode");
+    return RobotContainer.getElevator().setNeutralMode(mode).withName("Set Elevator Neutral Mode");
   }
 
   /**
@@ -76,14 +74,13 @@ public class ElevatorFactory {
    * @return Command to raise elevator
    */
   public static Command raise() {
-    return container
-        .getElevator()
+    return RobotContainer.getElevator()
         .raise()
         .withName("Raise Elevator")
         .onlyIf(
             () ->
                 NemesisMathUtil.isBetweenInclusive(
-                    container.getArm().getSetpoint(),
+                    RobotContainer.getArm().getSetpoint(),
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS,
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS));
   }
@@ -94,14 +91,13 @@ public class ElevatorFactory {
    * @return Command to lower elevator
    */
   public static Command lower() {
-    return container
-        .getElevator()
+    return RobotContainer.getElevator()
         .lower()
         .withName("Lower Elevator")
         .onlyIf(
             () ->
                 NemesisMathUtil.isBetweenInclusive(
-                    container.getArm().getSetpoint(),
+                    RobotContainer.getArm().getSetpoint(),
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS,
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS));
   }

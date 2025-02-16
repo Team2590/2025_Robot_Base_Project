@@ -5,7 +5,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.Constants;
-import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 
@@ -70,7 +70,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public void setPosition(double position) {
-    double armPos = Robot.getRobotContainerInstance().getArm().getAbsolutePosition();
+    double armPos = RobotContainer.getArm().getAbsolutePosition();
     double elevatorPos = this.rotationCount;
 
     if (SafetyChecker.isElevatorMovementSafe(armPos, elevatorPos)) {

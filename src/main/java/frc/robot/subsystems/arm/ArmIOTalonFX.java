@@ -23,7 +23,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 import frc.robot.util.StickyFaultUtil;
@@ -143,7 +143,7 @@ public class ArmIOTalonFX implements ArmIO {
   }
 
   public void setPosition(double position) {
-    double elevatorPos = Robot.getRobotContainerInstance().getElevator().getRotationCount();
+    double elevatorPos = RobotContainer.getElevator().getRotationCount();
 
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_ELEVATOR, elevatorPos, position)) {
       arm.setControl(mmv.withPosition(position));
@@ -210,7 +210,7 @@ public class ArmIOTalonFX implements ArmIO {
 
   @Override
   public void setVoltage(double volts) {
-    double elevatorPos = Robot.getRobotContainerInstance().getElevator().getRotationCount();
+    double elevatorPos = RobotContainer.getElevator().getRotationCount();
     double armPos = getAbsolutePosition();
 
     if (SafetyChecker.isArmMovementSafe(elevatorPos, armPos)) {
