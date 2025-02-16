@@ -97,7 +97,7 @@ public class ScoringFactory {
   }
 
   public static Command intakeFromStation(){
-    return new SequentialCommandGroup(ArmFactory.setPositionBlocking(ArmConstantsLeonidas.STATION_POS), EndEffectorFactory.runEndEffector())
+    return new SequentialCommandGroup(ArmFactory.setPositionBlocking(ArmConstantsLeonidas.STATION_POS), EndEffectorFactory.runEndEffector());
   
 
 }
