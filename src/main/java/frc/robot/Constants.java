@@ -158,16 +158,19 @@ public final class Constants {
   }
 
   public static class ElevatorConstantsLeonidas {
-    public static double ELEVATOR_FACTORY_MIN_POS = 5; // TODO: change to actual value
-    public static double ELEVATOR_FACTORY_MAX_POS = 10; // TODO: change to actual value
+    public static double ELEVATOR_OPERATIONAL_MIN_POS = 5; // TODO: change to actual value
+    public static double ELEVATOR_OPERATIONAL_MAX_POS = 10; // TODO: change to actual value
+    public static double ELEVATOR_SAFETY_POS = 7.5; // TODO: change to actual value
     public static double ELEVATOR_L2_POS = 6; // TODO: change to actual value
     public static double ELEVATOR_L3_POS = 7; // TODO: change to actual value
     public static double ELEVATOR_L4_POS = 8; // TODO: change to actual value
   }
 
   public static class ArmConstantsLeonidas {
-    public static double ARM_FACTORY_MIN_POS = 5; // TODO: change to actual value
-    public static double ARM_FACTORY_MAX_POS = 10; // TODO: change to actual value
+    public static double ARM_OPERATIONAL_MIN_POS = 5; // TODO: change to actual value
+    public static double ARM_OPERATIONAL_MAX_POS = 10; // TODO: change to actual value
+    public static double ARM_SAFETY_MIN_POS = 5; // TODO: change to actual value
+    public static double ARM_SAFETY_MAX_POS = 10; // TODO: change to actual value
     public static double ARM_L2_POS = 6; // TODO: change to actual value
     public static double ARM_L3_POS = 7; // TODO: change to actual value
     public static double ARM_L4_POS = 8; // TODO: change to actual value
