@@ -24,6 +24,8 @@ public class EndEffectorFactory {
    * @return Command to run the intake
    */
   public static Command runEndEffectorOuttake() {
-    return RobotContainer.getEndEffector().runEndEffectorOuttake().withName("Run Endeffector Outtake");
+    return RobotContainer.getEndEffector()
+        .runEndEffectorOuttake()
+        .withName("Run Endeffector Outtake");
   }
 }

@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.command_factories.DriveFactory;
-import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
@@ -173,7 +172,9 @@ public class RobotContainer {
                     ElevatorConstantsLarry.invert,
                     ElevatorConstantsLarry.brake,
                     ElevatorConstantsLarry.reduction));
-        endEffector = new EndEffector(new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
+        endEffector =
+            new EndEffector(
+                new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
         break;
       case Leonidas:
         drive =
@@ -412,5 +413,14 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  // Add joystick accessors if missing
+  public static CommandXboxController getDriverController() {
+    return controller;
+  }
+
+  public static CommandXboxController getOperatorController() {
+    return controller;
   }
 }

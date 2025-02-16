@@ -73,7 +73,7 @@ public class ElevatorIOSim implements ElevatorIO {
     double armPos = RobotContainer.getArm().getAbsolutePosition();
     double elevatorPos = this.rotationCount;
 
-    if (SafetyChecker.isElevatorMovementSafe(armPos, elevatorPos)) {
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, elevatorPos, armPos)) {
       double positionMeters = position * 2 * Math.PI * drumRadiusMeters / gearing;
       requestedPositionMeters = positionMeters;
       elevatorSim.setState(positionMeters, cruiseVelocity.get());

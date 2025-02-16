@@ -145,7 +145,7 @@ public class ArmIOTalonFX implements ArmIO {
   public void setPosition(double position) {
     double elevatorPos = RobotContainer.getElevator().getRotationCount();
 
-    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_ELEVATOR, elevatorPos, position)) {
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position, elevatorPos)) {
       arm.setControl(mmv.withPosition(position));
     } else {
       System.out.println("CAN'T MOVE ARM, elevator not in valid position.");
@@ -213,7 +213,7 @@ public class ArmIOTalonFX implements ArmIO {
     double elevatorPos = RobotContainer.getElevator().getRotationCount();
     double armPos = getAbsolutePosition();
 
-    if (SafetyChecker.isArmMovementSafe(elevatorPos, armPos)) {
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, armPos, elevatorPos)) {
       arm.setControl(new VoltageOut(volts));
     } else {
       System.out.println("CAN'T MOVE ARM, elevator not in valid position.");

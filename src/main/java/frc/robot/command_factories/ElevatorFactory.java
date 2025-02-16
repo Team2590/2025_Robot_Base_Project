@@ -2,10 +2,10 @@ package frc.robot.command_factories;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.util.NemesisMathUtil;
+import frc.robot.util.SafetyChecker;
 
 /**
  * Factory class for creating commands related to the elevator subsystem.
@@ -21,10 +21,15 @@ public class ElevatorFactory {
    * @return Command to move elevator to position
    */
   public static Command setPosition(double position) {
-    if (position < Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS && NemesisMathUtil.isBetweenInclusive(RobotContainer.getArm().getAbsolutePosition(), Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS, Constants.ArmConstantsLeonidas.ARM_SAFETY_MAX_POS)) return Commands.none();
     return RobotContainer.getElevator()
         .setPosition(position)
-        .withName("Set Elevator Position");
+        .withName("Set Elevator Position")
+        .onlyIf(
+            () ->
+                SafetyChecker.isSafe(
+                    SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
+                    position,
+                    RobotContainer.getArm().getAbsolutePosition()));
   }
 
   /**
@@ -35,10 +40,15 @@ public class ElevatorFactory {
    * @return Command to move elevator to position and wait
    */
   public static Command setPositionBlocking(double position) {
-    if (position < Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS && NemesisMathUtil.isBetweenInclusive(RobotContainer.getArm().getAbsolutePosition(), Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS, Constants.ArmConstantsLeonidas.ARM_SAFETY_MAX_POS)) return Commands.none();
     return RobotContainer.getElevator()
         .setPositionBlocking(position)
-        .withName("Set Elevator Position Blocking");
+        .withName("Set Elevator Position Blocking")
+        .onlyIf(
+            () ->
+                SafetyChecker.isSafe(
+                    SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
+                    position,
+                    RobotContainer.getArm().getAbsolutePosition()));
   }
 
   /**
@@ -96,4 +106,3 @@ public class ElevatorFactory {
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS));
   }
 }
-                

@@ -162,7 +162,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   @Override
   public void setPosition(double position) {
     double armPos = RobotContainer.getArm().getAbsolutePosition();
-    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_ARM, armPos, position)) {
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position, armPos)) {
       var request = new MotionMagicVoltage(0);
       if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {
         leader.setControl(request);
@@ -199,7 +199,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     double armPos = RobotContainer.getArm().getAbsolutePosition();
     double elevatorPos = getRotationCounts();
 
-    if (SafetyChecker.isElevatorMovementSafe(armPos, elevatorPos)) {
+    if (SafetyChecker.isSafe(
+        SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position.getValueAsDouble(), armPos)) {
       leader.setControl(volts);
     } else {
       System.out.println("CAN'T MOVE ELEVATOR, arm not in valid position");
