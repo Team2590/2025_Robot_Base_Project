@@ -303,53 +303,32 @@ public class DriveCommands {
     return AutoBuilder.pathfindToPose(targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
   }
 
-  public static Command snapToTargetAngle(
-      Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Pose2d targetPose) {
+  public static Command alignToTarget(
+      Drive drive, DoubleSupplier xSupplier, Pose2d targetPose) {
+    double angleSetpoint = targetPose.getRotation().getDegrees();
+    double lateralOffset = drive.getPose().minus(targetPose).getY();
     return Commands.run(
-        () -> snapToTargetAngleAuto(drive, xSupplier, ySupplier, targetPose), drive);
-  }
+        () -> {
+          double theta = drive.getPose().getRotation().getDegrees() % 360;
+          double currentError = theta - angleSetpoint;
 
-  public static void snapToTargetAngleAuto(
-      Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Pose2d targetPose) {
+          if (currentError > 180) {
+            currentError -= 360;
+          } else if (currentError < -180) {
+            currentError += 360;
+          }
 
-    // find angle
-    double theta = targetPose.getRotation().getRadians();
-    double currentAngle = drive.getPose().getRotation().getRadians() % (2 * Math.PI); // CHANGED
-    double currentError = theta - currentAngle;
-    if (currentError > Math.PI) {
-      currentAngle += 2 * Math.PI;
-    } else if (currentError < -Math.PI) {
-      currentAngle -= 2 * Math.PI;
-    }
-    // run the motors
-    drive.runVelocity(
-        ChassisSpeeds.fromFieldRelativeSpeeds(
-            xSupplier.getAsDouble()
-                * drive.getMaxLinearSpeedMetersPerSec()
-                * Drive.snapControllermultiplier.get(),
-            ySupplier.getAsDouble()
-                * drive.getMaxLinearSpeedMetersPerSec()
-                * Drive.snapControllermultiplier.get(),
-            drive.snapController.calculate(currentAngle, theta)
-                * drive.getMaxAngularSpeedRadPerSec(),
-            drive.getPose().getRotation()));
-  }
-
-  public static Command translateToTarget(
-      Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Pose2d targetPose) {
-    double yError = targetPose.getY() - drive.getPose().getY();
-    return Commands.run(
-        (() -> {
           drive.runVelocity(
               new ChassisSpeeds(
-                  // joystick magnitude
-                  -Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble())
-                      * drive.getMaxLinearSpeedMetersPerSec(),
-                  drive.translateController.calculate(yError, 0)
+                  xSupplier.getAsDouble()
                       * drive.getMaxLinearSpeedMetersPerSec()
-                      * Drive.translateControllermultiplier.get(),
-                  0));
-        }),
+                      * .25, // Adjusted linear speed
+                  drive.translateController.calculate(lateralOffset, 0)
+                      * drive.getMaxLinearSpeedMetersPerSec(), // Lateral movement
+                  drive.snapController.calculate(currentError, 0)
+                      * .25 // Adjusted angular speed for shortest rotation path
+                  ));
+        },
         drive);
   }
 }
