@@ -300,6 +300,7 @@ public class DriveCommands {
   }
 
   public static Command driveToPose(Pose2d targetPose) {
+    System.out.println("DRIVING TO POSE " + targetPose);
     return AutoBuilder.pathfindToPose(targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
   }
 }

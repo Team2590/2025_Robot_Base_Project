@@ -203,8 +203,6 @@ public class RobotContainer {
         intake = null;
         break;
       case SIM:
-      
-        
         drive =
             new Drive(
                 new GyroIO() {},
@@ -313,6 +311,9 @@ public class RobotContainer {
 
     // Lock to 0° when A button is held
     controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
+    controllerApp.print();
+    System.out.println(controllerApp.getTargetPose());
+    controller.b().whileTrue(DriveCommands.driveToPose(controllerApp.getTargetPose()));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

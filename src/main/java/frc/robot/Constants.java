@@ -24,8 +24,6 @@ import frc.robot.util.PolygonLocator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
