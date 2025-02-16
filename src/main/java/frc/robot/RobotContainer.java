@@ -66,12 +66,12 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
-  @Getter private final Drive drive;
-  @Getter private final Vision vision;
-  @Getter private final Arm arm;
-  @Getter private final Elevator elevator;
-  @Getter private final Intake intake;
-  @Getter private final EndEffector endEffector;
+  @Getter private static Drive drive;
+  @Getter private static Vision vision;
+  @Getter private static Arm arm;
+  @Getter private static Elevator elevator;
+  @Getter private static Intake intake;
+  @Getter private static EndEffector endEffector;
 
   // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
