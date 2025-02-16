@@ -168,14 +168,14 @@ public final class Constants {
   }
 
   public static class EndEffectorConstantsLeonidas {
-    static int canID = 2; //TODO
+    static int canID = 2; // TODO
     static String canBus = "Takeover";
-    static int currentLimitAmps = 120; //TODO
-    static boolean invert = true; //TODO
-    static boolean brake = true; //TODO
-    static double reduction = 1; //TODO
+    static int currentLimitAmps = 120; // TODO
+    static boolean invert = true; // TODO
+    static boolean brake = true; // TODO
+    static double reduction = 1; // TODO
   }
-  
+
   public static class IntakeConstantsLarry {
     static int canID = 60;
     static int currentLimitAmps = 40;

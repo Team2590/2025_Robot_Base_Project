@@ -36,13 +36,12 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
   private double statorCurrentAmps;
 
   public EndEffectorIOTalonFX(
-    int canID,
-    String canBus,
-    int currentLimitAmps,
-    boolean invert,
-    boolean brake,
-    double reduction
-  ) {
+      int canID,
+      String canBus,
+      int currentLimitAmps,
+      boolean invert,
+      boolean brake,
+      double reduction) {
     leader = new TalonFX(canID, canBus);
 
     cfg.MotorOutput.Inverted =

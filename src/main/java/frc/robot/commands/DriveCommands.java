@@ -302,4 +302,54 @@ public class DriveCommands {
   public static Command driveToPose(Pose2d targetPose) {
     return AutoBuilder.pathfindToPose(targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
   }
+
+  public static Command snapToTargetAngle(
+      Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Pose2d targetPose) {
+    return Commands.run(
+        () -> snapToTargetAngleAuto(drive, xSupplier, ySupplier, targetPose), drive);
+  }
+
+  public static void snapToTargetAngleAuto(
+      Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Pose2d targetPose) {
+
+    // find angle
+    double theta = targetPose.getRotation().getRadians();
+    double currentAngle = drive.getPose().getRotation().getRadians() % (2 * Math.PI); // CHANGED
+    double currentError = theta - currentAngle;
+    if (currentError > Math.PI) {
+      currentAngle += 2 * Math.PI;
+    } else if (currentError < -Math.PI) {
+      currentAngle -= 2 * Math.PI;
+    }
+    // run the motors
+    drive.runVelocity(
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            xSupplier.getAsDouble()
+                * drive.getMaxLinearSpeedMetersPerSec()
+                * Drive.snapControllermultiplier.get(),
+            ySupplier.getAsDouble()
+                * drive.getMaxLinearSpeedMetersPerSec()
+                * Drive.snapControllermultiplier.get(),
+            drive.snapController.calculate(currentAngle, theta)
+                * drive.getMaxAngularSpeedRadPerSec(),
+            drive.getPose().getRotation()));
+  }
+
+  public static Command translateToTarget(
+      Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Pose2d targetPose) {
+    double yError = targetPose.getY() - drive.getPose().getY();
+    return Commands.run(
+        (() -> {
+          drive.runVelocity(
+              new ChassisSpeeds(
+                  // joystick magnitude
+                  -Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble())
+                      * drive.getMaxLinearSpeedMetersPerSec(),
+                  drive.translateController.calculate(yError, 0)
+                      * drive.getMaxLinearSpeedMetersPerSec()
+                      * Drive.translateControllermultiplier.get(),
+                  0));
+        }),
+        drive);
+  }
 }

@@ -187,7 +187,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void simulationPeriodic() {}
 
-  public static RobotContainer getRobotContainerInstance(){
+  public static RobotContainer getRobotContainerInstance() {
     return robotContainer;
   }
 }

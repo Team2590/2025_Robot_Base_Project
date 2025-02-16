@@ -26,6 +26,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -49,6 +50,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.util.LocalADStarAK;
+import frc.robot.util.LoggedTunableNumber;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -81,6 +83,25 @@ public class Drive extends SubsystemBase {
       };
   private SwerveDrivePoseEstimator poseEstimator;
 
+  // USING 2024 constants for snap controller
+  public final PIDController snapController = new PIDController(.34, 0.0, 0.0);
+  public final PIDController translateController = new PIDController(.44, 0.0, .00001);
+
+  public static LoggedTunableNumber snapControllermultiplier =
+      new LoggedTunableNumber("SnapController/MaxSpeedRatio [0,1]", .5);
+  LoggedTunableNumber snapControllerP = new LoggedTunableNumber("SnapController/kP", .34);
+  LoggedTunableNumber snapControllerD = new LoggedTunableNumber("SnapController/kD", .00001);
+  LoggedTunableNumber snapControllerTolerance =
+      new LoggedTunableNumber("SnapController/tolerance", .05);
+
+  public static LoggedTunableNumber translateControllermultiplier =
+      new LoggedTunableNumber("TranslateController/MaxSpeedRatio", 6);
+  LoggedTunableNumber translateControllerP = new LoggedTunableNumber("TranslateController/kP", .44);
+  LoggedTunableNumber translateControllerD =
+      new LoggedTunableNumber("TranslateController/kD", .00001);
+  LoggedTunableNumber translateControllerTolerance =
+      new LoggedTunableNumber("TranslateController/tolerance", .1);
+
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -94,6 +115,9 @@ public class Drive extends SubsystemBase {
     modules[1] = new Module(frModuleIO, 1, constantsWrapper.getFrontRight());
     modules[2] = new Module(blModuleIO, 2, constantsWrapper.getBackLeft());
     modules[3] = new Module(brModuleIO, 3, constantsWrapper.getBackRight());
+
+    snapController.setTolerance(snapControllerTolerance.get());
+    translateController.setTolerance(translateControllerTolerance.get());
 
     // Usage reporting for swerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_AdvantageKit);
@@ -214,6 +238,23 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+
+    updateTunableNumbers();
+  }
+
+  private void updateTunableNumbers() {
+    if (snapControllerP.hasChanged(hashCode())
+        || snapControllerD.hasChanged(hashCode())
+        || snapControllerTolerance.hasChanged(hashCode())) {
+      snapController.setPID(snapControllerP.get(), 0.0, snapControllerD.get());
+      snapController.setTolerance(snapControllerTolerance.get());
+    }
+    if (translateControllerP.hasChanged(hashCode())
+        || translateControllerD.hasChanged(hashCode())
+        || translateControllerTolerance.hasChanged(hashCode())) {
+      translateController.setPID(translateControllerP.get(), 0.0, translateControllerD.get());
+      translateController.setTolerance(translateControllerTolerance.get());
+    }
   }
 
   /**
