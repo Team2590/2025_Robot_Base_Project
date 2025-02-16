@@ -9,7 +9,7 @@
           "data": {
             "commands": [
               {
-                "type": "parallel",
+                "type": "sequential",
                 "data": {
                   "commands": [
                     {
@@ -21,14 +21,14 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "HoldL4"
+                        "name": "Scorel4"
                       }
                     }
                   ]
                 }
               },
               {
-                "type": "parallel",
+                "type": "sequential",
                 "data": {
                   "commands": [
                     {
@@ -47,7 +47,7 @@
                 }
               },
               {
-                "type": "parallel",
+                "type": "sequential",
                 "data": {
                   "commands": [
                     {
@@ -61,14 +61,7 @@
                       "data": {
                         "name": "HoldL4"
                       }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
+                    },
                     {
                       "type": "named",
                       "data": {
