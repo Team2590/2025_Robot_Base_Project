@@ -15,7 +15,7 @@ public class EndEffectorFactory {
    * @return Command to run the intake
    */
   public static Command runEndEffector() {
-    return container.getEndEffector().runEndEffector().withName("Run Endeffector");
+    return container.getEndEffector().runEndEffector().withName("Run Endeffector Intake");
   }
 
   /**
@@ -26,6 +26,6 @@ public class EndEffectorFactory {
    * @return Command to run the intake
    */
   public static Command runEndEffectorOuttake() {
-    return container.getEndEffector().runEndEffectorOuttake().withName("Run Endeffector");
+    return container.getEndEffector().runEndEffectorOuttake().withName("Run Endeffector Outtake");
   }
 }

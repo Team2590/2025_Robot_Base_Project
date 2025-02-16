@@ -30,7 +30,7 @@ public class ElevatorFactory {
         .withName("Set Elevator Position")
         .onlyIf(
             () ->
-                NemesisMathUtil.isBetweenInclusive(
+                !NemesisMathUtil.isBetweenInclusive(
                     container.getArm().getSetpoint(),
                     Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS,
                     Constants.ArmConstantsLeonidas.ARM_SAFETY_MAX_POS));

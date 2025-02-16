@@ -24,8 +24,10 @@ public class ScoringFactory {
     return new ParallelCommandGroup(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L4_POS),
-            NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(), 1))
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L4_POS)
+            // NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(),
+            // 1)
+            )
         .withName("Score L4");
   }
 
@@ -39,8 +41,10 @@ public class ScoringFactory {
     return new ParallelCommandGroup(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L3_POS),
-            NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(), 1))
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L3_POS)
+            // NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(),
+            // 1)
+            )
         .withName("Score L3");
   }
 
@@ -54,8 +58,10 @@ public class ScoringFactory {
     return new ParallelCommandGroup(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L2_POS),
-            NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(), 1))
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L2_POS)
+            // NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(),
+            // 1)
+            )
         .withName("Score L2");
   }
 
@@ -67,9 +73,12 @@ public class ScoringFactory {
    */
   public static Command scoreL1() {
     return new ParallelCommandGroup(
-            IntakeFactory.setHomePosition(),
-            NemesisTimedCommand.generateTimedCommand(IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED), 1)
-        .withName("Score L1"));
+        IntakeFactory.setHomePosition(),
+        NemesisTimedCommand.generateTimedCommand(
+                IntakeFactory.runIntake(
+                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED),
+                1)
+            .withName("Score L1"));
   }
 
   /**
@@ -80,9 +89,12 @@ public class ScoringFactory {
    */
   public static Command scoreProcessor() {
     return new ParallelCommandGroup(
-            IntakeFactory.setHoldingAlgaePosition(),
-            NemesisTimedCommand.generateTimedCommand(IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_ALGAE_OUTTAKE_SPEED), 1)
-        .withName("Score L1"));
+        IntakeFactory.setHoldingAlgaePosition(),
+        NemesisTimedCommand.generateTimedCommand(
+                IntakeFactory.runIntake(
+                    () -> Constants.IntakeConstantsLeonidas.INTAKE_ALGAE_OUTTAKE_SPEED),
+                1)
+            .withName("Score Processor"));
   }
 
   /**
