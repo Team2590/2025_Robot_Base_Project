@@ -33,6 +33,7 @@ import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.command_factories.ArmFactory;
 import frc.robot.command_factories.AutoFactory;
 import frc.robot.command_factories.ScoringFactory;
+import frc.robot.command_factories.DriveFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
@@ -75,22 +76,22 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
-  @Getter private final Drive drive;
-  @Getter private final Vision vision;
-  @Getter private final Arm arm;
-  @Getter private final Elevator elevator;
-  @Getter private final Intake intake;
-  @Getter private final EndEffector endEffector;
+  @Getter private static Drive drive;
+  @Getter private static Vision vision;
+  @Getter private static Arm arm;
+  @Getter private static Elevator elevator;
+  @Getter private static Intake intake;
+  @Getter private static EndEffector endEffector;
 
   // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
 
   // Controller
-  @Getter private final CommandXboxController controller = new CommandXboxController(2);
+  @Getter private static CommandXboxController controller = new CommandXboxController(2);
 
-  @Getter private final CommandJoystick leftJoystick = new CommandJoystick(0);
+  @Getter private static CommandJoystick leftJoystick = new CommandJoystick(0);
 
-  @Getter private final CommandJoystick rightJoystick = new CommandJoystick(1);
+  @Getter private static CommandJoystick rightJoystick = new CommandJoystick(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -184,7 +185,7 @@ public class RobotContainer {
                     ElevatorConstantsLarry.reduction));
         endEffector =
             new EndEffector(
-                new EndEffectorIOTalonFX(0, camera0Name, 120, false, true, angularStdDevBaseline));
+                new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
         break;
       case Leonidas:
         drive =
@@ -315,15 +316,15 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -leftJoystick.getY(),
-            () -> -leftJoystick.getX(),
-            () -> -rightJoystick.getX()));
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDrive(
+    //         drive,
+    //         () -> -leftJoystick.getY(),
+    //         () -> -leftJoystick.getX(),
+    //         () -> -rightJoystick.getX()));
 
     // Default drive command using new factory method, replacement for above ^^.
-    // drive.setDefaultCommand(DriveFactory.joystickDrive());
+    drive.setDefaultCommand(DriveFactory.joystickDrive());
 
     // Lock to 0° when A button is held
     controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));

@@ -3,9 +3,9 @@ package frc.robot.command_factories;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.util.NemesisMathUtil;
+import frc.robot.util.SafetyChecker;
 
 /**
  * Factory class for creating commands related to the elevator subsystem.
@@ -13,7 +13,6 @@ import frc.robot.util.NemesisMathUtil;
  * <p>This class provides methods to create commands for controlling the elevator mechanism.
  */
 public class ElevatorFactory {
-  private static RobotContainer container = Robot.getRobotContainerInstance();
 
   /**
    * Creates a command to move the elevator to a specific position.
@@ -22,16 +21,15 @@ public class ElevatorFactory {
    * @return Command to move elevator to position
    */
   public static Command setPosition(double position) {
-    return container
-        .getElevator()
+    return RobotContainer.getElevator()
         .setPosition(position)
         .withName("Set Elevator Position")
         .onlyIf(
             () ->
-                NemesisMathUtil.isBetweenInclusive(
-                    container.getArm().getSetpoint(),
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
+                SafetyChecker.isSafe(
+                    SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
+                    position,
+                    RobotContainer.getArm().getAbsolutePosition()));
   }
 
   /**
@@ -42,10 +40,15 @@ public class ElevatorFactory {
    * @return Command to move elevator to position and wait
    */
   public static Command setPositionBlocking(double position) {
-    return container
-        .getElevator()
+    return RobotContainer.getElevator()
         .setPositionBlocking(position)
-        .withName("Set Elevator Position Blocking");
+        .withName("Set Elevator Position Blocking")
+        .onlyIf(
+            () ->
+                SafetyChecker.isSafe(
+                    SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
+                    position,
+                    RobotContainer.getArm().getAbsolutePosition()));
   }
 
   public static boolean elevatorCommandFinished(){
@@ -59,7 +62,9 @@ public class ElevatorFactory {
    * @return Command to reset rotation count
    */
   public static Command resetRotationCount() {
-    return container.getElevator().resetRotationCount().withName("Reset Elevator Rotation Count");
+    return RobotContainer.getElevator()
+        .resetRotationCount()
+        .withName("Reset Elevator Rotation Count");
   }
 
   /**
@@ -69,7 +74,7 @@ public class ElevatorFactory {
    * @return Command to set neutral mode
    */
   public static Command setNeutralMode(NeutralModeValue mode) {
-    return container.getElevator().setNeutralMode(mode).withName("Set Elevator Neutral Mode");
+    return RobotContainer.getElevator().setNeutralMode(mode).withName("Set Elevator Neutral Mode");
   }
 
   /**
@@ -78,16 +83,15 @@ public class ElevatorFactory {
    * @return Command to raise elevator
    */
   public static Command raise() {
-    return container
-        .getElevator()
+    return RobotContainer.getElevator()
         .raise()
         .withName("Raise Elevator")
         .onlyIf(
             () ->
                 NemesisMathUtil.isBetweenInclusive(
-                    container.getArm().getSetpoint(),
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
+                    RobotContainer.getArm().getSetpoint(),
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS,
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS));
   }
 
   /**
@@ -96,15 +100,14 @@ public class ElevatorFactory {
    * @return Command to lower elevator
    */
   public static Command lower() {
-    return container
-        .getElevator()
+    return RobotContainer.getElevator()
         .lower()
         .withName("Lower Elevator")
         .onlyIf(
             () ->
                 NemesisMathUtil.isBetweenInclusive(
-                    container.getArm().getSetpoint(),
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
+                    RobotContainer.getArm().getSetpoint(),
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS,
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS));
   }
 }

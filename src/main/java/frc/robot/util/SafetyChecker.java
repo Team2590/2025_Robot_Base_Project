@@ -4,49 +4,45 @@ import frc.robot.Constants;
 
 public class SafetyChecker {
   public enum MechanismType {
-    ARM_ELEVATOR,
-    ELEVATOR_ARM,
-    // Add other mechanism types as needed
+    ARM_MOVEMENT,
+    ELEVATOR_MOVEMENT
   }
 
-  // Generic safety check for different mechanism types
   public static boolean isSafe(
       MechanismType checkType, double primaryPosition, double secondaryPosition) {
     switch (checkType) {
-      case ARM_ELEVATOR:
-        return checkArmElevatorSafety(primaryPosition, secondaryPosition);
-      case ELEVATOR_ARM:
-        return checkElevatorArmSafety(primaryPosition, secondaryPosition);
+      case ARM_MOVEMENT:
+        // For ARM_MOVEMENT:
+        // primaryPosition is elevator position
+        // secondaryPosition is arm position
+        return isElevatorAboveMin(primaryPosition) || isArmInSafeRange(secondaryPosition);
+
+      case ELEVATOR_MOVEMENT:
+        // For ELEVATOR_MOVEMENT:
+        // primaryPosition is arm position
+        // secondaryPosition is elevator position
+        return isArmAboveMin(primaryPosition) || isElevatorInSafeRange(secondaryPosition);
+
       default:
-        return true; // Default safe if unknown type
+        return false;
     }
   }
 
-  // Specific safety implementations
-  private static boolean checkArmElevatorSafety(double elevatorPosition, double armPosition) {
-    return elevatorPosition > Constants.ArmConstantsLeonidas.ARM_FACTORY_MIN_POS
-        || NemesisMathUtil.isBetweenInclusive(
-            armPosition,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS);
+  private static boolean isElevatorAboveMin(double elevatorPosition) {
+    return elevatorPosition >= Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS;
   }
 
-  private static boolean checkElevatorArmSafety(double armPosition, double elevatorPosition) {
-    return armPosition > Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS
-        || NemesisMathUtil.isBetweenInclusive(
-            elevatorPosition,
-            Constants.ArmConstantsLeonidas.ARM_FACTORY_MIN_POS,
-            Constants.ArmConstantsLeonidas.ARM_FACTORY_MAX_POS);
+  private static boolean isArmInSafeRange(double armPosition) {
+    return armPosition >= Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS
+        && armPosition <= Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS;
   }
 
-  // Maintain legacy methods for compatibility
-  @Deprecated
-  public static boolean isArmMovementSafe(double elevatorPosition, double armPosition) {
-    return isSafe(MechanismType.ARM_ELEVATOR, elevatorPosition, armPosition);
+  private static boolean isArmAboveMin(double armPosition) {
+    return armPosition >= Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS;
   }
 
-  @Deprecated
-  public static boolean isElevatorMovementSafe(double armPosition, double elevatorPosition) {
-    return isSafe(MechanismType.ELEVATOR_ARM, armPosition, elevatorPosition);
+  private static boolean isElevatorInSafeRange(double elevatorPosition) {
+    return elevatorPosition >= Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS
+        && elevatorPosition <= Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS;
   }
 }
