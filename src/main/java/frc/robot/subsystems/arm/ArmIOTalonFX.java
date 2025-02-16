@@ -10,25 +10,33 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
-import frc.robot.Constants;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
+import frc.robot.Robot;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.SafetyChecker;
+import frc.robot.util.StickyFaultUtil;
 
 public class ArmIOTalonFX implements ArmIO {
-
-  TalonFX arm = new TalonFX(Constants.ArmConstants.ARM, Constants.CANBUS);
-  CANcoder armCancoder = new CANcoder(Constants.ArmConstants.ARM_CANCODER_ID, Constants.CANBUS);
-  LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 16); // 16
+  private TalonFX arm;
+  private CANcoder armCancoder;
+  LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 16);
   LoggedTunableNumber kI = new LoggedTunableNumber("Arm/kI", 0);
   LoggedTunableNumber kD = new LoggedTunableNumber("Arm/kD", 0);
   LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS", 0);
-  LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0.1); // 0.1
-  LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", -0.011); // -0.011
+  LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0.1);
+  LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", -0.011);
   LoggedTunableNumber MotionMagicCruiseVelocity1 =
       new LoggedTunableNumber("Arm/MotionMagicCruiseVelocity", 1500); // 1500
   LoggedTunableNumber MotionMagicAcceleration1 =
@@ -39,16 +47,39 @@ public class ArmIOTalonFX implements ArmIO {
   TalonFXConfiguration cfg;
   MotionMagicConfigs mm;
   MotionMagicDutyCycle mmv;
-  private final StatusSignal<Angle> armpos = armCancoder.getPosition();
-  private final StatusSignal<Angle> armabspos = armCancoder.getAbsolutePosition();
-  LoggedTunableNumber armTunableNumber = new LoggedTunableNumber("Arm/ArmTunableNumber", 0);
-  LoggedTunableNumber enableBreak = new LoggedTunableNumber("Arm/EnableBreak", 0);
+  private double reduction;
+  private StatusSignal<Angle> armabspos;
+  private StatusSignal<Angle> position;
+  private StatusSignal<AngularVelocity> velocity;
+  private StatusSignal<Voltage> appliedVoltage;
+  private StatusSignal<Current> supplyCurrent;
+  private StatusSignal<Current> torqueCurrent;
+  private StatusSignal<Temperature> tempCelsius;
 
-  public ArmIOTalonFX() {
+  public ArmIOTalonFX(
+      int motorCanID,
+      String canBus,
+      int currentLimitAmps,
+      boolean invert,
+      boolean brake,
+      double reduction,
+      int cancoderID,
+      double magOffset,
+      double sensor_reduction) {
+
+    this.reduction = reduction;
+    arm = new TalonFX(motorCanID, canBus);
+    armCancoder = new CANcoder(cancoderID, canBus);
+    StickyFaultUtil.clearCancoderStickyFaults(armCancoder, "Arm Cancoder");
+    StickyFaultUtil.clearMotorStickyFaults(arm, "Arm Motor");
     /* configurations for the arm motor */
     cfg = new TalonFXConfiguration();
     // cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    cfg.MotorOutput.Inverted =
+        invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+    cfg.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+    cfg.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
+    cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     /* Configure current limits */
     mm = cfg.MotionMagic;
@@ -66,11 +97,11 @@ public class ArmIOTalonFX implements ArmIO {
     slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
     FeedbackConfigs fdb = cfg.Feedback;
-    fdb.RotorToSensorRatio = Constants.ArmConstants.ARM_GEAR_RATIO;
+    fdb.RotorToSensorRatio = sensor_reduction;
     fdb.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    fdb.FeedbackRemoteSensorID = Constants.ArmConstants.ARM_CANCODER_ID;
+    fdb.FeedbackRemoteSensorID = cancoderID;
     MagnetSensorConfigs mag = new MagnetSensorConfigs();
-    mag.MagnetOffset = Constants.ArmConstants.MAG_OFFSET;
+    mag.MagnetOffset = magOffset;
     CANcoderConfiguration can = new CANcoderConfiguration();
     can.withMagnetSensor(mag);
     armCancoder.getConfigurator().apply(can);
@@ -78,20 +109,47 @@ public class ArmIOTalonFX implements ArmIO {
     arm.getConfigurator().apply(cfg);
     mmv = new MotionMagicDutyCycle(0);
 
-    BaseStatusSignal.setUpdateFrequencyForAll(50.0, armpos, armabspos);
+    position = arm.getPosition();
+    velocity = arm.getVelocity();
+    appliedVoltage = arm.getMotorVoltage();
+    supplyCurrent = arm.getSupplyCurrent();
+    torqueCurrent = arm.getTorqueCurrent();
+    tempCelsius = arm.getDeviceTemp();
+    armabspos = armCancoder.getAbsolutePosition();
+
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0,
+        armabspos,
+        position,
+        velocity,
+        appliedVoltage,
+        supplyCurrent,
+        torqueCurrent,
+        tempCelsius);
   }
 
   public void updateInputs(ArmIOInputs inputs) {
-    BaseStatusSignal.refreshAll(armabspos, armpos);
+    BaseStatusSignal.refreshAll(
+        armabspos, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
     inputs.armabspos = armabspos.getValueAsDouble();
-    inputs.armpos = armpos.getValueAsDouble();
-    inputs.velDegreesPerSecond = arm.getVelocity().getValueAsDouble();
-    inputs.currentAmps = arm.getStatorCurrent().getValueAsDouble();
+    inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble()) / reduction;
+    inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble()) / reduction;
+    inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
+    inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
+    inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
+    inputs.tempCelsius = tempCelsius.getValueAsDouble();
+    inputs.rotationCount = arm.getPosition().getValueAsDouble();
     updateTunableNumbers();
   }
 
   public void setPosition(double position) {
-    arm.setControl(mmv.withPosition(position));
+    double elevatorPos = Robot.getRobotContainerInstance().getElevator().getRotationCount();
+
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_ELEVATOR, elevatorPos, position)) {
+      arm.setControl(mmv.withPosition(position));
+    } else {
+      System.out.println("CAN'T MOVE ARM, elevator not in valid position.");
+    }
   }
 
   public double getAbsolutePosition() {
@@ -144,38 +202,21 @@ public class ArmIOTalonFX implements ArmIO {
     if (ff.hasChanged(0)) {
       mmv.FeedForward = ff.get();
     }
-
-    if (enableBreak.hasChanged(0)) {
-      if (enableBreak.get() == 0) {
-        arm.setNeutralMode(NeutralModeValue.Coast);
-      } else {
-        arm.setNeutralMode(NeutralModeValue.Brake);
-      }
-    }
   }
 
   public void setPower(DutyCycleOut power) {
     arm.setControl(power);
   }
 
-  // private static double CANCoderSensorUnitsToDegrees(double sensorUnits) {
-  //     return sensorUnits * (360.0) / 4096.0;
-  // }
+  @Override
+  public void setVoltage(double volts) {
+    double elevatorPos = Robot.getRobotContainerInstance().getElevator().getRotationCount();
+    double armPos = getAbsolutePosition();
 
-  // private static double degreesToCANCoderSensorUnits(double degrees) {
-  //     return degrees * 4096.0 / (360.0);
-  // }
-
-  // private static double CANCoderSensorUnitsToDegreesPerSecond(double sensorUnits) {
-  //     return sensorUnits * ((360.0 * 10.0)/4096.0);
-  // }
-
-  // private static double degreesPerSecondToCANCoderSensorUnits(double degrees) {
-  //     return degrees * (4096.0/(360.0 * 10.0));
-  // }
-
-  // private double getAngle() {
-  //     return CANCoderSensorUnitsToDegrees(arm.getSelectedSensorPosition());
-  // }
-
+    if (SafetyChecker.isArmMovementSafe(elevatorPos, armPos)) {
+      arm.setControl(new VoltageOut(volts));
+    } else {
+      System.out.println("CAN'T MOVE ARM, elevator not in valid position.");
+    }
+  }
 }

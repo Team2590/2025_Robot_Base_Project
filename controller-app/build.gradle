@@ -2,7 +2,7 @@ plugins {
     id "java"
     id 'application'
     id 'com.gradleup.shadow' version '8.3.5'
-    id "edu.wpi.first.GradleRIO" version "2025.1.1"
+    id "edu.wpi.first.GradleRIO" version "2025.2.1"
     id 'edu.wpi.first.WpilibTools' version '2.1.0'
     id 'org.openjfx.javafxplugin' version '0.1.0'
     id "com.diffplug.spotless" version "6.12.0"

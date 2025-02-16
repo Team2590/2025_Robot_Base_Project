@@ -159,7 +159,7 @@ public class VisionIOPhotonVision implements VisionIO {
               }
             }
           }
-
+          sleep(20);
         } catch (Exception e) {
           e.printStackTrace();
         }

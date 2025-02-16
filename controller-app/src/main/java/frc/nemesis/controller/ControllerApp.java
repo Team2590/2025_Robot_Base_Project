@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class ControllerApp extends Application {
@@ -29,6 +30,11 @@ public class ControllerApp extends Application {
   public void start(Stage primaryStage) {
     primaryStage.setTitle("Nemesis Controller");
 
+    // if there are multiple monitors (screens), get the second one, otherwise get the primary one
+    var screens = Screen.getScreens();
+    var screen = screens.size() > 1 ? screens.get(1) : Screen.getPrimary();
+    var bounds = screen.getVisualBounds();
+
     // Create a BorderPane to hold the content
     BorderPane root = new BorderPane();
     root.setPadding(new Insets(20));
@@ -39,8 +45,8 @@ public class ControllerApp extends Application {
     Pane compassPane = new Pane();
 
     // Define the center coordinates and radius
-    double centerX = 300;
-    double centerY = 300;
+    double centerX = bounds.getWidth() / 2;
+    double centerY = bounds.getHeight() / 2;
     double radius = 200;
 
     // Create and position compass buttons
@@ -80,8 +86,10 @@ public class ControllerApp extends Application {
     root.setBottom(buttonBox);
 
     // Create the Scene and set it to the stage
-    Scene scene = new Scene(root, 600, 600);
+    Scene scene = new Scene(root, bounds.getWidth(), bounds.getHeight());
     primaryStage.setScene(scene);
+    primaryStage.setX(bounds.getMinX());
+    primaryStage.setY(bounds.getMinY());
     primaryStage.setFullScreen(true);
 
     // Add the on close handler

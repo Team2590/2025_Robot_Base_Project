@@ -21,6 +21,10 @@ public class Elevator extends SubsystemBase {
     io.updateTunableNumbers();
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
+
+    // Log current position and target position
+    Logger.recordOutput("Elevator/CurrentPosition", inputs.rotationCount);
+    Logger.recordOutput("Elevator/TargetPosition", this.io.getTargetPosition());
   }
 
   public Command stop() {
@@ -35,6 +39,13 @@ public class Elevator extends SubsystemBase {
     return runEnd(() -> io.setPosition(position), () -> io.setPosition(position))
         .until(() -> NemesisMathUtil.isApprox(inputs.rotationCount, setpointTolerance, position));
   }
+
+  public boolean targetPositionReached(double position){
+    return NemesisMathUtil.isApprox(inputs.rotationCount, setpointTolerance, position);
+
+  }
+
+
 
   public Command resetRotationCount() {
     return runOnce(io::resetRotationCount);

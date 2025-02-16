@@ -6,13 +6,16 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ArmIO {
   @AutoLog
   public class ArmIOInputs {
-    public double velDegreesPerSecond = 0.0;
-    public double currentAmps = 0.0;
-    public double appliedVoltage = 0.0;
     public double appliedPercent = 0.0;
     public double armabspos = 0.0;
-    public double armpos = 0.0;
-    public boolean connected;
+    public boolean connected = false;
+    public double positionRads = 0.0;
+    public double velocityRadsPerSec = 0.0;
+    public double appliedVoltage = 0.0;
+    public double supplyCurrentAmps = 0.0;
+    public double torqueCurrentAmps = 0.0;
+    public double tempCelsius = 0.0;
+    public double rotationCount = 0.0;
   }
 
   /** Updates the set of loggable inputs */
@@ -38,4 +41,6 @@ public interface ArmIO {
   public void setPower(DutyCycleOut power);
 
   public void stop();
+
+  public default void setVoltage(double volts) {}
 }
