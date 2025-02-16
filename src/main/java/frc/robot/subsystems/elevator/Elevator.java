@@ -40,12 +40,9 @@ public class Elevator extends SubsystemBase {
         .until(() -> NemesisMathUtil.isApprox(inputs.rotationCount, setpointTolerance, position));
   }
 
-  public boolean targetPositionReached(double position){
+  public boolean targetPositionReached(double position) {
     return NemesisMathUtil.isApprox(inputs.rotationCount, setpointTolerance, position);
-
   }
-
-
 
   public Command resetRotationCount() {
     return runOnce(io::resetRotationCount);

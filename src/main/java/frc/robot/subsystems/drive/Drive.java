@@ -106,7 +106,7 @@ public class Drive extends SubsystemBase {
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
 
-     PP_CONFIG =
+    PP_CONFIG =
         new RobotConfig(
             ROBOT_MASS_KG,
             ROBOT_MOI,
@@ -351,7 +351,7 @@ public class Drive extends SubsystemBase {
     return constantsWrapper.kSpeedAt12Volts.in(MetersPerSecond);
   }
 
-  public RobotConfig getConfig(){
+  public RobotConfig getConfig() {
     return PP_CONFIG;
   }
 

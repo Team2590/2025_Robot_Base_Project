@@ -36,7 +36,7 @@ public final class Constants {
   public static final boolean tuningMode = true;
   public static final double loopPeriodSecs = 0.02;
 
-  public static final double endEffectOffset = .2921; // Offset of the end effector to the 
+  public static final double endEffectOffset = .2921; // Offset of the end effector to the
 
   public static class DriveToPoseConstraints {
     public static double maxVelocityMPS = 0;
@@ -82,8 +82,6 @@ public final class Constants {
   public static final boolean flipside =
       DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
 
-
-  
   public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
   public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTop");
   public static final FRCPolygon BargeBoundsBot = new FRCPolygon("BargeBot", "BargeBot");
@@ -103,7 +101,7 @@ public final class Constants {
   }
 
   public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
-  
+
   public static LoggedTunableNumber homeSetpoint =
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
   public static final String CANBUS = "Takeover";
@@ -177,7 +175,7 @@ public final class Constants {
     public static double ARM_L2_POS = 6; // TODO: change to actual value
     public static double ARM_L3_POS = 7; // TODO: change to actual value
     public static double ARM_L4_POS = 8; // TODO: change to actual value
-    public static double STATION_POS=9; //TODO: find actual intake value
+    public static double STATION_POS = 9; // TODO: find actual intake value
   }
 
   public static class EndEffectorConstantsLeonidas {

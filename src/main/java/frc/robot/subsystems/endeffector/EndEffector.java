@@ -31,12 +31,12 @@ public class EndEffector extends SubsystemBase {
     Logger.recordOutput("EndEffector/CurrentThreshold", CURRENT_THRESHOLD);
     Logger.recordOutput("EndEffector/filter", filtered_data);
   }
-  // This method is to check if we have a coral or not, if we don't have a coral the current will not spike 
-  public boolean currentSpiked(){
+  // This method is to check if we have a coral or not, if we don't have a coral the current will
+  // not spike
+  public boolean currentSpiked() {
     Timer t = new Timer();
-    
-    
-    return t.hasElapsed(.2) &&  isRunning && filtered_data >= CURRENT_THRESHOLD.get();
+
+    return t.hasElapsed(.2) && isRunning && filtered_data >= CURRENT_THRESHOLD.get();
   }
 
   public Command runEndEffector() {
@@ -87,7 +87,7 @@ public class EndEffector extends SubsystemBase {
         });
   }
 
-  public boolean isRunning(){
+  public boolean isRunning() {
     return isRunning;
   }
 }
