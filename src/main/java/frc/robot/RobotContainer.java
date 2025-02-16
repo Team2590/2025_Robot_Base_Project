@@ -15,8 +15,6 @@ package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,8 +23,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -57,9 +53,9 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
-import lombok.Getter;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import java.util.List;
+import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -70,20 +66,12 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
-  @Getter
-  private final Drive drive;
-  @Getter
-  private final Vision vision;
-  @Getter
-  private final Arm arm;
-  @Getter
-  private final Elevator elevator;
-  @Getter
-  private final Intake intake;
-  @Getter
-  private final EndEffector endEffector;
-
-
+  @Getter private final Drive drive;
+  @Getter private final Vision vision;
+  @Getter private final Arm arm;
+  @Getter private final Elevator elevator;
+  @Getter private final Intake intake;
+  @Getter private final EndEffector endEffector;
 
   // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
@@ -181,7 +169,9 @@ public class RobotContainer {
                     ElevatorConstantsLarry.invert,
                     ElevatorConstantsLarry.brake,
                     ElevatorConstantsLarry.reduction));
-        endEffector = new EndEffector(new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
+        endEffector =
+            new EndEffector(
+                new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
         break;
       case Leonidas:
         drive =
@@ -192,11 +182,53 @@ public class RobotContainer {
                 new ModuleIOTalonFX(constantsWrapper.BackLeft, constantsWrapper),
                 new ModuleIOTalonFX(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
-        arm = null;
-        elevator = null;
+        arm =
+            new Arm(
+                new ArmIOTalonFX(
+                    Constants.ArmConstantsLeonidas.canID,
+                    Constants.ArmConstantsLeonidas.canBus,
+                    Constants.ArmConstantsLeonidas.currentLimitAmps,
+                    Constants.ArmConstantsLeonidas.invert,
+                    Constants.ArmConstantsLeonidas.brake,
+                    Constants.ArmConstantsLeonidas.reduction,
+                    Constants.ArmConstantsLeonidas.cancoderID,
+                    Constants.ArmConstantsLeonidas.magOffset,
+                    Constants.ArmConstantsLeonidas.sensorReduction));
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    Constants.ElevatorConstantsLeonidas.canID,
+                    Constants.ElevatorConstantsLeonidas.canBus,
+                    Constants.ElevatorConstantsLeonidas.currentLimitAmps,
+                    Constants.ElevatorConstantsLeonidas.invert,
+                    Constants.ElevatorConstantsLeonidas.brake,
+                    Constants.ElevatorConstantsLeonidas.reduction));
         vision = null;
-        intake = null;
-        endEffector = new EndEffector(new EndEffectorIOTalonFX(EndEffectorConstantsLeonidas.canID, EndEffectorConstantsLeonidas.canBus, EndEffectorConstantsLeonidas.currentLimitAmps, EndEffectorConstantsLeonidas.invert, EndEffectorConstantsLeonidas.brake, EndEffectorConstantsLeonidas.reduction));
+        intake =
+            new Intake(
+                new IntakeIOTalonFX(
+                    Constants.IntakeConstantsLeonidas.canID,
+                    Constants.IntakeConstantsLeonidas.canBus,
+                    Constants.IntakeConstantsLeonidas.currentLimitAmps,
+                    Constants.IntakeConstantsLeonidas.invert,
+                    Constants.IntakeConstantsLeonidas.brake,
+                    Constants.IntakeConstantsLeonidas.reduction),
+                new IntakeArmIOTalonFX(
+                    Constants.IntakeArmConstantsLeonidas.canID,
+                    Constants.IntakeArmConstantsLeonidas.canBus,
+                    Constants.IntakeArmConstantsLeonidas.currentLimitAmps,
+                    Constants.IntakeArmConstantsLeonidas.invert,
+                    Constants.IntakeArmConstantsLeonidas.brake,
+                    Constants.IntakeArmConstantsLeonidas.reduction));
+        endEffector =
+            new EndEffector(
+                new EndEffectorIOTalonFX(
+                    Constants.EndEffectorConstantsLeonidas.canID,
+                    Constants.EndEffectorConstantsLeonidas.canBus,
+                    Constants.EndEffectorConstantsLeonidas.currentLimitAmps,
+                    Constants.EndEffectorConstantsLeonidas.invert,
+                    Constants.EndEffectorConstantsLeonidas.brake,
+                    Constants.EndEffectorConstantsLeonidas.reduction));
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -225,7 +257,10 @@ public class RobotContainer {
         arm = new Arm(new ArmIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 1, true, 1));
         elevator =
             new Elevator(new ElevatorIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 10, false, 1));
-        endEffector = new EndEffector(new EndEffectorIOSim(DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
+        endEffector =
+            new EndEffector(
+                new EndEffectorIOSim(
+                    DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
         break;
 
       default:

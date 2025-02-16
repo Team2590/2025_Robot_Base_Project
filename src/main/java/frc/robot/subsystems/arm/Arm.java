@@ -47,7 +47,7 @@ public class Arm extends SubsystemBase {
     arm.setVoltage(volts);
   }
 
-  public double getAbsolutePosition(){
+  public double getAbsolutePosition() {
     return inputs.armabspos;
   }
 }
