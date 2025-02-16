@@ -157,23 +157,34 @@ public final class Constants {
     static double reduction = 1;
   }
 
-  public static class ArmConstantsLeonidas {
+  public final class ArmConstantsLeonidas {
     public static double ELEVATOR_FACTORY_MIN_POS = 5; // TODO: change to actual value
     public static double ELEVATOR_FACTORY_MAX_POS = 10; // TODO: change to actual value
+    public static final int armPivot_ID = 1;
   }
 
-  public static class ElevatorConstantsLeonidas {
+  public final class ElevatorConstantsLeonidas {
     public static double ARM_FACTORY_MIN_POS = 5; // TODO: change to actual value
     public static double ARM_FACTORY_MAX_POS = 10; // TODO: change to actual value
+    public static final int choulder_canID = 5;
   }
 
-  public static class EndEffectorConstantsLeonidas {
-    static int canID = 2; //TODO
+  public final class EndEffectorConstantsLeonidas {
+    static int canID = 10; 
     static String canBus = "Takeover";
     static int currentLimitAmps = 120; //TODO
     static boolean invert = true; //TODO
     static boolean brake = true; //TODO
     static double reduction = 1; //TODO
+  }
+
+  public final class IntakeConstantsLeonidas { 
+    public static final int intakePivot_canID = 15;
+    public static final int intakeRoll_canID = 24;
+  }
+
+  public final class ClimbConstantsLeonidas {
+    public static final int climbWinch_canID = 14;
   }
   
   public static class IntakeConstantsLarry {
