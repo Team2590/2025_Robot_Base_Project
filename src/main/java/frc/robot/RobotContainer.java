@@ -16,7 +16,6 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -313,14 +312,13 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // autoChooser.addOption(
-    //     "Elevator FF Characterization",
-    //     new FeedForwardCharacterization(
-    //         elevator, elevator::setVoltage, elevator::getCharacterizationVelocity));
-    // autoChooser.addOption(
-    //     "Arm FF Characterization",
-    //     new FeedForwardCharacterization(
-    //         arm, arm::setVoltage, arm::getCharacterizationVelocity));
+    autoChooser.addOption(
+        "Elevator FF Characterization",
+        new FeedForwardCharacterization(
+            elevator, elevator::setVoltage, elevator::getCharacterizationVelocity));
+    autoChooser.addOption(
+        "Arm FF Characterization",
+        new FeedForwardCharacterization(arm, arm::setVoltage, arm::getCharacterizationVelocity));
     autoChooser.addOption(
         "Intake FF Characterization",
         new FeedForwardCharacterization(

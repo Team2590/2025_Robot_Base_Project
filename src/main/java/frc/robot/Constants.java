@@ -163,23 +163,23 @@ public final class Constants {
     public static final int canID = 1;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 40; // TODO
-    public static final boolean invert = true; // TODO
-    public static final boolean brake = true; // TODO
+    public static final boolean invert = false; // TODO
+    public static final boolean brake = false; // TODO
     public static final double reduction = 0; // TODO
-    public static final int cancoderID = 100; // TODO
-    public static final double magOffset = 1; // TODO
-    public static final double sensorReduction = 1; // TODO
+    public static final int cancoderID = 5;
+    public static final double magOffset = -0.3264;
+    public static final double sensorReduction = 2.5; // TODO
   }
 
   public final class ElevatorConstantsLeonidas {
     public static double ARM_FACTORY_MIN_POS = 5; // TODO: change to actual value
     public static double ARM_FACTORY_MAX_POS = 10; // TODO: change to actual value
-    public static final int canID = 5;
+    public static final int canID = 25;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 40; // TODO
-    public static final boolean invert = true; // TODO
-    public static final boolean brake = true; // TODO
-    public static final double reduction = 7; // TODO
+    public static final boolean invert = true;
+    public static final boolean brake = true;
+    public static final double reduction = 7;
   }
 
   public final class EndEffectorConstantsLeonidas {
@@ -194,10 +194,10 @@ public final class Constants {
   public final class IntakeConstantsLeonidas {
     public static final int canID = 24;
     public static final String canBus = "Takeover";
-    public static final int currentLimitAmps = 120; // TODO
-    public static final boolean invert = true; // TODO
-    public static final boolean brake = true; // TODO
-    public static final double reduction = 1; // TODO
+    public static final int currentLimitAmps = 120;
+    public static final boolean invert = true;
+    public static final boolean brake = true;
+    public static final double reduction = 1;
   }
 
   public final class IntakeArmConstantsLeonidas {
@@ -205,10 +205,10 @@ public final class Constants {
     public static final double INTAKE_ALGAE_POS = 6.5;
     public static final int canID = 15;
     public static final String canBus = "Takeover";
-    public static final int currentLimitAmps = 120; // TODO
-    public static final boolean invert = true; // TODO
-    public static final boolean brake = true; // TODO
-    public static final double reduction = 38.33; // TODO
+    public static final int currentLimitAmps = 120;
+    public static final boolean invert = true;
+    public static final boolean brake = true;
+    public static final double reduction = 38.33;
     public static final double kS = 0.25242;
     public static final double kV = 0.34993;
   }
