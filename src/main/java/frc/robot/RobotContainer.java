@@ -16,6 +16,7 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOSim;
@@ -319,10 +321,10 @@ public class RobotContainer {
     //     "Arm FF Characterization",
     //     new FeedForwardCharacterization(
     //         arm, arm::setVoltage, arm::getCharacterizationVelocity));
-    // autoChooser.addOption(
-    //     "Intake FF Characterization",
-    //     new FeedForwardCharacterization(
-    //         intake, intake::setVoltage, intake::getCharacterizationVelocity));
+    autoChooser.addOption(
+        "Intake FF Characterization",
+        new FeedForwardCharacterization(
+            intake, intake::setVoltage, intake::getCharacterizationVelocity));
 
     // Configure the button bindings
     configureButtonBindings();

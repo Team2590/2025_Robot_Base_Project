@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class FeedForwardCharacterization extends Command {
-  private static final double START_DELAY_SECS = 2.0;
+  private static final double START_DELAY_SECS = .5;
   private static final double RAMP_VOLTS_PER_SEC = 0.1;
 
   private FeedForwardCharacterizationData data;
@@ -57,7 +57,7 @@ public class FeedForwardCharacterization extends Command {
       double voltage = (timer.get() - START_DELAY_SECS) * RAMP_VOLTS_PER_SEC;
       voltageConsumer.accept(voltage);
       data.add(velocitySupplier.get(), voltage);
-      if (timer.get() > 1.0) {
+      if (timer.get() > 3) {
         data.print();
       }
     }
