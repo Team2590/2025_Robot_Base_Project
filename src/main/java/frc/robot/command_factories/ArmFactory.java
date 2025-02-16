@@ -4,6 +4,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.util.NemesisMathUtil;
 
 /** Factory class for creating commands related to the arm subsystem. */
 public class ArmFactory {
@@ -20,8 +21,9 @@ public class ArmFactory {
         .withName("Set Arm Position")
         .onlyIf(
             () ->
-                RobotContainer.getElevator().getRotationCount()
-                    > Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS);
+            ((RobotContainer.getElevator().getRotationCount()
+            >= Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS && NemesisMathUtil.isBetweenInclusive(position, Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS, Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS)) || 
+            (RobotContainer.getElevator().getRotationCount() < Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS && !NemesisMathUtil.isBetweenInclusive(position, Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS, Constants.ArmConstantsLeonidas.ARM_SAFETY_MAX_POS))));
   }
 
   public static Command setPositionBlocking(double position) {
@@ -30,9 +32,12 @@ public class ArmFactory {
         .withName("Set Arm Position Blocking")
         .onlyIf(
             () ->
-                RobotContainer.getElevator().getRotationCount()
-                    > Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS);
+                ((RobotContainer.getElevator().getRotationCount()
+                    >= Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS && NemesisMathUtil.isBetweenInclusive(position, Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS, Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS)) || 
+                    (RobotContainer.getElevator().getRotationCount() < Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS && !NemesisMathUtil.isBetweenInclusive(position, Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS, Constants.ArmConstantsLeonidas.ARM_SAFETY_MAX_POS))));
   }
+
+  // 
 
   /**
    * Creates a command for manual arm control.
