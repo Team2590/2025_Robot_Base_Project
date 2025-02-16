@@ -29,7 +29,6 @@ public class ArmFactory {
 
   public static Command setPositionBlocking(double position) {
 
-    
     return container
         .getArm()
         .setPositionBlocking(position)

@@ -48,9 +48,9 @@ public class ElevatorFactory {
         .withName("Set Elevator Position Blocking");
   }
 
-  public static boolean elevatorCommandFinished(){
+  public static boolean elevatorCommandFinished() {
 
-    return container.getElevator().getCharacterizationVelocity()==0; //Whatever Score Positon For
+    return container.getElevator().getCharacterizationVelocity() == 0; // Whatever Score Positon For
   }
 
   /**
