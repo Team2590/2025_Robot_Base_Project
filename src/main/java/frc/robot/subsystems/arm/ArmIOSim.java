@@ -84,7 +84,7 @@ public class ArmIOSim implements ArmIO {
   @Override
   public void setPosition(double position) {
     if (SafetyChecker.isSafe(
-        SafetyChecker.MechanismType.ARM_ELEVATOR, simulatedElevatorPosition, position)) {
+        SafetyChecker.MechanismType.ARM_MOVEMENT, simulatedElevatorPosition, position)) {
       targetPositionRad = position * 2 * Math.PI * drumRadiusMeters / gearing;
     } else {
       System.out.println("CAN'T MOVE ARM (SIM), elevator not in valid position.");

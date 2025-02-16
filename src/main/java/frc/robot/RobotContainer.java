@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
+import frc.robot.command_factories.DriveFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
@@ -66,20 +67,22 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
-  @Getter private final Drive drive;
-  @Getter private final Vision vision;
-  @Getter private final Arm arm;
-  @Getter private final Elevator elevator;
-  @Getter private final Intake intake;
-  @Getter private final EndEffector endEffector;
+  @Getter private static Drive drive;
+  @Getter private static Vision vision;
+  @Getter private static Arm arm;
+  @Getter private static Elevator elevator;
+  @Getter private static Intake intake;
+  @Getter private static EndEffector endEffector;
 
   // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(2);
-  private final CommandJoystick leftJoystick = new CommandJoystick(0);
-  private final CommandJoystick rightJoystick = new CommandJoystick(1);
+  @Getter private static CommandXboxController controller = new CommandXboxController(2);
+
+  @Getter private static CommandJoystick leftJoystick = new CommandJoystick(0);
+
+  @Getter private static CommandJoystick rightJoystick = new CommandJoystick(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -171,7 +174,7 @@ public class RobotContainer {
                     ElevatorConstantsLarry.reduction));
         endEffector =
             new EndEffector(
-                new EndEffectorIOTalonFX(0, camera0Name, 120, false, true, angularStdDevBaseline));
+                new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
         break;
       case Leonidas:
         drive =
@@ -302,12 +305,15 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -leftJoystick.getY(),
-            () -> -leftJoystick.getX(),
-            () -> -rightJoystick.getX()));
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDrive(
+    //         drive,
+    //         () -> -leftJoystick.getY(),
+    //         () -> -leftJoystick.getX(),
+    //         () -> -rightJoystick.getX()));
+
+    // Default drive command using new factory method, replacement for above ^^.
+    drive.setDefaultCommand(DriveFactory.joystickDrive());
 
     // Lock to 0° when A button is held
     controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
@@ -315,6 +321,37 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
     // controller.b().whileTrue(intake.runIntake(4));
+
+    //////////////////////////////////////////////////////
+    /// Examples of using commands from command factories.
+    //////////////////////////////////////////////////////
+    ///
+    ///
+    // example of how we might change some of the above to using the elevator factory
+    // leftJoystick.pov(0).onTrue(ElevatorFactory.setPosition(5));
+    // leftJoystick.pov(90).onTrue(ElevatorFactory.setPosition(17));
+    // leftJoystick.pov(180).onTrue(ElevatorFactory.setPosition(30));
+    // leftJoystick.pov(270).onTrue(ElevatorFactory.setPosition(48));
+    // leftJoystick.button(5).onTrue(ElevatorFactory.resetRotationCount());
+    // leftJoystick.button(4).onTrue(ElevatorFactory.setPosition(0));
+    // leftJoystick.button(1).whileTrue(endEffector.intake());
+
+    // Example of going to a specific pose using a command
+    // leftJoystick.butotn(2).onTrue(DriveFactory.driveToPose(new Pose2d()));
+
+    // Example of intake commands using controller buttons and factory pattern
+    // leftJoystick.button(1).whileTrue(IntakeFactory.runIntake(() -> 8));
+    // leftJoystick.button(2).whileTrue(IntakeFactory.runIntake(() -> -8));
+    // leftJoystick.button(3).onTrue(IntakeFactory.setIntakeCoralPosition());
+    // leftJoystick.button(4).onTrue(IntakeFactory.setIntakeAlgaePosition());
+
+    // Example of scoring commands using controller buttons
+    // leftJoystick.button(6).onTrue(ScoringFactory.scoreHigh());
+    // leftJoystick.button(7).onTrue(ScoringFactory.scoreMid());
+    // leftJoystick.button(8).onTrue(ScoringFactory.stow());
+    //////////////////////////////////////////////////////
+    /// End of examples using command factories
+    //////////////////////////////////////////////////////
 
     // Reset gyro to 0° when B button is pressed
     controller
@@ -367,15 +404,6 @@ public class RobotContainer {
     //     .button(3)
     //     .whileTrue(arm.setPosition(Constants.ArmConstants.CORAL_STATION_INTAKE_SETPOINT));
 
-    // Add elevator control bindings
-    leftJoystick.button(3).onTrue(elevator.setPosition(5)); // Move to position 5
-    leftJoystick.button(4).onTrue(elevator.setPosition(10)); // Move to position 10
-    leftJoystick.button(5).onTrue(elevator.setPosition(0)); // Return to home position
-
-    // Add arm control bindings
-    leftJoystick.button(6).onTrue(arm.setPosition(30)); // Mid position
-    leftJoystick.button(7).onTrue(arm.setPosition(60)); // High position
-    leftJoystick.button(8).onTrue(arm.setPosition(0)); // Home position
   }
 
   /**
@@ -387,10 +415,12 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
-  private void periodic() {
-    // Update simulated elevator position
-    if (elevator != null && arm.getIO() instanceof ArmIOSim) {
-      ((ArmIOSim) arm.getIO()).setSimulatedElevatorPosition(elevator.getRotationCount());
-    }
+  // Add joystick accessors if missing
+  public static CommandXboxController getDriverController() {
+    return controller;
+  }
+
+  public static CommandXboxController getOperatorController() {
+    return controller;
   }
 }

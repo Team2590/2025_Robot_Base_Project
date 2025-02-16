@@ -48,14 +48,6 @@ public class Intake extends SubsystemBase {
       intakeArmDisconnected.set(!intakeArmInputs.connected);
     }
 
-    public Command setIntakeCoralPosition() {
-      return runOnce(() -> intakeArmIO.setPosition(10));
-    }
-
-    public Command setIntakeAlgaePosition() {
-      return runOnce(() -> intakeArmIO.setPosition(4));
-    }
-
     public Command resetRotationCount() {
       return runOnce(() -> intakeArmIO.resetRotationCount());
     }
@@ -85,14 +77,6 @@ public class Intake extends SubsystemBase {
               intakeIO.stop();
             })
         .withName("Run Intake");
-  }
-
-  public Command setIntakeCoralPosition() {
-    return intakeArm.setIntakeCoralPosition();
-  }
-
-  public Command setIntakeAlgaePosition() {
-    return intakeArm.setIntakeAlgaePosition();
   }
 
   public Command setPosition(double position) {
