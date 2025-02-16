@@ -21,16 +21,10 @@ public class ElevatorFactory {
    * @return Command to move elevator to position
    */
   public static Command setPosition(double position) {
-    if (position < Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS && !NemesisMathUtil.isBetweenInclusive(RobotContainer.getArm().getAbsolutePosition(), Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS, Constants.ArmConstantsLeonidas.ARM_SAFETY_MAX_POS)) return Commands.none();
+    if (position < Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS && NemesisMathUtil.isBetweenInclusive(RobotContainer.getArm().getAbsolutePosition(), Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS, Constants.ArmConstantsLeonidas.ARM_SAFETY_MAX_POS)) return Commands.none();
     return RobotContainer.getElevator()
         .setPosition(position)
-        .withName("Set Elevator Position")
-        .onlyIf(
-            () ->
-                !NemesisMathUtil.isBetweenInclusive(
-                    RobotContainer.getArm().getSetpoint(),
-                    Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS,
-                    Constants.ArmConstantsLeonidas.ARM_SAFETY_MAX_POS));
+        .withName("Set Elevator Position");
   }
 
   /**
@@ -41,7 +35,7 @@ public class ElevatorFactory {
    * @return Command to move elevator to position and wait
    */
   public static Command setPositionBlocking(double position) {
-    if (position < Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS && !NemesisMathUtil.isBetweenInclusive(RobotContainer.getArm().getAbsolutePosition(), Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS, Constants.ArmConstantsLeonidas.ARM_SAFETY_MAX_POS)) return Commands.none();
+    if (position < Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS && NemesisMathUtil.isBetweenInclusive(RobotContainer.getArm().getAbsolutePosition(), Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS, Constants.ArmConstantsLeonidas.ARM_SAFETY_MAX_POS)) return Commands.none();
     return RobotContainer.getElevator()
         .setPositionBlocking(position)
         .withName("Set Elevator Position Blocking");
