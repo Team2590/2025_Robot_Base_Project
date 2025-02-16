@@ -2,6 +2,7 @@ package frc.robot.command_factories;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
@@ -22,6 +23,7 @@ public class ElevatorFactory {
    * @return Command to move elevator to position
    */
   public static Command setPosition(double position) {
+    if (position < Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS) return Commands.none();
     return container
         .getElevator()
         .setPosition(position)
@@ -30,8 +32,8 @@ public class ElevatorFactory {
             () ->
                 NemesisMathUtil.isBetweenInclusive(
                     container.getArm().getSetpoint(),
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
+                    Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS,
+                    Constants.ArmConstantsLeonidas.ARM_SAFETY_MAX_POS));
   }
 
   /**
@@ -42,6 +44,7 @@ public class ElevatorFactory {
    * @return Command to move elevator to position and wait
    */
   public static Command setPositionBlocking(double position) {
+    if (position < Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS) return Commands.none();
     return container
         .getElevator()
         .setPositionBlocking(position)
@@ -81,8 +84,8 @@ public class ElevatorFactory {
             () ->
                 NemesisMathUtil.isBetweenInclusive(
                     container.getArm().getSetpoint(),
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS,
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS));
   }
 
   /**
@@ -99,7 +102,7 @@ public class ElevatorFactory {
             () ->
                 NemesisMathUtil.isBetweenInclusive(
                     container.getArm().getSetpoint(),
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS));
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS,
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS));
   }
 }
