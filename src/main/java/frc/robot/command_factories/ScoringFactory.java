@@ -1,6 +1,7 @@
 package frc.robot.command_factories;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -20,7 +21,7 @@ public class ScoringFactory {
    * @return Command sequence for L4 scoring
    */
   public static Command scoreL4() {
-    return new SequentialCommandGroup(
+    return new ParallelCommandGroup(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
             ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L4_POS),
@@ -35,7 +36,7 @@ public class ScoringFactory {
    * @return Command sequence for L3 scoring
    */
   public static Command scoreL3() {
-    return new SequentialCommandGroup(
+    return new ParallelCommandGroup(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS),
             ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L3_POS),
@@ -50,7 +51,7 @@ public class ScoringFactory {
    * @return Command sequence for L2 scoring
    */
   public static Command scoreL2() {
-    return new SequentialCommandGroup(
+    return new ParallelCommandGroup(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS),
             ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L2_POS),
@@ -65,9 +66,22 @@ public class ScoringFactory {
    * @return Command sequence for L1 scoring
    */
   public static Command scoreL1() {
-    return new SequentialCommandGroup(
+    return new ParallelCommandGroup(
             IntakeFactory.setHomePosition(),
             NemesisTimedCommand.generateTimedCommand(IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED), 1)
+        .withName("Score L1"));
+  }
+
+  /**
+   * Creates a command sequence for scoring at processor.
+   *
+   * @param container The RobotContainer instance
+   * @return Command sequence for processor scoring
+   */
+  public static Command scoreProcessor() {
+    return new ParallelCommandGroup(
+            IntakeFactory.setHoldingAlgaePosition(),
+            NemesisTimedCommand.generateTimedCommand(IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_ALGAE_OUTTAKE_SPEED), 1)
         .withName("Score L1"));
   }
 

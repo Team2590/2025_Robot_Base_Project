@@ -191,6 +191,7 @@ public final class Constants {
     public static double INTAKE_FACTORY_HOME_POSITION = 0; // TODO: Find Actual Value
     public static double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 2; // TODO: Find Actual Value
     public static double INTAKE_CORAL_OUTTAKE_SPEED = -2; // TODO: Find Actual Value
+    public static double INTAKE_ALGAE_OUTTAKE_SPEED = -1; // TODO: Find Actual Value
   }
 
   public static class IntakeConstantsLarry {
