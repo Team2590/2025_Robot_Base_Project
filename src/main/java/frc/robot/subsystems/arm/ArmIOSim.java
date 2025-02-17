@@ -50,7 +50,7 @@ public class ArmIOSim implements ArmIO {
             armLengthMeters,
             minAngle,
             maxAngle,
-            simulateGravity,
+            false,
             minAngle // Start at 7 o'clock
             );
 

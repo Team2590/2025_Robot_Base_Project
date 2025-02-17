@@ -49,7 +49,7 @@ public class ElevatorIOSim implements ElevatorIO {
             drumRadiusMeters,
             minHeightMeters,
             maxHeightMeters,
-            simulateGravity,
+            false,
             minHeightMeters // Start at bottom position
             );
 
