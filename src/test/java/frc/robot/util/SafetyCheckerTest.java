@@ -12,9 +12,9 @@ class SafetyCheckerTest {
     assertTrue(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ARM_MOVEMENT,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS
-                + 1, // elevatorPosition (above min)
-            0.0 // armPosition (any value)
+            1.0, // armPosition (any value)
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS
+                + 1 // elevatorPosition (above min)
             ));
   }
 
@@ -23,9 +23,10 @@ class SafetyCheckerTest {
     assertTrue(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ARM_MOVEMENT,
+            Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS
+                + 1, // armPosition (within safe range)
             Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS
-                - 1, // elevatorPosition (below min)
-            Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS // armPosition (within safe range)
+                - 1 // elevatorPosition (below min)
             ));
   }
 
@@ -34,9 +35,9 @@ class SafetyCheckerTest {
     assertFalse(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ARM_MOVEMENT,
+            Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS - 1, // armPosition (below safe range)
             Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS
-                - 1, // elevatorPosition (below min)
-            Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS - 1 // armPosition (below safe range)
+                - 1 // elevatorPosition (below min)
             ));
   }
 
@@ -45,8 +46,8 @@ class SafetyCheckerTest {
     assertTrue(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
-            Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS + 1, // armPosition (above min)
-            0.0 // elevatorPosition (any value)
+            1.0, // elevatorPosition (any value)
+            Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS + 1 // armPosition (above min)
             ));
   }
 
@@ -55,9 +56,9 @@ class SafetyCheckerTest {
     assertTrue(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
-            Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS - 1, // armPosition (below min)
-            Constants.ElevatorConstantsLeonidas
-                .ELEVATOR_SAFETY_POS // elevatorPosition (within safe range)
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS
+                + 1, // elevatorPosition (within safe range)
+            Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS - 1 // armPosition (below min)
             ));
   }
 
@@ -66,9 +67,9 @@ class SafetyCheckerTest {
     assertFalse(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
-            Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS - 1, // armPosition (below min)
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS
-                - 1 // elevatorPosition (below safe range)
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS
+                - 1, // elevatorPosition (below safe range)
+            Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS - 1 // armPosition (below min)
             ));
   }
 
@@ -77,9 +78,9 @@ class SafetyCheckerTest {
     assertTrue(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ARM_MOVEMENT,
+            Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS, // Exactly at arm minimum
             Constants.ElevatorConstantsLeonidas
-                .ELEVATOR_OPERATIONAL_MIN_POS, // Exactly at elevator minimum
-            Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS // Exactly at arm minimum
+                .ELEVATOR_OPERATIONAL_MIN_POS // Exactly at elevator minimum
             ));
   }
 
