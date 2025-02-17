@@ -33,16 +33,16 @@ public class SafetyChecker {
   }
 
   private static boolean isArmInSafeRange(double armPosition) {
-    return armPosition >= Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS
-        && armPosition <= Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS;
+    return armPosition >= Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS
+        && armPosition <= Constants.ArmConstantsLeonidas.ARM_SAFETY_MAX_POS;
   }
 
   private static boolean isArmAboveMin(double armPosition) {
-    return armPosition >= Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS;
+    return armPosition >= Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS;
   }
 
   private static boolean isElevatorInSafeRange(double elevatorPosition) {
-    return elevatorPosition >= Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS
+    return elevatorPosition >= Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS
         && elevatorPosition <= Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS;
   }
 }
