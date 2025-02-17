@@ -409,9 +409,9 @@ public class RobotContainer {
     leftJoystick.button(5).onTrue(elevator.setPosition(100)); // Move to top
 
     // Add arm control bindings
-    leftJoystick.button(6).onTrue(arm.setPosition(75)); // Mid position
-    leftJoystick.button(7).onTrue(arm.setPosition(144)); // High position
-    leftJoystick.button(8).onTrue(arm.setPosition(0)); // Home position
+    leftJoystick.button(6).onTrue(arm.setPosition(0)); // Mid position
+    leftJoystick.button(7).onTrue(arm.setPosition(75)); // High position
+    leftJoystick.button(8).onTrue(arm.setPosition(144)); // Home position
   }
 
   /**
