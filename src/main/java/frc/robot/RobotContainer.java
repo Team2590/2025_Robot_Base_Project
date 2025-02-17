@@ -222,6 +222,7 @@ public class RobotContainer {
                     Constants.IntakeArmConstantsLeonidas.invert,
                     Constants.IntakeArmConstantsLeonidas.brake,
                     Constants.IntakeArmConstantsLeonidas.reduction));
+        intake.resetArmRotationCount();
         endEffector =
             new EndEffector(
                 new EndEffectorIOTalonFX(

@@ -56,8 +56,12 @@ public class Intake extends SubsystemBase {
       return runOnce(() -> intakeArmIO.setPosition(4));
     }
 
-    public Command resetRotationCount() {
+    public Command resetRotationCountCommand() {
       return runOnce(() -> intakeArmIO.resetRotationCount());
+    }
+
+    public void resetRotationCount() {
+      intakeArmIO.resetRotationCount();
     }
 
     public Command setPosition(double position) {
@@ -107,8 +111,12 @@ public class Intake extends SubsystemBase {
     return intakeArm.setPositionBlocking(position);
   }
 
-  public Command resetArmRotationCount() {
-    return intakeArm.resetRotationCount();
+  public Command resetArmRotationCountCommand() {
+    return intakeArm.resetRotationCountCommand();
+  }
+
+  public void resetArmRotationCount() {
+    intakeArm.resetRotationCount();
   }
 
   public void setVoltage(double volts) {

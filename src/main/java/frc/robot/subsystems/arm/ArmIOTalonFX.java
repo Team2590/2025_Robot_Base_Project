@@ -32,17 +32,17 @@ import frc.robot.util.StickyFaultUtil;
 public class ArmIOTalonFX implements ArmIO {
   private TalonFX arm;
   private CANcoder armCancoder;
-  LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 16);
+  LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 8);
   LoggedTunableNumber kI = new LoggedTunableNumber("Arm/kI", 0);
   LoggedTunableNumber kD = new LoggedTunableNumber("Arm/kD", 0);
-  LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS", 0);
-  LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0.1);
-  LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", -0.011);
+  LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS", .15);
+  LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0.15);
+  LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", 0);
   LoggedTunableNumber MotionMagicCruiseVelocity1 =
       new LoggedTunableNumber("Arm/MotionMagicCruiseVelocity", 1500); // 1500
   LoggedTunableNumber MotionMagicAcceleration1 =
-      new LoggedTunableNumber("Arm/MotionMagicAcceleration", 500); // 500
-  LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", 2000);
+      new LoggedTunableNumber("Arm/MotionMagicAcceleration", 50); // 500
+  LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", 100);
   LoggedTunableNumber ff = new LoggedTunableNumber("Arm/Feedforward", 0);
   Slot0Configs slot0;
   TalonFXConfiguration cfg;
@@ -99,11 +99,13 @@ public class ArmIOTalonFX implements ArmIO {
 
     FeedbackConfigs fdb = cfg.Feedback;
     fdb.RotorToSensorRatio = sensor_reduction;
+    // fdb.SensorToMechanismRatio = 1.6;
     fdb.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     fdb.FeedbackRemoteSensorID = cancoderID;
     MagnetSensorConfigs mag = new MagnetSensorConfigs();
     mag.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     mag.MagnetOffset = magOffset;
+    mag.AbsoluteSensorDiscontinuityPoint = 0.6;
     CANcoderConfiguration can = new CANcoderConfiguration();
     can.withMagnetSensor(mag);
     armCancoder.getConfigurator().apply(can);
@@ -112,7 +114,7 @@ public class ArmIOTalonFX implements ArmIO {
     mmv = new MotionMagicDutyCycle(0);
 
     position = arm.getPosition();
-    velocity = arm.getVelocity();
+    velocity = armCancoder.getVelocity();
     appliedVoltage = arm.getMotorVoltage();
     supplyCurrent = arm.getSupplyCurrent();
     torqueCurrent = arm.getTorqueCurrent();
