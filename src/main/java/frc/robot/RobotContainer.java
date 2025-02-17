@@ -258,7 +258,7 @@ public class RobotContainer {
         break;
     }
 
-    // RobotState.getInstance().setDrive(drive);
+    RobotState.initialize(arm, drive, elevator, endEffector, intake, vision);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
