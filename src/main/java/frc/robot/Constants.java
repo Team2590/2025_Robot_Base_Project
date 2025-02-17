@@ -158,8 +158,8 @@ public final class Constants {
   }
 
   public final class ArmConstantsLeonidas {
-    public static double ELEVATOR_FACTORY_MIN_POS = 5; // TODO: change to actual value
-    public static double ELEVATOR_FACTORY_MAX_POS = 10; // TODO: change to actual value
+    public static double ARM_FACTORY_MIN_POS = 5; // TODO: change to actual value
+    public static double ARM_FACTORY_MAX_POS = 10; // TODO: change to actual value
     public static final int canID = 1;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 40; // TODO
@@ -168,18 +168,23 @@ public final class Constants {
     public static final double reduction = 0; // TODO
     public static final int cancoderID = 5;
     public static final double magOffset = -0.3264;
-    public static final double sensorReduction = 2.5; // TODO
+    public static final double sensorReduction = 58.8; // TODO
   }
 
   public final class ElevatorConstantsLeonidas {
-    public static double ARM_FACTORY_MIN_POS = 5; // TODO: change to actual value
-    public static double ARM_FACTORY_MAX_POS = 10; // TODO: change to actual value
+    public static double ELEVATOR_FACTORY_MIN_POS = 5; // TODO: change to actual value
+    public static double ELEVATOR_FACTORY_MAX_POS = 89.5; // TODO: change to actual value
     public static final int canID = 25;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 40; // TODO
-    public static final boolean invert = true;
+    public static final boolean invert = false;
     public static final boolean brake = true;
     public static final double reduction = 7;
+    public static final double kS = 0.22720;
+    public static final double kV = 0.14051;
+    public static final double l2 = 27.210938;
+    public static final double l3 = 51.997559;
+    public static final double l4 = 84.572266;
   }
 
   public final class EndEffectorConstantsLeonidas {

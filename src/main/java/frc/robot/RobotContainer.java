@@ -204,6 +204,7 @@ public class RobotContainer {
                     Constants.ElevatorConstantsLeonidas.invert,
                     Constants.ElevatorConstantsLeonidas.brake,
                     Constants.ElevatorConstantsLeonidas.reduction));
+        elevator.resetRotationCount();
         vision = null;
         intake =
             new Intake(
@@ -369,6 +370,14 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
+    leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
+    rightJoystick.button(3).onTrue(elevator.setPosition(50));
+    rightJoystick
+        .button(2)
+        .onTrue(elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS));
+    // rightJoystick.button(1).onTrue(elevator.setPosition());
 
     /**
      * the following button binds work on Larry:

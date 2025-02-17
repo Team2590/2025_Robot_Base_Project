@@ -24,19 +24,19 @@ public class SafetyChecker {
 
   // Specific safety implementations
   private static boolean checkArmElevatorSafety(double elevatorPosition, double armPosition) {
-    return elevatorPosition > Constants.ElevatorConstantsLeonidas.ARM_FACTORY_MIN_POS
+    return elevatorPosition > Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS
         || NemesisMathUtil.isBetweenInclusive(
             armPosition,
-            Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
-            Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS);
+            Constants.ArmConstantsLeonidas.ARM_FACTORY_MIN_POS,
+            Constants.ArmConstantsLeonidas.ARM_FACTORY_MAX_POS);
   }
 
   private static boolean checkElevatorArmSafety(double armPosition, double elevatorPosition) {
-    return armPosition > Constants.ArmConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS
+    return armPosition > Constants.ArmConstantsLeonidas.ARM_FACTORY_MIN_POS
         || NemesisMathUtil.isBetweenInclusive(
             elevatorPosition,
-            Constants.ElevatorConstantsLeonidas.ARM_FACTORY_MIN_POS,
-            Constants.ElevatorConstantsLeonidas.ARM_FACTORY_MAX_POS);
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MIN_POS,
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_FACTORY_MAX_POS);
   }
 
   // Maintain legacy methods for compatibility
