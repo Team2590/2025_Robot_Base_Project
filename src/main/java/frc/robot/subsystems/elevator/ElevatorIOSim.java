@@ -5,7 +5,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.Constants;
-import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 
@@ -70,16 +70,21 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public void setPosition(double position) {
-    double armPos = Robot.getRobotContainerInstance().getArm().getAbsolutePosition();
+    double armPos = RobotContainer.getArm().getAbsolutePosition();
     double elevatorPos = this.rotationCount;
 
-    if (SafetyChecker.isElevatorMovementSafe(armPos, elevatorPos)) {
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, elevatorPos, armPos)) {
       double positionMeters = position * 2 * Math.PI * drumRadiusMeters / gearing;
       requestedPositionMeters = positionMeters;
       elevatorSim.setState(positionMeters, cruiseVelocity.get());
     } else {
       System.out.println("CAN'T MOVE ELEVATOR (SIM), arm not in valid position.");
     }
+  }
+
+  @Override
+  public double getTargetPosition() {
+    return requestedPositionMeters;
   }
 
   @Override

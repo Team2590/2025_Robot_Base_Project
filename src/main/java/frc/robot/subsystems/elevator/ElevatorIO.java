@@ -23,6 +23,8 @@ public interface ElevatorIO {
 
   public void setPosition(double position);
 
+  public double getTargetPosition();
+
   public void stop();
 
   public void resetRotationCount();

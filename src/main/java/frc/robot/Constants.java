@@ -157,36 +157,108 @@ public final class Constants {
     static double reduction = 1;
   }
 
-  public final class ArmConstantsLeonidas {
-    public static double ELEVATOR_FACTORY_MIN_POS = 5; // TODO: change to actual value
-    public static double ELEVATOR_FACTORY_MAX_POS = 10; // TODO: change to actual value
-    public static final int armPivot_ID = 1;
+  public static class ArmConstantsLeonidas {
+    public static double ARM_FACTORY_SAFETY_MIN = -0.148;
+    public static double ARM_FACTORY_SAFETY_MAX = .36;
+    public static final int canID = 1;
+    public static final String canBus = "Takeover";
+    public static final int currentLimitAmps = 40;
+    public static final boolean invert = false;
+    public static final boolean brake = false;
+    public static final double reduction = 1; // was a 94.18
+    public static final int cancoderID = 5;
+    public static final double magOffset = -.596436; // -.398
+    public static final double sensorReduction = 58.8;
+    public static double ARM_OPERATIONAL_MIN_POS = -.34;
+    public static double ARM_OPERATIONAL_MAX_POS = .5;
+    public static double ARM_DANGER_MIN_POS = ARM_OPERATIONAL_MIN_POS;
+    public static double ARM_DANGER_MAX_POS = -0.14;
+    public static double ARM_L2_POS = 6; // TODO: change to actual value
+    public static double ARM_L3_POS = 7; // TODO: change to actual value
+    public static double ARM_L4_POS = 8; // TODO: change to actual value
   }
 
-  public final class ElevatorConstantsLeonidas {
-    public static double ARM_FACTORY_MIN_POS = 5; // TODO: change to actual value
-    public static double ARM_FACTORY_MAX_POS = 10; // TODO: change to actual value
-    public static final int choulder_canID = 5;
+  public static class ElevatorConstantsLeonidas {
+    public static double ELEVATOR_OPERATIONAL_MIN_POS = 5;
+    public static double ELEVATOR_OPERATIONAL_MAX_POS = 89.5;
+    public static final int canID = 25;
+    public static final String canBus = "Takeover";
+    public static final int currentLimitAmps = 40;
+    public static final boolean invert = false;
+    public static final boolean brake = true;
+    public static final double reduction = 7;
+    public static final double kS = 0.22720;
+    public static final double kV = 0.14051;
+    public static double ELEVATOR_DANGER_MIN_POS = ELEVATOR_OPERATIONAL_MIN_POS;
+    public static double ELEVATOR_DANGER_MAX_POS = 27.28;
+    public static double ELEVATOR_L2_POS = 27.210938;
+    public static double ELEVATOR_L3_POS = 51.997559;
+    public static double ELEVATOR_L4_POS = 84.572266;
   }
+
+  /*   public final class ElevatorConstantsLeonidas {
+    public static double ELEVATOR_FACTORY_MIN_POS = 5; // TODO: change to actual value
+    public static double ELEVATOR_FACTORY_MAX_POS = 89.5; // TODO: change to actual value
+    public static final int canID = 25;
+    public static final String canBus = "Takeover";
+    public static final int currentLimitAmps = 40; // TODO
+    public static final boolean invert = false;
+    public static final boolean brake = true;
+    public static final double reduction = 7;
+    public static final double kS = 0.22720;
+    public static final double kV = 0.14051;
+    public static final double l2 = 27.210938;
+    public static final double l3 = 51.997559;
+    public static final double l4 = 84.572266;
+  }
+  */
 
   public final class EndEffectorConstantsLeonidas {
-    static int canID = 10; 
-    static String canBus = "Takeover";
-    static int currentLimitAmps = 120; //TODO
-    static boolean invert = true; //TODO
-    static boolean brake = true; //TODO
-    static double reduction = 1; //TODO
+    public static final int canID = 10;
+    public static final String canBus = "Takeover";
+    public static final int currentLimitAmps = 120; // TODO
+    public static final boolean invert = true; // TODO
+    public static final boolean brake = true; // TODO
+    public static final double reduction = 1; // TODO
   }
 
-  public final class IntakeConstantsLeonidas { 
-    public static final int intakePivot_canID = 15;
-    public static final int intakeRoll_canID = 24;
+  public final class IntakeConstantsLeonidas {
+    public static final int canID = 24;
+    public static final String canBus = "Takeover";
+    public static final int currentLimitAmps = 120;
+    public static final boolean invert = true;
+    public static final boolean brake = true;
+    public static final double reduction = 1;
+    public static final double INTAKE_FACTORY_CORAL_POSITION = 0;
+    public static final double INTAKE_FACTORY_ALGAE_POSITION = 0;
+    public static final double INTAKE_FACTORY_HOME_POSITION = 0;
+    public static final double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 0;
+    public static final double INTAKE_CORAL_OUTTAKE_SPEED = 6; // TODO
+    public static final double INTAKE_ALGAE_OUTTAKE_SPEED = 6;
+  }
+
+  public final class IntakeArmConstantsLeonidas {
+    public static final double INTAKE_CORAL_POS = 11.4;
+    public static final double INTAKE_ALGAE_POS = 6.5;
+    public static final int canID = 15;
+    public static final String canBus = "Takeover";
+    public static final int currentLimitAmps = 120;
+    public static final boolean invert = true;
+    public static final boolean brake = true;
+    public static final double reduction = 38.33;
+    public static final double kS = 0.25242;
+    public static final double kV = 0.34993;
   }
 
   public final class ClimbConstantsLeonidas {
-    public static final int climbWinch_canID = 14;
+    public static final int canID = 14;
+    public static final String canBus = "Takeover";
+    public static final int currentLimitAmps = 120; // TODO
+    public static final boolean invert = true; // TODO
+    public static final boolean brake = true; // TODO
+    public static final double reduction = 1; // TODO
   }
-  
+
   public static class IntakeConstantsLarry {
     static int canID = 60;
     static int currentLimitAmps = 40;

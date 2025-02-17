@@ -9,6 +9,7 @@ public class NemesisMathUtil {
   public static boolean isBetweenInclusive(Number value, Number min, Number max) {
     return value.doubleValue() >= min.doubleValue() && value.doubleValue() <= max.doubleValue();
   }
+
   public static boolean isBetweenExclusive(Number value, Number min, Number max) {
     return value.doubleValue() > min.doubleValue() && value.doubleValue() < max.doubleValue();
   }
