@@ -158,7 +158,7 @@ public final class Constants {
   }
 
   public static class ElevatorConstantsLeonidas {
-    public static double ELEVATOR_OPERATIONAL_MIN_POS = 5; 
+    public static double ELEVATOR_OPERATIONAL_MIN_POS = 5;
     public static double ELEVATOR_OPERATIONAL_MAX_POS = 89.5;
     public static final int canID = 25;
     public static final String canBus = "Takeover";
@@ -168,7 +168,8 @@ public final class Constants {
     public static final double reduction = 7;
     public static final double kS = 0.22720;
     public static final double kV = 0.14051;
-    public static double ELEVATOR_SAFETY_POS = 7.5; // TODO: change to actual value
+    public static double ELEVATOR_DANGER_MIN_POS = ELEVATOR_OPERATIONAL_MIN_POS;
+    public static double ELEVATOR_DANGER_MAX_POS = 27.28;
     public static double ELEVATOR_L2_POS = 27.210938;
     public static double ELEVATOR_L3_POS = 51.997559;
     public static double ELEVATOR_L4_POS = 84.572266;

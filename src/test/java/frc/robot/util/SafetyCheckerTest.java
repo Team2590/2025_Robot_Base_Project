@@ -68,9 +68,8 @@ class SafetyCheckerTest {
     assertTrue(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
-            1.0, // elevatorPosition (any value)
-            Constants.ArmConstantsLeonidas.ARM_DANGER_MIN_POS + 1 // armPosition (above min)
-            ));
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS,
+            Constants.ArmConstantsLeonidas.ARM_DANGER_MAX_POS + 0.1));
   }
 
   @Test
