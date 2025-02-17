@@ -37,10 +37,10 @@ public final class Constants {
   public static final double loopPeriodSecs = 0.02;
 
   public static class DriveToPoseConstraints {
-    public static double maxVelocityMPS = 0;
-    public static double maxAccelerationMPSSq = 0;
-    public static double maxAngularVelocityRadPerSec = 0;
-    public static double maxAngularAccelerationRadPerSecSq = 0;
+    public static double maxVelocityMPS = 15;
+    public static double maxAccelerationMPSSq = 10;
+    public static double maxAngularVelocityRadPerSec = 1;
+    public static double maxAngularAccelerationRadPerSecSq = 1;
 
     public static PathConstraints pathConstraints =
         new PathConstraints(
