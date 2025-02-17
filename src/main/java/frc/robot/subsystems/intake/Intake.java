@@ -64,6 +64,9 @@ public class Intake extends SubsystemBase {
                   NemesisMathUtil.isApprox(
                       intakeArmInputs.positionRads, setpointTolerance, position));
     }
+    public double getVelocityRadPerSec() {
+      return intakeArmInputs.velocityRadsPerSec;
+    }
   }
 
   public Command runIntake(double voltage) {
@@ -87,6 +90,10 @@ public class Intake extends SubsystemBase {
     return intakeArm.setPositionBlocking(position);
   }
 
+  public double getVelocityRadPerSec() {
+    return intakeArmInputs.velocityRadsPerSec;
+  }
+
   public Command resetArmRotationCount() {
     return intakeArm.resetRotationCount();
   }
@@ -97,6 +104,6 @@ public class Intake extends SubsystemBase {
 
   /** Returns the current velocity in radians per second. */
   public double getCharacterizationVelocity() {
-    return intakeArmInputs.velocityRadsPerSec;
+    return intakeArm.getVelocityRadPerSec();
   }
 }

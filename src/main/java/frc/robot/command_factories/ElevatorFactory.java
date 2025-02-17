@@ -58,7 +58,7 @@ public class ElevatorFactory {
    */
   public static Command resetRotationCount() {
     return RobotContainer.getElevator()
-        .resetRotationCount()
+        .resetRotationCountCommand()
         .withName("Reset Elevator Rotation Count");
   }
 
