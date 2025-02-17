@@ -67,8 +67,8 @@ class SafetyCheckerTest {
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
             Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS - 1, // armPosition (below min)
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS
-                - 1 // elevatorPosition (below safe range)
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS
+                - 1 // elevatorPosition (below safety pos)
             ));
   }
 

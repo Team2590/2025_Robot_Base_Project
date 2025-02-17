@@ -404,9 +404,9 @@ public class RobotContainer {
     //     .whileTrue(arm.setPosition(Constants.ArmConstants.CORAL_STATION_INTAKE_SETPOINT));
 
     // Add elevator control bindings
-    leftJoystick.button(3).onTrue(elevator.setPosition(50)); // Move to position 5
-    leftJoystick.button(4).onTrue(elevator.setPosition(100)); // Move to position 10
-    leftJoystick.button(5).onTrue(elevator.setPosition(0)); // Return to home position
+    leftJoystick.button(3).onTrue(elevator.setPosition(0)); // Move to home position
+    leftJoystick.button(4).onTrue(elevator.setPosition(50)); // Move to position 50
+    leftJoystick.button(5).onTrue(elevator.setPosition(100)); // Move to top
 
     // Add arm control bindings
     leftJoystick.button(6).onTrue(arm.setPosition(75)); // Mid position

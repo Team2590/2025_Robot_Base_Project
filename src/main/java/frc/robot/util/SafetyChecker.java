@@ -8,12 +8,12 @@ public class SafetyChecker {
     ELEVATOR_MOVEMENT
   }
 
-  public static boolean isSafe(
+  public static boolean isSafeAlwaysTrue(
       MechanismType checkType, double primaryPosition, double secondaryPosition) {
     return true;
   }
 
-  public static boolean isSafeReal(
+  public static boolean isSafe(
       MechanismType checkType, double primaryPosition, double secondaryPosition) {
     switch (checkType) {
       case ARM_MOVEMENT:
@@ -38,16 +38,14 @@ public class SafetyChecker {
   }
 
   private static boolean isArmInSafeRange(double armPosition) {
-    return armPosition >= Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS
-        && armPosition <= Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS;
+    return armPosition >= Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS;
   }
 
   private static boolean isArmAboveMin(double armPosition) {
-    return armPosition >= Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS;
+    return armPosition >= Constants.ArmConstantsLeonidas.ARM_SAFETY_MIN_POS;
   }
 
   private static boolean isElevatorInSafeRange(double elevatorPosition) {
-    return elevatorPosition >= Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS
-        && elevatorPosition <= Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS;
+    return elevatorPosition >= Constants.ElevatorConstantsLeonidas.ELEVATOR_SAFETY_POS;
   }
 }
