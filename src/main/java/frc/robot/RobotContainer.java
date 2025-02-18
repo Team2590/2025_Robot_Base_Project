@@ -107,10 +107,8 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
                     List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3))));
+                        new CameraConfig(sourceCameraName, robotToSourceCam),
+                        new CameraConfig(processorCameraName, robotToProcessorCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -145,10 +143,8 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
                     List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3))));
+                        new CameraConfig(sourceCameraName, robotToSourceCam),
+                        new CameraConfig(processorCameraName, robotToProcessorCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -209,6 +205,28 @@ public class RobotContainer {
                     Constants.ElevatorConstantsLeonidas.brake,
                     Constants.ElevatorConstantsLeonidas.reduction));
         elevator.resetRotationCount();
+        arm =
+            new Arm(
+                new ArmIOTalonFX(
+                    Constants.ArmConstantsLeonidas.canID,
+                    Constants.ArmConstantsLeonidas.canBus,
+                    Constants.ArmConstantsLeonidas.currentLimitAmps,
+                    Constants.ArmConstantsLeonidas.invert,
+                    Constants.ArmConstantsLeonidas.brake,
+                    Constants.ArmConstantsLeonidas.reduction,
+                    Constants.ArmConstantsLeonidas.cancoderID,
+                    Constants.ArmConstantsLeonidas.magOffset,
+                    Constants.ArmConstantsLeonidas.sensorReduction));
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    Constants.ElevatorConstantsLeonidas.canID,
+                    Constants.ElevatorConstantsLeonidas.canBus,
+                    Constants.ElevatorConstantsLeonidas.currentLimitAmps,
+                    Constants.ElevatorConstantsLeonidas.invert,
+                    Constants.ElevatorConstantsLeonidas.brake,
+                    Constants.ElevatorConstantsLeonidas.reduction));
+        elevator.resetRotationCount();
         vision = null;
         intake =
             new Intake(
@@ -226,15 +244,16 @@ public class RobotContainer {
                     Constants.IntakeArmConstantsLeonidas.invert,
                     Constants.IntakeArmConstantsLeonidas.brake,
                     Constants.IntakeArmConstantsLeonidas.reduction));
+        intake.resetArmRotationCount();
         endEffector =
             new EndEffector(
                 new EndEffectorIOTalonFX(
-                    EndEffectorConstantsLeonidas.canID,
-                    EndEffectorConstantsLeonidas.canBus,
-                    EndEffectorConstantsLeonidas.currentLimitAmps,
-                    EndEffectorConstantsLeonidas.invert,
-                    EndEffectorConstantsLeonidas.brake,
-                    EndEffectorConstantsLeonidas.reduction));
+                    Constants.EndEffectorConstantsLeonidas.canID,
+                    Constants.EndEffectorConstantsLeonidas.canBus,
+                    Constants.EndEffectorConstantsLeonidas.currentLimitAmps,
+                    Constants.EndEffectorConstantsLeonidas.invert,
+                    Constants.EndEffectorConstantsLeonidas.brake,
+                    Constants.EndEffectorConstantsLeonidas.reduction));
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -249,19 +268,24 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
+                new VisionIOPhotonVision(
                     List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3)),
-                    drive::getPose));
+                        new CameraConfig(sourceCameraName, robotToSourceCam),
+                        new CameraConfig(processorCameraName, robotToProcessorCam))));
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
                 new IntakeArmIOSim(DCMotor.getFalcon500(1), 4, .1));
         arm = new Arm(new ArmIOSim());
-        elevator = new Elevator(new ElevatorIOSim(100.0, 5.0, 0.05, true));
+        elevator = new Elevator(new ElevatorIOSim(100.0, 5.0, 0.05, true));        
+        endEffector =
+            new EndEffector(
+                new EndEffectorIOSim(
+                    DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
+        endEffector =
+            new EndEffector(
+                new EndEffectorIOSim(
+                    DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
         endEffector =
             new EndEffector(
                 new EndEffectorIOSim(
@@ -283,10 +307,8 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
                     List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3))));
+                        new CameraConfig(sourceCameraName, robotToSourceCam),
+                        new CameraConfig(processorCameraName, robotToProcessorCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -460,6 +482,15 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
+    leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
+    rightJoystick.button(3).onTrue(elevator.setPosition(50));
+    rightJoystick
+        .button(2)
+        .onTrue(
+            elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
+    // rightJoystick.button(1).onTrue(elevator.setPosition());
 
     /**
      * the following button binds work on Larry:
