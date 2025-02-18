@@ -217,9 +217,11 @@ public final class Constants {
     public static final int canID = 10;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 120; // TODO
-    public static final boolean invert = true; // TODO
+    public static final boolean invert = false; // TODO
     public static final boolean brake = true; // TODO
     public static final double reduction = 1; // TODO
+    public static final double INTAKE_VOLTAGE = 6;
+    public static final double EJECT_VOLTAGE = -INTAKE_VOLTAGE;
   }
 
   public final class IntakeConstantsLeonidas {

@@ -89,7 +89,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
 
   @Override
   public void setVoltage(double voltage) {
-    leader.setVoltage(voltageTunableNumber.get());
+    leader.setVoltage(voltage);
   }
 
   @Override
