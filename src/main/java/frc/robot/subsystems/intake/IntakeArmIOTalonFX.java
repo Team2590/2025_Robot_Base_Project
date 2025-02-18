@@ -26,12 +26,12 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
   private LoggedTunableNumber kI = new LoggedTunableNumber("IntakeArm/kI", 0);
   private LoggedTunableNumber kD = new LoggedTunableNumber("IntakeArm/kD", 0);
   private LoggedTunableNumber kS =
-  new LoggedTunableNumber("IntakeArm/kS", Constants.IntakeArmConstantsLeonidas.kS);
-private LoggedTunableNumber kV =
-  new LoggedTunableNumber("IntakeArm/kV", Constants.IntakeArmConstantsLeonidas.kV);
-private LoggedTunableNumber kG = new LoggedTunableNumber("IntakeArm/kG", 0.0);
+      new LoggedTunableNumber("IntakeArm/kS", Constants.IntakeArmConstantsLeonidas.kS);
+  private LoggedTunableNumber kV =
+      new LoggedTunableNumber("IntakeArm/kV", Constants.IntakeArmConstantsLeonidas.kV);
+  private LoggedTunableNumber kG = new LoggedTunableNumber("IntakeArm/kG", 0.0);
   private LoggedTunableNumber cruiseVelocity =
-  new LoggedTunableNumber("IntakeArm/cruiseVelocity", 100);
+      new LoggedTunableNumber("IntakeArm/cruiseVelocity", 100);
   private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 200);
   private LoggedTunableNumber jerk = new LoggedTunableNumber("IntakeArm/jerk", 250);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();

@@ -37,7 +37,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private LoggedTunableNumber kI = new LoggedTunableNumber("Elevator/kI", 0);
   private LoggedTunableNumber kD = new LoggedTunableNumber("Elevator/kD", 0);
   private LoggedTunableNumber cruiseVelocity =
-  new LoggedTunableNumber("Elevator/cruiseVelocity", 3000);
+      new LoggedTunableNumber("Elevator/cruiseVelocity", 3000);
   private LoggedTunableNumber acceleration = new LoggedTunableNumber("Elevator/acceleration", 300);
   private LoggedTunableNumber jerk = new LoggedTunableNumber("Elevator/jerk", 750);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();

@@ -64,6 +64,7 @@ public class Intake extends SubsystemBase {
                   NemesisMathUtil.isApprox(
                       intakeArmInputs.positionRads, setpointTolerance, position));
     }
+
     public double getVelocityRadPerSec() {
       return intakeArmInputs.velocityRadsPerSec;
     }
