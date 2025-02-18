@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
@@ -60,5 +61,10 @@ public class RobotState {
       throw new IllegalStateException("RobotState has not been initialized");
     }
     return instance;
+  }
+
+  /** Returns the current pose of the robot. */
+  public Pose2d getPose() {
+    return drive.getPose();
   }
 }
