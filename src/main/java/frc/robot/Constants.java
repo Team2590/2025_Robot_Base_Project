@@ -232,11 +232,12 @@ public final class Constants {
     public static final boolean brake = true;
     public static final double reduction = 1;
     public static final double INTAKE_FACTORY_CORAL_POSITION = 0;
-    public static final double INTAKE_FACTORY_ALGAE_POSITION = 0;
+    public static final double INTAKE_FACTORY_ALGAE_POSITION = 5.4;
     public static final double INTAKE_FACTORY_HOME_POSITION = 0;
     public static final double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 0;
     public static final double INTAKE_CORAL_OUTTAKE_SPEED = 6; // TODO
-    public static final double INTAKE_ALGAE_OUTTAKE_SPEED = 6;
+    public static final double INTAKE_ALGAE_INTAKE_SPEED = 6;
+    public static final double INTAKE_ALGAE_OUTTAKE_SPEED = -INTAKE_ALGAE_INTAKE_SPEED;
   }
 
   public final class IntakeArmConstantsLeonidas {
