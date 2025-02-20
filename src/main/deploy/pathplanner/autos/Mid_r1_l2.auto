@@ -5,38 +5,13 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "A_to_processor"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "processor_to_source"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "(source position?)"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "source_to_bl_2"
+                  "pathName": "Mid_to_r_1"
                 }
               },
               {
@@ -61,13 +36,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "bl_2_to_source"
+                  "pathName": "r1_to_source"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "(source position?)"
+                  "name": "Stow-Mechanism"
                 }
               }
             ]
@@ -80,7 +55,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "source_to_bl_1"
+                  "pathName": "source3_to_l_2"
                 }
               },
               {
@@ -105,13 +80,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "bl_1_to_source"
+                  "pathName": "l_2_to_source"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "(source position?)"
+                  "name": "Stow-Mechanism"
                 }
               }
             ]

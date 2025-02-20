@@ -8,28 +8,42 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1053071267740178,
-        "y": 0.8664450566320951
+        "x": 3.3887241135308273,
+        "y": 2.519606986788349
       },
       "isLocked": false,
       "linkedName": "shootl4"
     },
     {
       "anchor": {
-        "x": 4.0,
-        "y": 6.0
+        "x": 3.894145742358079,
+        "y": 2.859171158569869
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 6.0
+        "x": 3.6557573203651796,
+        "y": 2.6865600084617167
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "final"
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.0,
+      "maxWaypointRelativePos": 0.3974946120689654,
+      "constraints": {
+        "maxVelocity": 0.5,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -38,11 +52,11 @@
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
-    "unlimited": false
+    "unlimited": true
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -28.683684863291447
   },
   "reversed": false,
   "folder": "auton3",
