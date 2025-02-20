@@ -53,7 +53,7 @@ public class ElevatorFactory {
 
   public static boolean elevatorCommandFinished(){
 
-    return container.getElevator().getCharacterizationVelocity()==0; //Whatever Score Positon For
+    return RobotContainer.getElevator().getCharacterizationVelocity()==0; //Whatever Score Positon For
   }
 
   /**
@@ -63,7 +63,7 @@ public class ElevatorFactory {
    */
   public static Command resetRotationCount() {
     return RobotContainer.getElevator()
-        .resetRotationCountCommand()
+        .resetRotationCount()
         .withName("Reset Elevator Rotation Count");
   }
 

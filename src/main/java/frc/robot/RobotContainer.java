@@ -35,6 +35,7 @@ import frc.robot.command_factories.AutoFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOSim;
@@ -116,10 +117,8 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
                     List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3))));
+                        new CameraConfig(sourceCameraName, robotToSourceCam),
+                        new CameraConfig(processorCameraName, robotToProcessorCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -154,10 +153,8 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
                     List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3))));
+                        new CameraConfig(sourceCameraName, robotToSourceCam),
+                        new CameraConfig(processorCameraName, robotToProcessorCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -196,19 +193,55 @@ public class RobotContainer {
                 new ModuleIOTalonFX(constantsWrapper.BackLeft, constantsWrapper),
                 new ModuleIOTalonFX(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
-        arm = null;
-        elevator = null;
+        arm =
+            new Arm(
+                new ArmIOTalonFX(
+                    Constants.ArmConstantsLeonidas.canID,
+                    Constants.ArmConstantsLeonidas.canBus,
+                    Constants.ArmConstantsLeonidas.currentLimitAmps,
+                    Constants.ArmConstantsLeonidas.invert,
+                    Constants.ArmConstantsLeonidas.brake,
+                    Constants.ArmConstantsLeonidas.reduction,
+                    Constants.ArmConstantsLeonidas.cancoderID,
+                    Constants.ArmConstantsLeonidas.magOffset,
+                    Constants.ArmConstantsLeonidas.sensorReduction));
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    Constants.ElevatorConstantsLeonidas.canID,
+                    Constants.ElevatorConstantsLeonidas.canBus,
+                    Constants.ElevatorConstantsLeonidas.currentLimitAmps,
+                    Constants.ElevatorConstantsLeonidas.invert,
+                    Constants.ElevatorConstantsLeonidas.brake,
+                    Constants.ElevatorConstantsLeonidas.reduction));
+        elevator.resetRotationCount();
         vision = null;
-        intake = null;
+        intake =
+            new Intake(
+                new IntakeIOTalonFX(
+                    Constants.IntakeConstantsLeonidas.canID,
+                    Constants.IntakeConstantsLeonidas.canBus,
+                    Constants.IntakeConstantsLeonidas.currentLimitAmps,
+                    Constants.IntakeConstantsLeonidas.invert,
+                    Constants.IntakeConstantsLeonidas.brake,
+                    Constants.IntakeConstantsLeonidas.reduction),
+                new IntakeArmIOTalonFX(
+                    Constants.IntakeArmConstantsLeonidas.canID,
+                    Constants.IntakeArmConstantsLeonidas.canBus,
+                    Constants.IntakeArmConstantsLeonidas.currentLimitAmps,
+                    Constants.IntakeArmConstantsLeonidas.invert,
+                    Constants.IntakeArmConstantsLeonidas.brake,
+                    Constants.IntakeArmConstantsLeonidas.reduction));
+        intake.resetArmRotationCount();
         endEffector =
             new EndEffector(
                 new EndEffectorIOTalonFX(
-                    EndEffectorConstantsLeonidas.canID,
-                    EndEffectorConstantsLeonidas.canBus,
-                    EndEffectorConstantsLeonidas.currentLimitAmps,
-                    EndEffectorConstantsLeonidas.invert,
-                    EndEffectorConstantsLeonidas.brake,
-                    EndEffectorConstantsLeonidas.reduction));
+                    Constants.EndEffectorConstantsLeonidas.canID,
+                    Constants.EndEffectorConstantsLeonidas.canBus,
+                    Constants.EndEffectorConstantsLeonidas.currentLimitAmps,
+                    Constants.EndEffectorConstantsLeonidas.invert,
+                    Constants.EndEffectorConstantsLeonidas.brake,
+                    Constants.EndEffectorConstantsLeonidas.reduction));
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -223,13 +256,10 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
+                new VisionIOPhotonVision(
                     List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3)),
-                    drive::getPose));
+                        new CameraConfig(sourceCameraName, robotToSourceCam),
+                        new CameraConfig(processorCameraName, robotToProcessorCam))));
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
@@ -237,6 +267,10 @@ public class RobotContainer {
         arm = new Arm(new ArmIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 1, true, 1));
         elevator =
             new Elevator(new ElevatorIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 10, false, 1));
+        endEffector =
+            new EndEffector(
+                new EndEffectorIOSim(
+                    DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
         endEffector =
             new EndEffector(
                 new EndEffectorIOSim(
@@ -258,10 +292,8 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
                     List.of(
-                        new CameraConfig(camera0Name, robotToCamera0),
-                        new CameraConfig(camera1Name, robotToCamera1),
-                        new CameraConfig(camera2Name, robotToCamera2),
-                        new CameraConfig(camera3Name, robotToCamera3))));
+                        new CameraConfig(sourceCameraName, robotToSourceCam),
+                        new CameraConfig(processorCameraName, robotToProcessorCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -291,18 +323,17 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // autoChooser.addOption(
-    //     "Elevator FF Characterization",
-    //     new FeedForwardCharacterization(
-    //         elevator, elevator::setVoltage, elevator::getCharacterizationVelocity));
-    // autoChooser.addOption(
-    //     "Arm FF Characterization",
-    //     new FeedForwardCharacterization(
-    //         arm, arm::setVoltage, arm::getCharacterizationVelocity));
-    // autoChooser.addOption(
-    //     "Intake FF Characterization",
-    //     new FeedForwardCharacterization(
-    //         intake, intake::setVoltage, intake::getCharacterizationVelocity));
+    autoChooser.addOption(
+        "Elevator FF Characterization",
+        new FeedForwardCharacterization(
+            elevator, elevator::setVoltage, elevator::getCharacterizationVelocity));
+    autoChooser.addOption(
+        "Arm FF Characterization",
+        new FeedForwardCharacterization(arm, arm::setVoltage, arm::getCharacterizationVelocity));
+    autoChooser.addOption(
+        "Intake FF Characterization",
+        new FeedForwardCharacterization(
+            intake, intake::setVoltage, intake::getCharacterizationVelocity));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -332,6 +363,14 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
     // controller.b().whileTrue(intake.runIntake(4));
+
+    rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
+    leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
+    rightJoystick.button(3).onTrue(elevator.setPosition(50));
+    rightJoystick
+        .button(2)
+        .onTrue(
+            elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
 
     //////////////////////////////////////////////////////
     /// Examples of using commands from command factories.
@@ -383,6 +422,15 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
+    leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
+    rightJoystick.button(3).onTrue(elevator.setPosition(50));
+    rightJoystick
+        .button(2)
+        .onTrue(
+            elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
+    // rightJoystick.button(1).onTrue(elevator.setPosition());
 
     /**
      * the following button binds work on Larry:

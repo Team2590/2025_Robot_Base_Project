@@ -3,26 +3,19 @@ package frc.robot.util;
 import static org.junit.jupiter.api.Assertions.*;
 
 import frc.robot.Constants;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class SafetyCheckerTest {
-  @BeforeEach
-  void setup() {
-    // Adjust constants to better match expected behavior
-    Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS = 1.0;
-    Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS = 3.0;
-    Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS = 0.5;
-    Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS = 2.5;
-  }
 
   @Test
   void armMovementSafety_elevatorAboveMin_returnsTrue() {
     assertTrue(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ARM_MOVEMENT,
-            1.1, // elevatorPosition (above min)
-            0.0 // armPosition (any value)
+            Constants.ArmConstantsLeonidas
+                .ARM_OPERATIONAL_MIN_POS, // armPosition (any value within operational limits)
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_DANGER_MAX_POS
+                + 1 // Just above danger zone
             ));
   }
 
@@ -30,9 +23,32 @@ class SafetyCheckerTest {
   void armMovementSafety_armInSafeRange_returnsTrue() {
     assertTrue(
         SafetyChecker.isSafe(
+            SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_DANGER_MAX_POS - 1, // in danger zone
+            Constants.ArmConstantsLeonidas.ARM_DANGER_MAX_POS + 0.1 // just out of the danger zone
+            ));
+  }
+
+  @Test
+  void elevatorMovementSafety_AboveOperationalLimit_returnsFalse() {
+    assertFalse(
+        SafetyChecker.isSafe(
+            SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS
+                + 1, // just above operational limit
+            Constants.ArmConstantsLeonidas.ARM_DANGER_MAX_POS + 0.1 // just outside danger zone
+            ));
+  }
+
+  @Test
+  void armMovementSafety_AboveOperationalRange_returnsFalse() {
+    assertFalse(
+        SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ARM_MOVEMENT,
-            0.4, // elevatorPosition (below min)
-            1.5 // armPosition (within safe range)
+            Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS
+                + 0.1, // just outside operational limit
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS
+                - 1 // just inside operational limit but out of danger zone
             ));
   }
 
@@ -41,8 +57,9 @@ class SafetyCheckerTest {
     assertFalse(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ARM_MOVEMENT,
-            0.4, // elevatorPosition (below min)
-            0.9 // armPosition (below safe range)
+            Constants.ArmConstantsLeonidas.ARM_DANGER_MIN_POS - 1, // armPosition (below safe range)
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS
+                - 1 // below operational min
             ));
   }
 
@@ -51,9 +68,8 @@ class SafetyCheckerTest {
     assertTrue(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
-            1.1, // armPosition (above min)
-            0.0 // elevatorPosition (any value)
-            ));
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS,
+            Constants.ArmConstantsLeonidas.ARM_DANGER_MAX_POS + 0.1));
   }
 
   @Test
@@ -61,8 +77,9 @@ class SafetyCheckerTest {
     assertTrue(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
-            0.4, // armPosition (below min)
-            1.5 // elevatorPosition (within safe range)
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_DANGER_MAX_POS
+                + 1, // elevatorPosition (within safe range)
+            Constants.ArmConstantsLeonidas.ARM_DANGER_MIN_POS - 1 // armPosition (below min)
             ));
   }
 
@@ -71,18 +88,20 @@ class SafetyCheckerTest {
     assertFalse(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
-            0.4, // armPosition (below min)
-            0.4 // elevatorPosition (below safe range)
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_DANGER_MAX_POS
+                - 1, // elevatorPosition (below safe range)
+            Constants.ArmConstantsLeonidas.ARM_DANGER_MIN_POS - 1 // armPosition (below min)
             ));
   }
 
   @Test
-  void edgeCase_atMinimumBoundary_returnsTrue() {
-    assertTrue(
+  void edgeCase_atMinimumBoundary_returnsFalse() {
+    assertFalse(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ARM_MOVEMENT,
-            1.0, // Exactly at elevator minimum
-            1.0 // Exactly at arm minimum
+            Constants.ArmConstantsLeonidas.ARM_DANGER_MIN_POS, // Exactly at arm minimum
+            Constants.ElevatorConstantsLeonidas
+                .ELEVATOR_DANGER_MAX_POS // exactly at edge of danger zone
             ));
   }
 
@@ -91,8 +110,29 @@ class SafetyCheckerTest {
     assertTrue(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ARM_MOVEMENT,
-            1.0, // Exactly at arm minimum
-            2.5 // Exactly at elevator maximum
+            Constants.ArmConstantsLeonidas.ARM_DANGER_MIN_POS, // Exactly at arm minimum
+            Constants.ElevatorConstantsLeonidas
+                .ELEVATOR_OPERATIONAL_MAX_POS // Exactly at elevator maximum
+            ));
+  }
+
+  @Test
+  void elevatorMovementSafety_moveElevatorDownUnsafeArm_returnsFalse() {
+    assertFalse(
+        SafetyChecker.isSafe(
+            SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
+            22.0, // slightly unsafe
+            -0.15 // slightly unsafe
+            ));
+  }
+
+  @Test
+  void elevatorMovementSafety_moveArmDownUnsafeElevator_returnsFalse() {
+    assertFalse(
+        SafetyChecker.isSafe(
+            SafetyChecker.MechanismType.ARM_MOVEMENT,
+            -0.15, // slightly unsafe
+            22.0 // slightly unsafe
             ));
   }
 }
