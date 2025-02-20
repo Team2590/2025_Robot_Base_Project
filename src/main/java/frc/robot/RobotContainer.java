@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.command_factories.DriveFactory;
+import frc.robot.command_factories.ScoringFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
@@ -368,14 +369,6 @@ public class RobotContainer {
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
     // controller.b().whileTrue(intake.runIntake(4));
 
-    rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
-    leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
-    rightJoystick.button(3).onTrue(elevator.setPosition(50));
-    rightJoystick
-        .button(2)
-        .onTrue(
-            elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
-
     //////////////////////////////////////////////////////
     /// Examples of using commands from command factories.
     //////////////////////////////////////////////////////
@@ -429,11 +422,12 @@ public class RobotContainer {
 
     rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
     leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
-    rightJoystick.button(3).onTrue(elevator.setPosition(50));
+    rightJoystick.button(3).onTrue(climb.resetRotationCount());
     rightJoystick
         .button(2)
         .onTrue(
-            elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
+            ScoringFactory.deployClimbMechanism());
+    rightJoystick.button(4).onTrue(ScoringFactory.climb());
     // rightJoystick.button(1).onTrue(elevator.setPosition());
 
     /**

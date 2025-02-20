@@ -7,8 +7,8 @@ import frc.robot.util.NemesisMathUtil;
 
 public class ClimbFactory {
     public static Command runClimb(double position) {
-        return RobotContainer.getClimb().setPosition(position).withName("Run climb")
+        return RobotContainer.getClimb().runClimb(0.05).withName("Run climb")
                 .onlyIf(() -> RobotContainer.getClimb()
-                        .getRotationCount() < Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION);
+                        .getRotationCount() < position);
     }
 }

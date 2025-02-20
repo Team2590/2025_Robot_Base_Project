@@ -256,11 +256,11 @@ public final class Constants {
     public static final int canID = 14;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 120; // TODO
-    public static final boolean invert = true; // TODO
-    public static final boolean brake = true; // TODO
+    public static final boolean invert = false;
+    public static final boolean brake = false;
     public static final double reduction = 1; // TODO
-    public static final double CLIMB_MECHANISM_POSITION = 5;
-    public static final double CLIMB_MAX_POSITION = 10;
+    public static final double CLIMB_MECHANISM_POSITION = 55.2;
+    public static final double CLIMB_MAX_POSITION = 178; // 213.25 (actual)
   }
 
   public static class IntakeConstantsLarry {

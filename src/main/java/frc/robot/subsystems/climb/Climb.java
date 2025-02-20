@@ -23,11 +23,15 @@ public class Climb extends SubsystemBase {
     return runEnd(() -> io.setVoltage(voltage), io::stop);
   }
 
-  public Command setPosition(double position) {
-    return runEnd(() -> io.setPosition(position), io::stop);
+  public Command resetRotationCount() {
+    return runOnce(io::resetRotationCount);
   }
 
   public double getRotationCount() {
     return inputs.rotationCount;
+  }
+
+  public void resetRotationCountFunction() {
+    io.resetRotationCount();
   }
 }

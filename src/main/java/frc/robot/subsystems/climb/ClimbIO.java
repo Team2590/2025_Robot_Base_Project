@@ -18,13 +18,11 @@ public interface ClimbIO {
 
   public default void updateInputs(ClimbIOInputs inputs) {};
 
-  public default void updateTunableNumbers() {};
-
   public default void setVoltage(double voltage) {};
 
   public default void setVelocity(double speed) {};
 
-  public default void setPosition(double position) {};
-
   public default void stop() {};
+
+  public default void resetRotationCount() {};
 }
