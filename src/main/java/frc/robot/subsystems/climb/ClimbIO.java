@@ -22,5 +22,7 @@ public interface ClimbIO {
 
   public void setVelocity(double speed);
 
+  public void setPosition(double position);
+
   public void stop();
 }

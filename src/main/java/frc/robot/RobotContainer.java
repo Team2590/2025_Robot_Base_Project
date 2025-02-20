@@ -35,6 +35,8 @@ import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOSim;
 import frc.robot.subsystems.arm.ArmIOTalonFX;
+import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -73,6 +75,7 @@ public class RobotContainer {
   @Getter private static Elevator elevator;
   @Getter private static Intake intake;
   @Getter private static EndEffector endEffector;
+  @Getter private static Climb climb;
 
   // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
@@ -125,6 +128,7 @@ public class RobotContainer {
                     Constants.ArmConstantsKronos.SENSOR_REDUCTION));
         elevator = null;
         endEffector = null;
+        climb = null;
         break;
       case LARRY:
         // Real robot, instantiate hardware IO implementations
@@ -171,6 +175,7 @@ public class RobotContainer {
         endEffector =
             new EndEffector(
                 new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
+        climb = null;
         break;
       case Leonidas:
         drive =
@@ -230,6 +235,15 @@ public class RobotContainer {
                     Constants.EndEffectorConstantsLeonidas.invert,
                     Constants.EndEffectorConstantsLeonidas.brake,
                     Constants.EndEffectorConstantsLeonidas.reduction));
+        climb = new Climb(
+            new ClimbIOTalonFX(
+                Constants.ClimbConstantsLeonidas.canID, 
+                Constants.ClimbConstantsLeonidas.canBus, 
+                Constants.ClimbConstantsLeonidas.currentLimitAmps, 
+                Constants.ClimbConstantsLeonidas.invert, 
+                Constants.ClimbConstantsLeonidas.brake, 
+                Constants.ClimbConstantsLeonidas.reduction
+            ));
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -263,6 +277,7 @@ public class RobotContainer {
             new EndEffector(
                 new EndEffectorIOSim(
                     DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
+        climb = null;
         break;
 
       default:
@@ -289,6 +304,7 @@ public class RobotContainer {
         arm = new Arm(null);
         elevator = null;
         endEffector = null;
+        climb = null;
         break;
     }
 

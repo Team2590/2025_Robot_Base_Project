@@ -176,6 +176,7 @@ public final class Constants {
     public static double ARM_L2_POS = 6; // TODO: change to actual value
     public static double ARM_L3_POS = 7; // TODO: change to actual value
     public static double ARM_L4_POS = 8; // TODO: change to actual value
+    public static double CLIMB_POS = 0; // TODO: change to actual value
   }
 
   public static class ElevatorConstantsLeonidas {
@@ -194,6 +195,7 @@ public final class Constants {
     public static double ELEVATOR_L2_POS = 27.210938;
     public static double ELEVATOR_L3_POS = 51.997559;
     public static double ELEVATOR_L4_POS = 84.572266;
+    public static double CLIMB_POS = 0; // TODO: change to actual value
   }
 
   /*   public final class ElevatorConstantsLeonidas {
@@ -257,6 +259,8 @@ public final class Constants {
     public static final boolean invert = true; // TODO
     public static final boolean brake = true; // TODO
     public static final double reduction = 1; // TODO
+    public static final double CLIMB_MECHANISM_POSITION = 5;
+    public static final double CLIMB_MAX_POSITION = 10;
   }
 
   public static class IntakeConstantsLarry {

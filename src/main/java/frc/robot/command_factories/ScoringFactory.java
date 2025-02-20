@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.util.NemesisTimedCommand;
 
 /**
@@ -107,5 +108,23 @@ public class ScoringFactory {
     return new SequentialCommandGroup(
             ArmFactory.setPositionBlocking(0), ElevatorFactory.setPositionBlocking(0))
         .withName("Stow Mechanism");
+  }
+
+  public static Command deployClimbMechanism() {
+    return new ParallelCommandGroup(
+        ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS), 
+        ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
+        ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)
+    )
+    .withName("Deploy climb mechanism");
+  }
+
+  public static Command climb() {
+    return new ParallelCommandGroup(
+        ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS), 
+        ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
+        ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION)
+    )
+    .withName("Climb");
   }
 }

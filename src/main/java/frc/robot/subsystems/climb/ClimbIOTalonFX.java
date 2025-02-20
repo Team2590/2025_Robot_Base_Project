@@ -2,7 +2,10 @@ package frc.robot.subsystems.climb;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -16,6 +19,8 @@ import edu.wpi.first.units.measure.Voltage;
 public class ClimbIOTalonFX implements ClimbIO {
   private final TalonFX talon;
   private final TalonFXConfiguration cfg;
+  MotionMagicConfigs mm;
+  MotionMagicDutyCycle mmv;
   private double reduction;
   private StatusSignal<Angle> position;
   private StatusSignal<AngularVelocity> velocity;
@@ -85,5 +90,10 @@ public class ClimbIOTalonFX implements ClimbIO {
   @Override
   public void setVelocity(double velocity) {
     talon.set(velocity);
+  }
+
+  @Override
+  public void setPosition(double position) {
+    talon.setPosition(position);
   }
 }
