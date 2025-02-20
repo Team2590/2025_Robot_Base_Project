@@ -102,9 +102,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(sourceCameraName, robotToSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam))));
+                    List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -138,9 +136,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(sourceCameraName, robotToSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam))));
+                    List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -201,7 +197,11 @@ public class RobotContainer {
                     Constants.ElevatorConstantsLeonidas.brake,
                     Constants.ElevatorConstantsLeonidas.reduction));
         elevator.resetRotationCount();
-        vision = null;
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(
+                    List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(
@@ -243,9 +243,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(sourceCameraName, robotToSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam))));
+                    List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
@@ -277,9 +275,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(sourceCameraName, robotToSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam))));
+                    List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
