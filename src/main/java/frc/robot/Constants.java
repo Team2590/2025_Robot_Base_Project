@@ -220,6 +220,7 @@ public final class Constants {
     public static final boolean invert = true; // TODO
     public static final boolean brake = true; // TODO
     public static final double reduction = 1; // TODO
+    public static final int proxSensor_ID = 0; //TODO
   }
 
   public final class IntakeConstantsLeonidas {

@@ -23,7 +23,7 @@ public class EndEffector extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    filtered_data = filter.calculate(inputs.statorCurrentAmps);
+    filtered_data = filter.calculate(inputs.proxValue);
 
     Logger.recordOutput("EndEffector/StatorCurrent", inputs.statorCurrentAmps);
     Logger.recordOutput("EndEffector/IsRunning", isRunning);
@@ -77,5 +77,9 @@ public class EndEffector extends SubsystemBase {
           io.stop();
           isRunning = false;
         });
+  }
+
+  public boolean hasCoral() {
+    return filtered_data >= CURRENT_THRESHOLD.get();
   }
 }
