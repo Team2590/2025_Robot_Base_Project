@@ -170,12 +170,11 @@ public final class Constants {
     public static final double magOffset = -.596436; // -.398
     public static final double sensorReduction = 58.8;
     public static double ARM_OPERATIONAL_MIN_POS = -.34;
-    public static double ARM_OPERATIONAL_MAX_POS = .5;
+    public static double ARM_OPERATIONAL_MAX_POS = .55;
     public static double ARM_DANGER_MIN_POS = ARM_OPERATIONAL_MIN_POS;
     public static double ARM_DANGER_MAX_POS = -0.14;
-    public static double ARM_L2_POS = 6; // TODO: change to actual value
-    public static double ARM_L3_POS = 7; // TODO: change to actual value
-    public static double ARM_L4_POS = 8; // TODO: change to actual value
+    public static double ARM_SCORING_CORAL_POS = 0.5; // TODO: change to actual value
+    public static double ARM_INTAKE_POSITION = -0.34;
   }
 
   public static class ElevatorConstantsLeonidas {
