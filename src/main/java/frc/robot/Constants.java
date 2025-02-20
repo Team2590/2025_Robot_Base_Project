@@ -174,7 +174,7 @@ public final class Constants {
     public static double ARM_DANGER_MIN_POS = ARM_OPERATIONAL_MIN_POS;
     public static double ARM_DANGER_MAX_POS = -0.14;
     public static double ARM_SCORING_CORAL_POS = 0.5; // TODO: change to actual value
-    public static double ARM_INTAKE_POSITION = -0.34;
+    public static double ARM_INTAKE_SOURCE_POSITION = -0.34;
   }
 
   public static class ElevatorConstantsLeonidas {
@@ -193,6 +193,7 @@ public final class Constants {
     public static double ELEVATOR_L2_POS = 27.210938;
     public static double ELEVATOR_L3_POS = 51.997559;
     public static double ELEVATOR_L4_POS = 84.572266;
+    public static double ELEVATOR_SOURCE_POS = 42;
   }
 
   /*   public final class ElevatorConstantsLeonidas {

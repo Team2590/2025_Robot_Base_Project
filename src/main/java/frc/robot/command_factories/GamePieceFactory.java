@@ -6,7 +6,7 @@ import frc.robot.Constants;
 
 public class GamePieceFactory {
   public static Command intakeCoralFeeder() {
-    return new ParallelCommandGroup(ArmFactory.setPosition(-0.34), ElevatorFactory.setPosition(42));
+    return new ParallelCommandGroup(ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION), ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS));
   }
 
   public static Command intakeAlgaeGround() {

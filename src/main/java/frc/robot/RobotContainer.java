@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
+import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.commands.DriveCommands;
@@ -337,7 +338,7 @@ public class RobotContainer {
     //         () -> -rightJoystick.getX()));
 
     // Default drive command using new factory method, replacement for above ^^.
-    // drive.setDefaultCommand(DriveFactory.joystickDrive());
+    drive.setDefaultCommand(DriveFactory.joystickDrive());
 
     // Lock to 0° when A button is held
     // controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
