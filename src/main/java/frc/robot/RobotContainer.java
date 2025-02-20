@@ -17,7 +17,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -30,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
-import frc.robot.command_factories.ArmFactory;
 import frc.robot.command_factories.AutoFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.DriveFactory;
@@ -61,12 +59,8 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-
-import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
-
-import org.apache.commons.math3.linear.Array2DRowFieldMatrix;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -96,8 +90,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-
-  
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -474,8 +466,7 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
-
-  public static void registerCommands(){
+  public static void registerCommands() {
     NamedCommands.registerCommand("HoldL4", AutoFactory.holdThenL4);
     NamedCommands.registerCommand("HoldL3", AutoFactory.holdThenL3);
     NamedCommands.registerCommand("HoldL2", AutoFactory.holdThenL2);
@@ -486,11 +477,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("ScoreL2", ScoringFactory.scoreL2());
     NamedCommands.registerCommand("ScoreL1", ScoringFactory.scoreL1());
     NamedCommands.registerCommand("Stow-Mechanism", ScoringFactory.stow());
-
   }
 
-
-  public boolean inReef(){
+  public boolean inReef() {
 
     return Constants.locator.getZoneOfField(drive.getPose()).equals("reef");
   }

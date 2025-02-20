@@ -51,7 +51,7 @@ public class ElevatorFactory {
                     RobotContainer.getArm().getAbsolutePosition()));
   }
 
-  public static boolean elevatorCommandFinished(){
+  public static boolean elevatorCommandFinished() {
 
     return RobotContainer.getElevator().getCharacterizationVelocity()==0; //Whatever Score Positon For
   }
