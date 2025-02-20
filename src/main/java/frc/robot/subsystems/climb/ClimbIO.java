@@ -16,13 +16,13 @@ public interface ClimbIO {
     public double statorCurrentAmps = 0.0;
   }
 
-  public void updateInputs(ClimbIOInputs inputs);
+  public default void updateInputs(ClimbIOInputs inputs) {};
 
-  public void setVoltage(double voltage);
+  public default void setVoltage(double voltage) {};
 
-  public void setVelocity(double speed);
+  public default void setVelocity(double speed) {};
 
-  public void setPosition(double position);
+  public default void setPosition(double position) {};
 
-  public void stop();
+  public default void stop() {};
 }
