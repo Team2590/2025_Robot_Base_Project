@@ -112,8 +112,8 @@ public class ScoringFactory {
 
   public static Command deployClimbMechanism() {
     return new ParallelCommandGroup(
-        ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS), 
-        ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
+        // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS), 
+        // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
         ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)
     )
     .withName("Deploy climb mechanism");
@@ -121,8 +121,8 @@ public class ScoringFactory {
 
   public static Command climb() {
     return new ParallelCommandGroup(
-        ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS), 
-        ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
+        // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS), 
+        // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
         ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION)
     )
     .withName("Climb");
