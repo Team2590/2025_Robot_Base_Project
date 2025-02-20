@@ -16,19 +16,17 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.command_factories.DriveFactory;
+import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
@@ -359,11 +357,20 @@ public class RobotContainer {
     drive.setDefaultCommand(DriveFactory.joystickDrive());
 
     // Lock to 0° when A button is held
-    controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
+    // controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
 
-    // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    // controller.b().whileTrue(intake.runIntake(4));
+    // // Switch to X pattern when X button is pressed
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // // controller.b().whileTrue(intake.runIntake(4));
+
+    // rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
+    // leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
+    // rightJoystick.button(3).onTrue(elevator.setPosition(50));
+    // rightJoystick
+    //     .button(2)
+    //     .onTrue(
+    //
+    // elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
 
     //////////////////////////////////////////////////////
     /// Examples of using commands from command factories.
@@ -397,34 +404,44 @@ public class RobotContainer {
     //////////////////////////////////////////////////////
 
     // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
-    rightJoystick
-        .button(5)
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // controller
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
+    // rightJoystick
+    //     .button(5)
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
 
-    rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
-    leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
-    rightJoystick.button(3).onTrue(climb.resetRotationCount());
-    rightJoystick
-        .button(2)
-        .onTrue(
-            ScoringFactory.deployClimbMechanism());
-    rightJoystick.button(4).onTrue(ScoringFactory.climb());
+    // rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
+    // leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
+    // rightJoystick.button(3).onTrue(elevator.setPosition(50));
+    // rightJoystick
+    //     .button(2)
+    //     .onTrue(
+    //
+    // elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
     // rightJoystick.button(1).onTrue(elevator.setPosition());
+
+    rightJoystick.button(1).onTrue(ScoringFactory.scoreL1());
+    rightJoystick.button(2).onTrue(ScoringFactory.scoreL2());
+    rightJoystick.button(3).onTrue(ScoringFactory.scoreL3());
+    rightJoystick.button(4).onTrue(ScoringFactory.scoreL4());
+    leftJoystick.button(1).onTrue(elevator.setPosition(5));
+    rightJoystick.button(5).onTrue(GamePieceFactory.intakeCoralFeeder());
+    controller.x().onTrue(elevator.resetRotationCountCommand());
+
+    // leftJoystick.button(1).
 
     /**
      * the following button binds work on Larry:

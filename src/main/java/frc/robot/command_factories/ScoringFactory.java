@@ -25,7 +25,7 @@ public class ScoringFactory {
     return new ParallelCommandGroup(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L4_POS)
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS)
             // NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(),
             // 1)
             )
@@ -42,7 +42,7 @@ public class ScoringFactory {
     return new ParallelCommandGroup(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L3_POS)
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS)
             // NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(),
             // 1)
             )
@@ -59,7 +59,7 @@ public class ScoringFactory {
     return new ParallelCommandGroup(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_L2_POS)
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS)
             // NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(),
             // 1)
             )
