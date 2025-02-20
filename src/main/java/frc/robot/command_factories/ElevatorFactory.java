@@ -53,7 +53,8 @@ public class ElevatorFactory {
 
   public static boolean elevatorCommandFinished() {
 
-    return RobotContainer.getElevator().getCharacterizationVelocity()==0; //Whatever Score Positon For
+    return RobotContainer.getElevator().getCharacterizationVelocity()
+        == 0; // Whatever Score Positon For
   }
 
   /**

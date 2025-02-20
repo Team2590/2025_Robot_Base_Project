@@ -29,9 +29,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
+import frc.robot.autos.AutoRoutines;
 import frc.robot.command_factories.AutoFactory;
-import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.DriveFactory;
+import frc.robot.command_factories.ScoringFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
@@ -58,7 +59,6 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -245,13 +245,13 @@ public class RobotContainer {
                 new ModuleIOSim(constantsWrapper.BackLeft, constantsWrapper),
                 new ModuleIOSim(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(sourceCameraName, robotToSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam))));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOPhotonVision(
+        //             List.of(
+        //                 new CameraConfig(sourceCameraName, robotToSourceCam),
+        //                 new CameraConfig(processorCameraName, robotToProcessorCam))));
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
@@ -327,8 +327,10 @@ public class RobotContainer {
         new FeedForwardCharacterization(
             intake, intake::setVoltage, intake::getCharacterizationVelocity));
 
+    autoChooser.addOption("driveThenL4", AutoRoutines.driveThenScoreL4.getCommand());
+
     // Configure the button bindings
-    configureButtonBindings();
+    //  configureButtonBindings();
   }
 
   /**
@@ -470,7 +472,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("HoldL4", AutoFactory.holdThenL4);
     NamedCommands.registerCommand("HoldL3", AutoFactory.holdThenL3);
     NamedCommands.registerCommand("HoldL2", AutoFactory.holdThenL2);
-    NamedCommands.registerCommand("HoldL1", AutoFactory.holdThenL1);
+    // NamedCommands.registerCommand("HoldL1", AutoFactory.holdThenL1);
 
     NamedCommands.registerCommand("ScoreL4", ScoringFactory.scoreL4());
     NamedCommands.registerCommand("ScoreL3", ScoringFactory.scoreL3());

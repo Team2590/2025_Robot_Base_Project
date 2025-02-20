@@ -47,6 +47,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.autos.AutoRoutines;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
@@ -154,8 +155,21 @@ public class Drive extends SubsystemBase {
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
+  public static String autoCommandMessage = "yap yap"; // need it in some periodic
+
   @Override
   public void periodic() {
+
+    Logger.recordOutput("autoCommandMessage", autoCommandMessage); // idk where to log stuff
+    for (int i = 0;
+        i < AutoRoutines.getTriggerBooleans(AutoRoutines.driveThenScoreL4).size();
+        i++) {
+
+      Logger.recordOutput(
+          "TriggerBooleansForDrivel4: " + i,
+          AutoRoutines.getTriggerBooleans(AutoRoutines.driveThenScoreL4).get(i));
+    }
+
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);

@@ -33,15 +33,23 @@ public class VisionConstants {
 
   // Front side camera (camera0)
   public static Transform3d robotToSourceCam =
-      new Transform3d(-0.2079, 0.2269, 0.9278, new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
+      new Transform3d(
+          -0.2079,
+          0.2269,
+          0.9278,
+          new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
 
   // Back side camera (camera1)
   public static Transform3d robotToProcessorCam =
-      new Transform3d(-0.1869, 0.2064, 0.7892, new Rotation3d(0.0, Math.toRadians(-27.0), Math.toRadians(90.0)));
+      new Transform3d(
+          -0.1869,
+          0.2064,
+          0.7892,
+          new Rotation3d(0.0, Math.toRadians(-27.0), Math.toRadians(90.0)));
 
   // Left side camera (camera2)
-//   public static Transform3d robotToReefCam =
-//       new Transform3d(0.0, 0.2, 0.2, new Rotation3d(0.0, -0.4, Math.PI / 2));
+  //   public static Transform3d robotToReefCam =
+  //       new Transform3d(0.0, 0.2, 0.2, new Rotation3d(0.0, -0.4, Math.PI / 2));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
@@ -57,7 +65,7 @@ public class VisionConstants {
   public static double[] cameraStdDevFactors =
       new double[] {
         1.0, // Camera 0
-        1.0//,  Camera 1
+        1.0 // ,  Camera 1
         // 1.0, // Camera 2
         // 1.0 //  Camera 3
       };

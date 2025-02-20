@@ -4,8 +4,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
-import frc.robot.Constants.ArmConstantsLarry;
 import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.util.NemesisTimedCommand;
 
@@ -22,7 +20,6 @@ public class ScoringFactory {
    * @param container The RobotContainer instance
    * @return Command sequence for L4 scoring
    */
-
   public static Command scoreL4() {
     return new ParallelCommandGroup(
             ElevatorFactory.setPositionBlocking(
@@ -107,15 +104,15 @@ public class ScoringFactory {
    * @return Command sequence for stowing
    */
   public static Command stow() {
-    
+
     return new SequentialCommandGroup(
             ArmFactory.setPositionBlocking(0), ElevatorFactory.setPositionBlocking(0))
         .withName("Stow Mechanism");
   }
 
-  public static Command intakeFromStation(){
-    return new SequentialCommandGroup(ArmFactory.setPositionBlocking(ArmConstantsLeonidas.STATION_POS), EndEffectorFactory.runEndEffector());
-  
-
-}
+  public static Command intakeFromStation() {
+    return new SequentialCommandGroup(
+        ArmFactory.setPositionBlocking(ArmConstantsLeonidas.STATION_POS),
+        EndEffectorFactory.runEndEffector());
+  }
 }
