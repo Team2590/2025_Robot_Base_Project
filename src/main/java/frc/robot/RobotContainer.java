@@ -425,7 +425,7 @@ public class RobotContainer {
     rightJoystick.button(3).onTrue(ScoringFactory.scoreL3());
     rightJoystick.button(4).onTrue(ScoringFactory.scoreL4());
     leftJoystick.button(1).onTrue(elevator.setPosition(5));
-    rightJoystick.button(5).onTrue(GamePieceFactory.intakeFromFeeder());
+    rightJoystick.button(5).onTrue(GamePieceFactory.intakeCoralFeeder());
     controller.x().onTrue(elevator.resetRotationCountCommand());
 
     // leftJoystick.button(1).
