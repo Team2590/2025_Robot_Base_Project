@@ -28,7 +28,9 @@ import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
+import frc.robot.commands.ArmDefaultCommand;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ElevatorDefaultCommand;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
@@ -320,6 +322,8 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+    elevator.setDefaultCommand(new ElevatorDefaultCommand());
+    arm.setDefaultCommand(new ArmDefaultCommand());
   }
 
   /**
