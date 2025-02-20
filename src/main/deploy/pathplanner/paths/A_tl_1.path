@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.150382948962882,
-        "y": 6.3036201043941045
+        "x": 6.654664064067581,
+        "y": 7.279809100834014
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.094340715977965,
-        "y": 5.234503664735232
+        "x": 3.7942075771015285,
+        "y": 5.0718310760098255
       },
       "prevControl": {
-        "x": 3.4573715543122274,
-        "y": 5.768254895605895
+        "x": 2.9783014364003852,
+        "y": 6.008744524394203
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,23 +33,16 @@
   "pointTowardsZones": [
     {
       "fieldPosition": {
-        "x": 0.4,
+        "x": 6.0,
         "y": 5.5
       },
       "rotationOffset": 0.0,
       "minWaypointRelativePos": 0.25,
-      "maxWaypointRelativePos": 0.75,
+      "maxWaypointRelativePos": 0.526115248771499,
       "name": "Point Towards Zone"
     }
   ],
-  "eventMarkers": [
-    {
-      "name": "",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -63,10 +56,10 @@
     "rotation": -148.471537721334
   },
   "reversed": false,
-  "folder": "auton1",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 138.40488403849005
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

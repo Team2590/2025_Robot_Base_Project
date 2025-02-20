@@ -44,6 +44,8 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
       double reduction) {
     leader = new TalonFX(canID, canBus);
 
+    cfg = new TalonFXConfiguration();
+
     cfg.MotorOutput.Inverted =
         invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
     cfg.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
