@@ -31,6 +31,6 @@ public class EndEffectorFactory {
 
   public static boolean endEffectorCommandFinished(){
 
-    return !container.getEndEffector().isRunning();
+    return !RobotContainer.getEndEffector().isRunning();
   }
 }

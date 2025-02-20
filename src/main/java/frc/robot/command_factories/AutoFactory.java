@@ -36,7 +36,7 @@ public class AutoFactory {
 
 
 
-public static RobotContainer container =Robot.getRobotContainerInstance();
+//public static RobotContainer container =Robot.getRobotContainerInstance();
 
 
 
@@ -213,10 +213,10 @@ public static int getIndexLinearSearch(List<String> elements, String name) {
 }
 
 public static PathPlannerTrajectory getTrajectoryFromAuto( String fileName, int index){
-    RobotConfig config = container.getDrive().getConfig();
+    RobotConfig config = RobotContainer.getDrive().getConfig();
     try{
         PathPlannerPath p= PathPlannerAuto.getPathGroupFromAutoFile(fileName).get(index);
-        return p.generateTrajectory(new ChassisSpeeds(), container.getDrive().getRotation(), config);
+        return p.generateTrajectory(new ChassisSpeeds(), RobotContainer.getDrive().getRotation(), config);
     }
     catch( Exception e){
         return null;
@@ -284,6 +284,7 @@ public static PathPlannerTrajectory getTrajectoryFromAuto( String fileName, int 
                     Trigger inReef = currentCommand.condition(()->Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef")).and(whichPath);
                     Trigger atIntakeStation=currentCommand.condition(()->Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).contains("Feeder")).and(whichPath);
                     Trigger scoreProcessor= currentCommand.event("PrimeProcessor").and(whichPath); //controlled by event markers
+
                 
                     Trigger dumpL1= currentCommand.event("dumpL1").and(whichPath);
                     dumpL1.onTrue(ScoringFactory.scoreL1());
