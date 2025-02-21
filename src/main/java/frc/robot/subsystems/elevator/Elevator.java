@@ -25,6 +25,7 @@ public class Elevator extends SubsystemBase {
     // Log current position and target position
     Logger.recordOutput("Elevator/CurrentPosition", inputs.rotationCount);
     Logger.recordOutput("Elevator/TargetPosition", this.io.getTargetPosition());
+    Logger.recordOutput("Elevator/Position", getRotationCount());
   }
 
   public Command stop() {
@@ -32,6 +33,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command setPosition(double position) {
+    System.out.println("Going to position: " + position);
     return runOnce(() -> io.setPosition(position));
   }
 

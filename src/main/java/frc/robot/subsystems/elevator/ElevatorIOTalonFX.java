@@ -206,7 +206,11 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position.getValueAsDouble(), armPos)) {
       leader.setControl(volts);
     } else {
-      System.out.println("CAN'T MOVE ELEVATOR, arm not in valid position");
+      System.out.println(
+          "CAN'T MOVE ELEVATOR, arm not in valid position, elevator pos: "
+              + elevatorPos
+              + ", arm pos: "
+              + armPos);
     }
   }
 

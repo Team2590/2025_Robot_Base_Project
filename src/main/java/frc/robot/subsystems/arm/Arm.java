@@ -26,6 +26,7 @@ public class Arm extends SubsystemBase {
     // Log current position and target position
     Logger.recordOutput("Arm/CurrentPosition", inputs.armabspos);
     Logger.recordOutput("Arm/TargetPosition", setpoint);
+    Logger.recordOutput("Arm/Position", getAbsolutePosition());
   }
 
   /** Run open loop at the specified voltage. */
@@ -66,5 +67,9 @@ public class Arm extends SubsystemBase {
 
   public double getSetpoint() {
     return setpoint;
+  }
+
+  public ArmIO getIO() {
+    return arm;
   }
 }

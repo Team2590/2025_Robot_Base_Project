@@ -152,7 +152,11 @@ public class ArmIOTalonFX implements ArmIO {
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position, elevatorPos)) {
       arm.setControl(mmv.withPosition(position));
     } else {
-      System.out.println("CAN'T MOVE ARM, elevator not in valid position.");
+      System.out.println(
+          "CAN'T MOVE ARM, elevator not in valid position, elevator pos: "
+              + elevatorPos
+              + ", arm pos: "
+              + position);
     }
   }
 

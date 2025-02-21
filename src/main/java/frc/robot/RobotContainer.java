@@ -29,7 +29,6 @@ import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.autos.AutoRoutines;
 import frc.robot.command_factories.AutoFactory;
 import frc.robot.command_factories.DriveFactory;
-import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
@@ -206,11 +205,29 @@ public class RobotContainer {
                     Constants.ElevatorConstantsLeonidas.brake,
                     Constants.ElevatorConstantsLeonidas.reduction));
         elevator.resetRotationCount();
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
+        arm =
+            new Arm(
+                new ArmIOTalonFX(
+                    Constants.ArmConstantsLeonidas.canID,
+                    Constants.ArmConstantsLeonidas.canBus,
+                    Constants.ArmConstantsLeonidas.currentLimitAmps,
+                    Constants.ArmConstantsLeonidas.invert,
+                    Constants.ArmConstantsLeonidas.brake,
+                    Constants.ArmConstantsLeonidas.reduction,
+                    Constants.ArmConstantsLeonidas.cancoderID,
+                    Constants.ArmConstantsLeonidas.magOffset,
+                    Constants.ArmConstantsLeonidas.sensorReduction));
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    Constants.ElevatorConstantsLeonidas.canID,
+                    Constants.ElevatorConstantsLeonidas.canBus,
+                    Constants.ElevatorConstantsLeonidas.currentLimitAmps,
+                    Constants.ElevatorConstantsLeonidas.invert,
+                    Constants.ElevatorConstantsLeonidas.brake,
+                    Constants.ElevatorConstantsLeonidas.reduction));
+        elevator.resetRotationCount();
+        vision = null;
         intake =
             new Intake(
                 new IntakeIOTalonFX(
@@ -266,9 +283,12 @@ public class RobotContainer {
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
                 new IntakeArmIOSim(DCMotor.getFalcon500(1), 4, .1));
-        arm = new Arm(new ArmIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 1, true, 1));
-        elevator =
-            new Elevator(new ElevatorIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 10, false, 1));
+        arm = new Arm(new ArmIOSim());
+        elevator = new Elevator(new ElevatorIOSim(100.0, 5.0, 0.05, true));        
+        endEffector =
+            new EndEffector(
+                new EndEffectorIOSim(
+                    DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
         endEffector =
             new EndEffector(
                 new EndEffectorIOSim(
@@ -337,15 +357,55 @@ public class RobotContainer {
         new FeedForwardCharacterization(
             intake, intake::setVoltage, intake::getCharacterizationVelocity));
 
-    autoChooser.addOption("driveThenL4", AutoRoutines.driveThenScoreL4.getCommand());
-
-    // Configure the button bindings
-    //  configureButtonBindings();
-
-    // setup Named Commands:
-    registerNamedCommands();
+    // Only configure simulation bindings if in simulation mode
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      configureButtonBindingsSimulation();
+    } else {
+      // Configure the button bindings
+      configureButtonBindings();
+    }
   }
 
+  private void configureButtonBindingsSimulation() {
+
+    // Add elevator control bindings
+    leftJoystick
+        .button(3)
+        .onTrue(
+            elevator.setPosition(
+                Constants.ElevatorConstantsLeonidas
+                    .ELEVATOR_OPERATIONAL_MIN_POS)); // Move to home position
+    leftJoystick
+        .button(4)
+        .onTrue(
+            elevator.setPosition(
+                Constants.ElevatorConstantsLeonidas.ELEVATOR_DANGER_MAX_POS + 1)); // Just safe
+    leftJoystick
+        .button(5)
+        .onTrue(
+            elevator.setPosition(
+                Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS)); // Move to top
+
+    // Add arm control bindings
+    leftJoystick
+        .button(6)
+        .onTrue(
+            arm.setPosition(
+                Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS)); // Min position
+    leftJoystick
+        .button(7)
+        .onTrue(
+            arm.setPosition(Constants.ArmConstantsLeonidas.ARM_DANGER_MAX_POS + 0.1)); // Just safe
+    leftJoystick
+        .button(8)
+        .onTrue(
+            arm.setPosition(
+                Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS)); // Home position
+
+    leftJoystick.button(9).onTrue(ScoringFactory.scoreL3());
+    leftJoystick.button(10).onTrue(ScoringFactory.scoreProcessor());
+    leftJoystick.button(11).onTrue(ScoringFactory.stow(null));
+  }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link

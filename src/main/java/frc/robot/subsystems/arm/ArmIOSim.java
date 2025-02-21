@@ -1,88 +1,50 @@
 package frc.robot.subsystems.arm;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import frc.robot.Constants;
-import frc.robot.util.LoggedTunableNumber;
+import frc.robot.RobotContainer;
+import frc.robot.util.SafetyChecker;
 
 public class ArmIOSim implements ArmIO {
-  private SingleJointedArmSim armSim;
-  private double drumRadiusMeters;
-  private double gearing;
-  private LoggedTunableNumber cruiseVelocity = new LoggedTunableNumber("Arm/cruiseVelocity", 10);
-  private NeutralModeValue neutralMode;
-  private double armabspos;
-  private DCMotor gearBox;
-  private double requestedPositionMeters = 0;
-  private boolean holding = true;
 
-  public ArmIOSim(
-      DCMotor gearbox,
-      double gearing,
-      double carriageMassKg,
-      double drumRadiusMeters,
-      double minHeightMeters,
-      double maxHeightMeters,
-      boolean simulateGravity,
-      double startingHeightMeters) {
-    this.gearBox = gearbox;
-    this.drumRadiusMeters = drumRadiusMeters;
-    this.gearing = gearing;
+  private double armPositionSimulated = 0;
 
-    armSim =
-        new SingleJointedArmSim(
-            gearbox,
-            gearing,
-            carriageMassKg,
-            drumRadiusMeters,
-            minHeightMeters,
-            maxHeightMeters,
-            simulateGravity,
-            startingHeightMeters);
-  }
+  public ArmIOSim() {}
 
   @Override
   public void updateInputs(ArmIOInputs io) {
-    armSim.update(Constants.loopPeriodSecs);
-    io.armabspos = armSim.getAngleRads();
-    io.connected = true;
-    io.appliedVoltage = armSim.getCurrentDrawAmps();
-    io.positionRads = Units.rotationsToRadians(armSim.getAngleRads());
-    io.velocityRadsPerSec = armSim.getVelocityRadPerSec();
-    io.supplyCurrentAmps = armSim.getCurrentDrawAmps();
-    io.tempCelsius = 30;
-    if (holding) armSim.setState(requestedPositionMeters, cruiseVelocity.get());
+    // Convert current position to radians
+    double currentPositionRad =
+        armPositionSimulated; // convert armPositionSimulated to radians.  ie. 1.4 cancoder, etc.
+
+    io.armabspos = currentPositionRad;
+    io.positionRads = currentPositionRad;
   }
 
   @Override
   public void updateTunableNumbers() {}
 
-  @Override
-  public void setPosition(double position) {
-    double positionMeters = position * 2 * Math.PI * drumRadiusMeters / gearing;
-
-    requestedPositionMeters = positionMeters;
-
-    armSim.setState(positionMeters, 0);
+  public void setSimulatedElevatorPosition(double position) {
+    this.armPositionSimulated = position;
   }
 
   @Override
-  public void stop() {
-    double currentAngleRad = armSim.getAngleRads();
+  public void setPosition(double cancoderRotations) {
+    double simulatedElevatorPosition = RobotContainer.getElevator().getRotationCount();
 
-    if (neutralMode == NeutralModeValue.Brake) {
-      armSim.setState(currentAngleRad, 0.0);
+    System.out.println("Setting Arm Position: " + cancoderRotations + " cancoder rotations");
+    if (SafetyChecker.isSafe(
+        SafetyChecker.MechanismType.ARM_MOVEMENT, cancoderRotations, simulatedElevatorPosition)) {
+
+      this.armPositionSimulated = cancoderRotations;
     } else {
-      holding = false;
+      System.out.println(
+          "Can't move arm (sim), elevator not in valid position: " + simulatedElevatorPosition);
     }
   }
 
   @Override
-  public void setPower(DutyCycleOut power) {
+  public void stop() {}
 
-    armSim.setInputVoltage(power.Output);
-  }
+  @Override
+  public void setPower(DutyCycleOut power) {}
 }

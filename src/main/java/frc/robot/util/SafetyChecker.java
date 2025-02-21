@@ -40,10 +40,16 @@ public class SafetyChecker {
         // movingPosition is arm position
         // otherPosition is elevator position
         if (!isArmInOperationalRange(movingPosition)) {
+          System.out.println("ARM_MOVEMENT: Arm is out of operational range: " + movingPosition);
           return false; // trying to overshoot the arm position's capabilities
         }
 
         if (!isArmInSafeRange(movingPosition) && (!isElevatorInSafeRange(otherPosition))) {
+          System.out.println(
+              "ARM_MOVEMENT: Arm is in danger zone: "
+                  + movingPosition
+                  + " and elevator is in danger zone: "
+                  + otherPosition);
           return false; // if target position is out of operational range, or if its in the 'danger
           // zone' and elevator is also in its 'danger zone'.
         }
@@ -55,10 +61,17 @@ public class SafetyChecker {
         // movingPosition is elevator position
         // otherPosition is arm position
         if (!isElevatorInOperationalRange(movingPosition)) {
+          System.out.println(
+              "ELEVATOR_MOVEMENT: Elevator is out of operational range: " + movingPosition);
           return false; // outside elevators capabilities
         }
 
         if (!isElevatorInSafeRange(movingPosition) && !isArmInSafeRange(otherPosition)) {
+          System.out.println(
+              "ELEVATOR_MOVEMENT: Elevator is in danger zone: "
+                  + movingPosition
+                  + " and arm is in danger zone: "
+                  + otherPosition);
           return false; // Trying to move elevator to a 'danger zone' position while arm is within
           // its 'danger zone'
         }
@@ -66,6 +79,7 @@ public class SafetyChecker {
         return true;
 
       default:
+        System.out.println("SafetyChecker: Invalid mechanism type: " + checkType);
         return false;
     }
   }
