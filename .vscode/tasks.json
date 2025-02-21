@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "gradle",
+      "id": "/Users/sdavid/git/2025_Robot_Base_Project-1test2025_Robot_Base_Project-1",
+      "script": "test",
+      "description": "Runs the test suite.",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "project": "2025_Robot_Base_Project-1",
+      "buildFile": "/Users/sdavid/git/2025_Robot_Base_Project-1/build.gradle",
+      "rootProject": "2025_Robot_Base_Project-1",
+      "projectFolder": "/Users/sdavid/git/2025_Robot_Base_Project-1",
+      "workspaceFolder": "/Users/sdavid/git/2025_Robot_Base_Project-1",
+      "args": "",
+      "javaDebug": false,
+      "problemMatcher": [
+        "$gradle"
+      ],
+      "label": "gradle: test"
+    }
+  ]
+}

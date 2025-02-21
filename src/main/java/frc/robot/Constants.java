@@ -32,7 +32,7 @@ import java.util.List;
  */
 public final class Constants {
   public static final Mode simMode = Mode.SIM;
-  public static final Mode currentMode = RobotBase.isReal() ? Mode.LOKI : simMode;
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.Leonidas : simMode;
   public static final boolean tuningMode = true;
   public static final double loopPeriodSecs = 0.02;
 
@@ -267,6 +267,124 @@ public final class Constants {
   //   }
   // }
 
+  public static class ArmConstantsLeonidas {
+    public static double ARM_FACTORY_SAFETY_MIN = -0.148;
+    public static double ARM_FACTORY_SAFETY_MAX = .36;
+    public static final int canID = 1;
+    public static final String canBus = "Takeover";
+    public static final int currentLimitAmps = 40;
+    public static final boolean invert = false;
+    public static final boolean brake = false;
+    public static final double reduction = 1; // was a 94.18
+    public static final int cancoderID = 5;
+    public static final double magOffset = -.596436; // -.398
+    public static final double sensorReduction = 58.8;
+    public static double ARM_OPERATIONAL_MIN_POS = -.34;
+    public static double ARM_OPERATIONAL_MAX_POS = .55;
+    public static double ARM_DANGER_MIN_POS = ARM_OPERATIONAL_MIN_POS;
+    public static double ARM_DANGER_MAX_POS = -0.14;
+    public static double ARM_SCORING_CORAL_POS = 0.5; // TODO: change to actual value
+    public static double ARM_INTAKE_SOURCE_POSITION = -0.34;
+  }
+
+  public static class ElevatorConstantsLeonidas {
+    public static double ELEVATOR_OPERATIONAL_MIN_POS = 5;
+    public static double ELEVATOR_OPERATIONAL_MAX_POS = 89.5;
+    public static final int canID = 25;
+    public static final String canBus = "Takeover";
+    public static final int currentLimitAmps = 120;
+    public static final boolean invert = false;
+    public static final boolean brake = true;
+    public static final double reduction = 7;
+    public static final double kS = 0.22720;
+    public static final double kV = 0.14051;
+    public static double ELEVATOR_DANGER_MIN_POS = ELEVATOR_OPERATIONAL_MIN_POS;
+    public static double ELEVATOR_DANGER_MAX_POS = 27.28;
+    public static double ELEVATOR_L2_POS = 27.210938;
+    public static double ELEVATOR_L3_POS = 51.997559;
+    public static double ELEVATOR_L4_POS = 84.572266;
+    public static double ELEVATOR_SOURCE_POS = 42;
+  }
+
+  /*   public final class ElevatorConstantsLeonidas {
+    public static double ELEVATOR_FACTORY_MIN_POS = 5; // TODO: change to actual value
+    public static double ELEVATOR_FACTORY_MAX_POS = 89.5; // TODO: change to actual value
+    public static final int canID = 25;
+    public static final String canBus = "Takeover";
+    public static final int currentLimitAmps = 40; // TODO
+    public static final boolean invert = false;
+    public static final boolean brake = true;
+    public static final double reduction = 7;
+    public static final double kS = 0.22720;
+    public static final double kV = 0.14051;
+    public static final double l2 = 27.210938;
+    public static final double l3 = 51.997559;
+    public static final double l4 = 84.572266;
+  }
+  */
+
+  public final class EndEffectorConstantsLeonidas {
+    public static final int canID = 10;
+    public static final String canBus = "Takeover";
+    public static final int currentLimitAmps = 120; // TODO
+    public static final boolean invert = false; // TODO
+    public static final boolean brake = true; // TODO
+    public static final double reduction = 1; // TODO
+    public static final double INTAKE_VOLTAGE = 6;
+    public static final double EJECT_VOLTAGE = -INTAKE_VOLTAGE;
+  }
+
+  public final class IntakeConstantsLeonidas {
+    public static final int canID = 24;
+    public static final String canBus = "Takeover";
+    public static final int currentLimitAmps = 120;
+    public static final boolean invert = true;
+    public static final boolean brake = true;
+    public static final double reduction = 1;
+    public static final double INTAKE_FACTORY_CORAL_POSITION = 0;
+    public static final double INTAKE_FACTORY_ALGAE_POSITION = 5.4;
+    public static final double INTAKE_FACTORY_HOME_POSITION = 0;
+    public static final double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 0;
+    public static final double INTAKE_CORAL_INTAKE_SPEED = 6;
+    public static final double INTAKE_CORAL_OUTTAKE_SPEED = -8; // TODO
+    public static final double INTAKE_ALGAE_INTAKE_SPEED = 6;
+    public static final double INTAKE_ALGAE_OUTTAKE_SPEED = -8;
+  }
+
+  public final class IntakeArmConstantsLeonidas {
+    public static final double INTAKE_CORAL_POS = 11.4;
+    public static final double INTAKE_ALGAE_POS = 6.5;
+    public static final int canID = 15;
+    public static final String canBus = "Takeover";
+    public static final int currentLimitAmps = 120;
+    public static final boolean invert = true;
+    public static final boolean brake = true;
+    public static final double reduction = 38.33;
+    public static final double kS = 0.25242;
+    public static final double kV = 0.34993;
+  }
+
+  public final class ClimbConstantsLeonidas {
+    public static final int canID = 14;
+    public static final String canBus = "Takeover";
+    public static final int currentLimitAmps = 120; // TODO
+    public static final boolean invert = false;
+    public static final boolean brake = false;
+    public static final double reduction = 1; // TODO
+    public static final double CLIMB_MECHANISM_POSITION = 55.2;
+    public static final double CLIMB_MAX_POSITION = 178; // 213.25 (actual)
+    public static final double CLIMB_VOLTAGE = .1;
+  }
+
+  public static class IntakeConstantsLarry {
+    static int canID = 60;
+    static int currentLimitAmps = 40;
+    static String canBus = "Takeover";
+    static boolean invert = false;
+    static double reduction = 1;
+    static boolean brake = true;
+  }
+
   public static enum Mode {
     /** Running on a real robot. */
     COMP,
@@ -275,7 +393,7 @@ public final class Constants {
 
     LARRY,
 
-    LOKI,
+    Leonidas,
 
     /** Running a physics simulator. */
     SIM,

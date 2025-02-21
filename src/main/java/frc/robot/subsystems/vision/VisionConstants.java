@@ -24,29 +24,29 @@ public class VisionConstants {
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
   // Camera names, must match names configured on coprocessor
-  public static String camera0Name = "camera_0";
-  public static String camera1Name = "camera_1";
-  public static String camera2Name = "camera_2";
-  public static String camera3Name = "camera_3";
+  public static String sourceCameraName = "1mp_arducam_device_6";
+  public static String processorCameraName = "camera_1";
+  public static String reefCameraName = "idk";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
 
   // Front side camera (camera0)
-  public static Transform3d robotToCamera0 =
-      new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
+  public static Transform3d robotToSourceCam =
+      new Transform3d(
+          -0.2079,
+          0.2269,
+          0.9278,
+          new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
 
   // Back side camera (camera1)
-  public static Transform3d robotToCamera1 =
-      new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+  // public static Transform3d robotToProcessorCam =
+  //     new Transform3d(-0.1869, 0.2064, 0.7892, new Rotation3d(0.0, Math.toRadians(-27.0),
+  // Math.toRadians(90.0)));
 
   // Left side camera (camera2)
-  public static Transform3d robotToCamera2 =
-      new Transform3d(0.0, 0.2, 0.2, new Rotation3d(0.0, -0.4, Math.PI / 2));
-
-  // Right side camera (camera3)
-  public static Transform3d robotToCamera3 =
-      new Transform3d(0.0, -0.2, 0.2, new Rotation3d(0.0, -0.4, 0. - Math.PI / 2));
+  //   public static Transform3d robotToReefCam =
+  //       new Transform3d(0.0, 0.2, 0.2, new Rotation3d(0.0, -0.4, Math.PI / 2));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
@@ -61,10 +61,10 @@ public class VisionConstants {
   // (Adjust to trust some cameras more than others)
   public static double[] cameraStdDevFactors =
       new double[] {
-        1.0, // Camera 0
-        1.0, // Camera 1
-        1.0, // Camera 2
-        1.0 //  Camera 3
+        1.0 // , Camera 0
+        // 1.0,  Camera 1
+        // 1.0, // Camera 2
+        // 1.0 //  Camera 3
       };
 
   // Multipliers to apply for MegaTag 2 observations

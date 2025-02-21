@@ -11,7 +11,7 @@ public class Intake extends SubsystemBase {
   private final IntakeIO intakeIO;
   private final IntakeArmIO intakeArmIO;
   private final IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
-  private final IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
+  // private final IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
   private final Alert intakeDisconnected;
   private final IntakeArm intakeArm;
 
@@ -56,8 +56,12 @@ public class Intake extends SubsystemBase {
       return runOnce(() -> intakeArmIO.setPosition(4));
     }
 
-    public Command resetRotationCount() {
+    public Command resetRotationCountCommand() {
       return runOnce(() -> intakeArmIO.resetRotationCount());
+    }
+
+    public void resetRotationCount() {
+      intakeArmIO.resetRotationCount();
     }
 
     public Command setPosition(double position) {
@@ -71,6 +75,10 @@ public class Intake extends SubsystemBase {
               () ->
                   NemesisMathUtil.isApprox(
                       intakeArmInputs.positionRads, setpointTolerance, position));
+    }
+
+    public double getVelocityRadPerSec() {
+      return intakeArmInputs.velocityRadsPerSec;
     }
   }
 
@@ -87,14 +95,6 @@ public class Intake extends SubsystemBase {
         .withName("Run Intake");
   }
 
-  public Command setIntakeCoralPosition() {
-    return intakeArm.setIntakeCoralPosition();
-  }
-
-  public Command setIntakeAlgaePosition() {
-    return intakeArm.setIntakeAlgaePosition();
-  }
-
   public Command setPosition(double position) {
     return intakeArm.setPosition(position);
   }
@@ -103,8 +103,12 @@ public class Intake extends SubsystemBase {
     return intakeArm.setPositionBlocking(position);
   }
 
-  public Command resetArmRotationCount() {
-    return intakeArm.resetRotationCount();
+  public Command resetArmRotationCountCommand() {
+    return intakeArm.resetRotationCountCommand();
+  }
+
+  public void resetArmRotationCount() {
+    intakeArm.resetRotationCount();
   }
 
   public void setVoltage(double volts) {
@@ -113,6 +117,6 @@ public class Intake extends SubsystemBase {
 
   /** Returns the current velocity in radians per second. */
   public double getCharacterizationVelocity() {
-    return intakeArmInputs.velocityRadsPerSec;
+    return intakeArm.getVelocityRadPerSec();
   }
 }

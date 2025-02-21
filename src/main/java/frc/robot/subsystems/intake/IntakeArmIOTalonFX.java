@@ -17,6 +17,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 
 public class IntakeArmIOTalonFX implements IntakeArmIO {
@@ -24,13 +25,15 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
   private LoggedTunableNumber kP = new LoggedTunableNumber("IntakeArm/kP", 2);
   private LoggedTunableNumber kI = new LoggedTunableNumber("IntakeArm/kI", 0);
   private LoggedTunableNumber kD = new LoggedTunableNumber("IntakeArm/kD", 0);
-  private LoggedTunableNumber kS = new LoggedTunableNumber("IntakeArm/kS", 0);
-  private LoggedTunableNumber kV = new LoggedTunableNumber("IntakeArm/kV", 0.1);
-  private LoggedTunableNumber kG = new LoggedTunableNumber("IntakeArm/kG", -0.011);
+  private LoggedTunableNumber kS =
+      new LoggedTunableNumber("IntakeArm/kS", Constants.IntakeArmConstantsLeonidas.kS);
+  private LoggedTunableNumber kV =
+      new LoggedTunableNumber("IntakeArm/kV", Constants.IntakeArmConstantsLeonidas.kV);
+  private LoggedTunableNumber kG = new LoggedTunableNumber("IntakeArm/kG", 0.0);
   private LoggedTunableNumber cruiseVelocity =
-      new LoggedTunableNumber("IntakeArm/cruiseVelocity", 25);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 50);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("IntakeArm/jerk", 75);
+      new LoggedTunableNumber("IntakeArm/cruiseVelocity", 100);
+  private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 200);
+  private LoggedTunableNumber jerk = new LoggedTunableNumber("IntakeArm/jerk", 250);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;

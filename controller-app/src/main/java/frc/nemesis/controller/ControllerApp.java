@@ -53,6 +53,7 @@ public class ControllerApp extends Application {
   public void start(Stage primaryStage) {
     primaryStage.setTitle("Nemesis Controller");
 
+    // Create a BorderPane to hold the content
     BorderPane root = new BorderPane();
     root.setPadding(new Insets(20));
 
