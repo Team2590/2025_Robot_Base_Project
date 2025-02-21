@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -42,7 +43,7 @@ public class EndEffector extends SubsystemBase {
   public Command runEndEffector() {
     return runEnd(
             () -> {
-              io.setVoltage(6.0);
+              io.setVoltage(Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE);
               isRunning = true;
             },
             () -> {
@@ -56,7 +57,7 @@ public class EndEffector extends SubsystemBase {
   public Command runEndEffectorOuttake() {
     return runEnd(
             () -> {
-              io.setVoltage(-6.0);
+              io.setVoltage(Constants.EndEffectorConstantsLeonidas.EJECT_VOLTAGE);
               isRunning = true;
             },
             () -> {

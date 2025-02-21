@@ -16,14 +16,10 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -32,6 +28,7 @@ import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.autos.AutoRoutines;
 import frc.robot.command_factories.AutoFactory;
 import frc.robot.command_factories.DriveFactory;
+import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
@@ -39,6 +36,8 @@ import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOSim;
 import frc.robot.subsystems.arm.ArmIOTalonFX;
+import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -77,6 +76,7 @@ public class RobotContainer {
   @Getter private static Elevator elevator;
   @Getter private static Intake intake;
   @Getter private static EndEffector endEffector;
+  @Getter private static Climb climb;
 
   // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
@@ -108,9 +108,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(sourceCameraName, robotToSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam))));
+                    List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -129,6 +127,7 @@ public class RobotContainer {
                     Constants.ArmConstantsKronos.SENSOR_REDUCTION));
         elevator = null;
         endEffector = null;
+        climb = null;
         break;
       case LARRY:
         // Real robot, instantiate hardware IO implementations
@@ -144,9 +143,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(sourceCameraName, robotToSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam))));
+                    List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -175,6 +172,7 @@ public class RobotContainer {
         endEffector =
             new EndEffector(
                 new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
+        climb = null;
         break;
       case Leonidas:
         drive =
@@ -207,7 +205,11 @@ public class RobotContainer {
                     Constants.ElevatorConstantsLeonidas.brake,
                     Constants.ElevatorConstantsLeonidas.reduction));
         elevator.resetRotationCount();
-        vision = null;
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(
+                    List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(
@@ -234,6 +236,15 @@ public class RobotContainer {
                     Constants.EndEffectorConstantsLeonidas.invert,
                     Constants.EndEffectorConstantsLeonidas.brake,
                     Constants.EndEffectorConstantsLeonidas.reduction));
+        climb = new Climb(
+            new ClimbIOTalonFX(
+                Constants.ClimbConstantsLeonidas.canID, 
+                Constants.ClimbConstantsLeonidas.canBus, 
+                Constants.ClimbConstantsLeonidas.currentLimitAmps, 
+                Constants.ClimbConstantsLeonidas.invert, 
+                Constants.ClimbConstantsLeonidas.brake, 
+                Constants.ClimbConstantsLeonidas.reduction
+            ));
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -245,13 +256,11 @@ public class RobotContainer {
                 new ModuleIOSim(constantsWrapper.BackLeft, constantsWrapper),
                 new ModuleIOSim(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOPhotonVision(
-        //             List.of(
-        //                 new CameraConfig(sourceCameraName, robotToSourceCam),
-        //                 new CameraConfig(processorCameraName, robotToProcessorCam))));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(
+                    List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
@@ -267,6 +276,7 @@ public class RobotContainer {
             new EndEffector(
                 new EndEffectorIOSim(
                     DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
+        climb = null;
         break;
 
       default:
@@ -283,9 +293,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(sourceCameraName, robotToSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam))));
+                    List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -293,6 +301,7 @@ public class RobotContainer {
         arm = new Arm(null);
         elevator = null;
         endEffector = null;
+        climb = null;
         break;
     }
 
@@ -352,19 +361,20 @@ public class RobotContainer {
     drive.setDefaultCommand(DriveFactory.joystickDrive());
 
     // Lock to 0° when A button is held
-    controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
+    // controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
 
-    // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    // controller.b().whileTrue(intake.runIntake(4));
+    // // Switch to X pattern when X button is pressed
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // // controller.b().whileTrue(intake.runIntake(4));
 
-    rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
-    leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
-    rightJoystick.button(3).onTrue(elevator.setPosition(50));
-    rightJoystick
-        .button(2)
-        .onTrue(
-            elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
+    // rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
+    // leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
+    // rightJoystick.button(3).onTrue(elevator.setPosition(50));
+    // rightJoystick
+    //     .button(2)
+    //     .onTrue(
+    //
+    // elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
 
     //////////////////////////////////////////////////////
     /// Examples of using commands from command factories.
@@ -398,33 +408,44 @@ public class RobotContainer {
     //////////////////////////////////////////////////////
 
     // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
-    rightJoystick
-        .button(5)
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // controller
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
+    // rightJoystick
+    //     .button(5)
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
 
-    rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
-    leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
-    rightJoystick.button(3).onTrue(elevator.setPosition(50));
-    rightJoystick
-        .button(2)
-        .onTrue(
-            elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
+    // rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
+    // leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
+    // rightJoystick.button(3).onTrue(elevator.setPosition(50));
+    // rightJoystick
+    //     .button(2)
+    //     .onTrue(
+    //
+    // elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
     // rightJoystick.button(1).onTrue(elevator.setPosition());
+
+    rightJoystick.button(1).onTrue(ScoringFactory.scoreL1());
+    rightJoystick.button(2).onTrue(ScoringFactory.scoreL2());
+    rightJoystick.button(3).onTrue(ScoringFactory.scoreL3());
+    rightJoystick.button(4).onTrue(ScoringFactory.scoreL4());
+    leftJoystick.button(1).onTrue(elevator.setPosition(5));
+    rightJoystick.button(5).onTrue(GamePieceFactory.intakeCoralFeeder());
+    controller.x().onTrue(elevator.resetRotationCountCommand());
+
+    // leftJoystick.button(1).
 
     /**
      * the following button binds work on Larry:
