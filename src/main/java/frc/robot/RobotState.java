@@ -32,7 +32,7 @@ public class RobotState extends SubsystemBase{
         return intake.hasAlgae();
     }
 
-    public boolean isRunning() {
+    public boolean intakeRunning() {
         return intake.isRunning();
     }
 
