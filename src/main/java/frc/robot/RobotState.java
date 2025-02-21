@@ -42,6 +42,16 @@ public class RobotState extends SubsystemBase{
     this.vision = vision;
   }
     
+  /**
+   * Initializes the robot state
+   * @param arm robots arm
+   * @param drive drive
+   * @param elevator elevator
+   * @param endEffector endeffector
+   * @param intake intake
+   * @param vision vision
+   * @return new robot state object
+   */
   public static RobotState initialize(
     Arm arm,
     Drive drive,
@@ -56,6 +66,10 @@ public class RobotState extends SubsystemBase{
         return instance;
     }
 
+    /**
+     * Gets the Robot State if it's initialized
+     * @return robot state
+     */
     public static RobotState getInstance() {
         if (instance == null) {
           throw new IllegalStateException("RobotState has not been initialized");
@@ -63,6 +77,10 @@ public class RobotState extends SubsystemBase{
         return instance;
     }
 
+    /**
+     * Gets Robot Pose
+     * @return robot pose
+     */
     public Pose2d getPose() {
         return drive.getPose();
     }  
@@ -73,18 +91,34 @@ public class RobotState extends SubsystemBase{
         currentZone = Constants.locator.getZoneOfField(robotPose);
     }
 
+    /**
+     * Checks if endeffector has coral
+     * @return true if the endeffector has coral, false if not
+     */
     public boolean hasCoral() {
         return endEffector.hasCoral();
     }
 
+    /**
+     * Checks if intake has algae
+     * @return true if the intake has algae, false if not
+     */
     public boolean hasAlgae() {
         return intake.hasAlgae();
     }
 
+    /**
+     * Checks if intake is running
+     * @return true if intake is running, false if not
+     */
     public boolean intakeRunning() {
         return intake.isRunning();
     }
-
+    
+    /**
+     * Checks what zone robot is in
+     * @return the zone robot is in
+     */
     public String getCurrentZone() {
         return currentZone;
     }
