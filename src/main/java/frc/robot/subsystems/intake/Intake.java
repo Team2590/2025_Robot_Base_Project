@@ -1,9 +1,12 @@
 package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.NemesisMathUtil;
 import org.littletonrobotics.junction.Logger;
 
@@ -14,6 +17,12 @@ public class Intake extends SubsystemBase {
   // private final IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
   private final Alert intakeDisconnected;
   private final IntakeArm intakeArm;
+  private LoggedTunableNumber RUNNING_THRESHOLD =
+      new LoggedTunableNumber("Intake/LOWER_THRESHOLD", 0.25);
+  private LoggedTunableNumber HOLDING_THRESHOLD =
+      new LoggedTunableNumber("Intake/HIGHER_THRESHOLD", 0.5);
+  private LinearFilter filter = LinearFilter.movingAverage(30);
+    double filtered_data;
 
   public Intake(IntakeIO intakeIO, IntakeArmIO intakeArmIO) {
     this.intakeIO = intakeIO;
@@ -28,6 +37,8 @@ public class Intake extends SubsystemBase {
     intakeIO.updateInputs(intakeInputs);
     Logger.processInputs("Intake", intakeInputs);
     intakeDisconnected.set(!intakeInputs.connected);
+    filtered_data = filter.calculate(intakeInputs.torqueCurrentAmps);
+    Logger.recordOutput("Intake/filter", filtered_data);
   }
 
   private class IntakeArm extends SubsystemBase {
@@ -118,5 +129,21 @@ public class Intake extends SubsystemBase {
   /** Returns the current velocity in radians per second. */
   public double getCharacterizationVelocity() {
     return intakeArm.getVelocityRadPerSec();
+  }
+
+  /**
+   * Returns boolean whether the intake has the algae (not running)
+   * @return true if the intake has secured the algae, false if not
+   */
+  public boolean hasAlgae(){
+    return filtered_data >= HOLDING_THRESHOLD.get() && filtered_data <= RUNNING_THRESHOLD.get();
+  }
+
+  /**
+   * Returns boolean whether the intake is running or not
+   * @return true if intake is running, false if not
+   */
+  public boolean isRunning(){
+    return filtered_data >= HOLDING_THRESHOLD.get() && filtered_data >= RUNNING_THRESHOLD.get();
   }
 }

@@ -15,6 +15,8 @@ public class EndEffector extends SubsystemBase {
   private LoggedTunableNumber CURRENT_THRESHOLD =
       new LoggedTunableNumber("EndEffector/CURRENT_THRESHOLD", 200);
   private LinearFilter filter = LinearFilter.movingAverage(30);
+  private LoggedTunableNumber PROX_THRESHOLD =
+      new LoggedTunableNumber("EndEffector/PROX_THRESHOLD", 0.5);
   double filtered_data;
 
   public EndEffector(EndEffectorIO io) {
@@ -24,7 +26,7 @@ public class EndEffector extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    filtered_data = filter.calculate(inputs.statorCurrentAmps);
+    filtered_data = filter.calculate(inputs.proxValue);
 
     Logger.recordOutput("EndEffector/StatorCurrent", inputs.statorCurrentAmps);
     Logger.recordOutput("EndEffector/IsRunning", isRunning);
@@ -78,5 +80,13 @@ public class EndEffector extends SubsystemBase {
           io.stop();
           isRunning = false;
         });
+  }
+
+  /**
+   * returns whether the end effector has a piece of coral or not
+   * @return true if the end effector has coral, false if not
+   */
+  public boolean hasCoral() {
+    return filtered_data >= PROX_THRESHOLD.get();
   }
 }
