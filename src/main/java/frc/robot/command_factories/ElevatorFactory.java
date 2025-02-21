@@ -51,6 +51,13 @@ public class ElevatorFactory {
                     RobotContainer.getArm().getAbsolutePosition()));
   }
 
+  public static Command manualUp() {
+    return RobotContainer.getElevator().setVoltageCommand(Constants.ElevatorConstantsLeonidas.ELEVATOR_MANUAL_VOLTAGE).withName("Set Elevator Voltage");
+  }
+
+  public static Command manualDown() {
+    return RobotContainer.getElevator().setVoltageCommand(-Constants.ElevatorConstantsLeonidas.ELEVATOR_MANUAL_VOLTAGE).withName("Set Elevator Voltage");
+  }
   /**
    * Creates a command to reset the elevator's rotation count.
    *

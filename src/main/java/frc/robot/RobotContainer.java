@@ -16,16 +16,21 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.command_factories.DriveFactory;
+import frc.robot.command_factories.ElevatorFactory;
+import frc.robot.command_factories.EndEffectorFactory;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.commands.DriveCommands;
@@ -234,15 +239,15 @@ public class RobotContainer {
                     Constants.EndEffectorConstantsLeonidas.invert,
                     Constants.EndEffectorConstantsLeonidas.brake,
                     Constants.EndEffectorConstantsLeonidas.reduction));
-        climb = new Climb(
-            new ClimbIOTalonFX(
-                Constants.ClimbConstantsLeonidas.canID, 
-                Constants.ClimbConstantsLeonidas.canBus, 
-                Constants.ClimbConstantsLeonidas.currentLimitAmps, 
-                Constants.ClimbConstantsLeonidas.invert, 
-                Constants.ClimbConstantsLeonidas.brake, 
-                Constants.ClimbConstantsLeonidas.reduction
-            ));
+        climb =
+            new Climb(
+                new ClimbIOTalonFX(
+                    Constants.ClimbConstantsLeonidas.canID,
+                    Constants.ClimbConstantsLeonidas.canBus,
+                    Constants.ClimbConstantsLeonidas.currentLimitAmps,
+                    Constants.ClimbConstantsLeonidas.invert,
+                    Constants.ClimbConstantsLeonidas.brake,
+                    Constants.ClimbConstantsLeonidas.reduction));
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -345,135 +350,53 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // // Default command, normal field-relative drive
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDrive(
-    //         drive,
-    //         () -> -leftJoystick.getY(),
-    //         () -> -leftJoystick.getX(),
-    //         () -> -rightJoystick.getX()));
-
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
 
-    // Lock to 0° when A button is held
-    // controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
+    // reset button binds
+    rightJoystick
+        .button(5)
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
+    leftJoystick.button(5).onTrue(Commands.runOnce(() -> elevator.resetRotationCount(), elevator));
 
-    // // Switch to X pattern when X button is pressed
-    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    // // controller.b().whileTrue(intake.runIntake(4));
 
-    // rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
-    // leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
-    // rightJoystick.button(3).onTrue(elevator.setPosition(50));
-    // rightJoystick
-    //     .button(2)
-    //     .onTrue(
-    //
-    // elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
-
-    //////////////////////////////////////////////////////
-    /// Examples of using commands from command factories.
-    //////////////////////////////////////////////////////
-    ///
-    ///
-    // example of how we might change some of the above to using the elevator factory
-    // leftJoystick.pov(0).onTrue(ElevatorFactory.setPosition(5));
-    // leftJoystick.pov(90).onTrue(ElevatorFactory.setPosition(17));
-    // leftJoystick.pov(180).onTrue(ElevatorFactory.setPosition(30));
-    // leftJoystick.pov(270).onTrue(ElevatorFactory.setPosition(48));
-    // leftJoystick.button(5).onTrue(ElevatorFactory.resetRotationCount());
-    // leftJoystick.button(4).onTrue(ElevatorFactory.setPosition(0));
-    // leftJoystick.button(1).whileTrue(endEffector.intake());
-
-    // Example of going to a specific pose using a command
-    // leftJoystick.butotn(2).onTrue(DriveFactory.driveToPose(new Pose2d()));
-
-    // Example of intake commands using controller buttons and factory pattern
-    // leftJoystick.button(1).whileTrue(IntakeFactory.runIntake(() -> 8));
-    // leftJoystick.button(2).whileTrue(IntakeFactory.runIntake(() -> -8));
-    // leftJoystick.button(3).onTrue(IntakeFactory.setIntakeCoralPosition());
-    // leftJoystick.button(4).onTrue(IntakeFactory.setIntakeAlgaePosition());
-
-    // Example of scoring commands using controller buttons
-    // leftJoystick.button(6).onTrue(ScoringFactory.scoreHigh());
-    // leftJoystick.button(7).onTrue(ScoringFactory.scoreMid());
-    // leftJoystick.button(8).onTrue(ScoringFactory.stow());
-    //////////////////////////////////////////////////////
-    /// End of examples using command factories
-    //////////////////////////////////////////////////////
-
-    // Reset gyro to 0° when B button is pressed
-    // controller
-    //     .b()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-    //                 drive)
-    //             .ignoringDisable(true));
-    // rightJoystick
-    //     .button(5)
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-    //                 drive)
-    //             .ignoringDisable(true));
-
-    // rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
-    // leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
-    // rightJoystick.button(3).onTrue(elevator.setPosition(50));
-    // rightJoystick
-    //     .button(2)
-    //     .onTrue(
-    //
-    // elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
-    // rightJoystick.button(1).onTrue(elevator.setPosition());
-
-    rightJoystick.button(1).onTrue(ScoringFactory.scoreL1());
-    rightJoystick.button(2).onTrue(ScoringFactory.scoreL2());
-    rightJoystick.button(3).onTrue(ScoringFactory.scoreL3());
-    rightJoystick.button(4).onTrue(ScoringFactory.scoreL4());
-    leftJoystick.button(1).onTrue(elevator.setPosition(5));
-    rightJoystick.button(5).onTrue(GamePieceFactory.intakeCoralFeeder());
-    controller.x().onTrue(elevator.resetRotationCountCommand());
-
-    // leftJoystick.button(1).
-
+    // climb button binds
     /**
-     * the following button binds work on Larry:
-     * leftJoystick.pov(0).onTrue(elevator.setPosition(5));
-     * leftJoystick.pov(90).onTrue(elevator.setPosition(17));
-     * leftJoystick.pov(180).onTrue(elevator.setPosition(30));
-     * leftJoystick.pov(270).onTrue(elevator.setPosition(48));
-     * leftJoystick.button(5).onTrue(elevator.resetRotationCount());
-     * leftJoystick.button(4).onTrue(elevator.setPosition(0));
-     * rightJoystick.button(1).whileTrue(endEffector.intake());
-     * leftJoystick.button(1).whileTrue(endEffector.outtake());
-     * leftJoystick.button(2).whileTrue(intake.runIntake(-2));
-     * rightJoystick.button(2).onTrue(intake.setIntakeCoralPosition());
-     * rightJoystick.button(2).whileTrue(intake.runIntake(8));
-     * rightJoystick.button(5).onTrue(intake.resetArmRotationCount());
-     * rightJoystick.button(2).onFalse(intake.setPosition(0));
-     * rightJoystick.button(3).onTrue(intake.setIntakeAlgaePosition());
-     * rightJoystick.button(3).whileTrue(intake.runIntake(-8));
-     * rightJoystick.button(3).onFalse(intake.setPosition(0));
-     * rightJoystick.button(4).whileTrue(intake.runIntake(4));
+     * TODO - need climb factory methods for running till end and deploying backpack
+     * rightJoystick.button(4) -> backpack activation down leftJoystick.button(4) or button 3 -> run
+     * full climb
      */
 
-    // rightJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_1_SETPOINT));
-    // leftJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_2_3_SETPOINT));
-    // rightJoystick.button(2).whileTrue(arm.setPosition(Constants.ArmConstants.BARGE));
-    // leftJoystick
-    //     .button(2)
-    //     .whileTrue(arm.setPosition(Constants.ArmConstants.GROUND_INTAKE_SETPOINT));
-    // rightJoystick
-    //     .button(3)
-    //     .whileTrue(arm.setPosition(Constants.ArmConstants.CORAL_STATION_INTAKE_SETPOINT));
+    // intake button binds
+    rightJoystick.trigger().whileTrue(GamePieceFactory.intakeAlgaeGround());
+    leftJoystick.trigger().whileTrue(ScoringFactory.scoreProcessor());
+    rightJoystick
+        .button(2)
+        .and(rightJoystick.trigger())
+        .whileTrue(GamePieceFactory.intakeCoralGround());
+    rightJoystick.button(2).and(rightJoystick.trigger()).whileTrue(ScoringFactory.scoreL1());
+    rightJoystick
+        .button(3)
+        .and(rightJoystick.trigger())
+        .whileTrue(GamePieceFactory.intakeCoralFeeder());
 
+    // scoring button binds
+    // TODO- controller app activation button:
+    // rightJoystick.button(3).and(leftJoystick.trigger()).whileTrue(<controller app function>);
+
+    // manual backup button binds
+    rightJoystick
+        .button(3)
+        .and(leftJoystick.button(2))
+        .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
+    rightJoystick.povUp().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualUp());
+    rightJoystick.povDown().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualDown());
   }
 
   /**
