@@ -17,7 +17,7 @@ public class AutoRoutines {
       new NemesisAuto(
           "driveThenScoreL4",
           "simple1piece",
-          new String[] {"scoreL4"},
+          new String[] {"dumpL1 scoreL4"},
           Constants.currentMode == Mode.SIM);
 
   public static ArrayList<Boolean> getTriggerBooleans(NemesisAuto auto) {

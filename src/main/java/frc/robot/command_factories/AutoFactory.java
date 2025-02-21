@@ -290,12 +290,13 @@ public class AutoFactory {
             currentCommand
                 .event("dumpL1")
                 .and(whichPath); // if we are at EventMarker in path which has the name "dumpL1"
-        dumpL1.onTrue(ScoringFactory.scoreL1());
+        // dumpL1.onTrue(ScoringFactory.scoreL1());
 
         Command chosen;
         // ['dumpl1 score'] will activate the Trigger for dumpL1 and intake based on their
         // conditions, this way on one path we can do multiple things
         String[] currentString = commandString[i].split(" ");
+
         for (String command : currentString) {
 
           switch (command) {
@@ -314,8 +315,9 @@ public class AutoFactory {
             case "scoreL4":
               chosen =
                   simMode
-                      ? Commands.print(
-                          "\n scoreL4 command placeholder") // on True this command should be
+                      ? Commands.runOnce(
+                          () ->
+                              logAutoCommandsSim("Score L4 sim")) // on True this command should be
                       // scheduled
                       : ScoringFactory.scoreL4().andThen(ScoringFactory.stow());
               inReef.onTrue(chosen);
@@ -324,19 +326,23 @@ public class AutoFactory {
             case "scoreL1":
               chosen =
                   simMode
-                      ? Commands.print("scoreL1 command placeholder")
+                      ? Commands.runOnce(() -> logAutoCommandsSim("Score L1 sim"))
                       : ScoringFactory.scoreL1().andThen(ScoringFactory.stow());
 
               inReef.onTrue(chosen);
               break;
             case "dumpL1":
-              chosen = ScoringFactory.scoreL1();
+              chosen =
+                  simMode
+                      ? Commands.runOnce(() -> logAutoCommandsSim("dump L1 sim"))
+                          .alongWith(Commands.print("dumpL1 Command run"))
+                      : ScoringFactory.scoreL1();
               dumpL1.onTrue(chosen);
 
             case "intakeFromStation":
               chosen =
                   simMode
-                      ? Commands.print("intake command placeholder")
+                      ? Commands.runOnce(() -> logAutoCommandsSim("intake station sim"))
                       : EndEffectorFactory.runEndEffector().andThen(ScoringFactory.stow());
 
               atIntakeStation.onTrue(chosen);
@@ -346,7 +352,7 @@ public class AutoFactory {
             case "processor":
               chosen =
                   simMode
-                      ? Commands.print("processor command placeholder")
+                      ? Commands.runOnce(() -> logAutoCommandsSim("processor score sim"))
                       : IntakeFactory.setHoldingAlgaePosition();
               scoreProcessor.onTrue(chosen);
           }

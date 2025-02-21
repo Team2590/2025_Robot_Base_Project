@@ -16,6 +16,7 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -236,15 +237,15 @@ public class RobotContainer {
                     Constants.EndEffectorConstantsLeonidas.invert,
                     Constants.EndEffectorConstantsLeonidas.brake,
                     Constants.EndEffectorConstantsLeonidas.reduction));
-        climb = new Climb(
-            new ClimbIOTalonFX(
-                Constants.ClimbConstantsLeonidas.canID, 
-                Constants.ClimbConstantsLeonidas.canBus, 
-                Constants.ClimbConstantsLeonidas.currentLimitAmps, 
-                Constants.ClimbConstantsLeonidas.invert, 
-                Constants.ClimbConstantsLeonidas.brake, 
-                Constants.ClimbConstantsLeonidas.reduction
-            ));
+        climb =
+            new Climb(
+                new ClimbIOTalonFX(
+                    Constants.ClimbConstantsLeonidas.canID,
+                    Constants.ClimbConstantsLeonidas.canBus,
+                    Constants.ClimbConstantsLeonidas.currentLimitAmps,
+                    Constants.ClimbConstantsLeonidas.invert,
+                    Constants.ClimbConstantsLeonidas.brake,
+                    Constants.ClimbConstantsLeonidas.reduction));
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -256,11 +257,11 @@ public class RobotContainer {
                 new ModuleIOSim(constantsWrapper.BackLeft, constantsWrapper),
                 new ModuleIOSim(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOPhotonVision(
+        //             List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
@@ -340,6 +341,9 @@ public class RobotContainer {
 
     // Configure the button bindings
     //  configureButtonBindings();
+
+    // setup Named Commands:
+    registerNamedCommands();
   }
 
   /**
@@ -489,7 +493,7 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
-  public static void registerCommands() {
+  public static void registerNamedCommands() {
     NamedCommands.registerCommand("HoldL4", AutoFactory.holdThenL4);
     NamedCommands.registerCommand("HoldL3", AutoFactory.holdThenL3);
     NamedCommands.registerCommand("HoldL2", AutoFactory.holdThenL2);
