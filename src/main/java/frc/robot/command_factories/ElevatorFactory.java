@@ -51,6 +51,12 @@ public class ElevatorFactory {
                     RobotContainer.getArm().getAbsolutePosition()));
   }
 
+  public static boolean elevatorCommandFinished() {
+
+    return RobotContainer.getElevator().getCharacterizationVelocity()
+        == 0; // Whatever Score Positon For
+  }
+
   /**
    * Creates a command to reset the elevator's rotation count.
    *

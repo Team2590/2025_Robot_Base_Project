@@ -35,6 +35,8 @@ public class DriveFactory {
    * @return Command to drive to pose
    */
   public static Command driveToPose(Pose2d targetPose) {
+
+    // RobotContainer.factoryCommands.add("Drive To Pose");
     return DriveCommands.driveToPose(targetPose).withName("Drive To Pose");
   }
 }

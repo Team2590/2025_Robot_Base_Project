@@ -36,6 +36,8 @@ public final class Constants {
   public static final boolean tuningMode = true;
   public static final double loopPeriodSecs = 0.02;
 
+  public static final double endEffectOffset = .2921; // Offset of the end effector to the
+
   public static class DriveToPoseConstraints {
     public static double maxVelocityMPS = 15;
     public static double maxAccelerationMPSSq = 10;
@@ -80,6 +82,7 @@ public final class Constants {
 
   public static final boolean flipside =
       DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+
   public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
   public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTop");
   public static final FRCPolygon BargeBoundsBot = new FRCPolygon("BargeBot", "BargeBot");
@@ -101,6 +104,7 @@ public final class Constants {
   }
 
   public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
+
   public static LoggedTunableNumber homeSetpoint =
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
   public static final String CANBUS = "Takeover";
