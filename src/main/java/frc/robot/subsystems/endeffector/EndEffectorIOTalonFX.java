@@ -36,14 +36,15 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
   private double statorCurrentAmps;
 
   public EndEffectorIOTalonFX(
-    int canID,
-    String canBus,
-    int currentLimitAmps,
-    boolean invert,
-    boolean brake,
-    double reduction
-  ) {
+      int canID,
+      String canBus,
+      int currentLimitAmps,
+      boolean invert,
+      boolean brake,
+      double reduction) {
     leader = new TalonFX(canID, canBus);
+
+    cfg = new TalonFXConfiguration();
 
     cfg.MotorOutput.Inverted =
         invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
@@ -88,7 +89,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
 
   @Override
   public void setVoltage(double voltage) {
-    leader.setVoltage(voltageTunableNumber.get());
+    leader.setVoltage(voltage);
   }
 
   @Override

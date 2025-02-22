@@ -17,7 +17,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Robot;
+import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 import frc.robot.util.StickyFaultUtil;
@@ -27,16 +28,19 @@ import frc.robot.util.StickyFaultUtil;
  */
 public class ElevatorIOTalonFX implements ElevatorIO {
   private TalonFX leader;
-  private LoggedTunableNumber kS = new LoggedTunableNumber("Elevator/kS", 0.28021);
-  private LoggedTunableNumber kV = new LoggedTunableNumber("Elevator/kV", 0.02265);
+  private LoggedTunableNumber kS =
+      new LoggedTunableNumber("Elevator/kS", Constants.ElevatorConstantsLeonidas.kS);
+  private LoggedTunableNumber kV =
+      new LoggedTunableNumber("Elevator/kV", Constants.ElevatorConstantsLeonidas.kV);
   private LoggedTunableNumber kG = new LoggedTunableNumber("Elevator/kG", 0.18);
   private LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP", 16);
   private LoggedTunableNumber kI = new LoggedTunableNumber("Elevator/kI", 0);
   private LoggedTunableNumber kD = new LoggedTunableNumber("Elevator/kD", 0);
   private LoggedTunableNumber cruiseVelocity =
-      new LoggedTunableNumber("Elevator/cruiseVelocity", 4000);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Elevator/acceleration", 100);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("Elevator/jerk", 4000);
+      new LoggedTunableNumber("Elevator/cruiseVelocity", 3000);
+  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Elevator/acceleration", 300);
+  private LoggedTunableNumber jerk = new LoggedTunableNumber("Elevator/jerk", 750);
+  private LoggedTunableNumber setPos = new LoggedTunableNumber("Elevator/setpointPos", 5);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
@@ -161,8 +165,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setPosition(double position) {
-    double armPos = Robot.getRobotContainerInstance().getArm().getAbsolutePosition();
-    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_ARM, armPos, position)) {
+    double armPos = RobotContainer.getArm().getAbsolutePosition();
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position, armPos)) {
       var request = new MotionMagicVoltage(0);
       if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {
         leader.setControl(request);
@@ -172,6 +176,25 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     } else {
       System.out.println("CAN'T MOVE ELEVATOR, arm not in valid position");
     }
+  }
+
+  public void setPositionLoggedNumber() {
+    double armPos = RobotContainer.getArm().getAbsolutePosition();
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, setPos.get(), armPos)) {
+      var request = new MotionMagicVoltage(0);
+      if (leader.getPosition().getValueAsDouble() < 0 || setPos.get() < 0) {
+        leader.setControl(request);
+      } else {
+        leader.setControl(request.withPosition(setPos.get()));
+      }
+    } else {
+      System.out.println("CAN'T MOVE ELEVATOR, arm not in valid position");
+    }
+  }
+
+  @Override
+  public double getTargetPosition() {
+    return leader.getPosition().getValueAsDouble();
   }
 
   @Override
@@ -191,10 +214,11 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setVoltage(VoltageOut volts) {
-    double armPos = Robot.getRobotContainerInstance().getArm().getAbsolutePosition();
+    double armPos = RobotContainer.getArm().getAbsolutePosition();
     double elevatorPos = getRotationCounts();
 
-    if (SafetyChecker.isElevatorMovementSafe(armPos, elevatorPos)) {
+    if (SafetyChecker.isSafe(
+        SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position.getValueAsDouble(), armPos)) {
       leader.setControl(volts);
     } else {
       System.out.println("CAN'T MOVE ELEVATOR, arm not in valid position");

@@ -3,10 +3,13 @@ package frc.robot.subsystems.arm;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.NemesisMathUtil;
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
   private ArmIO arm;
+  private double setpointTolerance = 0.05;
+  private double setpoint;
 
   private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
@@ -19,11 +22,25 @@ public class Arm extends SubsystemBase {
     arm.updateTunableNumbers();
     arm.updateInputs(inputs);
     Logger.processInputs("Arm", inputs);
+
+    // Log current position and target position
+    Logger.recordOutput("Arm/CurrentPosition", inputs.armabspos);
+    Logger.recordOutput("Arm/TargetPosition", setpoint);
   }
 
   /** Run open loop at the specified voltage. */
   public Command setPosition(double setpoint) {
     return runOnce(() -> arm.setPosition(setpoint));
+  }
+
+  public Command setPositionBlocking(double setpoint) {
+    this.setpoint = setpoint;
+    return runEnd(() -> arm.setPosition(setpoint), () -> arm.setPosition(setpoint))
+        .until(() -> NemesisMathUtil.isApprox(inputs.armabspos, setpointTolerance, setpoint));
+  }
+
+  public Command setPositionLoggedTunableNumber() {
+    return runEnd(() -> arm.setPositionLoggedNumber(), () -> arm.setPositionLoggedNumber());
   }
 
   public Command resetarm() {
@@ -47,7 +64,11 @@ public class Arm extends SubsystemBase {
     arm.setVoltage(volts);
   }
 
-  public double getAbsolutePosition(){
+  public double getAbsolutePosition() {
     return inputs.armabspos;
+  }
+
+  public double getSetpoint() {
+    return setpoint;
   }
 }

@@ -23,11 +23,15 @@ public interface ElevatorIO {
 
   public void setPosition(double position);
 
+  public double getTargetPosition();
+
   public void stop();
 
   public void resetRotationCount();
 
   public void setNeutralMode(NeutralModeValue mode);
+
+  public default void setPositionLoggedNumber() {}
 
   /** Run open loop at the specified voltage. */
   public default void setVoltage(VoltageOut volts) {}

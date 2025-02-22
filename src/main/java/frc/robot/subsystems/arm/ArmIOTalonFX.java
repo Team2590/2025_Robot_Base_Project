@@ -17,13 +17,14 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 import frc.robot.util.StickyFaultUtil;
@@ -31,18 +32,19 @@ import frc.robot.util.StickyFaultUtil;
 public class ArmIOTalonFX implements ArmIO {
   private TalonFX arm;
   private CANcoder armCancoder;
-  LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 16);
+  LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 8);
   LoggedTunableNumber kI = new LoggedTunableNumber("Arm/kI", 0);
   LoggedTunableNumber kD = new LoggedTunableNumber("Arm/kD", 0);
-  LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS", 0);
-  LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0.1);
-  LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", -0.011);
+  LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS", .15);
+  LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0.15);
+  LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", 0);
   LoggedTunableNumber MotionMagicCruiseVelocity1 =
       new LoggedTunableNumber("Arm/MotionMagicCruiseVelocity", 1500); // 1500
   LoggedTunableNumber MotionMagicAcceleration1 =
-      new LoggedTunableNumber("Arm/MotionMagicAcceleration", 500); // 500
-  LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", 2000);
+      new LoggedTunableNumber("Arm/MotionMagicAcceleration", 50); // 500
+  LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", 100);
   LoggedTunableNumber ff = new LoggedTunableNumber("Arm/Feedforward", 0);
+  LoggedTunableNumber setPos = new LoggedTunableNumber("Arm/setpointPos", 0);
   Slot0Configs slot0;
   TalonFXConfiguration cfg;
   MotionMagicConfigs mm;
@@ -98,10 +100,13 @@ public class ArmIOTalonFX implements ArmIO {
 
     FeedbackConfigs fdb = cfg.Feedback;
     fdb.RotorToSensorRatio = sensor_reduction;
+    // fdb.SensorToMechanismRatio = 1.6;
     fdb.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     fdb.FeedbackRemoteSensorID = cancoderID;
     MagnetSensorConfigs mag = new MagnetSensorConfigs();
+    mag.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     mag.MagnetOffset = magOffset;
+    mag.AbsoluteSensorDiscontinuityPoint = 0.9;
     CANcoderConfiguration can = new CANcoderConfiguration();
     can.withMagnetSensor(mag);
     armCancoder.getConfigurator().apply(can);
@@ -110,7 +115,7 @@ public class ArmIOTalonFX implements ArmIO {
     mmv = new MotionMagicDutyCycle(0);
 
     position = arm.getPosition();
-    velocity = arm.getVelocity();
+    velocity = armCancoder.getVelocity();
     appliedVoltage = arm.getMotorVoltage();
     supplyCurrent = arm.getSupplyCurrent();
     torqueCurrent = arm.getTorqueCurrent();
@@ -143,10 +148,20 @@ public class ArmIOTalonFX implements ArmIO {
   }
 
   public void setPosition(double position) {
-    double elevatorPos = Robot.getRobotContainerInstance().getElevator().getRotationCount();
+    double elevatorPos = RobotContainer.getElevator().getRotationCount();
 
-    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_ELEVATOR, elevatorPos, position)) {
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position, elevatorPos)) {
       arm.setControl(mmv.withPosition(position));
+    } else {
+      System.out.println("CAN'T MOVE ARM, elevator not in valid position.");
+    }
+  }
+
+  public void setPositionLoggedNumber() {
+    double elevatorPos = RobotContainer.getElevator().getRotationCount();
+
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, setPos.get(), elevatorPos)) {
+      arm.setControl(mmv.withPosition(setPos.get()));
     } else {
       System.out.println("CAN'T MOVE ARM, elevator not in valid position.");
     }
@@ -210,10 +225,10 @@ public class ArmIOTalonFX implements ArmIO {
 
   @Override
   public void setVoltage(double volts) {
-    double elevatorPos = Robot.getRobotContainerInstance().getElevator().getRotationCount();
+    double elevatorPos = RobotContainer.getElevator().getRotationCount();
     double armPos = getAbsolutePosition();
 
-    if (SafetyChecker.isArmMovementSafe(elevatorPos, armPos)) {
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, armPos, elevatorPos)) {
       arm.setControl(new VoltageOut(volts));
     } else {
       System.out.println("CAN'T MOVE ARM, elevator not in valid position.");

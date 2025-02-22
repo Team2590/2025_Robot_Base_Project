@@ -1,9 +1,11 @@
 package frc.robot.subsystems.endeffector;
 
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
@@ -30,11 +32,18 @@ public class EndEffector extends SubsystemBase {
     Logger.recordOutput("EndEffector/CurrentThreshold", CURRENT_THRESHOLD);
     Logger.recordOutput("EndEffector/filter", filtered_data);
   }
+  // This method is to check if we have a coral or not, if we don't have a coral the current will
+  // not spike
+  public boolean currentSpiked() {
+    Timer t = new Timer();
+
+    return t.hasElapsed(.2) && isRunning && filtered_data >= CURRENT_THRESHOLD.get();
+  }
 
   public Command runEndEffector() {
     return runEnd(
             () -> {
-              io.setVoltage(6.0);
+              io.setVoltage(Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE);
               isRunning = true;
             },
             () -> {
@@ -48,7 +57,7 @@ public class EndEffector extends SubsystemBase {
   public Command runEndEffectorOuttake() {
     return runEnd(
             () -> {
-              io.setVoltage(-6.0);
+              io.setVoltage(Constants.EndEffectorConstantsLeonidas.EJECT_VOLTAGE);
               isRunning = true;
             },
             () -> {
@@ -77,5 +86,9 @@ public class EndEffector extends SubsystemBase {
           io.stop();
           isRunning = false;
         });
+  }
+
+  public boolean isRunning() {
+    return isRunning;
   }
 }
