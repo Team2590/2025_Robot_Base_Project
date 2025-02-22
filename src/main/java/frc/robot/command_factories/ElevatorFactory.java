@@ -63,8 +63,6 @@ public class ElevatorFactory {
         .withName("Set Elevator Voltage");
   }
 
- 
-
   /**
    * Creates a command to reset the elevator's rotation count.
    *

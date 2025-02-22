@@ -28,6 +28,4 @@ public class EndEffectorFactory {
         .runEndEffectorOuttake()
         .withName("Run Endeffector Outtake");
   }
-
-
 }

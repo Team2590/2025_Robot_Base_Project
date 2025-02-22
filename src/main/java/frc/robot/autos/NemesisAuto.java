@@ -3,15 +3,11 @@ package frc.robot.autos;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.events.EventScheduler;
-import com.pathplanner.lib.events.PointTowardsZoneTrigger;
-import com.pathplanner.lib.events.ScheduleCommandEvent;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -20,184 +16,192 @@ import frc.robot.command_factories.IntakeFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.subsystems.drive.Drive;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class NemesisAuto {
 
+  public String fileName;
+  public String[] commandString;
+  public PathPlannerAuto currentCommand;
+  public String autoName;
+  public PathPlannerAuto initialCommand;
+  public boolean manualMode;
+  public ArrayList<Trigger> triggers;
+  List<PathPlannerPath> pathList;
+  HashMap<String, Command> stringToCommand;
 
- 
+  // public Command eventCommand;
+  // Load in auto path Group from file
 
-    public String fileName;
-    public String[] commandString;
-    public PathPlannerAuto currentCommand;
-    public String autoName;
-    public PathPlannerAuto initialCommand;
-    public boolean simMode;
-    public ArrayList<Trigger> triggers;
-    // public Command eventCommand;
-    // Load in auto path Group from file
+  /*
+   * This constructor builds an auto that creates an EventScheduler and for each Trajectory it creates a command for that trajectory
+   * So command1 will be for trajectory 1, command2 will be for trajectory2, command3 will be for trajectory 3 etc
+   * When we run them all in parallel, hopefully when we are on trajectory1 command1 will run along with the pathfollowcommand
+   * We define triggers for certain conditions such as eventTriggers ,or custom conditions
+   *
+   *
+   */
 
-    /*
-     * This constructor builds an auto that creates an EventScheduler and for each Trajectory it creates a command for that trajectory
-     * So command1 will be for trajectory 1, command2 will be for trajectory2, command3 will be for trajectory 3 etc
-     * When we run them all in parallel, hopefully when we are on trajectory1 command1 will run along with the pathfollowcommand
-     * We define triggers for certain conditions such as eventTriggers ,or custom conditions
+  public NemesisAuto(String autoName, String fileName, String[] commandString, boolean manual) {
+    this.manualMode = manual;
+    this.fileName = fileName;
+    this.commandString = commandString;
+    this.autoName = autoName;
+
+    stringToCommand = new HashMap<>();
+    stringToCommand.put("scoreL4", ScoringFactory.scoreL4().andThen(ScoringFactory.stow()));
+    stringToCommand.put("dumpL1", ScoringFactory.scoreL1());
+    stringToCommand.put("intake", EndEffectorFactory.runEndEffector());
+
+    // simMode = simOrNah;
+    logAutoCommandsSim("init this auto :D : " + fileName);
+
+    triggers = new ArrayList<>();
+    try {
+      pathList = PathPlannerAuto.getPathGroupFromAutoFile(fileName);
+    } catch (Exception e) {
+      pathList = null;
+      System.out.println("oopsei with reading the . auto file " + e.getMessage());
+    }
+  }
+
+  public Command getCommand() {
+    // initialize the conditionals to add Commands based on the strings in the list
+    /* Ie ['scoreL4', 'intake', 'scoreL1', 'dumpL1 intake']
+    first iteration
+    scoreL4
+    Create Triggers inReef, and atIntakeStation
+    This way we create a Trigger for each iteration, and only the ones that are on the correct iteration can be run
+    Activate Trigger based on string
+
      *
      *
      */
 
-  
+    Command init = AutoBuilder.buildAuto(fileName);
+    currentCommand = new PathPlannerAuto(init);
+    for (int i = 0; i < pathList.size(); i++) {
+      Trigger whichPath =
+          currentCommand.activePath(
+              pathList.get(i)
+                  .name); // creates a trigger thats true when we are on the currentPath of index
+      // i
 
-    public NemesisAuto(String autoName, String fileName, String[] commandString, boolean simOrNah) {
-      Command init = AutoBuilder.buildAuto(fileName);
-      currentCommand = new PathPlannerAuto(init);
-      simMode = simOrNah;
+      // if the first path is being run, we want to use the first command in the command list
+      // we are on the first path and the first command in the list, because if we want to do
+      // something different while in the reef next time,
+      Trigger startScoreTrigger =
+          // currentCommand
+          //     .condition(
+          //         () ->
+          //
+          // Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).equals("reef"))
 
-      List<PathPlannerPath> pathList;
-      triggers = new ArrayList<>();
-      try {
-        pathList = PathPlannerAuto.getPathGroupFromAutoFile(fileName);
-      } catch (Exception e) {
-        pathList = null;
-        System.out.println("oopsei with reading the . auto file " + e.getMessage());
-      }
-     
+          currentCommand
+              .event("startScore")
+              .and(whichPath); // if in the reef and we following the same path as the selected i
+      Trigger atIntakeStation =
+          currentCommand
+              .condition(
+                  () ->
+                      Constants.locator
+                          .getZoneOfField(AutoBuilder.getCurrentPose())
+                          .contains("Feeder"))
+              .and(whichPath); // if in the intake zone
+      Trigger scoreProcessor =
+          currentCommand.event("PrimeProcessor").and(whichPath); // controlled by event markers
 
-      // initialize the conditionals to add Commands based on the strings in the list
-      /* Ie ['scoreL4', 'intake', 'scoreL1', 'dumpL1 intake']
-      first iteration
-      scoreL4
-      Create Triggers inReef, and atIntakeStation
-      This way we create a Trigger for each iteration, and only the ones that are on the correct iteration can be run
-      Activate Trigger based on string
+      Trigger dumpL1 =
+          currentCommand
+              .event("dumpL1")
+              .and(whichPath); // if we are at EventMarker in path which has the name "dumpL1"
+      // dumpL1.onTrue(ScoringFactory.scoreL1());
 
-       *
-       *
-       */
-      for (int i = 0; i < pathList.size(); i++) {
-        Trigger whichPath =
-            currentCommand.activePath(
-                pathList.get(i)
-                    .name); // creates a trigger thats true when we are on the currentPath of index
-        // i
+      Command chosen;
+      // ['dumpl1 score'] will activate the Trigger for dumpL1 and intake based on their
+      // conditions, this way on one path we can do multiple things
+      String[] currentString = commandString[i].split(" ");
 
-        // if the first path is being run, we want to use the first command in the command list
-        // we are on the first path and the first command in the list, because if we want to do
-        // something different while in the reef next time,
-        Trigger inReef =
-            currentCommand
-                .condition(
-                    () ->
-                        Constants.locator
-                            .getZoneOfField(AutoBuilder.getCurrentPose())
-                            .equals("reef"))
-                .and(whichPath); // if in the reef and we following the same path as the selected i
-        Trigger atIntakeStation =
-            currentCommand
-                .condition(
-                    () ->
-                        Constants.locator
-                            .getZoneOfField(AutoBuilder.getCurrentPose())
-                            .contains("Feeder"))
-                .and(whichPath); // if in the intake zone
-        Trigger scoreProcessor =
-            currentCommand.event("PrimeProcessor").and(whichPath); // controlled by event markers
+      for (String command : currentString) {
 
-        Trigger dumpL1 =
-            currentCommand
-                .event("dumpL1")
-                .and(whichPath); // if we are at EventMarker in path which has the name "dumpL1"
-        // dumpL1.onTrue(ScoringFactory.scoreL1());
+        switch (command) {
+            // activate Triggers !
+          default:
+            chosen =
+                Constants.currentMode == Constants.simMode
+                    ? Commands.print("default commnad")
+                    : Commands.print("mispelled or smth").andThen(ScoringFactory.stow());
+            System.out.println("default switch case");
 
-        Command chosen;
-        // ['dumpl1 score'] will activate the Trigger for dumpL1 and intake based on their
-        // conditions, this way on one path we can do multiple things
-        String[] currentString = commandString[i].split(" ");
+            break;
+          case "none":
+            chosen = Commands.none();
+            break;
+          case "scoreL4":
+            chosen =
+                Constants.currentMode == Constants.simMode
+                    ? Commands.runOnce(
+                        () -> logAutoCommandsSim("Score L4 sim")) // on True this command should be
+                    // scheduled
+                    : ScoringFactory.scoreL4().andThen(ScoringFactory.stow());
+            startScoreTrigger.onTrue(chosen);
+            System.out.println(" \n  l4 switch case, Trigger created     \n");
+            break;
+          case "scoreL2":
+            chosen =
+                Constants.currentMode == Constants.simMode
+                    ? Commands.runOnce(() -> logAutoCommandsSim("Score L2 sim"))
+                    : ScoringFactory.scoreL1().andThen(ScoringFactory.stow());
 
-        for (String command : currentString) {
+            startScoreTrigger.onTrue(chosen);
 
-          switch (command) {
-              // activate Triggers !
-            default:
-              chosen =
-                  simMode
-                      ? Commands.print("default commnad")
-                      : Commands.print("mispelled or smth").andThen(ScoringFactory.stow());
-              System.out.println("default switch case");
+            break;
+          case "dumpL1":
+            chosen =
+                Constants.currentMode == Constants.simMode
+                    ? Commands.runOnce(() -> logAutoCommandsSim("dump L1 sim"))
+                        .alongWith(Commands.print("dumpL1 Command run"))
+                    : ScoringFactory.scoreL1();
+            dumpL1.onTrue(chosen);
 
-              break;
-            case "none":
-              chosen = Commands.none();
-              break;
-            case "scoreL4":
-              chosen =
-                  simMode
-                      ? Commands.runOnce(
-                          () ->
-                              logAutoCommandsSim("Score L4 sim")) // on True this command should be
-                      // scheduled
-                      : ScoringFactory.scoreL4().andThen(ScoringFactory.stow());
-              inReef.onTrue(chosen);
-              System.out.println(" \n  l4 switch case, Trigger created     \n");
-              break;
-            case "scoreL1":
-              chosen =
-                  simMode
-                      ? Commands.runOnce(() -> logAutoCommandsSim("Score L1 sim"))
-                      : ScoringFactory.scoreL1().andThen(ScoringFactory.stow());
+          case "intakeFromStation":
+            chosen =
+                Constants.currentMode == Constants.simMode
+                    ? Commands.runOnce(() -> logAutoCommandsSim("intake station sim"))
+                    : EndEffectorFactory.runEndEffector().andThen(ScoringFactory.stow());
 
-              inReef.onTrue(chosen);
-              break;
-            case "dumpL1":
-              chosen =
-                  simMode
-                      ? Commands.runOnce(() -> logAutoCommandsSim("dump L1 sim"))
-                          .alongWith(Commands.print("dumpL1 Command run"))
-                      : ScoringFactory.scoreL1();
-              dumpL1.onTrue(chosen);
+            atIntakeStation.onTrue(chosen);
 
-            case "intakeFromStation":
-              chosen =
-                  simMode
-                      ? Commands.runOnce(() -> logAutoCommandsSim("intake station sim"))
-                      : EndEffectorFactory.runEndEffector().andThen(ScoringFactory.stow());
+            break;
 
-              atIntakeStation.onTrue(chosen);
-
-              break;
-
-            case "processor":
-              chosen =
-                  simMode
-                      ? Commands.runOnce(() -> logAutoCommandsSim("processor score sim"))
-                      : IntakeFactory.setHoldingAlgaePosition();
-              scoreProcessor.onTrue(chosen);
-          }
-
-          triggers.add(inReef);
-          triggers.add(whichPath);
-          triggers.add(atIntakeStation);
-          triggers.add(scoreProcessor);
-          triggers.add(dumpL1);
-
+          case "processor":
+            chosen =
+                Constants.currentMode == Constants.simMode
+                    ? Commands.runOnce(() -> logAutoCommandsSim("processor score sim"))
+                    : IntakeFactory.setHoldingAlgaePosition();
+            scoreProcessor.onTrue(chosen);
         }
-      
 
+        triggers.add(startScoreTrigger);
+        triggers.add(whichPath);
+        triggers.add(atIntakeStation);
+        triggers.add(scoreProcessor);
+        triggers.add(dumpL1);
       }
     }
 
-    public Command getCommand() {
-      return currentCommand;
-    }
+    return currentCommand;
+  }
 
-    public ArrayList<Trigger> getTriggers() {
-      return triggers;
-    }
-  
+  public ArrayList<Trigger> getTriggers() {
+    return triggers;
+  }
 
   public static void logAutoCommandsSim(String message) {
     Drive.autoCommandMessage = message;
   }
+
   public static PathPlannerTrajectory getTrajectoryFromAuto(String fileName, int index) {
     RobotConfig config = RobotContainer.getDrive().getConfig();
     try {
@@ -209,7 +213,3 @@ public class NemesisAuto {
     }
   }
 }
-
-
-
-

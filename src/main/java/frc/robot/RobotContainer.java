@@ -345,7 +345,7 @@ public class RobotContainer {
     autoChooser.addOption("driveThenL4", AutoRoutines.driveThenScoreL4.getCommand());
 
     // Configure the button bindings
-    configureButtonBindings();
+    // configureButtonBindings();
 
     // setup Named Commands:
     registerNamedCommands();
@@ -416,9 +416,12 @@ public class RobotContainer {
   }
 
   public static void registerNamedCommands() {
-   
 
-    NamedCommands.registerCommand("ScoreL4", ScoringFactory.scoreL4());
+    NamedCommands.registerCommand(
+        "ScoreL4",
+        Constants.currentMode == Constants.simMode
+            ? Commands.runOnce(() -> NemesisAuto.logAutoCommandsSim("scoreL4 in spirit :>"))
+            : ScoringFactory.scoreL4());
     NamedCommands.registerCommand("ScoreL3", ScoringFactory.scoreL3());
     NamedCommands.registerCommand("ScoreL2", ScoringFactory.scoreL2());
     NamedCommands.registerCommand("ScoreL1", ScoringFactory.scoreL1());
