@@ -29,11 +29,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.DriveToPoseConstraints;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
@@ -300,6 +302,20 @@ public class DriveCommands {
   }
 
   public static Command driveToPose(Pose2d targetPose) {
+    System.out.println("DRIVING TO POSE " + targetPose);
     return AutoBuilder.pathfindToPose(targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
+  }
+
+  public static Command driveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
+    System.out.println("DRIVING TO POSE " + targetPoseSupplier.get());
+    HashSet<Subsystem> requirements = new HashSet<>();
+    requirements.add(drive);
+    return Commands.defer(
+        () -> {
+          Pose2d targetPose = targetPoseSupplier.get();
+          return AutoBuilder.pathfindToPose(
+              targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
+        },
+        requirements);
   }
 }

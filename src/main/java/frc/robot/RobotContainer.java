@@ -16,8 +16,13 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+<<<<<<< HEAD
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+=======
+import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.geometry.Pose2d;
+>>>>>>> origin
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -28,6 +33,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
+import frc.robot.autos.AutoRoutines;
+import frc.robot.command_factories.AutoFactory;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
@@ -80,6 +87,7 @@ public class RobotContainer {
   @Getter private static Intake intake;
   @Getter private static EndEffector endEffector;
   @Getter private static Climb climb;
+  private final ControllerOrchestrator controllerApp = new ControllerOrchestrator();
 
   // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
@@ -250,7 +258,6 @@ public class RobotContainer {
                     Constants.ClimbConstantsLeonidas.reduction));
         break;
       case SIM:
-        // Sim robot, instantiate physics sim IO implementations
         drive =
             new Drive(
                 new GyroIO() {},
@@ -339,8 +346,13 @@ public class RobotContainer {
         new FeedForwardCharacterization(
             intake, intake::setVoltage, intake::getCharacterizationVelocity));
 
+    autoChooser.addOption("driveThenL4", AutoRoutines.driveThenScoreL4.getCommand());
+
     // Configure the button bindings
     configureButtonBindings();
+
+    // setup Named Commands:
+    registerNamedCommands();
   }
 
   /**
@@ -406,6 +418,23 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public static void registerNamedCommands() {
+    NamedCommands.registerCommand("HoldL4", AutoFactory.holdThenL4);
+    NamedCommands.registerCommand("HoldL3", AutoFactory.holdThenL3);
+    NamedCommands.registerCommand("HoldL2", AutoFactory.holdThenL2);
+    // NamedCommands.registerCommand("HoldL1", AutoFactory.holdThenL1);
+
+    NamedCommands.registerCommand("ScoreL4", ScoringFactory.scoreL4());
+    NamedCommands.registerCommand("ScoreL3", ScoringFactory.scoreL3());
+    NamedCommands.registerCommand("ScoreL2", ScoringFactory.scoreL2());
+    NamedCommands.registerCommand("ScoreL1", ScoringFactory.scoreL1());
+    NamedCommands.registerCommand("Stow-Mechanism", ScoringFactory.stow());
+  }
+
+  public boolean inReef() {
+    return Constants.locator.getZoneOfField(drive.getPose()).equals("reef");
   }
 
   // Add joystick accessors if missing
