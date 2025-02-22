@@ -103,7 +103,6 @@ public class ScoringFactory {
    * @return Command sequence for stowing
    */
   public static Command stow() {
-
     return new SequentialCommandGroup(
             ArmFactory.setPositionBlocking(0), ElevatorFactory.setPositionBlocking(0))
         .withName("Stow Mechanism");

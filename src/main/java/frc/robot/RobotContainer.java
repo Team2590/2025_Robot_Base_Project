@@ -17,10 +17,13 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -29,6 +32,9 @@ import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.autos.AutoRoutines;
 import frc.robot.command_factories.AutoFactory;
 import frc.robot.command_factories.DriveFactory;
+import frc.robot.command_factories.ElevatorFactory;
+import frc.robot.command_factories.EndEffectorFactory;
+import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
@@ -77,6 +83,7 @@ public class RobotContainer {
   @Getter private static Intake intake;
   @Getter private static EndEffector endEffector;
   @Getter private static Climb climb;
+  private final ControllerOrchestrator controllerApp = new ControllerOrchestrator();
 
   // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
@@ -205,29 +212,11 @@ public class RobotContainer {
                     Constants.ElevatorConstantsLeonidas.brake,
                     Constants.ElevatorConstantsLeonidas.reduction));
         elevator.resetRotationCount();
-        arm =
-            new Arm(
-                new ArmIOTalonFX(
-                    Constants.ArmConstantsLeonidas.canID,
-                    Constants.ArmConstantsLeonidas.canBus,
-                    Constants.ArmConstantsLeonidas.currentLimitAmps,
-                    Constants.ArmConstantsLeonidas.invert,
-                    Constants.ArmConstantsLeonidas.brake,
-                    Constants.ArmConstantsLeonidas.reduction,
-                    Constants.ArmConstantsLeonidas.cancoderID,
-                    Constants.ArmConstantsLeonidas.magOffset,
-                    Constants.ArmConstantsLeonidas.sensorReduction));
-        elevator =
-            new Elevator(
-                new ElevatorIOTalonFX(
-                    Constants.ElevatorConstantsLeonidas.canID,
-                    Constants.ElevatorConstantsLeonidas.canBus,
-                    Constants.ElevatorConstantsLeonidas.currentLimitAmps,
-                    Constants.ElevatorConstantsLeonidas.invert,
-                    Constants.ElevatorConstantsLeonidas.brake,
-                    Constants.ElevatorConstantsLeonidas.reduction));
-        elevator.resetRotationCount();
-        vision = null;
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(
+                    List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(
@@ -265,7 +254,6 @@ public class RobotContainer {
                     Constants.ClimbConstantsLeonidas.reduction));
         break;
       case SIM:
-        // Sim robot, instantiate physics sim IO implementations
         drive =
             new Drive(
                 new GyroIO() {},
@@ -274,21 +262,18 @@ public class RobotContainer {
                 new ModuleIOSim(constantsWrapper.BackLeft, constantsWrapper),
                 new ModuleIOSim(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOPhotonVision(
-        //             List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(
+                    List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
                 new IntakeArmIOSim(DCMotor.getFalcon500(1), 4, .1));
-        arm = new Arm(new ArmIOSim());
-        elevator = new Elevator(new ElevatorIOSim(100.0, 5.0, 0.05, true));        
-        endEffector =
-            new EndEffector(
-                new EndEffectorIOSim(
-                    DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
+        arm = new Arm(new ArmIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 1, true, 1));
+        elevator =
+            new Elevator(new ElevatorIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 10, false, 1));
         endEffector =
             new EndEffector(
                 new EndEffectorIOSim(
@@ -357,55 +342,15 @@ public class RobotContainer {
         new FeedForwardCharacterization(
             intake, intake::setVoltage, intake::getCharacterizationVelocity));
 
-    // Only configure simulation bindings if in simulation mode
-    if (Constants.currentMode == Constants.Mode.SIM) {
-      configureButtonBindingsSimulation();
-    } else {
-      // Configure the button bindings
-      configureButtonBindings();
-    }
+    autoChooser.addOption("driveThenL4", AutoRoutines.driveThenScoreL4.getCommand());
+
+    // Configure the button bindings
+    configureButtonBindings();
+
+    // setup Named Commands:
+    registerNamedCommands();
   }
 
-  private void configureButtonBindingsSimulation() {
-
-    // Add elevator control bindings
-    leftJoystick
-        .button(3)
-        .onTrue(
-            elevator.setPosition(
-                Constants.ElevatorConstantsLeonidas
-                    .ELEVATOR_OPERATIONAL_MIN_POS)); // Move to home position
-    leftJoystick
-        .button(4)
-        .onTrue(
-            elevator.setPosition(
-                Constants.ElevatorConstantsLeonidas.ELEVATOR_DANGER_MAX_POS + 1)); // Just safe
-    leftJoystick
-        .button(5)
-        .onTrue(
-            elevator.setPosition(
-                Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS)); // Move to top
-
-    // Add arm control bindings
-    leftJoystick
-        .button(6)
-        .onTrue(
-            arm.setPosition(
-                Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS)); // Min position
-    leftJoystick
-        .button(7)
-        .onTrue(
-            arm.setPosition(Constants.ArmConstantsLeonidas.ARM_DANGER_MAX_POS + 0.1)); // Just safe
-    leftJoystick
-        .button(8)
-        .onTrue(
-            arm.setPosition(
-                Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS)); // Home position
-
-    leftJoystick.button(9).onTrue(ScoringFactory.scoreL3());
-    leftJoystick.button(10).onTrue(ScoringFactory.scoreProcessor());
-    leftJoystick.button(11).onTrue(ScoringFactory.stow(null));
-  }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -413,135 +358,52 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // // Default command, normal field-relative drive
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDrive(
-    //         drive,
-    //         () -> -leftJoystick.getY(),
-    //         () -> -leftJoystick.getX(),
-    //         () -> -rightJoystick.getX()));
-
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
 
-    // Lock to 0° when A button is held
-    // controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
+    // reset button binds
+    rightJoystick
+        .button(5)
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
+    leftJoystick.button(5).onTrue(Commands.runOnce(() -> elevator.resetRotationCount(), elevator));
 
-    // // Switch to X pattern when X button is pressed
-    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    // // controller.b().whileTrue(intake.runIntake(4));
-
-    // rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
-    // leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
-    // rightJoystick.button(3).onTrue(elevator.setPosition(50));
-    // rightJoystick
-    //     .button(2)
-    //     .onTrue(
-    //
-    // elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
-
-    //////////////////////////////////////////////////////
-    /// Examples of using commands from command factories.
-    //////////////////////////////////////////////////////
-    ///
-    ///
-    // example of how we might change some of the above to using the elevator factory
-    // leftJoystick.pov(0).onTrue(ElevatorFactory.setPosition(5));
-    // leftJoystick.pov(90).onTrue(ElevatorFactory.setPosition(17));
-    // leftJoystick.pov(180).onTrue(ElevatorFactory.setPosition(30));
-    // leftJoystick.pov(270).onTrue(ElevatorFactory.setPosition(48));
-    // leftJoystick.button(5).onTrue(ElevatorFactory.resetRotationCount());
-    // leftJoystick.button(4).onTrue(ElevatorFactory.setPosition(0));
-    // leftJoystick.button(1).whileTrue(endEffector.intake());
-
-    // Example of going to a specific pose using a command
-    // leftJoystick.butotn(2).onTrue(DriveFactory.driveToPose(new Pose2d()));
-
-    // Example of intake commands using controller buttons and factory pattern
-    // leftJoystick.button(1).whileTrue(IntakeFactory.runIntake(() -> 8));
-    // leftJoystick.button(2).whileTrue(IntakeFactory.runIntake(() -> -8));
-    // leftJoystick.button(3).onTrue(IntakeFactory.setIntakeCoralPosition());
-    // leftJoystick.button(4).onTrue(IntakeFactory.setIntakeAlgaePosition());
-
-    // Example of scoring commands using controller buttons
-    // leftJoystick.button(6).onTrue(ScoringFactory.scoreHigh());
-    // leftJoystick.button(7).onTrue(ScoringFactory.scoreMid());
-    // leftJoystick.button(8).onTrue(ScoringFactory.stow());
-    //////////////////////////////////////////////////////
-    /// End of examples using command factories
-    //////////////////////////////////////////////////////
-
-    // Reset gyro to 0° when B button is pressed
-    // controller
-    //     .b()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-    //                 drive)
-    //             .ignoringDisable(true));
-    // rightJoystick
-    //     .button(5)
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-    //                 drive)
-    //             .ignoringDisable(true));
-
-    // rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
-    // leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
-    // rightJoystick.button(3).onTrue(elevator.setPosition(50));
-    // rightJoystick
-    //     .button(2)
-    //     .onTrue(
-    //
-    // elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
-    // rightJoystick.button(1).onTrue(elevator.setPosition());
-
-    rightJoystick.button(1).onTrue(ScoringFactory.scoreL1());
-    rightJoystick.button(2).onTrue(ScoringFactory.scoreL2());
-    rightJoystick.button(3).onTrue(ScoringFactory.scoreL3());
-    rightJoystick.button(4).onTrue(ScoringFactory.scoreL4());
-    leftJoystick.button(1).onTrue(elevator.setPosition(5));
-    rightJoystick.button(5).onTrue(GamePieceFactory.intakeCoralFeeder());
-    controller.x().onTrue(elevator.resetRotationCountCommand());
-
-    // leftJoystick.button(1).
-
+    // climb button binds
     /**
-     * the following button binds work on Larry:
-     * leftJoystick.pov(0).onTrue(elevator.setPosition(5));
-     * leftJoystick.pov(90).onTrue(elevator.setPosition(17));
-     * leftJoystick.pov(180).onTrue(elevator.setPosition(30));
-     * leftJoystick.pov(270).onTrue(elevator.setPosition(48));
-     * leftJoystick.button(5).onTrue(elevator.resetRotationCount());
-     * leftJoystick.button(4).onTrue(elevator.setPosition(0));
-     * rightJoystick.button(1).whileTrue(endEffector.intake());
-     * leftJoystick.button(1).whileTrue(endEffector.outtake());
-     * leftJoystick.button(2).whileTrue(intake.runIntake(-2));
-     * rightJoystick.button(2).onTrue(intake.setIntakeCoralPosition());
-     * rightJoystick.button(2).whileTrue(intake.runIntake(8));
-     * rightJoystick.button(5).onTrue(intake.resetArmRotationCount());
-     * rightJoystick.button(2).onFalse(intake.setPosition(0));
-     * rightJoystick.button(3).onTrue(intake.setIntakeAlgaePosition());
-     * rightJoystick.button(3).whileTrue(intake.runIntake(-8));
-     * rightJoystick.button(3).onFalse(intake.setPosition(0));
-     * rightJoystick.button(4).whileTrue(intake.runIntake(4));
+     * TODO - need climb factory methods for running till end and deploying backpack
+     * rightJoystick.button(4) -> backpack activation down leftJoystick.button(4) or button 3 -> run
+     * full climb
      */
 
-    // rightJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_1_SETPOINT));
-    // leftJoystick.button(1).whileTrue(arm.setPosition(Constants.ArmConstants.REEF_2_3_SETPOINT));
-    // rightJoystick.button(2).whileTrue(arm.setPosition(Constants.ArmConstants.BARGE));
-    // leftJoystick
-    //     .button(2)
-    //     .whileTrue(arm.setPosition(Constants.ArmConstants.GROUND_INTAKE_SETPOINT));
-    // rightJoystick
-    //     .button(3)
-    //     .whileTrue(arm.setPosition(Constants.ArmConstants.CORAL_STATION_INTAKE_SETPOINT));
+    // intake button binds
+    rightJoystick.trigger().whileTrue(GamePieceFactory.intakeAlgaeGround());
+    leftJoystick.trigger().whileTrue(ScoringFactory.scoreProcessor());
+    rightJoystick
+        .button(2)
+        .and(rightJoystick.trigger())
+        .whileTrue(GamePieceFactory.intakeCoralGround());
+    rightJoystick.button(2).and(rightJoystick.trigger()).whileTrue(ScoringFactory.scoreL1());
+    rightJoystick
+        .button(3)
+        .and(rightJoystick.trigger())
+        .whileTrue(GamePieceFactory.intakeCoralFeeder());
 
+    // scoring button binds
+    // TODO- controller app activation button:
+    // rightJoystick.button(3).and(leftJoystick.trigger()).whileTrue(<controller app function>);
+
+    // manual backup button binds
+    rightJoystick
+        .button(3)
+        .and(leftJoystick.button(2))
+        .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
+    rightJoystick.povUp().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualUp());
+    rightJoystick.povDown().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualDown());
   }
 
   /**
@@ -567,7 +429,15 @@ public class RobotContainer {
   }
 
   public boolean inReef() {
-
     return Constants.locator.getZoneOfField(drive.getPose()).equals("reef");
+  }
+
+  // Add joystick accessors if missing
+  public static CommandXboxController getDriverController() {
+    return controller;
+  }
+
+  public static CommandXboxController getOperatorController() {
+    return controller;
   }
 }
