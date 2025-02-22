@@ -39,10 +39,10 @@ public final class Constants {
   public static final double endEffectOffset = .2921; // Offset of the end effector to the
 
   public static class DriveToPoseConstraints {
-    public static double maxVelocityMPS = 0;
-    public static double maxAccelerationMPSSq = 0;
-    public static double maxAngularVelocityRadPerSec = 0;
-    public static double maxAngularAccelerationRadPerSecSq = 0;
+    public static double maxVelocityMPS = 15;
+    public static double maxAccelerationMPSSq = 10;
+    public static double maxAngularVelocityRadPerSec = 1;
+    public static double maxAngularAccelerationRadPerSecSq = 1;
 
     public static PathConstraints pathConstraints =
         new PathConstraints(
@@ -56,20 +56,21 @@ public final class Constants {
   private static Rectangle2D fieldBounds = new Rectangle2D.Double(0, 0, 15, 15);
   /*
    *
-   * The ordering of points matters. I went mad trying to debug at one point, turns out it was in a bowtie and not a square
+   * The ordering of points matters. I went mad trying to debug at one point,
+   * turns out it was in a bowtie and not a square
    * Bowtie shape (incorrect rectangle):
    *
-   *     (0,2)---(2,2)
-   *      / \   / \
-   *     /   \ /   \
-   *    (0,0)---(2,0)
+   * (0,2)---(2,2)
+   * / \ / \
+   * / \ / \
+   * (0,0)---(2,0)
    *
    * Square shape (correct rectangle):
    *
-   *    (0,2)---(2,2)
-   *     |       |
-   *     |       |
-   *    (0,0)---(2,0)
+   * (0,2)---(2,2)
+   * | |
+   * | |
+   * (0,0)---(2,0)
    */
   public static final FRCPolygon playBox =
       new FRCPolygon(
@@ -85,12 +86,14 @@ public final class Constants {
   public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
   public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTop");
   public static final FRCPolygon BargeBoundsBot = new FRCPolygon("BargeBot", "BargeBot");
-  // public static final FRCPolygon PresetAlgae = new FRCPolygon("PresetAlgae", "FloatingAlgae");
+  // public static final FRCPolygon PresetAlgae = new FRCPolygon("PresetAlgae",
+  // "FloatingAlgae");
   public static final FRCPolygon Processor = new FRCPolygon("Processor", "Processor");
   public static final FRCPolygon FeederStationTop = new FRCPolygon("FeederStationTop", "Station1");
   public static final FRCPolygon FeederStationBot = new FRCPolygon("FeederStationBot", "Station2");
 
-  // Two ways to instantiate the polygons, this static initialization box is necessary
+  // Two ways to instantiate the polygons, this static initialization box is
+  // necessary
   static {
     polygons.add(playBox);
     polygons.add(reefBounds);
@@ -160,6 +163,113 @@ public final class Constants {
     static boolean brake = true;
     static double reduction = 1;
   }
+
+  public static class CoralPose {
+    public final double x;
+    public final double y;
+    public final double elevatorPosition;
+    public final double rotationTarget;
+
+    public CoralPose(double x, double y, double elevatorPosition, double rotationTarget) {
+      this.x = x;
+      this.y = y;
+      this.elevatorPosition = elevatorPosition;
+      this.rotationTarget = rotationTarget;
+    }
+
+    public CoralPose(double x, double y) {
+      this.x = x;
+      this.y = y;
+      this.elevatorPosition = 0;
+      this.rotationTarget = 0;
+    }
+  }
+
+  // public static class CoralPoses {
+
+  //   // private final Map<String, CoralPose> bluePoses;
+  //   // private final Map<String, CoralPose> redPoses;
+
+  //   // private CoralPoses(Map<String, CoralPose> bluePoses, Map<String, CoralPose> redPoses) {
+  //   //   this.bluePoses = bluePoses;
+  //   //   this.redPoses = redPoses;
+  //   // }
+
+  //   // public CoralPose getBluePose(String locID) {
+  //   //   return bluePoses.get(locID);
+  //   // }
+
+  //   // public CoralPose getRedPose(String locID) {
+  //   //   return redPoses.get(locID);
+  //   // }
+
+  //   // public CoralPose getAllianceCoralPose(String locID) {
+  //   //   Optional<Alliance> ally = DriverStation.getAlliance();
+
+  //   //   if (ally.isPresent()) {
+  //   //     if (ally.get() == Alliance.Red) {
+  //   //       return getRedPose(locID);
+  //   //     }
+  //   //     if (ally.get() == Alliance.Blue) {
+  //   //       return getBluePose(locID);
+  //   //     }
+  //   //   } else {
+  //   //     throw new IllegalStateException("NO ALLIANCE FOUND");
+  //   //   }
+  //   // }
+
+  //   // public static class Builder {
+
+  //   //   private final Map<String, CoralPose> bluePoses = new HashMap<>();
+  //   //   private final Map<String, CoralPose> redPoses = new HashMap<>();
+
+  //   //   public Builder add(String locID, CoralPose blue, CoralPose red) {
+  //   //     bluePoses.put(locID, blue);
+  //   //     redPoses.put(locID, red);
+  //   //     return this;
+  //   //   }
+
+  //   //   public CoralPoses build() {
+  //   //     return new CoralPoses(bluePoses, redPoses);
+  //   //   }
+  //   // }
+
+  //   // public static final CoralPoses CORAL_POSSES =
+  //   //     new CoralPoses.Builder()
+  //   //         .add("reefn", new CoralPose(1, 1), new CoralPose(2, 2))
+  //   //         .add("reef2", new CoralPose(5, 5), new CoralPose(6, 6))
+  //   //         .build();
+
+  //   public static class BlueCoralPoses {
+  //     public static final CoralPose Sleft = new CoralPose(3.9, 5.3);
+  //     public static final CoralPose Sright = new CoralPose(3.676, 5);
+  //     public static final CoralPose p3 = new CoralPose(3.14, 4.2);
+  //     public static final CoralPose p4 = new CoralPose(3.15, 3.87);
+  //     public static final CoralPose p5 = new CoralPose(3.62, 2.933);
+  //     public static final CoralPose p6 = new CoralPose(3.93, 2.787);
+  //     public static final CoralPose p7 = new CoralPose(5.031, 2.787);
+  //     public static final CoralPose p8 = new CoralPose(5.304, 2.933);
+  //     public static final CoralPose p9 = new CoralPose(5.83, 3.859);
+  //     public static final CoralPose p10 = new CoralPose(5.83, 4.17);
+  //     public static final CoralPose p11 = new CoralPose(5.275, 5.127);
+  //     public static final CoralPose p12 = new CoralPose(3.968, 5.283);
+  //   }
+
+  //   public static class RedCoralPoses {
+  //     public static final CoralPose p1 = new CoralPose(13.913, 5.088);
+  //     public static final CoralPose p2 = new CoralPose(13.621, 5.253);
+  //     public static final CoralPose p3 = new CoralPose(12.47, 5.253);
+  //     public static final CoralPose p4 = new CoralPose(12.217, 5.127);
+  //     public static final CoralPose p5 = new CoralPose(11.72, 4.2);
+  //     public static final CoralPose p6 = new CoralPose(11.7, 3.869);
+  //     public static final CoralPose p7 = new CoralPose(12.236, 2.943);
+  //     public static final CoralPose p8 = new CoralPose(12.5, 2.806);
+  //     public static final CoralPose p9 = new CoralPose(13.621, 2.777);
+  //     public static final CoralPose p10 = new CoralPose(13.923, 2.933);
+  //     public static final CoralPose p11 = new CoralPose(14.39, 3.869);
+  //     public static final CoralPose p12 = new CoralPose(14.411, 4.171);
+  //   }
+  // }
 
   public static class ArmConstantsLeonidas {
     public static double ARM_FACTORY_SAFETY_MIN = -0.148;
