@@ -178,7 +178,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     }
   }
 
-  public void setPositionLoggedNumber(){
+  public void setPositionLoggedNumber() {
     double armPos = RobotContainer.getArm().getAbsolutePosition();
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, setPos.get(), armPos)) {
       var request = new MotionMagicVoltage(0);
