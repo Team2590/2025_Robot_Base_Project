@@ -16,7 +16,6 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -238,15 +237,15 @@ public class RobotContainer {
                     Constants.EndEffectorConstantsLeonidas.invert,
                     Constants.EndEffectorConstantsLeonidas.brake,
                     Constants.EndEffectorConstantsLeonidas.reduction));
-        climb = new Climb(
-            new ClimbIOTalonFX(
-                Constants.ClimbConstantsLeonidas.canID, 
-                Constants.ClimbConstantsLeonidas.canBus, 
-                Constants.ClimbConstantsLeonidas.currentLimitAmps, 
-                Constants.ClimbConstantsLeonidas.invert, 
-                Constants.ClimbConstantsLeonidas.brake, 
-                Constants.ClimbConstantsLeonidas.reduction
-            ));
+        climb =
+            new Climb(
+                new ClimbIOTalonFX(
+                    Constants.ClimbConstantsLeonidas.canID,
+                    Constants.ClimbConstantsLeonidas.canBus,
+                    Constants.ClimbConstantsLeonidas.currentLimitAmps,
+                    Constants.ClimbConstantsLeonidas.invert,
+                    Constants.ClimbConstantsLeonidas.brake,
+                    Constants.ClimbConstantsLeonidas.reduction));
         break;
       case SIM:
         drive =
