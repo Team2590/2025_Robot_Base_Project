@@ -66,6 +66,10 @@ public class Elevator extends SubsystemBase {
     io.setVoltage(new VoltageOut(volts));
   }
 
+  public Command setVoltageCommand(double volts) {
+    return runEnd(
+        () -> io.setVoltage(new VoltageOut(volts)), () -> io.setPosition(inputs.rotationCount));
+  }
   /** Returns the current velocity in radians per second. */
   public double getCharacterizationVelocity() {
     return inputs.velocityRadsPerSec;

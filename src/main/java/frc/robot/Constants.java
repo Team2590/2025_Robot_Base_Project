@@ -308,6 +308,7 @@ public final class Constants {
     public static double ELEVATOR_L3_POS = 51.997559;
     public static double ELEVATOR_L4_POS = 84.572266;
     public static double ELEVATOR_SOURCE_POS = 42;
+    public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
 
   /*   public final class ElevatorConstantsLeonidas {
