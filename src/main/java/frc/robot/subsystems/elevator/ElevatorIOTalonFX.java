@@ -40,6 +40,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
       new LoggedTunableNumber("Elevator/cruiseVelocity", 3000);
   private LoggedTunableNumber acceleration = new LoggedTunableNumber("Elevator/acceleration", 300);
   private LoggedTunableNumber jerk = new LoggedTunableNumber("Elevator/jerk", 750);
+  private LoggedTunableNumber setPos = new LoggedTunableNumber("Elevator/setpointPos", 5);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
@@ -171,6 +172,20 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         leader.setControl(request);
       } else {
         leader.setControl(request.withPosition(position));
+      }
+    } else {
+      System.out.println("CAN'T MOVE ELEVATOR, arm not in valid position");
+    }
+  }
+
+  public void setPositionLoggedNumber() {
+    double armPos = RobotContainer.getArm().getAbsolutePosition();
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, setPos.get(), armPos)) {
+      var request = new MotionMagicVoltage(0);
+      if (leader.getPosition().getValueAsDouble() < 0 || setPos.get() < 0) {
+        leader.setControl(request);
+      } else {
+        leader.setControl(request.withPosition(setPos.get()));
       }
     } else {
       System.out.println("CAN'T MOVE ELEVATOR, arm not in valid position");

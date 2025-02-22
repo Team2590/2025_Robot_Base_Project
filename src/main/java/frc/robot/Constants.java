@@ -272,8 +272,8 @@ public final class Constants {
   // }
 
   public static class ArmConstantsLeonidas {
-    public static double ARM_FACTORY_SAFETY_MIN = -0.148;
-    public static double ARM_FACTORY_SAFETY_MAX = .36;
+    public static double ARM_FACTORY_SAFETY_MIN = 0;
+    public static double ARM_FACTORY_SAFETY_MAX = 1;
     public static final int canID = 1;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 40;
@@ -281,14 +281,15 @@ public final class Constants {
     public static final boolean brake = false;
     public static final double reduction = 1; // was a 94.18
     public static final int cancoderID = 5;
-    public static final double magOffset = -.596436; // -.398
+    // public static final double magOffset = -.596436; // -.398
+    public static final double magOffset = -.0979; // -.398
     public static final double sensorReduction = 58.8;
     public static double ARM_OPERATIONAL_MIN_POS = -.34;
-    public static double ARM_OPERATIONAL_MAX_POS = .55;
+    public static double ARM_OPERATIONAL_MAX_POS = .9;
     public static double ARM_DANGER_MIN_POS = ARM_OPERATIONAL_MIN_POS;
-    public static double ARM_DANGER_MAX_POS = -0.14;
-    public static double ARM_SCORING_CORAL_POS = 0.5; // TODO: change to actual value
-    public static double ARM_INTAKE_SOURCE_POSITION = -0.34;
+    public static double ARM_DANGER_MAX_POS = -1;
+    public static double ARM_SCORING_CORAL_POS = 0.72; // TODO: change to actual value
+    public static double ARM_INTAKE_SOURCE_POSITION = .12;
   }
 
   public static class ElevatorConstantsLeonidas {
@@ -304,9 +305,9 @@ public final class Constants {
     public static final double kV = 0.14051;
     public static double ELEVATOR_DANGER_MIN_POS = ELEVATOR_OPERATIONAL_MIN_POS;
     public static double ELEVATOR_DANGER_MAX_POS = 27.28;
-    public static double ELEVATOR_L2_POS = 27.210938;
-    public static double ELEVATOR_L3_POS = 51.997559;
-    public static double ELEVATOR_L4_POS = 84.572266;
+    public static double ELEVATOR_L2_POS = 19;
+    public static double ELEVATOR_L3_POS = 46;
+    public static double ELEVATOR_L4_POS = 87;
     public static double ELEVATOR_SOURCE_POS = 42;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
@@ -343,18 +344,19 @@ public final class Constants {
   public final class IntakeConstantsLeonidas {
     public static final int canID = 24;
     public static final String canBus = "Takeover";
-    public static final int currentLimitAmps = 120;
+    public static final int currentLimitAmps = 20;
     public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 1;
-    public static final double INTAKE_FACTORY_CORAL_POSITION = 0;
+    public static final double INTAKE_FACTORY_CORAL_POSITION = 11;
     public static final double INTAKE_FACTORY_ALGAE_POSITION = 5.4;
     public static final double INTAKE_FACTORY_HOME_POSITION = 0;
     public static final double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 0;
-    public static final double INTAKE_CORAL_INTAKE_SPEED = 6;
-    public static final double INTAKE_CORAL_OUTTAKE_SPEED = -8; // TODO
-    public static final double INTAKE_ALGAE_INTAKE_SPEED = 6;
-    public static final double INTAKE_ALGAE_OUTTAKE_SPEED = -8;
+    public static final double INTAKE_CORAL_INTAKE_SPEED = 4;
+    public static final double INTAKE_CORAL_OUTTAKE_SPEED = -6; // TODO
+    public static final double INTAKE_ALGAE_INTAKE_SPEED = -6;
+    public static final double INTAKE_ALGAE_OUTTAKE_SPEED = 8;
+    public static final double HAS_ALGAE_THRESHOLD_CURRENT = 10;
   }
 
   public final class IntakeArmConstantsLeonidas {
