@@ -159,8 +159,8 @@ public class Drive extends SubsystemBase {
 
   @Override
   public void periodic() {
-
-    Logger.recordOutput("autoCommandMessage", autoCommandMessage); // idk where to log stuff
+    //This should be moved to Robot State update function probably
+    Logger.recordOutput("autoCommandMessage", autoCommandMessage); //used for a debug table in AdvantageScope
     for (int i = 0;
         i < AutoRoutines.getTriggerBooleans(AutoRoutines.driveThenScoreL4).size();
         i++) {
@@ -168,7 +168,7 @@ public class Drive extends SubsystemBase {
       Logger.recordOutput(
           "TriggerBooleansForDrivel4: " + i,
           AutoRoutines.getTriggerBooleans(AutoRoutines.driveThenScoreL4).get(i));
-    }
+    } // used in case triggers 
 
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);

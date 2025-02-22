@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.autos.AutoRoutines;
-import frc.robot.command_factories.AutoFactory;
+import frc.robot.autos.NemesisAuto;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
@@ -416,10 +416,7 @@ public class RobotContainer {
   }
 
   public static void registerNamedCommands() {
-    NamedCommands.registerCommand("HoldL4", AutoFactory.holdThenL4);
-    NamedCommands.registerCommand("HoldL3", AutoFactory.holdThenL3);
-    NamedCommands.registerCommand("HoldL2", AutoFactory.holdThenL2);
-    // NamedCommands.registerCommand("HoldL1", AutoFactory.holdThenL1);
+   
 
     NamedCommands.registerCommand("ScoreL4", ScoringFactory.scoreL4());
     NamedCommands.registerCommand("ScoreL3", ScoringFactory.scoreL3());

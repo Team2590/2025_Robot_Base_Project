@@ -3,16 +3,13 @@ package frc.robot.autos;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
-import frc.robot.command_factories.AutoFactory.NemesisAuto;
+import frc.robot.autos.NemesisAuto;
+
 import java.util.ArrayList;
 
 public class AutoRoutines {
 
-  // public static LoggedDashboardChooser<Command> autoChooser = new LoggedDashboardChooser<>("Auto
-  // Choices");
 
-  // public static Command scoobydoobydoo= new AutoFactory.NemesisAuto("driveThenScoreL4",
-  // "preloadl1, source cycling", new String[]{"scoreL4","intake", "scoreL1"}).getCommand();
   public static NemesisAuto driveThenScoreL4 =
       new NemesisAuto(
           "driveThenScoreL4",
