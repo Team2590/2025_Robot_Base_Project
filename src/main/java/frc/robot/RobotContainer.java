@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -405,6 +406,15 @@ public class RobotContainer {
     // TODO- controller app activation button:
     // rightJoystick.button(3).and(leftJoystick.trigger()).whileTrue(<controller app function>);
     // rightJoystick.button(3).onTrue(ScoringFactory.scoreL2());
+    /**
+     * For tuning purposes:
+     * rightJoystick
+        .button(3)
+        .and(leftJoystick.trigger())
+        .whileTrue(
+            new ParallelCommandGroup(
+                arm.setPositionLoggedTunableNumber(), elevator.setPositionLoggedTunableNumber()));
+     */
     // manual backup button binds
     rightJoystick
         .button(3)

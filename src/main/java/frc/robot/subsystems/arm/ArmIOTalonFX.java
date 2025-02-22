@@ -106,7 +106,7 @@ public class ArmIOTalonFX implements ArmIO {
     MagnetSensorConfigs mag = new MagnetSensorConfigs();
     mag.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     mag.MagnetOffset = magOffset;
-    mag.AbsoluteSensorDiscontinuityPoint = 0.6;
+    mag.AbsoluteSensorDiscontinuityPoint = 0.9;
     CANcoderConfiguration can = new CANcoderConfiguration();
     can.withMagnetSensor(mag);
     armCancoder.getConfigurator().apply(can);

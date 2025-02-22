@@ -40,6 +40,10 @@ public class Elevator extends SubsystemBase {
         .until(() -> NemesisMathUtil.isApprox(inputs.rotationCount, setpointTolerance, position));
   }
 
+  public Command setPositionLoggedTunableNumber() {
+    return runEnd(() -> io.setPositionLoggedNumber(), () -> io.setPositionLoggedNumber());
+  }
+
   public Command resetRotationCountCommand() {
     return runOnce(io::resetRotationCount);
   }
