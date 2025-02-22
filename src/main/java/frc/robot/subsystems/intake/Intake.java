@@ -1,7 +1,6 @@
 package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,8 +20,10 @@ public class Intake extends SubsystemBase {
       new LoggedTunableNumber("Intake/LOWER_THRESHOLD", 0.25);
   private LoggedTunableNumber HOLDING_THRESHOLD =
       new LoggedTunableNumber("Intake/HIGHER_THRESHOLD", 0.5);
+      private LoggedTunableNumber INTAKE_CORAL_CURRENT_THRESHOLD =
+      new LoggedTunableNumber("Intake/CoralCurrentThreshold", 0.5);
   private LinearFilter filter = LinearFilter.movingAverage(30);
-    double filtered_data;
+  double filtered_data;
 
   public Intake(IntakeIO intakeIO, IntakeArmIO intakeArmIO) {
     this.intakeIO = intakeIO;
@@ -133,17 +134,28 @@ public class Intake extends SubsystemBase {
 
   /**
    * Returns boolean whether the intake has the algae (not running)
+   *
    * @return true if the intake has secured the algae, false if not
    */
-  public boolean hasAlgae(){
-    return filtered_data >= HOLDING_THRESHOLD.get() && filtered_data <= RUNNING_THRESHOLD.get();
+  public boolean hasAlgae() {
+    return filtered_data >= HOLDING_THRESHOLD.get() || filtered_data <= RUNNING_THRESHOLD.get();
   }
 
   /**
    * Returns boolean whether the intake is running or not
+   *
    * @return true if intake is running, false if not
    */
-  public boolean isRunning(){
+  public boolean isRunning() {
     return filtered_data >= HOLDING_THRESHOLD.get() && filtered_data >= RUNNING_THRESHOLD.get();
+  }
+
+  /*
+   * 
+   * The way we can distinguish between Algae and Coral is by using the sign of the current
+   *  TODO figure out the direction of intake coral vs algae
+   */
+  public boolean hasCoral(){
+    return filtered_data >= INTAKE_CORAL_CURRENT_THRESHOLD.get();
   }
 }

@@ -16,7 +16,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.util.LoggedTunableNumber;
 
@@ -107,7 +106,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
     leader.set(velocity);
   }
 
-  public double getProxValue(){
+  public double getProxValue() {
     return proxInput.getValue();
   }
 }

@@ -386,8 +386,8 @@ public class RobotContainer {
     rightJoystick
         .button(2)
         .and(rightJoystick.trigger())
-        .whileTrue(GamePieceFactory.intakeCoralGround());
-    rightJoystick.button(2).and(rightJoystick.trigger()).whileTrue(ScoringFactory.scoreL1());
+        .whileTrue(GamePieceFactory.intakeCoralGround().until(RobotState::intakeHasCoral).finallyDo(() -> RobotState.setIntakeHasCoral()));
+    rightJoystick.button(2).and(rightJoystick.trigger()).whileTrue(ScoringFactory.scoreL1().finallyDo(() -> RobotState.setIntakeNoCoral()));
     rightJoystick
         .button(3)
         .and(rightJoystick.trigger())
