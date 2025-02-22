@@ -31,7 +31,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.autos.AutoRoutines;
+import frc.robot.command_factories.ArmFactory;
 import frc.robot.command_factories.AutoFactory;
+import frc.robot.command_factories.ClimbFactory;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
@@ -292,6 +294,8 @@ public class RobotContainer {
                     DCMotor.getFalcon500(1), Constants.ClimbConstantsLeonidas.reduction, 1));
 
         elevatorCheck();
+        armCheck();
+        climbCheck();
         break;
 
       default:
@@ -434,6 +438,24 @@ public class RobotContainer {
             Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS));
     return NemesisMathUtil.isApprox(
         elevator.getRotationCount(), 0.05, Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS);
+  }
+
+  private boolean armCheck() {
+    CommandScheduler.getInstance()
+        .schedule(ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS));
+    Logger.recordOutput(
+        "Arm/ArmCheck",
+        NemesisMathUtil.isApprox(
+            arm.getAbsolutePosition(), 0.05, Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS));
+    return NemesisMathUtil.isApprox(
+        arm.getAbsolutePosition(), 0.05, Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS);
+  }
+
+  private boolean climbCheck() {
+    CommandScheduler.getInstance().schedule(ClimbFactory.runClimb(170));
+    Logger.recordOutput(
+        "Climb/ClimbCheck", NemesisMathUtil.isApprox(climb.getRotationCount(), 0.05, 170));
+    return NemesisMathUtil.isApprox(climb.getRotationCount(), 0.05, 170);
   }
 
   /**
