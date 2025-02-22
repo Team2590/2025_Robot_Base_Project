@@ -396,7 +396,7 @@ public class RobotContainer {
     // scoring button binds
     // TODO- controller app activation button:
     // rightJoystick.button(3).and(leftJoystick.trigger()).whileTrue(<controller app function>);
-
+    rightJoystick.button(3).and(leftJoystick.trigger()).whileTrue(ScoringFactory.scoreL2());
     // manual backup button binds
     rightJoystick
         .button(3)

@@ -44,6 +44,7 @@ public class ArmIOTalonFX implements ArmIO {
       new LoggedTunableNumber("Arm/MotionMagicAcceleration", 50); // 500
   LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", 100);
   LoggedTunableNumber ff = new LoggedTunableNumber("Arm/Feedforward", 0);
+  LoggedTunableNumber setPos = new LoggedTunableNumber("Arm/setpointPos", 0);
   Slot0Configs slot0;
   TalonFXConfiguration cfg;
   MotionMagicConfigs mm;
@@ -149,8 +150,8 @@ public class ArmIOTalonFX implements ArmIO {
   public void setPosition(double position) {
     double elevatorPos = RobotContainer.getElevator().getRotationCount();
 
-    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position, elevatorPos)) {
-      arm.setControl(mmv.withPosition(position));
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, setPos.get(), elevatorPos)) {
+      arm.setControl(mmv.withPosition(setPos.get()));
     } else {
       System.out.println("CAN'T MOVE ARM, elevator not in valid position.");
     }
