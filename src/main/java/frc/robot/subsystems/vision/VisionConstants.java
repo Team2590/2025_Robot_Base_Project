@@ -17,6 +17,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 
 public class VisionConstants {
   // AprilTag layout
@@ -24,24 +25,37 @@ public class VisionConstants {
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
   // Camera names, must match names configured on coprocessor
-  public static String sourceCameraName = "camera_0";
-  public static String processorCameraName = "camera_1";
-  public static String reefCameraName = "idk";
+  public static String upperSourceCameraName = "1mp_arducam_device_6";
+  public static String processorCameraName = "1mp_arducam_device_4";
+  public static String reefCameraName = "1mp_arducam_device_1";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
 
-  // Front side camera (camera0)
-  public static Transform3d robotToSourceCam =
-      new Transform3d(-0.2079, 0.2269, 0.9278, new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
+  // Upper Source Camera
+  public static Transform3d robotToUpperSourceCam =
+      new Transform3d(
+        Units.inchesToMeters(-7.8508),
+        Units.inchesToMeters(9.0),
+        Units.inchesToMeters(35.7347),
+        new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
 
-  // Back side camera (camera1)
+  
+  // Processor Camera
   public static Transform3d robotToProcessorCam =
-      new Transform3d(-0.1869, 0.2064, 0.7892, new Rotation3d(0.0, Math.toRadians(-27.0), Math.toRadians(90.0)));
+      new Transform3d(
+        Units.inchesToMeters(-6.379),
+        Units.inchesToMeters(7.2767),
+        Units.inchesToMeters(29.9459),
+        new Rotation3d(0.0, Math.toRadians(-27.0), Math.toRadians(-90.0)));
 
-  // Left side camera (camera2)
-//   public static Transform3d robotToReefCam =
-//       new Transform3d(0.0, 0.2, 0.2, new Rotation3d(0.0, -0.4, Math.PI / 2));
+  // Reef Camera
+  public static Transform3d robotToReefCam =
+      new Transform3d(
+        Units.inchesToMeters(5.0),
+        Units.inchesToMeters(12.0),
+        Units.inchesToMeters(10.33832),
+        new Rotation3d(0.0, 0.0, Math.toRadians(-25.4884)));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
@@ -56,10 +70,9 @@ public class VisionConstants {
   // (Adjust to trust some cameras more than others)
   public static double[] cameraStdDevFactors =
       new double[] {
-        1.0, // Camera 0
-        1.0//,  Camera 1
-        // 1.0, // Camera 2
-        // 1.0 //  Camera 3
+        1.0, // Upper Source Camera
+        1.0, // Processor Camera
+        1.0  // Reef Camera
       };
 
   // Multipliers to apply for MegaTag 2 observations
