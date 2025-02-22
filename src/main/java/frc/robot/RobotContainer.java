@@ -399,6 +399,7 @@ public class RobotContainer {
         .and(rightJoystick.trigger())
         .whileTrue(GamePieceFactory.intakeCoralFeeder());
 
+
     // scoring button binds
     // TODO- controller app activation button:
     // rightJoystick.button(3).and(leftJoystick.trigger()).whileTrue(<controller app function>);
