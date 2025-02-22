@@ -52,12 +52,17 @@ public class ElevatorFactory {
   }
 
   public static Command manualUp() {
-    return RobotContainer.getElevator().setVoltageCommand(Constants.ElevatorConstantsLeonidas.ELEVATOR_MANUAL_VOLTAGE).withName("Set Elevator Voltage");
+    return RobotContainer.getElevator()
+        .setVoltageCommand(Constants.ElevatorConstantsLeonidas.ELEVATOR_MANUAL_VOLTAGE)
+        .withName("Set Elevator Voltage");
   }
 
   public static Command manualDown() {
-    return RobotContainer.getElevator().setVoltageCommand(-Constants.ElevatorConstantsLeonidas.ELEVATOR_MANUAL_VOLTAGE).withName("Set Elevator Voltage");
+    return RobotContainer.getElevator()
+        .setVoltageCommand(-Constants.ElevatorConstantsLeonidas.ELEVATOR_MANUAL_VOLTAGE)
+        .withName("Set Elevator Voltage");
   }
+
   public static boolean elevatorCommandFinished() {
 
     return RobotContainer.getElevator().getCharacterizationVelocity()
