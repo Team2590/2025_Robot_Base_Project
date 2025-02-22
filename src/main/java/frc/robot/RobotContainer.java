@@ -381,13 +381,19 @@ public class RobotContainer {
      */
 
     // intake button binds
-    rightJoystick.trigger().whileTrue(GamePieceFactory.intakeAlgaeGround());
-    leftJoystick.trigger().whileTrue(ScoringFactory.scoreProcessor());
+    rightJoystick
+        .trigger()
+        .and(rightJoystick.button(3).negate()).and(rightJoystick.button(2).negate())
+        .whileTrue(GamePieceFactory.intakeAlgaeGround());
+    leftJoystick
+        .trigger()
+        .and(rightJoystick.button(3).negate()).and(rightJoystick.button(2).negate())
+        .whileTrue(ScoringFactory.scoreProcessor());
     rightJoystick
         .button(2)
         .and(rightJoystick.trigger())
         .whileTrue(GamePieceFactory.intakeCoralGround());
-    rightJoystick.button(2).and(rightJoystick.trigger()).whileTrue(ScoringFactory.scoreL1());
+    rightJoystick.button(2).and(leftJoystick.trigger()).whileTrue(ScoringFactory.scoreL1());
     rightJoystick
         .button(3)
         .and(rightJoystick.trigger())
@@ -396,7 +402,7 @@ public class RobotContainer {
     // scoring button binds
     // TODO- controller app activation button:
     // rightJoystick.button(3).and(leftJoystick.trigger()).whileTrue(<controller app function>);
-
+    // rightJoystick.button(3).onTrue(ScoringFactory.scoreL2());
     // manual backup button binds
     rightJoystick
         .button(3)
