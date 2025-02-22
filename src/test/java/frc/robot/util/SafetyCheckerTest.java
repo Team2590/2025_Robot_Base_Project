@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import frc.robot.Constants;
 import org.junit.jupiter.api.Test;
 
-// class SafetyCheckerTest {
+class SafetyCheckerTest {
 
 //   @Test
 //   void armMovementSafety_elevatorAboveMin_returnsTrue() {
