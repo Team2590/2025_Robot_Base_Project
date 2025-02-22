@@ -223,7 +223,10 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    List.of(new CameraConfig(sourceCameraName, robotToSourceCam))));
+                    List.of(
+                        new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
+                        new CameraConfig(processorCameraName, robotToProcessorCam),
+                        new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(
