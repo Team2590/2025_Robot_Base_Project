@@ -20,7 +20,7 @@ public class Intake extends SubsystemBase {
       new LoggedTunableNumber("Intake/LOWER_THRESHOLD", 0.25);
   private LoggedTunableNumber HOLDING_THRESHOLD =
       new LoggedTunableNumber("Intake/HIGHER_THRESHOLD", 0.5);
-      private LoggedTunableNumber INTAKE_CORAL_CURRENT_THRESHOLD =
+  private LoggedTunableNumber INTAKE_CORAL_CURRENT_THRESHOLD =
       new LoggedTunableNumber("Intake/CoralCurrentThreshold", 0.5);
   private LinearFilter filter = LinearFilter.movingAverage(30);
   double filtered_data;
@@ -151,11 +151,11 @@ public class Intake extends SubsystemBase {
   }
 
   /*
-   * 
+   *
    * The way we can distinguish between Algae and Coral is by using the sign of the current
    *  TODO figure out the direction of intake coral vs algae
    */
-  public boolean hasCoral(){
+  public boolean hasCoral() {
     return filtered_data >= INTAKE_CORAL_CURRENT_THRESHOLD.get();
   }
 }

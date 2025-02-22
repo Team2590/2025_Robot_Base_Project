@@ -1,9 +1,5 @@
 package frc.robot;
 
-import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -17,6 +13,7 @@ import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.vision.Vision;
 import lombok.Getter;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class RobotState extends SubsystemBase {
   Alliance alliance;
@@ -28,93 +25,91 @@ public class RobotState extends SubsystemBase {
   private final Vision vision;
   private final EndEffector endEffector;
   private static Intake intake;
-    private static RobotState instance;
-    @Getter
-    private static boolean endEffectorhasCoral;
-    private static boolean intakeHasCoral;
-  
-    private RobotState(
-        Arm arm,
-        Drive drive,
-        Elevator elevator,
-        EndEffector endEffector,
-        Intake intake,
-        Vision vision) {
-      this.arm = arm;
-      this.drive = drive;
-      this.elevator = elevator;
-      this.endEffector = endEffector;
-      this.intake = intake;
-      this.vision = vision;
+  private static RobotState instance;
+  @Getter private static boolean endEffectorhasCoral;
+  private static boolean intakeHasCoral;
+
+  private RobotState(
+      Arm arm,
+      Drive drive,
+      Elevator elevator,
+      EndEffector endEffector,
+      Intake intake,
+      Vision vision) {
+    this.arm = arm;
+    this.drive = drive;
+    this.elevator = elevator;
+    this.endEffector = endEffector;
+    this.intake = intake;
+    this.vision = vision;
+  }
+
+  /**
+   * Initializes the robot state
+   *
+   * @param arm robots arm
+   * @param drive drive
+   * @param elevator elevator
+   * @param endEffector endeffector
+   * @param intake intake
+   * @param vision vision
+   * @return new robot state object
+   */
+  public static RobotState initialize(
+      Arm arm,
+      Drive drive,
+      Elevator elevator,
+      EndEffector endEffector,
+      Intake intake,
+      Vision vision) {
+    if (instance != null) {
+      throw new IllegalStateException("RobotState has already been initialized");
     }
-  
-    /**
-     * Initializes the robot state
-     *
-     * @param arm robots arm
-     * @param drive drive
-     * @param elevator elevator
-     * @param endEffector endeffector
-     * @param intake intake
-     * @param vision vision
-     * @return new robot state object
-     */
-    public static RobotState initialize(
-        Arm arm,
-        Drive drive,
-        Elevator elevator,
-        EndEffector endEffector,
-        Intake intake,
-        Vision vision) {
-      if (instance != null) {
-        throw new IllegalStateException("RobotState has already been initialized");
-      }
-      instance = new RobotState(arm, drive, elevator, endEffector, intake, vision);
-      return instance;
+    instance = new RobotState(arm, drive, elevator, endEffector, intake, vision);
+    return instance;
+  }
+
+  /**
+   * Gets the Robot State if it's initialized
+   *
+   * @return robot state
+   */
+  public static RobotState getInstance() {
+    if (instance == null) {
+      throw new IllegalStateException("RobotState has not been initialized");
     }
-  
-    /**
-     * Gets the Robot State if it's initialized
-     *
-     * @return robot state
-     */
-    public static RobotState getInstance() {
-      if (instance == null) {
-        throw new IllegalStateException("RobotState has not been initialized");
-      }
-      return instance;
-    }
-  
-    /**
-     * Gets Robot Pose
-     *
-     * @return robot pose
-     */
-    public Pose2d getPose() {
-      return drive.getPose();
-    }
-  
-    public void periodic() {
-      alliance = DriverStation.getAlliance().get();
-      robotPose = drive.getPose();
-      currentZone = Constants.locator.getZoneOfField(robotPose);
-      endEffectorhasCoral = endEffectorhasCoral();
-  
-    }
-  
-    /**
-     * Checks if endeffector has coral
-     *
-     * @return true if the endeffector has coral, false if not
-     */
-    @AutoLogOutput(key="EndEffector/hasCoral")
-    public boolean endEffectorhasCoral() {
-      return endEffector.hasCoral();
-    }
-  
-    @AutoLogOutput(key="Intake/hasCoral")
-    public static boolean intakeHasCoral(){
-      return intake.hasCoral();
+    return instance;
+  }
+
+  /**
+   * Gets Robot Pose
+   *
+   * @return robot pose
+   */
+  public Pose2d getPose() {
+    return drive.getPose();
+  }
+
+  public void periodic() {
+    alliance = DriverStation.getAlliance().get();
+    robotPose = drive.getPose();
+    currentZone = Constants.locator.getZoneOfField(robotPose);
+    endEffectorhasCoral = endEffectorhasCoral();
+  }
+
+  /**
+   * Checks if endeffector has coral
+   *
+   * @return true if the endeffector has coral, false if not
+   */
+  @AutoLogOutput(key = "EndEffector/hasCoral")
+  public boolean endEffectorhasCoral() {
+    return endEffector.hasCoral();
+  }
+
+  @AutoLogOutput(key = "Intake/hasCoral")
+  public static boolean intakeHasCoral() {
+    return intake.hasCoral();
   }
 
   /**
@@ -122,7 +117,7 @@ public class RobotState extends SubsystemBase {
    *
    * @return true if the intake has algae, false if not
    */
-  @AutoLogOutput(key="Intake/hasAlgae")
+  @AutoLogOutput(key = "Intake/hasAlgae")
   public boolean hasAlgae() {
     return intake.hasAlgae();
   }
@@ -145,11 +140,11 @@ public class RobotState extends SubsystemBase {
     return currentZone;
   }
 
-  public static Command setIntakeHasCoral(){
-    return Commands.run(() -> intakeHasCoral = true);
+  public static Command setIntakeHasCoral() {
+    return Commands.runOnce(() -> intakeHasCoral = true);
   }
 
-  public static Command setIntakeNoCoral(){
-    return Commands.run(() -> intakeHasCoral = false);
+  public static Command setIntakeNoCoral() {
+    return Commands.runOnce(() -> intakeHasCoral = false);
   }
 }

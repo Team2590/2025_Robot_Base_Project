@@ -35,6 +35,7 @@ import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
 import frc.robot.command_factories.GamePieceFactory;
+import frc.robot.command_factories.IntakeFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
@@ -386,8 +387,13 @@ public class RobotContainer {
     rightJoystick
         .button(2)
         .and(rightJoystick.trigger())
-        .whileTrue(GamePieceFactory.intakeCoralGround().until(RobotState::intakeHasCoral).finallyDo(() -> RobotState.setIntakeHasCoral()));
-    rightJoystick.button(2).and(rightJoystick.trigger()).whileTrue(ScoringFactory.scoreL1().finallyDo(() -> RobotState.setIntakeNoCoral()));
+        .whileTrue(
+            GamePieceFactory.intakeCoralGround()
+                .until(RobotState::intakeHasCoral).andThen(RobotState.setIntakeHasCoral()).andThen(IntakeFactory.setHomePosition()));
+    rightJoystick
+        .button(2)
+        .and(rightJoystick.trigger())
+        .whileTrue(ScoringFactory.scoreL1().finallyDo(() -> RobotState.setIntakeNoCoral()));
     rightJoystick
         .button(3)
         .and(rightJoystick.trigger())
