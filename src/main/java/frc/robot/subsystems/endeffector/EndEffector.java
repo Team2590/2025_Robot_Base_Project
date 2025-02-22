@@ -44,7 +44,7 @@ public class EndEffector extends SubsystemBase {
               io.stop();
               isRunning = false;
             })
-        .until(() -> filtered_data >= CURRENT_THRESHOLD.get())
+        .until(() -> hasCoral())
         .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
   }
 
@@ -58,7 +58,7 @@ public class EndEffector extends SubsystemBase {
               io.stop();
               isRunning = false;
             })
-        .until(() -> isRunning && filtered_data >= CURRENT_THRESHOLD.get())
+        .until(() -> hasCoral())
         .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
   }
 
