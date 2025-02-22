@@ -28,6 +28,7 @@ public class RobotState extends SubsystemBase {
   private static RobotState instance;
   @Getter private static boolean endEffectorhasCoral;
   private static boolean intakeHasCoral;
+  private static boolean intakeHasAlgae;
 
   private RobotState(
       Arm arm,
@@ -118,7 +119,7 @@ public class RobotState extends SubsystemBase {
    * @return true if the intake has algae, false if not
    */
   @AutoLogOutput(key = "Intake/hasAlgae")
-  public boolean hasAlgae() {
+  public static boolean intakeHasAlgae() {
     return intake.hasAlgae();
   }
 
@@ -146,5 +147,13 @@ public class RobotState extends SubsystemBase {
 
   public static Command setIntakeNoCoral() {
     return Commands.runOnce(() -> intakeHasCoral = false);
+  }
+
+  public static Command setIntakeHasAlgae() {
+    return Commands.runOnce(() -> intakeHasAlgae = true);
+  }
+
+  public static Command setIntakeNoAlgae() {
+    return Commands.runOnce(() -> intakeHasAlgae = false);
   }
 }

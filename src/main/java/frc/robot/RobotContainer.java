@@ -382,8 +382,11 @@ public class RobotContainer {
      */
 
     // intake button binds
-    rightJoystick.trigger().whileTrue(GamePieceFactory.intakeAlgaeGround());
-    leftJoystick.trigger().whileTrue(ScoringFactory.scoreProcessor());
+    rightJoystick.trigger().whileTrue(
+        GamePieceFactory.intakeAlgaeGround()
+            .until(RobotState::intakeHasAlgae).andThen(RobotState.setIntakeHasAlgae()).andThen(IntakeFactory.setHomePosition())
+    );
+    leftJoystick.trigger().whileTrue(ScoringFactory.scoreProcessor().finallyDo(() -> RobotState.setIntakeNoAlgae()));
     rightJoystick
         .button(2)
         .and(rightJoystick.trigger())
