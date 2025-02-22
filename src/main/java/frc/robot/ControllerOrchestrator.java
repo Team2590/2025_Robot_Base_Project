@@ -49,11 +49,11 @@ public class ControllerOrchestrator extends SubsystemBase {
     }
 
     // TODO: add real values
-    elevatorSetpointMap.put("station", 0.0);
-    elevatorSetpointMap.put("L1", 1.0);
-    elevatorSetpointMap.put("L2", 2.0);
-    elevatorSetpointMap.put("L3", 3.0);
-    elevatorSetpointMap.put("L4", 4.0);
+    elevatorSetpointMap.put("station", Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS);
+    elevatorSetpointMap.put("L1", 10.0); // need to find
+    elevatorSetpointMap.put("L2", Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS);
+    elevatorSetpointMap.put("L3", Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS);
+    elevatorSetpointMap.put("L4", Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS);
 
     // TODO: add real values
     endeffectorWristSetpointMap.put("station", 0.0);
@@ -62,6 +62,7 @@ public class ControllerOrchestrator extends SubsystemBase {
     endeffectorWristSetpointMap.put("L3", 3.0);
     endeffectorWristSetpointMap.put("L4", 4.0);
   }
+
 
   public NetworkTableEntry getTableEntry(String key) {
     NetworkTable table = NetworkTableInstance.getDefault().getTable("ControllerApp/target");
@@ -86,12 +87,12 @@ public class ControllerOrchestrator extends SubsystemBase {
   }
 
   public double getElevatorSetpoint() {
-    String elevatorSetpointKey = getValue("moveTo").split("_")[0];
+    String elevatorSetpointKey = getValue("moveTo").split("_")[1];
     return elevatorSetpointMap.get(elevatorSetpointKey);
   }
 
   public double endeffectorWristSetpoint() {
-    String endeffectorWristSetpointKey = getValue("moveTo").split("_")[1];
+    String endeffectorWristSetpointKey = getValue("moveTo").split("_")[0];
     return endeffectorWristSetpointMap.get(endeffectorWristSetpointKey);
   }
 }

@@ -359,12 +359,10 @@ public class RobotContainer {
     drive.setDefaultCommand(DriveFactory.joystickDrive());
 
     // Lock to 0° when A button is held
-    controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
-    // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
+    // // Switch to X pattern when X button is pressed
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
     // controller.b().whileTrue(intake.runIntake(4));
-    controller.y().whileTrue(DriveCommands.driveToPose(drive, controllerApp::getTargetPose));
-
     // DriveCommands.driveToPose(controllerApp.getTargetPose()));
 
     // rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
@@ -436,7 +434,6 @@ public class RobotContainer {
     //
     // elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS));
     // rightJoystick.button(1).onTrue(elevator.setPosition());
-
     rightJoystick.button(1).onTrue(ScoringFactory.scoreL1());
     rightJoystick.button(2).onTrue(ScoringFactory.scoreL2());
     rightJoystick.button(3).onTrue(ScoringFactory.scoreL3());
@@ -444,8 +441,7 @@ public class RobotContainer {
     leftJoystick.button(1).onTrue(elevator.setPosition(5));
     rightJoystick.button(5).onTrue(GamePieceFactory.intakeCoralFeeder());
     controller.x().onTrue(elevator.resetRotationCountCommand());
-
-    // leftJoystick.button(1).
+    controller.y().whileTrue(DriveCommands.driveToPose(drive, controllerApp::getTargetPose)); 
 
     /**
      * the following button binds work on Larry:
