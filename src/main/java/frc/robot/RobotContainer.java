@@ -16,10 +16,12 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -75,6 +77,7 @@ public class RobotContainer {
   @Getter private static Intake intake;
   @Getter private static EndEffector endEffector;
   @Getter private static Climb climb;
+  private final ControllerOrchestrator controllerApp = new ControllerOrchestrator();
 
   // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
@@ -234,18 +237,17 @@ public class RobotContainer {
                     Constants.EndEffectorConstantsLeonidas.invert,
                     Constants.EndEffectorConstantsLeonidas.brake,
                     Constants.EndEffectorConstantsLeonidas.reduction));
-        climb = new Climb(
-            new ClimbIOTalonFX(
-                Constants.ClimbConstantsLeonidas.canID, 
-                Constants.ClimbConstantsLeonidas.canBus, 
-                Constants.ClimbConstantsLeonidas.currentLimitAmps, 
-                Constants.ClimbConstantsLeonidas.invert, 
-                Constants.ClimbConstantsLeonidas.brake, 
-                Constants.ClimbConstantsLeonidas.reduction
-            ));
+        climb =
+            new Climb(
+                new ClimbIOTalonFX(
+                    Constants.ClimbConstantsLeonidas.canID,
+                    Constants.ClimbConstantsLeonidas.canBus,
+                    Constants.ClimbConstantsLeonidas.currentLimitAmps,
+                    Constants.ClimbConstantsLeonidas.invert,
+                    Constants.ClimbConstantsLeonidas.brake,
+                    Constants.ClimbConstantsLeonidas.reduction));
         break;
       case SIM:
-        // Sim robot, instantiate physics sim IO implementations
         drive =
             new Drive(
                 new GyroIO() {},
@@ -357,11 +359,13 @@ public class RobotContainer {
     drive.setDefaultCommand(DriveFactory.joystickDrive());
 
     // Lock to 0° when A button is held
-    // controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
+    controller.a().whileTrue(DriveCommands.driveToPose(new Pose2d()));
+    // Switch to X pattern when X button is pressed
+    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.b().whileTrue(intake.runIntake(4));
+    controller.y().whileTrue(DriveCommands.driveToPose(drive, controllerApp::getTargetPose));
 
-    // // Switch to X pattern when X button is pressed
-    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    // // controller.b().whileTrue(intake.runIntake(4));
+    // DriveCommands.driveToPose(controllerApp.getTargetPose()));
 
     // rightJoystick.button(1).whileTrue(endEffector.runEndEffectorOuttake());
     // leftJoystick.button(1).whileTrue(endEffector.runEndEffector());
