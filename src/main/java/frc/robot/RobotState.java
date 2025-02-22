@@ -1,5 +1,7 @@
 package frc.robot;
 
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -105,10 +107,12 @@ public class RobotState extends SubsystemBase {
      *
      * @return true if the endeffector has coral, false if not
      */
+    @AutoLogOutput(key="EndEffector/hasCoral")
     public boolean endEffectorhasCoral() {
       return endEffector.hasCoral();
     }
   
+    @AutoLogOutput(key="Intake/hasCoral")
     public static boolean intakeHasCoral(){
       return intake.hasCoral();
   }
@@ -118,6 +122,7 @@ public class RobotState extends SubsystemBase {
    *
    * @return true if the intake has algae, false if not
    */
+  @AutoLogOutput(key="Intake/hasAlgae")
   public boolean hasAlgae() {
     return intake.hasAlgae();
   }
