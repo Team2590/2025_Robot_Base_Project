@@ -23,6 +23,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -43,6 +44,7 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOSim;
 import frc.robot.subsystems.arm.ArmIOTalonFX;
 import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.climb.ClimbIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -64,8 +66,10 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
+import frc.robot.util.NemesisMathUtil;
 import java.util.List;
 import lombok.Getter;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -282,7 +286,12 @@ public class RobotContainer {
             new EndEffector(
                 new EndEffectorIOSim(
                     DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
-        climb = null;
+        climb =
+            new Climb(
+                new ClimbIOSim(
+                    DCMotor.getFalcon500(1), Constants.ClimbConstantsLeonidas.reduction, 1));
+
+        elevatorCheck();
         break;
 
       default:
@@ -383,11 +392,13 @@ public class RobotContainer {
     // intake button binds
     rightJoystick
         .trigger()
-        .and(rightJoystick.button(3).negate()).and(rightJoystick.button(2).negate())
+        .and(rightJoystick.button(3).negate())
+        .and(rightJoystick.button(2).negate())
         .whileTrue(GamePieceFactory.intakeAlgaeGround());
     leftJoystick
         .trigger()
-        .and(rightJoystick.button(3).negate()).and(rightJoystick.button(2).negate())
+        .and(rightJoystick.button(3).negate())
+        .and(rightJoystick.button(2).negate())
         .whileTrue(ScoringFactory.scoreProcessor());
     rightJoystick
         .button(2)
@@ -410,6 +421,19 @@ public class RobotContainer {
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
     rightJoystick.povUp().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualUp());
     rightJoystick.povDown().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualDown());
+  }
+
+  private boolean elevatorCheck() {
+    CommandScheduler.getInstance()
+        .schedule(ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS));
+    Logger.recordOutput(
+        "Elevator/ElevatorCheck",
+        NemesisMathUtil.isApprox(
+            elevator.getRotationCount(),
+            0.05,
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS));
+    return NemesisMathUtil.isApprox(
+        elevator.getRotationCount(), 0.05, Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS);
   }
 
   /**
