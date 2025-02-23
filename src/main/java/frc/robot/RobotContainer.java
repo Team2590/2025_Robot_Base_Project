@@ -440,6 +440,9 @@ public class RobotContainer {
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
     rightJoystick.povUp().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualUp());
     rightJoystick.povDown().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualDown());
+    rightJoystick.button(8).onTrue(ScoringFactory.scoreL2());
+    rightJoystick.button(9).onTrue(ScoringFactory.scoreL3());
+    rightJoystick.button(10).onTrue(ScoringFactory.scoreL4());
   }
 
   /**
