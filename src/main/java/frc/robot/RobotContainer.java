@@ -324,6 +324,7 @@ public class RobotContainer {
         break;
     }
 
+    RobotState.initialize(arm, drive, elevator, endEffector, intake, vision);
     // setup Named Commands:
     registerNamedCommands();
 
