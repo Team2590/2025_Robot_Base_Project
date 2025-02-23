@@ -27,6 +27,18 @@ public class ArmFactory {
                     RobotContainer.getElevator().getRotationCount()));
   }
 
+  public static Command defaultCommand() {
+    return RobotContainer.getArm()
+        .setPosition(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION)
+        .onlyIf(
+            () ->
+                SafetyChecker.isSafe(
+                    SafetyChecker.MechanismType.ARM_MOVEMENT,
+                    Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION,
+                    RobotContainer.getElevator().getRotationCount()))
+        .withName("Arm Default Command");
+  }
+
   public static Command setPositionBlocking(double position) {
     return RobotContainer.getArm()
         .setPositionBlocking(position)

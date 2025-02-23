@@ -24,6 +24,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
@@ -106,7 +107,7 @@ public class ArmIOTalonFX implements ArmIO {
     MagnetSensorConfigs mag = new MagnetSensorConfigs();
     mag.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     mag.MagnetOffset = magOffset;
-    mag.AbsoluteSensorDiscontinuityPoint = 0.9;
+    mag.AbsoluteSensorDiscontinuityPoint = 0.95;
     CANcoderConfiguration can = new CANcoderConfiguration();
     can.withMagnetSensor(mag);
     armCancoder.getConfigurator().apply(can);
@@ -149,6 +150,13 @@ public class ArmIOTalonFX implements ArmIO {
 
   public void setPosition(double position) {
     double elevatorPos = RobotContainer.getElevator().getRotationCount();
+    if (position > Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS) {
+      System.out.println("SETTING TO MAX POSITION");
+      position = Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS;
+    } else if (position < Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS) {
+      System.out.println("SETTING TO MIN POSITION");
+      position = Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS;
+    }
 
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position, elevatorPos)) {
       arm.setControl(mmv.withPosition(position));

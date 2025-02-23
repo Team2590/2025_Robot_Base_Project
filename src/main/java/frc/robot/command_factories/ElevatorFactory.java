@@ -32,6 +32,17 @@ public class ElevatorFactory {
                     RobotContainer.getArm().getAbsolutePosition()));
   }
 
+  public static Command defaultCommand() {
+    return RobotContainer.getElevator()
+        .setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS)
+        .onlyIf(
+            () ->
+                SafetyChecker.isSafe(
+                    SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS,
+                    RobotContainer.getArm().getAbsolutePosition()));
+  }
+
   /**
    * Creates a command to move the elevator to a specific position and wait until it reaches the
    * target.
