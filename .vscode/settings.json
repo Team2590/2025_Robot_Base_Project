@@ -62,12 +62,12 @@
     "edu.wpi.first.math.**.proto.*",
     "edu.wpi.first.math.**.struct.*"
   ],
-  "editor.defaultFormatter": "",
+  "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
   "[json]": {
-    "editor.defaultFormatter": ""
+    "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"
   },
   "[java]": {
-    "editor.defaultFormatter": ""
+    "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"
   },
   "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m -Xlog:disable"
 }
