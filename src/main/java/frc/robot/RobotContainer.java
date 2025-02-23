@@ -440,6 +440,9 @@ public class RobotContainer {
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
     rightJoystick.povUp().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualUp());
     rightJoystick.povDown().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualDown());
+
+    controller.a().onTrue(GamePieceFactory.intakeAlgaeGround());
+    controller.b().onTrue(GamePieceFactory.intakeCoralGround());
   }
 
   /**
