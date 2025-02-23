@@ -463,6 +463,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("ScoreL1", ScoringFactory.scoreL1());
     NamedCommands.registerCommand("Stow-Mechanism", ScoringFactory.stow());
 
+    // This uses a wait command but we can make this into a WaitUntil command that can wait
+    // for a certain condition. 
     NamedCommands.registerCommand(
         "DemoWait", Commands.waitSeconds(20).andThen(Commands.print("Done waiting ...")));
   }
