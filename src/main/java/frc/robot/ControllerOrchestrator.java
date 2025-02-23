@@ -16,7 +16,6 @@ import org.littletonrobotics.junction.Logger;
 public class ControllerOrchestrator extends SubsystemBase {
   private HashMap<String, Pose2d> poseMap = new HashMap<String, Pose2d>();
   private HashMap<String, Double> elevatorSetpointMap = new HashMap<String, Double>();
-  private HashMap<String, Double> endeffectorWristSetpointMap = new HashMap<String, Double>();
   private HashMap<String, Double> armSetpointMap = new HashMap<String, Double>();
   private String alliance;
 
@@ -52,6 +51,7 @@ public class ControllerOrchestrator extends SubsystemBase {
         poseMap.put("sourceTop", FieldConstants.CoralStationRight);
         poseMap.put("sourceBottom", FieldConstants.CoralStationLeft);
         break;
+
       case "Blue":
         poseMap.put("Sright", FieldConstants.BlueReefPoses.Sright);
         poseMap.put("Sleft", FieldConstants.BlueReefPoses.Sleft);
@@ -65,27 +65,23 @@ public class ControllerOrchestrator extends SubsystemBase {
         poseMap.put("NEleft", FieldConstants.BlueReefPoses.NEleft);
         poseMap.put("SEright", FieldConstants.BlueReefPoses.SEright);
         poseMap.put("SEleft", FieldConstants.BlueReefPoses.SEleft);
-
-        // poseMap.put("source",FieldConstants)
-        // poseMap.put("climb",FieldConstants)
         break;
     }
 
     // TODO: add real values
-    elevatorSetpointMap.put("station", Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS);
-    elevatorSetpointMap.put("L1", 10.0); // need to find
+    elevatorSetpointMap.put("source", Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS);
+    elevatorSetpointMap.put(
+        "L1", Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS); // need to find
     elevatorSetpointMap.put("L2", Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS);
     elevatorSetpointMap.put("L3", Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS);
     elevatorSetpointMap.put("L4", Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS);
 
     // TODO: add real values
-    endeffectorWristSetpointMap.put("station", 0.0);
-    endeffectorWristSetpointMap.put("L1", 1.0);
-    endeffectorWristSetpointMap.put("L2", 2.0);
-    endeffectorWristSetpointMap.put("L3", 3.0);
-    endeffectorWristSetpointMap.put("L4", 4.0);
-
-    // armSetpointMap.put(alliance, null);
+    armSetpointMap.put("source", Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION);
+    armSetpointMap.put("L1", Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS);
+    armSetpointMap.put("L2", Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS);
+    armSetpointMap.put("L3", Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS);
+    armSetpointMap.put("L4", Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS);
   }
 
   public NetworkTableEntry getTableEntry(String key) {
@@ -115,19 +111,21 @@ public class ControllerOrchestrator extends SubsystemBase {
     try {
       elevatorSetpointKey = getValue("moveTo").split("_")[1];
     } catch (Exception e) {
-      elevatorSetpointKey = "station";
+      elevatorSetpointKey = "source";
+      System.out.println("E STACK " + e);
     }
-    Logger.recordOutput("Controller/ElevatorSetpoint", elevatorSetpointKey);
+    Logger.recordOutput("ControllerApp/ElevatorSetpoint", elevatorSetpointKey);
     return elevatorSetpointMap.get(elevatorSetpointKey);
   }
 
-  // public double getArmSetpoint() {
-  //   String armSetpointKey = getValue("moveTo").split("_")[1];
-  //   return armSetpointMap.get(armSetpointKey);
-  // }
-
-  public double endeffectorWristSetpoint() {
-    String endeffectorWristSetpointKey = getValue("moveTo").split("_")[0];
-    return endeffectorWristSetpointMap.get(endeffectorWristSetpointKey);
+  public double getArmSetpoint() {
+    String armSetpointKey;
+    try {
+      armSetpointKey = getValue("moveTo").split("_")[1];
+    } catch (Exception e) {
+      armSetpointKey = "source";
+    }
+    Logger.recordOutput("ControllerApp/ArmSetpoint", armSetpointKey);
+    return armSetpointMap.get(armSetpointKey);
   }
 }
