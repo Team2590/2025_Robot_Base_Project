@@ -439,6 +439,7 @@ public class RobotContainer {
     leftJoystick.button(1).onTrue(elevator.setPosition(5));
     rightJoystick.button(5).onTrue(GamePieceFactory.intakeCoralFeeder());
     controller.x().onTrue(elevator.resetRotationCountCommand());
+    controller.a().whileTrue(elevator.setPosition(controllerApp.getElevatorSetpoint()));
     controller.y().whileTrue(DriveCommands.driveToPose(drive, controllerApp::getTargetPose));
 
     /**
