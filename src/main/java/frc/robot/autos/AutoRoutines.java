@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class AutoRoutines {
 
   public static NemesisAuto driveThenScoreL4 =
-      new NemesisAuto("driveThenScoreL4", "simple1piece", new String[] {"dumpL1 scoreL4"}, false);
+      new NemesisAuto("driveThenScoreL4", "simple1piece", new String[] {"scoreL4"});
 
   public static ArrayList<Boolean> getTriggerBooleans(NemesisAuto auto) {
     ArrayList<Trigger> triggers = auto.getTriggers();

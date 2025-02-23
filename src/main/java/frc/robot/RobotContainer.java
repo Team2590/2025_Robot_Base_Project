@@ -342,7 +342,7 @@ public class RobotContainer {
         new FeedForwardCharacterization(
             intake, intake::setVoltage, intake::getCharacterizationVelocity));
 
-    autoChooser.addOption("driveThenL4", AutoRoutines.driveThenScoreL4.getCommand());
+    autoChooser.addOption("driveThenL4", AutoRoutines.driveThenScoreL4.getCommandStitched());
 
     // Configure the button bindings
     // configureButtonBindings();

@@ -8,28 +8,34 @@ import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.command_factories.EndEffectorFactory;
+import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.IntakeFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.subsystems.drive.Drive;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class NemesisAuto {
 
   public String fileName;
-  public String[] commandString;
+  String[] commandString;
   public PathPlannerAuto currentCommand;
   public String autoName;
   public PathPlannerAuto initialCommand;
   public boolean manualMode;
+  public Command chosenCommand;
+  // String chosenCommandName;
   public ArrayList<Trigger> triggers;
   List<PathPlannerPath> pathList;
   HashMap<String, Command> stringToCommand;
+  public int pathI;
 
   // public Command eventCommand;
   // Load in auto path Group from file
@@ -43,16 +49,26 @@ public class NemesisAuto {
    *
    */
 
-  public NemesisAuto(String autoName, String fileName, String[] commandString, boolean manual) {
-    this.manualMode = manual;
+  public NemesisAuto(String autoName, String fileName, String[] commandString) {
+    // this.manualMode = manual;
     this.fileName = fileName;
     this.commandString = commandString;
     this.autoName = autoName;
+    this.pathI = 0;
+    // this.chosenCommand=Commands.none();
 
     stringToCommand = new HashMap<>();
-    stringToCommand.put("scoreL4", ScoringFactory.scoreL4().andThen(ScoringFactory.stow()));
+    stringToCommand.put(
+        "scoreL4",
+        (Constants.currentMode == Constants.simMode
+            ? Commands.runOnce(() -> logAutoCommandsSim("Score L4 placeholder"))
+            : ScoringFactory.scoreL4()));
+    stringToCommand.put("scoreL3", ScoringFactory.scoreL3());
+    stringToCommand.put("scoreL2", ScoringFactory.scoreL3());
     stringToCommand.put("dumpL1", ScoringFactory.scoreL1());
-    stringToCommand.put("intake", EndEffectorFactory.runEndEffector());
+    stringToCommand.put("intake", GamePieceFactory.intakeCoralFeeder());
+    stringToCommand.put("init", new WaitCommand(0.02));
+    stringToCommand.put("scoreProcessor", ScoringFactory.scoreProcessor());
 
     // simMode = simOrNah;
     logAutoCommandsSim("init this auto :D : " + fileName);
@@ -64,6 +80,76 @@ public class NemesisAuto {
       pathList = null;
       System.out.println("oopsei with reading the . auto file " + e.getMessage());
     }
+  }
+
+  public Command getCommandStitched() {
+
+    Command x = Commands.print("init message");
+    for (int i = 0; i < pathList.size(); i++) {
+      pathI = i;
+      chosenCommand = stringToCommand.get(commandString[i]);
+      Command followUp =
+          commandString[i].contains("score")
+              ? EndEffectorFactory.runEndEffectorOuttake().andThen(ScoringFactory.stow())
+              : ScoringFactory.stow();
+      x = x.andThen(customFollowPath.andThen(followUp));
+    }
+    PathPlannerAuto auto = new PathPlannerAuto(x);
+    createTriggers(auto);
+
+    return auto;
+  }
+
+  public void createTriggers(PathPlannerAuto command) {
+
+    for (int i = 0; i < pathList.size(); i++) {
+      Trigger whichPath;
+      if (i == 0) {
+        whichPath = command.activePath(pathList.get(0).name);
+        whichPath.onTrue(Commands.runOnce(() -> setCurrentCommand("init")));
+      } else {
+        whichPath = command.activePath(pathList.get(i).name);
+        AtomicReference<Integer> index = new AtomicReference<Integer>(i);
+        whichPath.onTrue(Commands.runOnce(() -> setCurrentCommand(commandString[index.get()])));
+      }
+
+      triggers.add(whichPath);
+    }
+    // trigger for each path
+
+    Trigger scoreL4Trigger = command.event("scoreL4");
+
+    Trigger scoreL3Trigger = command.event("scoreL3");
+
+    Trigger scoreL2Trigger = command.event("scoreL2");
+    // .and(whichPath); // if in the reef and we following the same path as the selected i
+    Trigger atIntakeStation =
+        command.condition(
+            () ->
+                Constants.locator.getZoneOfField(AutoBuilder.getCurrentPose()).contains("Feeder"));
+    // .and(whichPath); // if in the intake zone
+    Trigger scoreProcessor =
+        command.event("PrimeProcessor"); // .and(whichPath); // controlled by event markers
+
+    Trigger dumpL1 = command.event("dumpL1");
+    // .and(whichPath); // if we are at EventMarker in path which has the name "dumpL1"
+
+    Trigger intakeStationTrigger = command.event("IntakeStation");
+    // whichPath.onTrue(command);
+    scoreProcessor.onTrue(ScoringFactory.scoreProcessor());
+    scoreL4Trigger.onTrue(ScoringFactory.scoreL4());
+    scoreL3Trigger.onTrue(ScoringFactory.scoreL3());
+    scoreL2Trigger.onTrue(ScoringFactory.scoreL2());
+    dumpL1.onTrue(ScoringFactory.scoreL1());
+    intakeStationTrigger.onTrue(GamePieceFactory.intakeCoralFeeder());
+
+    // triggers.add(whichPath);
+    // triggers.add(scoreProcessor);
+    triggers.add(scoreL4Trigger);
+    // triggers.add(scoreL3Trigger);
+    // triggers.add(scoreL2Trigger);
+    // triggers.add(dumpL1);
+    // triggers.add(intakeStationTrigger);
   }
 
   public Command getCommand() {
@@ -192,6 +278,39 @@ public class NemesisAuto {
     }
 
     return currentCommand;
+  }
+
+  private Command customFollowPath =
+      new Command() {
+        PathPlannerPath path;
+        Command pathCommand;
+
+        public void initialize() {
+
+          path = pathList.get(pathI);
+
+          pathCommand = AutoBuilder.followPath(path);
+        }
+
+        public void execute() {
+          boolean shouldRun = chosenCommand.isFinished();
+          if (shouldRun) {
+
+            pathCommand.execute();
+          }
+        }
+        ;
+
+        public boolean isFinished() {
+          return pathCommand.isFinished();
+        }
+
+        public void end(boolean interrupted) {}
+        ;
+      };
+
+  public void setCurrentCommand(String s) {
+    chosenCommand = stringToCommand.get(s);
   }
 
   public ArrayList<Trigger> getTriggers() {
