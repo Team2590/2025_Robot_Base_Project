@@ -450,6 +450,9 @@ public class RobotContainer {
     controller.x().whileTrue(ScoringFactory.scoreL2());
     controller.b().whileTrue(ScoringFactory.scoreL3());
     controller.y().whileTrue(ScoringFactory.scoreL4());
+
+    controller.rightBumper().onTrue(GamePieceFactory.intakeAlgaeGround());
+    controller.leftBumper().onTrue(GamePieceFactory.intakeCoralGround());
   }
 
   /**

@@ -35,27 +35,26 @@ public class VisionConstants {
   // Upper Source Camera
   public static Transform3d robotToUpperSourceCam =
       new Transform3d(
-        Units.inchesToMeters(-7.8508),
-        Units.inchesToMeters(9.0),
-        Units.inchesToMeters(35.7347),
-        new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
+          Units.inchesToMeters(-7.8508),
+          Units.inchesToMeters(9.0),
+          Units.inchesToMeters(35.7347),
+          new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
 
-  
   // Processor Camera
   public static Transform3d robotToProcessorCam =
       new Transform3d(
-        Units.inchesToMeters(-6.379),
-        Units.inchesToMeters(7.2767),
-        Units.inchesToMeters(29.9459),
-        new Rotation3d(0.0, Math.toRadians(-27.0), Math.toRadians(-90.0)));
+          Units.inchesToMeters(-6.379),
+          Units.inchesToMeters(7.2767),
+          Units.inchesToMeters(29.9459),
+          new Rotation3d(0.0, Math.toRadians(-27.0), Math.toRadians(-90.0)));
 
   // Reef Camera
   public static Transform3d robotToReefCam =
       new Transform3d(
-        Units.inchesToMeters(5.0),
-        Units.inchesToMeters(12.0),
-        Units.inchesToMeters(10.33832),
-        new Rotation3d(0.0, 0.0, Math.toRadians(-25.4884)));
+          Units.inchesToMeters(5.0),
+          Units.inchesToMeters(12.0),
+          Units.inchesToMeters(10.33832),
+          new Rotation3d(0.0, 0.0, Math.toRadians(-25.4884)));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
@@ -72,7 +71,7 @@ public class VisionConstants {
       new double[] {
         1.0, // Upper Source Camera
         1.0, // Processor Camera
-        1.0  // Reef Camera
+        1.0 // Reef Camera
       };
 
   // Multipliers to apply for MegaTag 2 observations
