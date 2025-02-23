@@ -8,8 +8,13 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.elevator.Elevator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
@@ -116,6 +121,17 @@ public class ControllerOrchestrator extends SubsystemBase {
     }
     Logger.recordOutput("ControllerApp/ElevatorSetpoint", elevatorSetpointKey);
     return elevatorSetpointMap.get(elevatorSetpointKey);
+  }
+
+  public Command getElevatorSetpoint(Elevator elevator) {
+    HashSet<Subsystem> requirements = new HashSet<>();
+    requirements.add(elevator);
+    return Commands.defer(
+        () -> {
+          Double elevatorSetpoint = getElevatorSetpoint();
+          return elevator.setPosition(elevatorSetpoint);
+        },
+        requirements);
   }
 
   public double getArmSetpoint() {
