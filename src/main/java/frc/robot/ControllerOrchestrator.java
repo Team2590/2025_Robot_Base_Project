@@ -6,17 +6,31 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class ControllerOrchestrator extends SubsystemBase {
   private HashMap<String, Pose2d> poseMap = new HashMap<String, Pose2d>();
   private HashMap<String, Double> elevatorSetpointMap = new HashMap<String, Double>();
   private HashMap<String, Double> endeffectorWristSetpointMap = new HashMap<String, Double>();
+  private String alliance;
 
   public ControllerOrchestrator() {
-    // Optional<Alliance> ally = DriverStation.getAlliance();
-    String alliance = "Blue";
+    Optional<Alliance> ally = DriverStation.getAlliance();
+    if (ally.isPresent()) {
+      if (ally.get() == Alliance.Red) {
+        alliance = "Red";
+      }
+      if (ally.get() == Alliance.Blue) {
+        alliance = "Blue";
+      }
+    } else {
+      // SIM mode
+      alliance = "Red";
+    }
     switch (alliance) {
       case "Red":
         poseMap.put("Sright", FieldConstants.RedReefPoses.Sright);
@@ -32,9 +46,9 @@ public class ControllerOrchestrator extends SubsystemBase {
         poseMap.put("SEright", FieldConstants.RedReefPoses.SEright);
         poseMap.put("SEleft", FieldConstants.RedReefPoses.SEleft);
 
-        //Test 
-        poseMap.put("sourceTop",FieldConstants.CoralStationRight); 
-        poseMap.put("sourceBottom",FieldConstants.CoralStationLeft); 
+        // Test
+        poseMap.put("sourceTop", FieldConstants.CoralStationRight);
+        poseMap.put("sourceBottom", FieldConstants.CoralStationLeft);
         break;
       case "Blue":
         poseMap.put("Sright", FieldConstants.BlueReefPoses.Sright);
