@@ -414,7 +414,7 @@ public class RobotContainer {
     rightJoystick
         .button(2)
         .and(leftJoystick.trigger())
-        .whileTrue(ScoringFactory.score().finallyDo(() -> RobotState.setIntakeNoCoral()));
+        .whileTrue(ScoringFactory.scoreL1().finallyDo(() -> RobotState.setIntakeNoCoral()));
     rightJoystick
         .button(3)
         .and(rightJoystick.trigger())
