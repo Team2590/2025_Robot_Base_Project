@@ -16,6 +16,7 @@ public class ControllerOrchestrator extends SubsystemBase {
   private HashMap<String, Pose2d> poseMap = new HashMap<String, Pose2d>();
   private HashMap<String, Double> elevatorSetpointMap = new HashMap<String, Double>();
   private HashMap<String, Double> endeffectorWristSetpointMap = new HashMap<String, Double>();
+  private HashMap<String, Double> armSetpointMap = new HashMap<String, Double>();
   private String alliance;
 
   public ControllerOrchestrator() {
@@ -82,6 +83,8 @@ public class ControllerOrchestrator extends SubsystemBase {
     endeffectorWristSetpointMap.put("L2", 2.0);
     endeffectorWristSetpointMap.put("L3", 3.0);
     endeffectorWristSetpointMap.put("L4", 4.0);
+
+    // armSetpointMap.put(alliance, null);
   }
 
   public NetworkTableEntry getTableEntry(String key) {
@@ -110,6 +113,11 @@ public class ControllerOrchestrator extends SubsystemBase {
     String elevatorSetpointKey = getValue("moveTo").split("_")[1];
     return elevatorSetpointMap.get(elevatorSetpointKey);
   }
+
+  // public double getArmSetpoint() {
+  //   String armSetpointKey = getValue("moveTo").split("_")[1];
+  //   return armSetpointMap.get(armSetpointKey);
+  // }
 
   public double endeffectorWristSetpoint() {
     String endeffectorWristSetpointKey = getValue("moveTo").split("_")[0];
