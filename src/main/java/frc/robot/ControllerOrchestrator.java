@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.HashMap;
 import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 
 public class ControllerOrchestrator extends SubsystemBase {
   private HashMap<String, Pose2d> poseMap = new HashMap<String, Pose2d>();
@@ -110,7 +111,13 @@ public class ControllerOrchestrator extends SubsystemBase {
   }
 
   public double getElevatorSetpoint() {
-    String elevatorSetpointKey = getValue("moveTo").split("_")[1];
+    String elevatorSetpointKey;
+    try {
+      elevatorSetpointKey = getValue("moveTo").split("_")[1];
+    } catch (Exception e) {
+      elevatorSetpointKey = "station";
+    }
+    Logger.recordOutput("Controller/ElevatorSetpoint", elevatorSetpointKey);
     return elevatorSetpointMap.get(elevatorSetpointKey);
   }
 
