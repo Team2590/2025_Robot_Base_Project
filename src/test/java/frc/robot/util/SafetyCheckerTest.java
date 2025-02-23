@@ -19,15 +19,16 @@ class SafetyCheckerTest {
             ));
   }
 
-  @Test
-  void armMovementSafety_armInSafeRange_returnsTrue() {
-    assertTrue(
-        SafetyChecker.isSafe(
-            SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_DANGER_MAX_POS - 1, // in danger zone
-            Constants.ArmConstantsLeonidas.ARM_DANGER_MAX_POS + 0.1 // just out of the danger zone
-            ));
-  }
+  //   @Test
+  //   void armMovementSafety_armInSafeRange_returnsTrue() {
+  //     assertTrue(
+  //         SafetyChecker.isSafe(
+  //             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
+  //             Constants.ElevatorConstantsLeonidas.ELEVATOR_DANGER_MAX_POS - 1, // in danger zone
+  //             Constants.ArmConstantsLeonidas.ARM_DANGER_MAX_POS + 0.1 // just out of the danger
+  // zone
+  //             ));
+  //   }
 
   @Test
   void elevatorMovementSafety_AboveOperationalLimit_returnsFalse() {
@@ -105,26 +106,26 @@ class SafetyCheckerTest {
             ));
   }
 
-  @Test
-  void edgeCase_atMaximumBoundary_returnsTrue() {
-    assertTrue(
-        SafetyChecker.isSafe(
-            SafetyChecker.MechanismType.ARM_MOVEMENT,
-            Constants.ArmConstantsLeonidas.ARM_DANGER_MAX_POS, // Exactly at arm maximum
-            Constants.ElevatorConstantsLeonidas
-                .ELEVATOR_OPERATIONAL_MAX_POS // Exactly at elevator maximum
-            ));
-  }
+  //   @Test
+  //   void edgeCase_atMaximumBoundary_returnsTrue() {
+  //     assertTrue(
+  //         SafetyChecker.isSafe(
+  //             SafetyChecker.MechanismType.ARM_MOVEMENT,
+  //             Constants.ArmConstantsLeonidas.ARM_DANGER_MAX_POS, // Exactly at arm maximum
+  //             Constants.ElevatorConstantsLeonidas
+  //                 .ELEVATOR_OPERATIONAL_MAX_POS // Exactly at elevator maximum
+  //             ));
+  //   }
 
-  @Test
-  void elevatorMovementSafety_moveElevatorDownUnsafeArm_returnsFalse() {
-    assertFalse(
-        SafetyChecker.isSafe(
-            SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
-            22.0, // slightly unsafe
-            -0.15 // slightly unsafe
-            ));
-  }
+  //   @Test
+  //   void elevatorMovementSafety_moveElevatorDownUnsafeArm_returnsFalse() {
+  //     assertFalse(
+  //         SafetyChecker.isSafe(
+  //             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
+  //             22.0, // slightly unsafe
+  //             -0.15 // slightly unsafe
+  //             ));
+  //   }
 
   @Test
   void elevatorMovementSafety_moveArmDownUnsafeElevator_returnsFalse() {

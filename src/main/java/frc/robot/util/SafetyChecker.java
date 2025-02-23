@@ -43,7 +43,7 @@ public class SafetyChecker {
           return false; // trying to overshoot the arm position's capabilities
         }
 
-        if (!isArmInSafeRange(movingPosition) && (!isElevatorInSafeRange(otherPosition))) {
+        if (!isElevatorInSafeRange(otherPosition)) {
           return false; // if target position is out of operational range, or if its in the 'danger
           // zone' and elevator is also in its 'danger zone'.
         }

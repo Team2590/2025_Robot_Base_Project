@@ -283,14 +283,14 @@ public final class Constants {
     public static final double sensorReduction = 58.8;
     public static double ARM_OPERATIONAL_MIN_POS = .1;
     public static double ARM_OPERATIONAL_MAX_POS = .95;
-    public static double ARM_DANGER_MIN_POS = -0.01;
-    public static double ARM_DANGER_MAX_POS = -1;
+    public static double ARM_DANGER_MIN_POS = 0;
+    public static double ARM_DANGER_MAX_POS = .099;
     public static double ARM_SCORING_CORAL_POS = 0.72; // TODO: change to actual value
     public static double ARM_INTAKE_SOURCE_POSITION = .12;
   }
 
   public static class ElevatorConstantsLeonidas {
-    public static double ELEVATOR_OPERATIONAL_MIN_POS = 5;
+    public static double ELEVATOR_OPERATIONAL_MIN_POS = 0;
     public static double ELEVATOR_OPERATIONAL_MAX_POS = 89.5;
     public static final int canID = 25;
     public static final String canBus = "Takeover";
@@ -301,30 +301,13 @@ public final class Constants {
     public static final double kS = 0.22720;
     public static final double kV = 0.14051;
     public static double ELEVATOR_DANGER_MIN_POS = ELEVATOR_OPERATIONAL_MIN_POS;
-    public static double ELEVATOR_DANGER_MAX_POS = 27.28;
+    public static double ELEVATOR_DANGER_MAX_POS = 0;
     public static double ELEVATOR_L2_POS = 19;
     public static double ELEVATOR_L3_POS = 46;
     public static double ELEVATOR_L4_POS = 87;
     public static double ELEVATOR_SOURCE_POS = 15;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
-
-  /*   public final class ElevatorConstantsLeonidas {
-    public static double ELEVATOR_FACTORY_MIN_POS = 5; // TODO: change to actual value
-    public static double ELEVATOR_FACTORY_MAX_POS = 89.5; // TODO: change to actual value
-    public static final int canID = 25;
-    public static final String canBus = "Takeover";
-    public static final int currentLimitAmps = 40; // TODO
-    public static final boolean invert = false;
-    public static final boolean brake = true;
-    public static final double reduction = 7;
-    public static final double kS = 0.22720;
-    public static final double kV = 0.14051;
-    public static final double l2 = 27.210938;
-    public static final double l3 = 51.997559;
-    public static final double l4 = 84.572266;
-  }
-  */
 
   public final class EndEffectorConstantsLeonidas {
     public static final int canID = 10;
