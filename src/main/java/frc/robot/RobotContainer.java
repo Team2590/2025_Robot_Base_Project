@@ -450,6 +450,9 @@ public class RobotContainer {
     controller.x().whileTrue(ScoringFactory.scoreL2());
     controller.b().whileTrue(ScoringFactory.scoreL3());
     controller.y().whileTrue(ScoringFactory.scoreL4());
+
+    controller.leftBumper().onTrue(ScoringFactory.deployClimbMechanism());
+    controller.leftBumper().onTrue(ScoringFactory.climb());
   }
 
   /**
