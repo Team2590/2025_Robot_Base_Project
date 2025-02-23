@@ -436,15 +436,15 @@ public class RobotContainer {
     // rightJoystick.button(2).and(rightJoystick.trigger()).whileTrue(ScoringFactory.scoreL1());
 
     leftJoystick
-    .trigger()
-    .and(rightJoystick.button(3).negate())
-    .and(rightJoystick.button(2).negate())
-    .whileTrue(ScoringFactory.scoreProcessor().finallyDo(() -> RobotState.setIntakeNoAlgae()));
+        .trigger()
+        .and(rightJoystick.button(3).negate())
+        .and(rightJoystick.button(2).negate())
+        .whileTrue(ScoringFactory.scoreProcessor().finallyDo(() -> RobotState.setIntakeNoAlgae()));
 
     rightJoystick
-    .button(2)
-    .and(leftJoystick.trigger())
-    .whileTrue(ScoringFactory.scoreL1().finallyDo(() -> RobotState.setIntakeNoCoral()));
+        .button(2)
+        .and(leftJoystick.trigger())
+        .whileTrue(ScoringFactory.scoreL1().finallyDo(() -> RobotState.setIntakeNoCoral()));
 
     controller.a().whileTrue(ScoringFactory.scoreL1());
     controller.x().whileTrue(ScoringFactory.scoreL2());
