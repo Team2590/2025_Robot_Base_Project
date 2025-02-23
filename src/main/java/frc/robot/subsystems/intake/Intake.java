@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.NemesisMathUtil;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -16,13 +17,13 @@ public class Intake extends SubsystemBase {
   // private final IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
   private final Alert intakeDisconnected;
   private final IntakeArm intakeArm;
-  private LoggedTunableNumber RUNNING_THRESHOLD =
-      new LoggedTunableNumber("Intake/LOWER_THRESHOLD", 0.25);
-  private LoggedTunableNumber HOLDING_THRESHOLD =
-      new LoggedTunableNumber("Intake/HIGHER_THRESHOLD", 0.5);
+  private LoggedTunableNumber INTAKE_ALGAE_CURRENT_THRESHOLD =
+      new LoggedTunableNumber("Intake/AlgaeCurrentThreshold", -38);
   private LoggedTunableNumber INTAKE_CORAL_CURRENT_THRESHOLD =
-      new LoggedTunableNumber("Intake/CoralCurrentThreshold", 0.5);
-  private LinearFilter filter = LinearFilter.movingAverage(30);
+      new LoggedTunableNumber("Intake/CoralCurrentThreshold", 60);
+  private LoggedTunableNumber LINEAR_FILTER_SAMPLES =
+      new LoggedTunableNumber("Intake/LinearFilterSamples", 20);
+  private LinearFilter filter;
   double filtered_data;
 
   public Intake(IntakeIO intakeIO, IntakeArmIO intakeArmIO) {
@@ -31,6 +32,7 @@ public class Intake extends SubsystemBase {
     intakeDisconnected = new Alert("Intake motor disconnected!", Alert.AlertType.kWarning);
     intakeArm = new IntakeArm(intakeArmIO);
     intakeIO.setNeutralMode(NeutralModeValue.Brake);
+    filter = LinearFilter.movingAverage((int) LINEAR_FILTER_SAMPLES.get());
   }
 
   @Override
@@ -137,17 +139,9 @@ public class Intake extends SubsystemBase {
    *
    * @return true if the intake has secured the algae, false if not
    */
+  @AutoLogOutput
   public boolean hasAlgae() {
-    return filtered_data >= HOLDING_THRESHOLD.get() || filtered_data <= RUNNING_THRESHOLD.get();
-  }
-
-  /**
-   * Returns boolean whether the intake is running or not
-   *
-   * @return true if intake is running, false if not
-   */
-  public boolean isRunning() {
-    return filtered_data >= HOLDING_THRESHOLD.get() && filtered_data >= RUNNING_THRESHOLD.get();
+    return filtered_data <= INTAKE_ALGAE_CURRENT_THRESHOLD.get();
   }
 
   /*
@@ -155,6 +149,7 @@ public class Intake extends SubsystemBase {
    * The way we can distinguish between Algae and Coral is by using the sign of the current
    *  TODO figure out the direction of intake coral vs algae
    */
+  @AutoLogOutput
   public boolean hasCoral() {
     return filtered_data >= INTAKE_CORAL_CURRENT_THRESHOLD.get();
   }

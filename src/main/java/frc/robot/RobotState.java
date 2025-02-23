@@ -124,15 +124,6 @@ public class RobotState extends SubsystemBase {
   }
 
   /**
-   * Checks if intake is running
-   *
-   * @return true if intake is running, false if not
-   */
-  public boolean intakeRunning() {
-    return intake.isRunning();
-  }
-
-  /**
    * Checks what zone robot is in
    *
    * @return the zone robot is in
