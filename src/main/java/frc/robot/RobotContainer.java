@@ -453,16 +453,17 @@ public class RobotContainer {
     /**
      * For tuning purposes: rightJoystick .button(3) .and(leftJoystick.trigger()) .whileTrue( new
      * ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
-     * elevator.setPositionLoggedTunableNumber()));
-     * controller.button(7).whileTrue( new
+     * elevator.setPositionLoggedTunableNumber())); controller.button(7).whileTrue( new
      * ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
      * elevator.setPositionLoggedTunableNumber()));
      */
     // manual backup button binds
-    
-    controller.button(7).whileTrue( new
-    ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
-    elevator.setPositionLoggedTunableNumber()));
+
+    // controller
+    //     .button(7)
+    //     .whileTrue(
+    //         new ParallelCommandGroup(
+    //             arm.setPositionLoggedTunableNumber(), elevator.setPositionLoggedTunableNumber()));
 
     rightJoystick
         .button(3)
@@ -490,14 +491,18 @@ public class RobotContainer {
         .whileTrue(ScoringFactory.scoreL1().finallyDo(() -> RobotState.setIntakeNoCoral()));
 
     controller.a().whileTrue(ScoringFactory.scoreL1());
-    controller.x().whileTrue(ScoringFactory.scoreL2());
-    controller.b().whileTrue(ScoringFactory.scoreL3());
-    controller.y().whileTrue(ScoringFactory.scoreL4());
+    controller.b().whileTrue(ScoringFactory.scoreL2());
+    controller.y().whileTrue(ScoringFactory.scoreL3());
+    controller.x().whileTrue(ScoringFactory.scoreL4());
+    // controller.a().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
+    // controller.b().whileTrue(EndEffectorFactory.runEndEffector());
+    // controller.rightBumper().onTrue(GamePieceFactory.intakeAlgaeGround());
+    // controller.leftBumper().onTrue(GamePieceFactory.intakeCoralGround());
+    controller.rightBumper().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
+    controller.leftBumper().whileTrue(EndEffectorFactory.runEndEffector());
 
-
-    controller.rightBumper().onTrue(GamePieceFactory.intakeAlgaeGround());
-    controller.leftBumper().onTrue(GamePieceFactory.intakeCoralGround());
-    rightJoystick.button(11).whileTrue(ScoringFactory.deployClimbMechanism());
+    rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
+    rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
   }
 

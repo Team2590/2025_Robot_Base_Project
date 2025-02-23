@@ -23,7 +23,7 @@ public class ScoringFactory {
     return new ParallelCommandGroup(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS)
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4)
             // NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(),
             // 1)
             )
@@ -108,12 +108,20 @@ public class ScoringFactory {
         .withName("Stow Mechanism");
   }
 
-  public static Command deployClimbMechanism() {
+  public static Command prepClimb() {
     // return new ParallelCommandGroup(
     // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS),
     // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
-    return ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)
+    return new ParallelCommandGroup(
+            IntakeFactory.setIntakeCoralPosition(),
+            ArmFactory.setPositionBlocking(.33),
+            ElevatorFactory.setPositionBlocking(0.5))
         .withName("Deploy climb mechanism");
+    // , ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)
+  }
+
+  public static Command deployMechanism() {
+    return ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION);
   }
 
   public static Command climb() {
