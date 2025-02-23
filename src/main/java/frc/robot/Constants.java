@@ -122,7 +122,7 @@ public final class Constants {
     public static final int ARM_CAN_ID = 45;
     public static final int ARM_CANCODER_ID = 44;
     public static final double ARM_GEAR_RATIO = 266.67;
-    public static final double MAG_OFFSET = -.156;
+    public static final double MAG_OFFSET = 0;
     public static final double ARM_MAX = -0.35; // -.3
     public static final String CANBUS = "Takeover";
     public static final int CURRENT_LIMIT = 40;

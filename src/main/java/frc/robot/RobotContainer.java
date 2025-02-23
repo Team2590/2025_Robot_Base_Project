@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -363,7 +364,7 @@ public class RobotContainer {
     if (Constants.currentMode == Constants.Mode.SIM) {
       configureButtonBindingsSimulation();
     }
-    
+
     configureButtonBindings();
 
     // setup Named Commands:
@@ -453,8 +454,16 @@ public class RobotContainer {
      * For tuning purposes: rightJoystick .button(3) .and(leftJoystick.trigger()) .whileTrue( new
      * ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
      * elevator.setPositionLoggedTunableNumber()));
+     * controller.button(7).whileTrue( new
+     * ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
+     * elevator.setPositionLoggedTunableNumber()));
      */
     // manual backup button binds
+    
+    controller.button(7).whileTrue( new
+    ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
+    elevator.setPositionLoggedTunableNumber()));
+
     rightJoystick
         .button(3)
         .and(leftJoystick.button(2))
@@ -485,8 +494,11 @@ public class RobotContainer {
     controller.b().whileTrue(ScoringFactory.scoreL3());
     controller.y().whileTrue(ScoringFactory.scoreL4());
 
+
     controller.rightBumper().onTrue(GamePieceFactory.intakeAlgaeGround());
     controller.leftBumper().onTrue(GamePieceFactory.intakeCoralGround());
+    rightJoystick.button(11).whileTrue(ScoringFactory.deployClimbMechanism());
+    rightJoystick.button(16).whileTrue(ScoringFactory.climb());
   }
 
   /**
