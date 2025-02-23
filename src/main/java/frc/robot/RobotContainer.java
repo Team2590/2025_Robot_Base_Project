@@ -29,8 +29,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
-import frc.robot.autos.AutoRoutines;
-import frc.robot.command_factories.AutoFactory;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
@@ -360,8 +358,6 @@ public class RobotContainer {
         new FeedForwardCharacterization(
             intake, intake::setVoltage, intake::getCharacterizationVelocity));
 
-    autoChooser.addOption("driveThenL4", AutoRoutines.driveThenScoreL4.getCommand());
-
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -418,7 +414,7 @@ public class RobotContainer {
     rightJoystick
         .button(2)
         .and(leftJoystick.trigger())
-        .whileTrue(ScoringFactory.scoreL1().finallyDo(() -> RobotState.setIntakeNoCoral()));
+        .whileTrue(ScoringFactory.score().finallyDo(() -> RobotState.setIntakeNoCoral()));
     rightJoystick
         .button(3)
         .and(rightJoystick.trigger())
@@ -452,19 +448,29 @@ public class RobotContainer {
   }
 
   public static void registerNamedCommands() {
-    NamedCommands.registerCommand("HoldL4", AutoFactory.holdThenL4);
-    NamedCommands.registerCommand("HoldL3", AutoFactory.holdThenL3);
-    NamedCommands.registerCommand("HoldL2", AutoFactory.holdThenL2);
-    // NamedCommands.registerCommand("HoldL1", AutoFactory.holdThenL1);
 
-    NamedCommands.registerCommand("ScoreL4", ScoringFactory.scoreL4());
-    NamedCommands.registerCommand("ScoreL3", ScoringFactory.scoreL3());
-    NamedCommands.registerCommand("ScoreL2", ScoringFactory.scoreL2());
-    NamedCommands.registerCommand("ScoreL1", ScoringFactory.scoreL1());
+    // Prime Elevator and Arm position. Useful in Autos but could also be useful to trigger in a
+    // zone
+    // if we have a coral and the controller app telling us where to score.
+    NamedCommands.registerCommand("PrimeL4", ScoringFactory.primeForLevel(ScoringFactory.Level.L4));
+    NamedCommands.registerCommand("PrimeL3", ScoringFactory.primeForLevel(ScoringFactory.Level.L3));
+    NamedCommands.registerCommand("PrimeL2", ScoringFactory.primeForLevel(ScoringFactory.Level.L2));
+    // NamedCommands.registerCommand("PrimeL1",
+    // ScoringFactory.primeForLevel(ScoringFactory.Level.L2));
+
+    // Scoring Commands
+    NamedCommands.registerCommand("ScoreL4", ScoringFactory.score(ScoringFactory.Level.L4));
+    NamedCommands.registerCommand("ScoreL3", ScoringFactory.score(ScoringFactory.Level.L3));
+    NamedCommands.registerCommand("ScoreL2", ScoringFactory.score(ScoringFactory.Level.L2));
+    // NamedCommands.registerCommand("ScoreL1", ScoringFactory.score(ScoringFactory.Level.L1));
+
+    // Does this need priming?
+    NamedCommands.registerCommand("ScoreProcessor", ScoringFactory.scoreProcessor());
+
     NamedCommands.registerCommand("Stow-Mechanism", ScoringFactory.stow());
 
     // This uses a wait command but we can make this into a WaitUntil command that can wait
-    // for a certain condition. 
+    // for a certain condition.
     NamedCommands.registerCommand(
         "DemoWait", Commands.waitSeconds(20).andThen(Commands.print("Done waiting ...")));
   }

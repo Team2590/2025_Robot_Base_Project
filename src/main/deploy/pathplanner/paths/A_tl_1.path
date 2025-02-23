@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "dumpL1",
+      "name": "PrimeElevatorAndArmToL4",
       "waypointRelativePos": 0.56271186440678,
       "endWaypointRelativePos": null,
       "command": null
