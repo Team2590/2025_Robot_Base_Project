@@ -16,7 +16,7 @@ public class ControllerOrchestrator extends SubsystemBase {
 
   public ControllerOrchestrator() {
     // Optional<Alliance> ally = DriverStation.getAlliance();
-    String alliance = "Red";
+    String alliance = "Blue";
     switch (alliance) {
       case "Red":
         poseMap.put("Sright", FieldConstants.RedReefPoses.Sright);
@@ -31,6 +31,10 @@ public class ControllerOrchestrator extends SubsystemBase {
         poseMap.put("NEleft", FieldConstants.RedReefPoses.NEleft);
         poseMap.put("SEright", FieldConstants.RedReefPoses.SEright);
         poseMap.put("SEleft", FieldConstants.RedReefPoses.SEleft);
+
+        //Test 
+        poseMap.put("sourceTop",FieldConstants.CoralStationRight); 
+        poseMap.put("sourceBottom",FieldConstants.CoralStationLeft); 
         break;
       case "Blue":
         poseMap.put("Sright", FieldConstants.BlueReefPoses.Sright);
@@ -45,6 +49,9 @@ public class ControllerOrchestrator extends SubsystemBase {
         poseMap.put("NEleft", FieldConstants.BlueReefPoses.NEleft);
         poseMap.put("SEright", FieldConstants.BlueReefPoses.SEright);
         poseMap.put("SEleft", FieldConstants.BlueReefPoses.SEleft);
+
+        // poseMap.put("source",FieldConstants)
+        // poseMap.put("climb",FieldConstants)
         break;
     }
 
@@ -62,7 +69,6 @@ public class ControllerOrchestrator extends SubsystemBase {
     endeffectorWristSetpointMap.put("L3", 3.0);
     endeffectorWristSetpointMap.put("L4", 4.0);
   }
-
 
   public NetworkTableEntry getTableEntry(String key) {
     NetworkTable table = NetworkTableInstance.getDefault().getTable("ControllerApp/target");

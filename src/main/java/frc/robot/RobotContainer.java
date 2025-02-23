@@ -16,12 +16,10 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -441,7 +439,7 @@ public class RobotContainer {
     leftJoystick.button(1).onTrue(elevator.setPosition(5));
     rightJoystick.button(5).onTrue(GamePieceFactory.intakeCoralFeeder());
     controller.x().onTrue(elevator.resetRotationCountCommand());
-    controller.y().whileTrue(DriveCommands.driveToPose(drive, controllerApp::getTargetPose)); 
+    controller.y().whileTrue(DriveCommands.driveToPose(drive, controllerApp::getTargetPose));
 
     /**
      * the following button binds work on Larry:
