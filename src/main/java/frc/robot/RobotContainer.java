@@ -456,23 +456,25 @@ public class RobotContainer {
     NamedCommands.registerCommand("PrimeL3", ScoringFactory.primeForLevel(ScoringFactory.Level.L3));
     NamedCommands.registerCommand("PrimeL2", ScoringFactory.primeForLevel(ScoringFactory.Level.L2));
     // NamedCommands.registerCommand("PrimeL1",
-    // ScoringFactory.primeForLevel(ScoringFactory.Level.L2));
+    // ScoringFactory.primeForLevel(ScoringFactory.Level.L1));
+    // TODO: Prime for Source
 
     // Scoring Commands
     NamedCommands.registerCommand("ScoreL4", ScoringFactory.score(ScoringFactory.Level.L4));
     NamedCommands.registerCommand("ScoreL3", ScoringFactory.score(ScoringFactory.Level.L3));
     NamedCommands.registerCommand("ScoreL2", ScoringFactory.score(ScoringFactory.Level.L2));
-    // NamedCommands.registerCommand("ScoreL1", ScoringFactory.score(ScoringFactory.Level.L1));
+    NamedCommands.registerCommand("ScoreL1", ScoringFactory.score(ScoringFactory.Level.L1));
 
     // Does this need priming?
     NamedCommands.registerCommand("ScoreProcessor", ScoringFactory.scoreProcessor());
 
     NamedCommands.registerCommand("Stow-Mechanism", ScoringFactory.stow());
+    NamedCommands.registerCommand("PrimeSource", ScoringFactory.stow());
 
     // This uses a wait command but we can make this into a WaitUntil command that can wait
     // for a certain condition.
     NamedCommands.registerCommand(
-        "DemoWait", Commands.waitSeconds(20).andThen(Commands.print("Done waiting ...")));
+        "WaitAndPrint", Commands.waitSeconds(5).andThen(Commands.print("Done waiting ...")));
   }
 
   public boolean inReef() {

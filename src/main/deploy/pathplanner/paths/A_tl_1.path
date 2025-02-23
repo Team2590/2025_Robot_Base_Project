@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.7110137061068884,
-        "y": 5.207575993788868
+        "x": 3.8944854083814118,
+        "y": 5.268538256695396
       },
       "prevControl": {
-        "x": 3.7502738876163457,
-        "y": 5.454474025672163
+        "x": 3.9337455898908695,
+        "y": 5.515436288578691
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "PrimeElevatorAndArmToL4",
-      "waypointRelativePos": 0.56271186440678,
+      "name": "PrimeL4",
+      "waypointRelativePos": 0.6322217319100936,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -49,7 +49,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -57.65321361017534
+    "rotation": -54.07487247078446
   },
   "reversed": false,
   "folder": null,
