@@ -401,24 +401,11 @@ public class RobotContainer {
         .and(rightJoystick.button(3).negate())
         .and(rightJoystick.button(2).negate())
         .whileTrue(GamePieceFactory.intakeAlgaeGround());
-    leftJoystick
-        .trigger()
-        .and(rightJoystick.button(3).negate())
-        .and(rightJoystick.button(2).negate())
-        .whileTrue(ScoringFactory.scoreProcessor().finallyDo(() -> RobotState.setIntakeNoAlgae()));
     rightJoystick
         .button(2)
         .and(rightJoystick.trigger())
         .whileTrue(GamePieceFactory.intakeCoralGround());
-    // rightJoystick
-    //     .button(2)
-    //     .and(rightJoystick.trigger())
-    //     .whileTrue(GamePieceFactory.intakeCoralGround());
-    // rightJoystick.button(2).and(rightJoystick.trigger()).whileTrue(ScoringFactory.scoreL1());
-    rightJoystick
-        .button(2)
-        .and(leftJoystick.trigger())
-        .whileTrue(ScoringFactory.scoreL1().finallyDo(() -> RobotState.setIntakeNoCoral()));
+
     rightJoystick
         .button(3)
         .and(rightJoystick.trigger())
@@ -440,6 +427,29 @@ public class RobotContainer {
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
     rightJoystick.povUp().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualUp());
     rightJoystick.povDown().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualDown());
+
+    // SCORING BUTTONS
+    // rightJoystick
+    //     .button(2)
+    //     .and(rightJoystick.trigger())
+    //     .whileTrue(GamePieceFactory.intakeCoralGround());
+    // rightJoystick.button(2).and(rightJoystick.trigger()).whileTrue(ScoringFactory.scoreL1());
+
+    leftJoystick
+    .trigger()
+    .and(rightJoystick.button(3).negate())
+    .and(rightJoystick.button(2).negate())
+    .whileTrue(ScoringFactory.scoreProcessor().finallyDo(() -> RobotState.setIntakeNoAlgae()));
+
+    rightJoystick
+    .button(2)
+    .and(leftJoystick.trigger())
+    .whileTrue(ScoringFactory.scoreL1().finallyDo(() -> RobotState.setIntakeNoCoral()));
+
+    controller.a().whileTrue(ScoringFactory.scoreL1());
+    controller.x().whileTrue(ScoringFactory.scoreL2());
+    controller.b().whileTrue(ScoringFactory.scoreL3());
+    controller.y().whileTrue(ScoringFactory.scoreL4());
   }
 
   /**
