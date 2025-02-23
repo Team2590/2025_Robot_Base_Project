@@ -326,6 +326,9 @@ public class RobotContainer {
         break;
     }
 
+    // setup Named Commands:
+    registerNamedCommands();
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -361,9 +364,6 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-
-    // setup Named Commands:
-    registerNamedCommands();
   }
 
   /**
@@ -462,6 +462,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("ScoreL2", ScoringFactory.scoreL2());
     NamedCommands.registerCommand("ScoreL1", ScoringFactory.scoreL1());
     NamedCommands.registerCommand("Stow-Mechanism", ScoringFactory.stow());
+
+    NamedCommands.registerCommand(
+        "DemoWait", Commands.waitSeconds(20).andThen(Commands.print("Done waiting ...")));
   }
 
   public boolean inReef() {
