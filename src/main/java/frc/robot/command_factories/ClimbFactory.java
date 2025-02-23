@@ -11,4 +11,8 @@ public class ClimbFactory {
         .withName("Run climb")
         .until(() -> RobotContainer.getClimb().getRotationCount() > position);
   }
+
+  public static Command testClimb(double voltage) {
+    return RobotContainer.getClimb().runClimb(voltage);
+  }
 }
