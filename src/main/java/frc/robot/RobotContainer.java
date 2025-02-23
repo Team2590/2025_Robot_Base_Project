@@ -360,12 +360,46 @@ public class RobotContainer {
     autoChooser.addOption("driveThenL4", AutoRoutines.driveThenScoreL4.getCommand());
 
     // Configure the button bindings
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      configureButtonBindingsSimulation();
+    }
+    
     configureButtonBindings();
 
     // setup Named Commands:
     registerNamedCommands();
   }
 
+  private void configureButtonBindingsSimulation() {
+
+    // Add elevator control bindings
+    leftJoystick
+        .button(4)
+        .onTrue(
+            elevator.setPosition(
+                Constants.ElevatorConstantsLeonidas
+                    .ELEVATOR_OPERATIONAL_MIN_POS)); // Move to home position
+    leftJoystick
+        .button(5)
+        .onTrue(
+            elevator.setPosition(
+                Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS)); // Just safe
+
+    // Add arm control bindings
+    leftJoystick
+        .button(6)
+        .onTrue(
+            arm.setPosition(
+                Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS)); // Min position
+    leftJoystick
+        .button(7)
+        .onTrue(
+            arm.setPosition(
+                Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS)); // Max position
+
+    leftJoystick.button(8).onTrue(ScoringFactory.scoreL3());
+    leftJoystick.button(9).onTrue(ScoringFactory.scoreProcessor());
+  }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
