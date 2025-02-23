@@ -338,8 +338,6 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-    // elevator.setDefaultCommand(new ElevatorDefaultCommand());
-    // arm.setDefaultCommand(new ArmDefaultCommand());
     elevator.setDefaultCommand(new ElevatorDefaultCommand());
     arm.setDefaultCommand(new ArmDefaultCommand());
   }
