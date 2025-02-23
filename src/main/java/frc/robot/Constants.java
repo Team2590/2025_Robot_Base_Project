@@ -286,8 +286,6 @@ public final class Constants {
     public static final double sensorReduction = 58.8;
     public static double ARM_OPERATIONAL_MIN_POS = -.34;
     public static double ARM_OPERATIONAL_MAX_POS = .9;
-    public static double ARM_DANGER_MIN_POS = ARM_OPERATIONAL_MIN_POS;
-    public static double ARM_DANGER_MAX_POS = -1;
     public static double ARM_SCORING_CORAL_POS = 0.72; // TODO: change to actual value
     public static double ARM_INTAKE_SOURCE_POSITION = .12;
   }
@@ -303,8 +301,6 @@ public final class Constants {
     public static final double reduction = 7;
     public static final double kS = 0.22720;
     public static final double kV = 0.14051;
-    public static double ELEVATOR_DANGER_MIN_POS = ELEVATOR_OPERATIONAL_MIN_POS;
-    public static double ELEVATOR_DANGER_MAX_POS = 27.28;
     public static double ELEVATOR_L2_POS = 19;
     public static double ELEVATOR_L3_POS = 46;
     public static double ELEVATOR_L4_POS = 87;
@@ -381,7 +377,7 @@ public final class Constants {
     public static final double reduction = 1; // TODO
     public static final double CLIMB_MECHANISM_POSITION = 55.2;
     public static final double CLIMB_MAX_POSITION = 178; // 213.25 (actual)
-    public static final double CLIMB_VOLTAGE = .1;
+    public static final double CLIMB_VOLTAGE = 1;
   }
 
   public static class IntakeConstantsLarry {

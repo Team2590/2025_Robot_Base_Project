@@ -360,9 +360,43 @@ public class RobotContainer {
             intake, intake::setVoltage, intake::getCharacterizationVelocity));
 
     // Configure the button bindings
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      configureButtonBindingsSimulation();
+    }
+    
     configureButtonBindings();
   }
 
+  private void configureButtonBindingsSimulation() {
+
+    // Add elevator control bindings
+    leftJoystick
+        .button(4)
+        .onTrue(
+            elevator.setPosition(
+                Constants.ElevatorConstantsLeonidas
+                    .ELEVATOR_OPERATIONAL_MIN_POS)); // Move to home position
+    leftJoystick
+        .button(5)
+        .onTrue(
+            elevator.setPosition(
+                Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS)); // Just safe
+
+    // Add arm control bindings
+    leftJoystick
+        .button(6)
+        .onTrue(
+            arm.setPosition(
+                Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS)); // Min position
+    leftJoystick
+        .button(7)
+        .onTrue(
+            arm.setPosition(
+                Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS)); // Max position
+
+    leftJoystick.button(8).onTrue(ScoringFactory.scoreL3());
+    leftJoystick.button(9).onTrue(ScoringFactory.scoreProcessor());
+  }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -398,24 +432,11 @@ public class RobotContainer {
         .and(rightJoystick.button(3).negate())
         .and(rightJoystick.button(2).negate())
         .whileTrue(GamePieceFactory.intakeAlgaeGround());
-    leftJoystick
-        .trigger()
-        .and(rightJoystick.button(3).negate())
-        .and(rightJoystick.button(2).negate())
-        .whileTrue(ScoringFactory.scoreProcessor().finallyDo(() -> RobotState.setIntakeNoAlgae()));
     rightJoystick
         .button(2)
         .and(rightJoystick.trigger())
         .whileTrue(GamePieceFactory.intakeCoralGround());
-    // rightJoystick
-    //     .button(2)
-    //     .and(rightJoystick.trigger())
-    //     .whileTrue(GamePieceFactory.intakeCoralGround());
-    // rightJoystick.button(2).and(rightJoystick.trigger()).whileTrue(ScoringFactory.scoreL1());
-    rightJoystick
-        .button(2)
-        .and(leftJoystick.trigger())
-        .whileTrue(ScoringFactory.scoreL1().finallyDo(() -> RobotState.setIntakeNoCoral()));
+
     rightJoystick
         .button(3)
         .and(rightJoystick.trigger())
@@ -437,6 +458,32 @@ public class RobotContainer {
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
     rightJoystick.povUp().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualUp());
     rightJoystick.povDown().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualDown());
+
+    // SCORING BUTTONS
+    // rightJoystick
+    //     .button(2)
+    //     .and(rightJoystick.trigger())
+    //     .whileTrue(GamePieceFactory.intakeCoralGround());
+    // rightJoystick.button(2).and(rightJoystick.trigger()).whileTrue(ScoringFactory.scoreL1());
+
+    leftJoystick
+        .trigger()
+        .and(rightJoystick.button(3).negate())
+        .and(rightJoystick.button(2).negate())
+        .whileTrue(ScoringFactory.scoreProcessor().finallyDo(() -> RobotState.setIntakeNoAlgae()));
+
+    rightJoystick
+        .button(2)
+        .and(leftJoystick.trigger())
+        .whileTrue(ScoringFactory.scoreL1().finallyDo(() -> RobotState.setIntakeNoCoral()));
+
+    controller.a().whileTrue(ScoringFactory.scoreL1());
+    controller.x().whileTrue(ScoringFactory.scoreL2());
+    controller.b().whileTrue(ScoringFactory.scoreL3());
+    controller.y().whileTrue(ScoringFactory.scoreL4());
+
+    controller.rightBumper().onTrue(GamePieceFactory.intakeAlgaeGround());
+    controller.leftBumper().onTrue(GamePieceFactory.intakeCoralGround());
   }
 
   /**
