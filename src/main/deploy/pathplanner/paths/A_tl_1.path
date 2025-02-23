@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.906357745920166,
-        "y": 6.764661097837793
+        "x": 5.410564184309559,
+        "y": 6.186622613115384
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 5.268538256695396
       },
       "prevControl": {
-        "x": 3.9337455898908695,
-        "y": 5.515436288578691
+        "x": 4.121076631256542,
+        "y": 5.380436408374548
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "PrimeL4",
-      "waypointRelativePos": 0.6322217319100936,
+      "waypointRelativePos": 0.839043765144552,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -55,7 +55,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 177.05689647699128
+    "rotation": -177.41524055547674
   },
   "useDefaultConstraints": true
 }

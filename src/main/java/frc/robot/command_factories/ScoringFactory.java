@@ -3,6 +3,7 @@ package frc.robot.command_factories;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 import frc.robot.util.NemesisTimedCommand;
 
 /**
@@ -43,6 +44,7 @@ public class ScoringFactory {
       default:
         yield primeForLevel(level)
             .andThen(EndEffectorFactory.runEndEffectorOuttake())
+            .until(() -> !RobotState.getInstance().endEffectorhasCoral())
             .withName("Score " + level.name());
     };
   }
