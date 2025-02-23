@@ -323,6 +323,7 @@ public class RobotContainer {
         climb = null;
         break;
     }
+    RobotState.initialize(arm, drive, elevator, endEffector, intake, vision);
 
     RobotState.initialize(arm, drive, elevator, endEffector, intake, vision);
     // setup Named Commands:
