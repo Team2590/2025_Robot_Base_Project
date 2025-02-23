@@ -32,9 +32,9 @@ public class ControllerOrchestrator extends SubsystemBase {
         poseMap.put("SEright", FieldConstants.RedReefPoses.SEright);
         poseMap.put("SEleft", FieldConstants.RedReefPoses.SEleft);
 
-        //Test 
-        poseMap.put("sourceTop",FieldConstants.CoralStationRight); 
-        poseMap.put("sourceBottom",FieldConstants.CoralStationLeft); 
+        // Test
+        poseMap.put("sourceTop", FieldConstants.CoralStationRight);
+        poseMap.put("sourceBottom", FieldConstants.CoralStationLeft);
         break;
       case "Blue":
         poseMap.put("Sright", FieldConstants.BlueReefPoses.Sright);
