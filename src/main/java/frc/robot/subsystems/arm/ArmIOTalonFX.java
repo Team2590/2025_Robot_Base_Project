@@ -44,6 +44,7 @@ public class ArmIOTalonFX implements ArmIO {
       new LoggedTunableNumber("Arm/MotionMagicAcceleration", 50); // 500
   LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", 100);
   LoggedTunableNumber ff = new LoggedTunableNumber("Arm/Feedforward", 0);
+  LoggedTunableNumber setPos = new LoggedTunableNumber("Arm/setpointPos", 0);
   Slot0Configs slot0;
   TalonFXConfiguration cfg;
   MotionMagicConfigs mm;
@@ -105,7 +106,7 @@ public class ArmIOTalonFX implements ArmIO {
     MagnetSensorConfigs mag = new MagnetSensorConfigs();
     mag.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     mag.MagnetOffset = magOffset;
-    mag.AbsoluteSensorDiscontinuityPoint = 0.6;
+    mag.AbsoluteSensorDiscontinuityPoint = 0.9;
     CANcoderConfiguration can = new CANcoderConfiguration();
     can.withMagnetSensor(mag);
     armCancoder.getConfigurator().apply(can);
@@ -151,6 +152,16 @@ public class ArmIOTalonFX implements ArmIO {
 
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position, elevatorPos)) {
       arm.setControl(mmv.withPosition(position));
+    } else {
+      System.out.println("CAN'T MOVE ARM, elevator not in valid position.");
+    }
+  }
+
+  public void setPositionLoggedNumber() {
+    double elevatorPos = RobotContainer.getElevator().getRotationCount();
+
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, setPos.get(), elevatorPos)) {
+      arm.setControl(mmv.withPosition(setPos.get()));
     } else {
       System.out.println("CAN'T MOVE ARM, elevator not in valid position.");
     }

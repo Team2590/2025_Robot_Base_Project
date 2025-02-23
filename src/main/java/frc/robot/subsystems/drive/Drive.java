@@ -47,6 +47,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.autos.AutoRoutines;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
@@ -67,6 +68,7 @@ public class Drive extends SubsystemBase {
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
+  public RobotConfig PP_CONFIG;
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
@@ -105,7 +107,7 @@ public class Drive extends SubsystemBase {
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
 
-    RobotConfig PP_CONFIG =
+    PP_CONFIG =
         new RobotConfig(
             ROBOT_MASS_KG,
             ROBOT_MOI,
@@ -153,8 +155,21 @@ public class Drive extends SubsystemBase {
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
+  public static String autoCommandMessage = "yap yap"; // need it in some periodic
+
   @Override
   public void periodic() {
+
+    Logger.recordOutput("autoCommandMessage", autoCommandMessage); // idk where to log stuff
+    for (int i = 0;
+        i < AutoRoutines.getTriggerBooleans(AutoRoutines.driveThenScoreL4).size();
+        i++) {
+
+      Logger.recordOutput(
+          "TriggerBooleansForDrivel4: " + i,
+          AutoRoutines.getTriggerBooleans(AutoRoutines.driveThenScoreL4).get(i));
+    }
+
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
@@ -348,6 +363,10 @@ public class Drive extends SubsystemBase {
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
     return constantsWrapper.kSpeedAt12Volts.in(MetersPerSecond);
+  }
+
+  public RobotConfig getConfig() {
+    return PP_CONFIG;
   }
 
   /** Returns the maximum angular speed in radians per sec. */

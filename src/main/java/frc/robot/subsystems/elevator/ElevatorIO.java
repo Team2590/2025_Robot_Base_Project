@@ -31,6 +31,8 @@ public interface ElevatorIO {
 
   public void setNeutralMode(NeutralModeValue mode);
 
+  public default void setPositionLoggedNumber() {}
+
   /** Run open loop at the specified voltage. */
   public default void setVoltage(VoltageOut volts) {}
 }

@@ -3,49 +3,47 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.07512842465753425,
-        "y": 1.2076840753424654
+        "x": 7.572199525791485,
+        "y": 7.289280840611354
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.0751284246575346,
-        "y": 1.2076840753424654
+        "x": 6.95306031651155,
+        "y": 3.6981558984560507
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.9450342465753425,
-        "y": 1.2677868150684934
+        "x": 6.338514516239083,
+        "y": 0.39639140966157127
       },
       "prevControl": {
-        "x": 2.6447665294604517,
-        "y": 1.3141854692933308
-      },
-      "nextControl": {
-        "x": 3.1921019367225676,
-        "y": 1.2296088569602495
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 2.795,
-        "y": 0.020654965753424223
-      },
-      "prevControl": {
-        "x": 2.9383655860908315,
-        "y": -0.1841530143763362
+        "x": 6.582000668824978,
+        "y": 1.7921043638728773
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "ptos"
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.8987587035809019,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -54,14 +52,14 @@
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
-    "unlimited": false
+    "unlimited": true
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -56.30993247402052
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "auton3",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

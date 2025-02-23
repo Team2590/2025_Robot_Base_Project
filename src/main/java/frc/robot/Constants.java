@@ -36,11 +36,13 @@ public final class Constants {
   public static final boolean tuningMode = true;
   public static final double loopPeriodSecs = 0.02;
 
+  public static final double endEffectOffset = .2921; // Offset of the end effector to the
+
   public static class DriveToPoseConstraints {
-    public static double maxVelocityMPS = 0;
-    public static double maxAccelerationMPSSq = 0;
-    public static double maxAngularVelocityRadPerSec = 0;
-    public static double maxAngularAccelerationRadPerSecSq = 0;
+    public static double maxVelocityMPS = 15;
+    public static double maxAccelerationMPSSq = 10;
+    public static double maxAngularVelocityRadPerSec = 1;
+    public static double maxAngularAccelerationRadPerSecSq = 1;
 
     public static PathConstraints pathConstraints =
         new PathConstraints(
@@ -54,20 +56,21 @@ public final class Constants {
   private static Rectangle2D fieldBounds = new Rectangle2D.Double(0, 0, 15, 15);
   /*
    *
-   * The ordering of points matters. I went mad trying to debug at one point, turns out it was in a bowtie and not a square
+   * The ordering of points matters. I went mad trying to debug at one point,
+   * turns out it was in a bowtie and not a square
    * Bowtie shape (incorrect rectangle):
    *
-   *     (0,2)---(2,2)
-   *      / \   / \
-   *     /   \ /   \
-   *    (0,0)---(2,0)
+   * (0,2)---(2,2)
+   * / \ / \
+   * / \ / \
+   * (0,0)---(2,0)
    *
    * Square shape (correct rectangle):
    *
-   *    (0,2)---(2,2)
-   *     |       |
-   *     |       |
-   *    (0,0)---(2,0)
+   * (0,2)---(2,2)
+   * | |
+   * | |
+   * (0,0)---(2,0)
    */
   public static final FRCPolygon playBox =
       new FRCPolygon(
@@ -79,15 +82,18 @@ public final class Constants {
 
   public static final boolean flipside =
       DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+
   public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
   public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTop");
   public static final FRCPolygon BargeBoundsBot = new FRCPolygon("BargeBot", "BargeBot");
-  // public static final FRCPolygon PresetAlgae = new FRCPolygon("PresetAlgae", "FloatingAlgae");
+  // public static final FRCPolygon PresetAlgae = new FRCPolygon("PresetAlgae",
+  // "FloatingAlgae");
   public static final FRCPolygon Processor = new FRCPolygon("Processor", "Processor");
   public static final FRCPolygon FeederStationTop = new FRCPolygon("FeederStationTop", "Station1");
   public static final FRCPolygon FeederStationBot = new FRCPolygon("FeederStationBot", "Station2");
 
-  // Two ways to instantiate the polygons, this static initialization box is necessary
+  // Two ways to instantiate the polygons, this static initialization box is
+  // necessary
   static {
     polygons.add(playBox);
     polygons.add(reefBounds);
@@ -98,6 +104,7 @@ public final class Constants {
   }
 
   public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
+
   public static LoggedTunableNumber homeSetpoint =
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
   public static final String CANBUS = "Takeover";
@@ -157,9 +164,116 @@ public final class Constants {
     static double reduction = 1;
   }
 
+  public static class CoralPose {
+    public final double x;
+    public final double y;
+    public final double elevatorPosition;
+    public final double rotationTarget;
+
+    public CoralPose(double x, double y, double elevatorPosition, double rotationTarget) {
+      this.x = x;
+      this.y = y;
+      this.elevatorPosition = elevatorPosition;
+      this.rotationTarget = rotationTarget;
+    }
+
+    public CoralPose(double x, double y) {
+      this.x = x;
+      this.y = y;
+      this.elevatorPosition = 0;
+      this.rotationTarget = 0;
+    }
+  }
+
+  // public static class CoralPoses {
+
+  //   // private final Map<String, CoralPose> bluePoses;
+  //   // private final Map<String, CoralPose> redPoses;
+
+  //   // private CoralPoses(Map<String, CoralPose> bluePoses, Map<String, CoralPose> redPoses) {
+  //   //   this.bluePoses = bluePoses;
+  //   //   this.redPoses = redPoses;
+  //   // }
+
+  //   // public CoralPose getBluePose(String locID) {
+  //   //   return bluePoses.get(locID);
+  //   // }
+
+  //   // public CoralPose getRedPose(String locID) {
+  //   //   return redPoses.get(locID);
+  //   // }
+
+  //   // public CoralPose getAllianceCoralPose(String locID) {
+  //   //   Optional<Alliance> ally = DriverStation.getAlliance();
+
+  //   //   if (ally.isPresent()) {
+  //   //     if (ally.get() == Alliance.Red) {
+  //   //       return getRedPose(locID);
+  //   //     }
+  //   //     if (ally.get() == Alliance.Blue) {
+  //   //       return getBluePose(locID);
+  //   //     }
+  //   //   } else {
+  //   //     throw new IllegalStateException("NO ALLIANCE FOUND");
+  //   //   }
+  //   // }
+
+  //   // public static class Builder {
+
+  //   //   private final Map<String, CoralPose> bluePoses = new HashMap<>();
+  //   //   private final Map<String, CoralPose> redPoses = new HashMap<>();
+
+  //   //   public Builder add(String locID, CoralPose blue, CoralPose red) {
+  //   //     bluePoses.put(locID, blue);
+  //   //     redPoses.put(locID, red);
+  //   //     return this;
+  //   //   }
+
+  //   //   public CoralPoses build() {
+  //   //     return new CoralPoses(bluePoses, redPoses);
+  //   //   }
+  //   // }
+
+  //   // public static final CoralPoses CORAL_POSSES =
+  //   //     new CoralPoses.Builder()
+  //   //         .add("reefn", new CoralPose(1, 1), new CoralPose(2, 2))
+  //   //         .add("reef2", new CoralPose(5, 5), new CoralPose(6, 6))
+  //   //         .build();
+
+  //   public static class BlueCoralPoses {
+  //     public static final CoralPose Sleft = new CoralPose(3.9, 5.3);
+  //     public static final CoralPose Sright = new CoralPose(3.676, 5);
+  //     public static final CoralPose p3 = new CoralPose(3.14, 4.2);
+  //     public static final CoralPose p4 = new CoralPose(3.15, 3.87);
+  //     public static final CoralPose p5 = new CoralPose(3.62, 2.933);
+  //     public static final CoralPose p6 = new CoralPose(3.93, 2.787);
+  //     public static final CoralPose p7 = new CoralPose(5.031, 2.787);
+  //     public static final CoralPose p8 = new CoralPose(5.304, 2.933);
+  //     public static final CoralPose p9 = new CoralPose(5.83, 3.859);
+  //     public static final CoralPose p10 = new CoralPose(5.83, 4.17);
+  //     public static final CoralPose p11 = new CoralPose(5.275, 5.127);
+  //     public static final CoralPose p12 = new CoralPose(3.968, 5.283);
+  //   }
+
+  //   public static class RedCoralPoses {
+  //     public static final CoralPose p1 = new CoralPose(13.913, 5.088);
+  //     public static final CoralPose p2 = new CoralPose(13.621, 5.253);
+  //     public static final CoralPose p3 = new CoralPose(12.47, 5.253);
+  //     public static final CoralPose p4 = new CoralPose(12.217, 5.127);
+  //     public static final CoralPose p5 = new CoralPose(11.72, 4.2);
+  //     public static final CoralPose p6 = new CoralPose(11.7, 3.869);
+  //     public static final CoralPose p7 = new CoralPose(12.236, 2.943);
+  //     public static final CoralPose p8 = new CoralPose(12.5, 2.806);
+  //     public static final CoralPose p9 = new CoralPose(13.621, 2.777);
+  //     public static final CoralPose p10 = new CoralPose(13.923, 2.933);
+  //     public static final CoralPose p11 = new CoralPose(14.39, 3.869);
+  //     public static final CoralPose p12 = new CoralPose(14.411, 4.171);
+  //   }
+  // }
+
   public static class ArmConstantsLeonidas {
-    public static double ARM_FACTORY_SAFETY_MIN = -0.148;
-    public static double ARM_FACTORY_SAFETY_MAX = .36;
+    public static double ARM_FACTORY_SAFETY_MIN = 0;
+    public static double ARM_FACTORY_SAFETY_MAX = 1;
     public static final int canID = 1;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 40;
@@ -167,14 +281,15 @@ public final class Constants {
     public static final boolean brake = false;
     public static final double reduction = 1; // was a 94.18
     public static final int cancoderID = 5;
-    public static final double magOffset = -.596436; // -.398
+    // public static final double magOffset = -.596436; // -.398
+    public static final double magOffset = -.0979; // -.398
     public static final double sensorReduction = 58.8;
     public static double ARM_OPERATIONAL_MIN_POS = -.34;
-    public static double ARM_OPERATIONAL_MAX_POS = .55;
+    public static double ARM_OPERATIONAL_MAX_POS = .9;
     public static double ARM_DANGER_MIN_POS = ARM_OPERATIONAL_MIN_POS;
-    public static double ARM_DANGER_MAX_POS = -0.14;
-    public static double ARM_SCORING_CORAL_POS = 0.5; // TODO: change to actual value
-    public static double ARM_INTAKE_SOURCE_POSITION = -0.34;
+    public static double ARM_DANGER_MAX_POS = -1;
+    public static double ARM_SCORING_CORAL_POS = 0.72; // TODO: change to actual value
+    public static double ARM_INTAKE_SOURCE_POSITION = .12;
   }
 
   public static class ElevatorConstantsLeonidas {
@@ -190,10 +305,11 @@ public final class Constants {
     public static final double kV = 0.14051;
     public static double ELEVATOR_DANGER_MIN_POS = ELEVATOR_OPERATIONAL_MIN_POS;
     public static double ELEVATOR_DANGER_MAX_POS = 27.28;
-    public static double ELEVATOR_L2_POS = 27.210938;
-    public static double ELEVATOR_L3_POS = 51.997559;
-    public static double ELEVATOR_L4_POS = 84.572266;
+    public static double ELEVATOR_L2_POS = 19;
+    public static double ELEVATOR_L3_POS = 46;
+    public static double ELEVATOR_L4_POS = 87;
     public static double ELEVATOR_SOURCE_POS = 42;
+    public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
 
   /*   public final class ElevatorConstantsLeonidas {
@@ -227,18 +343,19 @@ public final class Constants {
   public final class IntakeConstantsLeonidas {
     public static final int canID = 24;
     public static final String canBus = "Takeover";
-    public static final int currentLimitAmps = 120;
+    public static final int currentLimitAmps = 20;
     public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 1;
-    public static final double INTAKE_FACTORY_CORAL_POSITION = 0;
+    public static final double INTAKE_FACTORY_CORAL_POSITION = 11;
     public static final double INTAKE_FACTORY_ALGAE_POSITION = 5.4;
     public static final double INTAKE_FACTORY_HOME_POSITION = 0;
     public static final double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 0;
-    public static final double INTAKE_CORAL_INTAKE_SPEED = 6;
-    public static final double INTAKE_CORAL_OUTTAKE_SPEED = -8; // TODO
-    public static final double INTAKE_ALGAE_INTAKE_SPEED = 6;
-    public static final double INTAKE_ALGAE_OUTTAKE_SPEED = -8;
+    public static final double INTAKE_CORAL_INTAKE_SPEED = 4;
+    public static final double INTAKE_CORAL_OUTTAKE_SPEED = -6; // TODO
+    public static final double INTAKE_ALGAE_INTAKE_SPEED = -6;
+    public static final double INTAKE_ALGAE_OUTTAKE_SPEED = 8;
+    public static final double HAS_ALGAE_THRESHOLD_CURRENT = 10;
   }
 
   public final class IntakeArmConstantsLeonidas {
