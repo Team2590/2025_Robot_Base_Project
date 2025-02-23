@@ -34,6 +34,7 @@ import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
+import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
@@ -324,7 +325,7 @@ public class RobotContainer {
         break;
     }
     RobotState.initialize(arm, drive, elevator, endEffector, intake, vision);
-    
+
     // setup Named Commands:
     registerNamedCommands();
 
@@ -363,7 +364,7 @@ public class RobotContainer {
     if (Constants.currentMode == Constants.Mode.SIM) {
       configureButtonBindingsSimulation();
     }
-    
+
     configureButtonBindings();
   }
 
@@ -394,7 +395,7 @@ public class RobotContainer {
             arm.setPosition(
                 Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS)); // Max position
 
-    leftJoystick.button(8).onTrue(ScoringFactory.scoreL3());
+    leftJoystick.button(8).onTrue(ScoringFactory.score(Level.L3));
     leftJoystick.button(9).onTrue(ScoringFactory.scoreProcessor());
   }
   /**
@@ -477,10 +478,10 @@ public class RobotContainer {
         .and(leftJoystick.trigger())
         .whileTrue(ScoringFactory.scoreL1().finallyDo(() -> RobotState.setIntakeNoCoral()));
 
-    controller.a().whileTrue(ScoringFactory.scoreL1());
-    controller.x().whileTrue(ScoringFactory.scoreL2());
-    controller.b().whileTrue(ScoringFactory.scoreL3());
-    controller.y().whileTrue(ScoringFactory.scoreL4());
+    controller.a().whileTrue(ScoringFactory.score(Level.L1));
+    controller.x().whileTrue(ScoringFactory.score(Level.L2));
+    controller.b().whileTrue(ScoringFactory.score(Level.L3));
+    controller.y().whileTrue(ScoringFactory.score(Level.L4));
 
     controller.rightBumper().onTrue(GamePieceFactory.intakeAlgaeGround());
     controller.leftBumper().onTrue(GamePieceFactory.intakeCoralGround());
