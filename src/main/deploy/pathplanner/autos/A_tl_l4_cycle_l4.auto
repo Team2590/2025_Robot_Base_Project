@@ -21,7 +21,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "Scorel4"
+                        "name": "ScoreL4"
                       }
                     }
                   ]
@@ -54,12 +54,6 @@
                       "type": "path",
                       "data": {
                         "pathName": "source_to_tl_1"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "HoldL4"
                       }
                     },
                     {

@@ -1,8 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,7 +14,6 @@ import lombok.Getter;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class RobotState extends SubsystemBase {
-  Alliance alliance;
   Pose2d robotPose;
   private String currentZone;
   private final Arm arm;
@@ -92,7 +89,6 @@ public class RobotState extends SubsystemBase {
   }
 
   public void periodic() {
-    alliance = DriverStation.getAlliance().get();
     robotPose = drive.getPose();
     currentZone = Constants.locator.getZoneOfField(robotPose);
     endEffectorhasCoral = endEffectorhasCoral();
