@@ -387,7 +387,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     leftJoystick.button(5).onTrue(Commands.runOnce(() -> elevator.resetRotationCount(), elevator));
-    elevator.setDefaultCommand(ElevatorFactory.defaultCommand());
+    // elevator.setDefaultCommand(ElevatorFactory.defaultCommand());
     // arm.setDefaultCommand(ArmFactory.defaultCommand());
 
     // climb button binds
