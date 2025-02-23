@@ -20,12 +20,17 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
+import frc.robot.util.LoggedTunableNumber;
 import java.util.LinkedList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -35,6 +40,13 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+  private LoggedTunableNumber UPPER_SOURCE_CAMERA_STD_DEV_FACTOR =
+      new LoggedTunableNumber("Vision/UpperSourceCamStdFactor", 0.01);
+  private LoggedTunableNumber PROCESSOR_CAMERA_STD_DEV_FACTOR =
+      new LoggedTunableNumber("Vision/ProcessorCamStdFactor", 0.01);
+  private LoggedTunableNumber REEF_CAMERA_STD_DEV_FACTOR =
+      new LoggedTunableNumber("Vision/ReefCamStdFactor", 0.01);
+  private double[] cameraStdDevFactors = new double[3];
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -53,6 +65,18 @@ public class Vision extends SubsystemBase {
           new Alert(
               "Vision camera " + Integer.toString(i) + " is disconnected.", AlertType.kWarning);
     }
+
+    cameraStdDevFactors[0] = UPPER_SOURCE_CAMERA_STD_DEV_FACTOR.get();
+    cameraStdDevFactors[1] = PROCESSOR_CAMERA_STD_DEV_FACTOR.get();
+    cameraStdDevFactors[2] = REEF_CAMERA_STD_DEV_FACTOR.get();
+
+    if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
+      robotToUpperSourceCam =
+          robotToUpperSourceCam.plus(new Transform3d(0, 0, 0, new Rotation3d(0, 0, Math.PI)));
+      robotToProcessorCam =
+          robotToProcessorCam.plus(new Transform3d(0, 0, 0, new Rotation3d(0, 0, Math.PI)));
+      robotToReefCam = robotToReefCam.plus(new Transform3d(0, 0, 0, new Rotation3d(0, 0, Math.PI)));
+    }
   }
 
   /**
@@ -66,6 +90,10 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
+    cameraStdDevFactors[0] = UPPER_SOURCE_CAMERA_STD_DEV_FACTOR.get();
+    cameraStdDevFactors[1] = PROCESSOR_CAMERA_STD_DEV_FACTOR.get();
+    cameraStdDevFactors[2] = REEF_CAMERA_STD_DEV_FACTOR.get();
+
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);

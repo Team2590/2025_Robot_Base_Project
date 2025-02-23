@@ -453,6 +453,8 @@ public class RobotContainer {
 
     controller.rightBumper().onTrue(GamePieceFactory.intakeAlgaeGround());
     controller.leftBumper().onTrue(GamePieceFactory.intakeCoralGround());
+
+    controller.rightTrigger().onTrue(drive.resetGryo());
   }
 
   /**

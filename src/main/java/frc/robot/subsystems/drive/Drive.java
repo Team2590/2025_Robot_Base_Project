@@ -351,6 +351,11 @@ public class Drive extends SubsystemBase {
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
   }
 
+  public Command resetGryo() {
+    return runOnce(
+        () -> gyroIO.resetGyro(DriverStation.getAlliance().get() == Alliance.Red ? 0 : 180));
+  }
+
   /** Adds a new timestamped vision measurement. */
   public void addVisionMeasurement(
       Pose2d visionRobotPoseMeters,
