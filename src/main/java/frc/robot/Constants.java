@@ -337,7 +337,7 @@ public final class Constants {
     public static final boolean brake = true; // TODO
     public static final double reduction = 1; // TODO
     public static final int proxSensor_ID = 0; // TODO
-    public static final double INTAKE_VOLTAGE = 6;
+    public static final double INTAKE_VOLTAGE = 3;
     public static final double EJECT_VOLTAGE = -INTAKE_VOLTAGE;
   }
 

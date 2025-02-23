@@ -18,7 +18,7 @@ public class Intake extends SubsystemBase {
   private final Alert intakeDisconnected;
   private final IntakeArm intakeArm;
   private LoggedTunableNumber INTAKE_ALGAE_CURRENT_THRESHOLD =
-      new LoggedTunableNumber("Intake/AlgaeCurrentThreshold", -38);
+      new LoggedTunableNumber("Intake/AlgaeCurrentThreshold", -15);
   private LoggedTunableNumber INTAKE_CORAL_CURRENT_THRESHOLD =
       new LoggedTunableNumber("Intake/CoralCurrentThreshold", 60);
   private LoggedTunableNumber LINEAR_FILTER_SAMPLES =
@@ -106,6 +106,7 @@ public class Intake extends SubsystemBase {
               System.out.println("Stopping the intake command now!");
               intakeIO.stop();
             })
+        .until(() -> hasAlgae() || hasCoral())
         .withName("Run Intake");
   }
 
