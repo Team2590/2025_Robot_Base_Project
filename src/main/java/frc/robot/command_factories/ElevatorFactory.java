@@ -2,6 +2,7 @@ package frc.robot.command_factories;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.util.NemesisMathUtil;
@@ -70,6 +71,20 @@ public class ElevatorFactory {
    */
   public static Command setNeutralMode(NeutralModeValue mode) {
     return RobotContainer.getElevator().setNeutralMode(mode).withName("Set Elevator Neutral Mode");
+  }
+
+  public static Command defaultCommand() {
+    return RobotContainer.getElevator()
+        .setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS)
+        .onlyIf(
+            () ->
+                !NemesisMathUtil.isApprox(
+                    RobotContainer.getElevator().getRotationCount(),
+                    0.05,
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS))
+        .withName("Elevator default command")
+        .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
+        .finallyDo(() -> System.out.println("Elevator default command finished"));
   }
 
   /**

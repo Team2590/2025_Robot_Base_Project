@@ -236,15 +236,15 @@ public class RobotContainer {
                     Constants.EndEffectorConstantsLeonidas.invert,
                     Constants.EndEffectorConstantsLeonidas.brake,
                     Constants.EndEffectorConstantsLeonidas.reduction));
-        climb = new Climb(
-            new ClimbIOTalonFX(
-                Constants.ClimbConstantsLeonidas.canID, 
-                Constants.ClimbConstantsLeonidas.canBus, 
-                Constants.ClimbConstantsLeonidas.currentLimitAmps, 
-                Constants.ClimbConstantsLeonidas.invert, 
-                Constants.ClimbConstantsLeonidas.brake, 
-                Constants.ClimbConstantsLeonidas.reduction
-            ));
+        climb =
+            new Climb(
+                new ClimbIOTalonFX(
+                    Constants.ClimbConstantsLeonidas.canID,
+                    Constants.ClimbConstantsLeonidas.canBus,
+                    Constants.ClimbConstantsLeonidas.currentLimitAmps,
+                    Constants.ClimbConstantsLeonidas.invert,
+                    Constants.ClimbConstantsLeonidas.brake,
+                    Constants.ClimbConstantsLeonidas.reduction));
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -338,6 +338,8 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+    // elevator.setDefaultCommand(new ElevatorDefaultCommand());
+    // arm.setDefaultCommand(new ArmDefaultCommand());
     elevator.setDefaultCommand(new ElevatorDefaultCommand());
     arm.setDefaultCommand(new ArmDefaultCommand());
   }

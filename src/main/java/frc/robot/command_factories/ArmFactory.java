@@ -4,6 +4,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.util.NemesisMathUtil;
 import frc.robot.util.SafetyChecker;
 
 /** Factory class for creating commands related to the arm subsystem. */
@@ -39,7 +40,18 @@ public class ArmFactory {
                     RobotContainer.getElevator().getRotationCount()));
   }
 
-  //
+  public static Command defaultCommand() {
+    return RobotContainer.getArm()
+        .setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS)
+        .onlyIf(
+            () ->
+                !NemesisMathUtil.isApprox(
+                    RobotContainer.getArm().getAbsolutePosition(),
+                    0.05,
+                    Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION))
+        .withName("Arm default command")
+        .finallyDo(() -> System.out.println("Arm default command finished"));
+  }
 
   /**
    * Creates a command for manual arm control.
