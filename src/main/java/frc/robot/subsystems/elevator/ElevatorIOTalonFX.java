@@ -18,7 +18,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 import frc.robot.util.StickyFaultUtil;
@@ -165,8 +164,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setPosition(double position) {
-    double armPos = RobotContainer.getArm().getAbsolutePosition();
-    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position, armPos)) {
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position)) {
       var request = new MotionMagicVoltage(0);
       if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {
         leader.setControl(request);
@@ -174,13 +172,12 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         leader.setControl(request.withPosition(position));
       }
     } else {
-      System.out.println("CAN'T MOVE ELEVATOR, arm not in valid position");
+      System.out.println("CAN'T MOVE ELEVATOR, safety check failed.");
     }
   }
 
   public void setPositionLoggedNumber() {
-    double armPos = RobotContainer.getArm().getAbsolutePosition();
-    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, setPos.get(), armPos)) {
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, setPos.get())) {
       var request = new MotionMagicVoltage(0);
       if (leader.getPosition().getValueAsDouble() < 0 || setPos.get() < 0) {
         leader.setControl(request);
@@ -188,7 +185,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         leader.setControl(request.withPosition(setPos.get()));
       }
     } else {
-      System.out.println("CAN'T MOVE ELEVATOR, arm not in valid position");
+      System.out.println("CAN'T MOVE ELEVATOR, safety check failed.");
     }
   }
 
@@ -214,11 +211,11 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setVoltage(VoltageOut volts) {
-    double armPos = RobotContainer.getArm().getAbsolutePosition();
-    double elevatorPos = getRotationCounts();
 
+    // NOTE- without a setpoint, we can't check if the elevator movement is safe. The following will
+    // only check the current positions safety, which should never be the case.
     if (SafetyChecker.isSafe(
-        SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position.getValueAsDouble(), armPos)) {
+        SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position.getValueAsDouble())) {
       leader.setControl(volts);
     } else {
       System.out.println("CAN'T MOVE ELEVATOR, arm not in valid position");
