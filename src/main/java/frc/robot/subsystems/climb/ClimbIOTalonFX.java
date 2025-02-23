@@ -2,7 +2,10 @@ package frc.robot.subsystems.climb;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -12,10 +15,19 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.AnalogInput;
+import frc.robot.Constants.EndEffectorConstantsLeonidas;
+import frc.robot.util.LoggedTunableNumber;
 
 public class ClimbIOTalonFX implements ClimbIO {
-  private final TalonFX talon;
-  private final TalonFXConfiguration cfg;
+  private final TalonFX leader;
+  private LoggedTunableNumber voltageTunableNumber =
+      new LoggedTunableNumber("EndEffector/voltage", 6);
+  LoggedTunableNumber ff = new LoggedTunableNumber("Arm/Feedforward", 0);
+  Slot0Configs slot0;
+  TalonFXConfiguration cfg;
+  MotionMagicConfigs mm;
+  MotionMagicDutyCycle mmv;
   private double reduction;
   private StatusSignal<Angle> position;
   private StatusSignal<AngularVelocity> velocity;
@@ -23,15 +35,18 @@ public class ClimbIOTalonFX implements ClimbIO {
   private StatusSignal<Current> supplyCurrent;
   private StatusSignal<Current> torqueCurrent;
   private StatusSignal<Temperature> tempCelsius;
+  private double statorCurrentAmps;
+  private AnalogInput proxInput = new AnalogInput(EndEffectorConstantsLeonidas.proxSensor_ID);
 
   public ClimbIOTalonFX(
-      int canId,
+      int canID,
       String canBus,
       int currentLimitAmps,
       boolean invert,
       boolean brake,
       double reduction) {
-    talon = new TalonFX(canId, canBus);
+    leader = new TalonFX(canID, canBus);
+
     cfg = new TalonFXConfiguration();
 
     cfg.MotorOutput.Inverted =
@@ -40,14 +55,15 @@ public class ClimbIOTalonFX implements ClimbIO {
     cfg.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
     cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    talon.getConfigurator().apply(cfg);
+    leader.getConfigurator().apply(cfg);
 
-    position = talon.getPosition();
-    velocity = talon.getVelocity();
-    appliedVoltage = talon.getMotorVoltage();
-    supplyCurrent = talon.getSupplyCurrent();
-    torqueCurrent = talon.getTorqueCurrent();
-    tempCelsius = talon.getDeviceTemp();
+    position = leader.getPosition();
+    velocity = leader.getVelocity();
+    appliedVoltage = leader.getMotorVoltage();
+    supplyCurrent = leader.getSupplyCurrent();
+    torqueCurrent = leader.getTorqueCurrent();
+    tempCelsius = leader.getDeviceTemp();
+    statorCurrentAmps = leader.getStatorCurrent().getValueAsDouble();
     this.reduction = reduction;
 
     BaseStatusSignal.setUpdateFrequencyForAll(
@@ -55,9 +71,10 @@ public class ClimbIOTalonFX implements ClimbIO {
         // cancoderPosition,
         // cancoderAbsPosition
         );
-    talon.optimizeBusUtilization(0, 1);
+    leader.optimizeBusUtilization(0, 1);
   }
 
+  @Override
   public void updateInputs(ClimbIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(
@@ -69,26 +86,26 @@ public class ClimbIOTalonFX implements ClimbIO {
     inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
     inputs.tempCelsius = tempCelsius.getValueAsDouble();
-    inputs.rotationCount = talon.getPosition().getValueAsDouble();
+    inputs.rotationCount = leader.getPosition().getValueAsDouble();
+    statorCurrentAmps = leader.getStatorCurrent().getValueAsDouble();
   }
 
   @Override
   public void setVoltage(double voltage) {
-    talon.setVoltage(voltage);
+    leader.setVoltage(voltage);
   }
 
   @Override
   public void stop() {
-    talon.set(0);
+    leader.set(0);
   }
 
   @Override
   public void setVelocity(double velocity) {
-    talon.set(velocity);
+    leader.set(velocity);
   }
 
-  @Override
-  public void resetRotationCount() {
-    talon.setPosition(0);
+  public double getProxValue() {
+    return proxInput.getValue();
   }
 }
