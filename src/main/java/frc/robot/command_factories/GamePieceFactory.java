@@ -13,17 +13,6 @@ public class GamePieceFactory {
   }
 
   public static Command intakeAlgaeGround() {
-<<<<<<< HEAD
-    return new ParallelCommandGroup(
-        IntakeFactory.setIntakeAlgaePosition(),
-        IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_ALGAE_INTAKE_SPEED));
-  }
-
-  public static Command intakeCoralGround() {
-    return new ParallelCommandGroup(
-        IntakeFactory.setIntakeCoralPosition(),
-        IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED));
-=======
     return new SequentialCommandGroup(
         new ParallelCommandGroup(
             IntakeFactory.setIntakeAlgaePosition(),
@@ -39,6 +28,5 @@ public class GamePieceFactory {
             IntakeFactory.runIntake(
                 () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED)),
         IntakeFactory.setHoldingAlgaePosition());
->>>>>>> origin
   }
 }
