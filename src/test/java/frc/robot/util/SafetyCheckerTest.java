@@ -1,11 +1,11 @@
-// package frc.robot.util;
+package frc.robot.util;
 
-// import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-// import frc.robot.Constants;
-// import org.junit.jupiter.api.Test;
+import frc.robot.Constants;
+import org.junit.jupiter.api.Test;
 
-// class SafetyCheckerTest {
+class SafetyCheckerTest {
 
   @Test
   void elevatorMovementSafety_SetPositionsAreSafe_returnsTrue() {
