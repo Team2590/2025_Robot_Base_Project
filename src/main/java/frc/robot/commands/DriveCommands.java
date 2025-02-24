@@ -328,9 +328,9 @@ public class DriveCommands {
    * @param targetPose the pose which we want to align to
    * @return command for aligning to the target pose (limiting angle and horizontal offset)
    */
-  public static Command alignToPose(Drive drive, DoubleSupplier horizontaDoubleSupplier, Pose2d targetPose){
+  public static Command alignToPose(Drive drive, DoubleSupplier horizontaDoubleSupplier, Supplier<Pose2d> targetPoseSupplier){
     Pose2d currentPose = drive.getPose();
-    Transform2d poseTransform = targetPose.minus(currentPose);
+    Transform2d poseTransform = targetPoseSupplier.get().minus(currentPose);
     double y_offset = poseTransform.getY();
     double angle_offset = poseTransform.getRotation().getRadians();
     if(angle_offset > 180){angle_offset -= 360;} else if(angle_offset < -180){angle_offset+=180;}

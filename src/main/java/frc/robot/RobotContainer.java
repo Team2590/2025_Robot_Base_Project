@@ -503,7 +503,7 @@ public class RobotContainer {
     rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
 
-    //rightJoystick.trigger().whileTrue(DriveCommands.alignToPose(drive, () -> -leftJoystick.getX(), null));
+    rightJoystick.trigger().whileTrue(DriveCommands.alignToPose(drive, () -> -leftJoystick.getX(), () -> controllerApp.getTargetPose()));
   }
 
   /**
