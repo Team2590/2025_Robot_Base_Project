@@ -40,7 +40,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
 import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
@@ -323,17 +322,25 @@ public class DriveCommands {
 
   /**
    * Aligns the robot to a given pose, reducing horizontal and angle error
+   *
    * @param drive robot drive
    * @param horizontaDoubleSupplier gets the joystick's horizontal component
    * @param targetPose the pose which we want to align to
    * @return command for aligning to the target pose (limiting angle and horizontal offset)
    */
-  public static Command alignToPose(Drive drive, DoubleSupplier horizontaDoubleSupplier, Supplier<Pose2d> targetPoseSupplier){
+  public static Command alignToPose(
+      Drive drive, DoubleSupplier horizontaDoubleSupplier, Supplier<Pose2d> targetPoseSupplier) {
     Pose2d currentPose = drive.getPose();
-    Transform2d poseTransform = targetPoseSupplier.get().minus(currentPose);
+    Pose2d targetPose = targetPoseSupplier.get();
+    if(targetPose == null){targetPose = new Pose2d();}
+    Transform2d poseTransform = targetPose.minus(currentPose);
     double y_offset = poseTransform.getY();
     double angle_offset = poseTransform.getRotation().getRadians();
-    if(angle_offset > 180){angle_offset -= 360;} else if(angle_offset < -180){angle_offset+=180;}
+    if (angle_offset > 180) {
+      angle_offset -= 360;
+    } else if (angle_offset < -180) {
+      angle_offset += 180;
+    }
     Logger.recordOutput("Odometry/Y Error to Pose", y_offset);
     Logger.recordOutput("Odometry/Angle Error to Pose", angle_offset);
 
@@ -341,7 +348,7 @@ public class DriveCommands {
         () -> {
           drive.runVelocity(
               new ChassisSpeeds(
-                horizontaDoubleSupplier.getAsDouble()
+                  horizontaDoubleSupplier.getAsDouble()
                       * drive.getMaxLinearSpeedMetersPerSec()
                       * .25, // Adjusted linear speed
                   drive.linearMovementController.calculate(y_offset, 0)

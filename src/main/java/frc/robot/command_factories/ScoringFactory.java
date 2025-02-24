@@ -48,7 +48,8 @@ public class ScoringFactory {
             )
         .withName("Score L4");
   }
-public static Command score(Level level) {
+
+  public static Command score(Level level) {
     return switch (level) {
       case L1:
         yield scoreL1();

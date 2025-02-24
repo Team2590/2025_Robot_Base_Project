@@ -51,7 +51,6 @@ import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.LoggedTunableNumber;
-
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -169,7 +168,7 @@ public class Drive extends SubsystemBase {
                 (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
-    
+
     updateTunableNumbers();
   }
 
@@ -404,7 +403,8 @@ public class Drive extends SubsystemBase {
     if (linearMovementControllerP.hasChanged(hashCode())
         || linearMovementControllerD.hasChanged(hashCode())
         || linearMovementControllerTolerance.hasChanged(hashCode())) {
-      linearMovementController.setPID(linearMovementControllerP.get(), 0.0, linearMovementControllerD.get());
+      linearMovementController.setPID(
+          linearMovementControllerP.get(), 0.0, linearMovementControllerD.get());
       linearMovementController.setTolerance(linearMovementControllerTolerance.get());
     }
   }
