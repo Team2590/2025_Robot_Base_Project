@@ -2,6 +2,7 @@ package frc.robot.command_factories;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.util.NemesisMathUtil;
@@ -32,14 +33,16 @@ public class ArmFactory {
 
   public static Command defaultCommand() {
     return RobotContainer.getArm()
-        .setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS)
+        .setPosition(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION)
         .onlyIf(
             () ->
                 !NemesisMathUtil.isApprox(
-                    RobotContainer.getArm().getAbsolutePosition(),
-                    0.05,
-                    Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION))
+                        RobotContainer.getArm().getAbsolutePosition(),
+                        0.05,
+                        Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION)
+                    && false) // TODO: add robot state logic
         .withName("Arm default command")
+        .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
         .finallyDo(() -> System.out.println("Arm default command finished"));
   }
 

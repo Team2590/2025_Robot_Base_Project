@@ -35,9 +35,11 @@ import frc.robot.command_factories.EndEffectorFactory;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
+import frc.robot.commands.ArmDefaultCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorDefaultCommand;
 import frc.robot.commands.FeedForwardCharacterization;
+import frc.robot.commands.IntakeDefaultCommand;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOSim;
@@ -367,6 +369,9 @@ public class RobotContainer {
     }
 
     configureButtonBindings();
+    elevator.setDefaultCommand(new ElevatorDefaultCommand());
+    arm.setDefaultCommand(new ArmDefaultCommand());
+    intake.setDefaultCommand(new IntakeDefaultCommand());
   }
 
   private void configureButtonBindingsSimulation() {
@@ -461,7 +466,8 @@ public class RobotContainer {
     //     .button(7)
     //     .whileTrue(
     //         new ParallelCommandGroup(
-    //             arm.setPositionLoggedTunableNumber(), elevator.setPositionLoggedTunableNumber()));
+    //             arm.setPositionLoggedTunableNumber(),
+    // elevator.setPositionLoggedTunableNumber()));
 
     rightJoystick
         .button(3)

@@ -89,9 +89,10 @@ public class ElevatorFactory {
         .onlyIf(
             () ->
                 !NemesisMathUtil.isApprox(
-                    RobotContainer.getElevator().getRotationCount(),
-                    0.05,
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS))
+                        RobotContainer.getElevator().getRotationCount(),
+                        0.05,
+                        Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS)
+                    && false) // TODO: add robot state logic
         .withName("Elevator default command")
         .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
         .finallyDo(() -> System.out.println("Elevator default command finished"));

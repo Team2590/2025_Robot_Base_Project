@@ -1,8 +1,12 @@
 package frc.robot.command_factories;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstantsLeonidas;
 import frc.robot.RobotContainer;
+import frc.robot.RobotState;
+import frc.robot.util.NemesisMathUtil;
 import java.util.function.DoubleSupplier;
 
 /**
@@ -71,5 +75,21 @@ public class IntakeFactory {
     return RobotContainer.getIntake()
         .setPosition(IntakeConstantsLeonidas.INTAKE_FACTORY_HOLDING_ALGAE_POSITION)
         .withName("Set Intake Home Position");
+  }
+
+  public static Command defaultCommand() {
+    return RobotContainer.getIntake()
+        .setPosition(Constants.IntakeConstantsLeonidas.INTAKE_FACTORY_HOME_POSITION)
+        .onlyIf(
+            () ->
+                !NemesisMathUtil.isApprox(
+                        RobotContainer.getArm().getAbsolutePosition(),
+                        0.05,
+                        Constants.IntakeConstantsLeonidas.INTAKE_FACTORY_HOME_POSITION)
+                    && !RobotState.intakeHasCoral()
+                    && !RobotState.intakeHasAlgae())
+        .withName("Intake default command")
+        .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
+        .finallyDo(() -> System.out.println("Intake default command finished"));
   }
 }
