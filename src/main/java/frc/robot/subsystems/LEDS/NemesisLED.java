@@ -61,45 +61,59 @@ public class NemesisLED extends SubsystemBase {
     return Commands.none();
   }
 
-  public void setRed(Color color) {
+  public Command setWhite(Color color) {
+      LEDPattern white = LEDPattern.solid(Color.kWhite);
+      white.applyTo(buffer);
+      led.setData(buffer);
+      return Commands.none();
+
+  }
+
+  public Command setRed(Color color) {
       LEDPattern red = LEDPattern.solid(Color.kRed);
       red.applyTo(buffer);
       led.setData(buffer);
+      return Commands.none();
 
   }
 
-  public void setOrange(Color color) {
+  public Command setOrange(Color color) {
       LEDPattern orange = LEDPattern.solid(Color.kOrange);
       orange.applyTo(buffer);
       led.setData(buffer);
+      return Commands.none();
       
   }
 
-  public void setYellow(Color color) {
+  public Command setYellow(Color color) {
       LEDPattern yellow = LEDPattern.solid(Color.kYellow);
       yellow.applyTo(buffer);
       led.setData(buffer);
+      return Commands.none();
       
   }
 
-  public void setGreen(Color color) {
+  public Command setGreen(Color color) {
       LEDPattern green = LEDPattern.solid(Color.kGreen);
       green.applyTo(buffer);
       led.setData(buffer);
+      return Commands.none();
       
   }
 
-  public void setBlue(Color color) {
+  public Command setBlue(Color color) {
       LEDPattern blue = LEDPattern.solid(Color.kBlue);
       blue.applyTo(buffer);
       led.setData(buffer);
+      return Commands.none();
       
   }
 
-  public void setPurple(Color color) {
+  public Command setPurple(Color color) {
       LEDPattern purple = LEDPattern.solid(Color.kPurple);
       purple.applyTo(buffer);
       led.setData(buffer);
+      return Commands.none();
       
   }
 
