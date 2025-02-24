@@ -86,7 +86,7 @@ public class ControllerOrchestrator extends SubsystemBase {
     armSetpointMap.put("L1", Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS);
     armSetpointMap.put("L2", Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS);
     armSetpointMap.put("L3", Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS);
-    armSetpointMap.put("L4", Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS);
+    armSetpointMap.put("L4", Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4);
   }
 
   public NetworkTableEntry getTableEntry(String key) {
