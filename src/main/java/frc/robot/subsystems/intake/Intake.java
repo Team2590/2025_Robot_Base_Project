@@ -1,10 +1,13 @@
 package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.NemesisMathUtil;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -14,6 +17,14 @@ public class Intake extends SubsystemBase {
   // private final IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
   private final Alert intakeDisconnected;
   private final IntakeArm intakeArm;
+  private LoggedTunableNumber INTAKE_ALGAE_CURRENT_THRESHOLD =
+      new LoggedTunableNumber("Intake/AlgaeCurrentThreshold", -15);
+  private LoggedTunableNumber INTAKE_CORAL_CURRENT_THRESHOLD =
+      new LoggedTunableNumber("Intake/CoralCurrentThreshold", 60);
+  private LoggedTunableNumber LINEAR_FILTER_SAMPLES =
+      new LoggedTunableNumber("Intake/LinearFilterSamples", 20);
+  private LinearFilter filter;
+  double filtered_data;
 
   public Intake(IntakeIO intakeIO, IntakeArmIO intakeArmIO) {
     this.intakeIO = intakeIO;
@@ -21,6 +32,7 @@ public class Intake extends SubsystemBase {
     intakeDisconnected = new Alert("Intake motor disconnected!", Alert.AlertType.kWarning);
     intakeArm = new IntakeArm(intakeArmIO);
     intakeIO.setNeutralMode(NeutralModeValue.Brake);
+    filter = LinearFilter.movingAverage((int) LINEAR_FILTER_SAMPLES.get());
   }
 
   @Override
@@ -28,6 +40,8 @@ public class Intake extends SubsystemBase {
     intakeIO.updateInputs(intakeInputs);
     Logger.processInputs("Intake", intakeInputs);
     intakeDisconnected.set(!intakeInputs.connected);
+    filtered_data = filter.calculate(intakeInputs.torqueCurrentAmps);
+    Logger.recordOutput("Intake/filter", filtered_data);
   }
 
   private class IntakeArm extends SubsystemBase {
@@ -92,6 +106,7 @@ public class Intake extends SubsystemBase {
               System.out.println("Stopping the intake command now!");
               intakeIO.stop();
             })
+        .until(() -> hasAlgae() || hasCoral())
         .withName("Run Intake");
   }
 
@@ -118,5 +133,25 @@ public class Intake extends SubsystemBase {
   /** Returns the current velocity in radians per second. */
   public double getCharacterizationVelocity() {
     return intakeArm.getVelocityRadPerSec();
+  }
+
+  /**
+   * Returns boolean whether the intake has the algae (not running)
+   *
+   * @return true if the intake has secured the algae, false if not
+   */
+  @AutoLogOutput
+  public boolean hasAlgae() {
+    return filtered_data <= INTAKE_ALGAE_CURRENT_THRESHOLD.get();
+  }
+
+  /*
+   *
+   * The way we can distinguish between Algae and Coral is by using the sign of the current
+   *  TODO figure out the direction of intake coral vs algae
+   */
+  @AutoLogOutput
+  public boolean hasCoral() {
+    return filtered_data >= INTAKE_CORAL_CURRENT_THRESHOLD.get();
   }
 }

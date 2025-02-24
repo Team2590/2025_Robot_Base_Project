@@ -8,7 +8,7 @@ public class ClimbFactory {
   public static Command runClimb(double position) {
     return RobotContainer.getClimb()
         .runClimb(Constants.ClimbConstantsLeonidas.CLIMB_VOLTAGE)
-        .withName("Run climb")
-        .until(() -> RobotContainer.getClimb().getRotationCount() > position);
+        .until(() -> RobotContainer.getClimb().getRotationCount() > position)
+        .withName("Run climb");
   }
 }

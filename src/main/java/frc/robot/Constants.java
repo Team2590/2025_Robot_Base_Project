@@ -36,6 +36,8 @@ public final class Constants {
   public static final boolean tuningMode = true;
   public static final double loopPeriodSecs = 0.02;
 
+  public static final double endEffectOffset = .2921; // Offset of the end effector to the
+
   public static class DriveToPoseConstraints {
     public static double maxVelocityMPS = 15;
     public static double maxAccelerationMPSSq = 10;
@@ -80,6 +82,7 @@ public final class Constants {
 
   public static final boolean flipside =
       DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+
   public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
   public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTop");
   public static final FRCPolygon BargeBoundsBot = new FRCPolygon("BargeBot", "BargeBot");
@@ -101,6 +104,7 @@ public final class Constants {
   }
 
   public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
+
   public static LoggedTunableNumber homeSetpoint =
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
   public static final String CANBUS = "Takeover";
@@ -118,7 +122,7 @@ public final class Constants {
     public static final int ARM_CAN_ID = 45;
     public static final int ARM_CANCODER_ID = 44;
     public static final double ARM_GEAR_RATIO = 266.67;
-    public static final double MAG_OFFSET = -.156;
+    public static final double MAG_OFFSET = 0;
     public static final double ARM_MAX = -0.35; // -.3
     public static final String CANBUS = "Takeover";
     public static final int CURRENT_LIMIT = 40;
@@ -278,18 +282,17 @@ public final class Constants {
     public static final double reduction = 1; // was a 94.18
     public static final int cancoderID = 5;
     // public static final double magOffset = -.596436; // -.398
-    public static final double magOffset = -.0979; // -.398
+    public static final double magOffset = -.268; // -.398
     public static final double sensorReduction = 58.8;
-    public static double ARM_OPERATIONAL_MIN_POS = -.34;
-    public static double ARM_OPERATIONAL_MAX_POS = .9;
-    public static double ARM_DANGER_MIN_POS = ARM_OPERATIONAL_MIN_POS;
-    public static double ARM_DANGER_MAX_POS = -1;
-    public static double ARM_SCORING_CORAL_POS = 0.72; // TODO: change to actual value
-    public static double ARM_INTAKE_SOURCE_POSITION = .12;
+    public static double ARM_OPERATIONAL_MIN_POS = 0;
+    public static double ARM_OPERATIONAL_MAX_POS = .7;
+    public static double ARM_SCORING_CORAL_POS = 0.68; // TODO: change to actual value
+    public static double ARM_SCORING_CORAL_POS_L4 = 0.6;
+    public static double ARM_INTAKE_SOURCE_POSITION = .09;
   }
 
   public static class ElevatorConstantsLeonidas {
-    public static double ELEVATOR_OPERATIONAL_MIN_POS = 5;
+    public static double ELEVATOR_OPERATIONAL_MIN_POS = 0;
     public static double ELEVATOR_OPERATIONAL_MAX_POS = 89.5;
     public static final int canID = 25;
     public static final String canBus = "Takeover";
@@ -299,12 +302,11 @@ public final class Constants {
     public static final double reduction = 7;
     public static final double kS = 0.22720;
     public static final double kV = 0.14051;
-    public static double ELEVATOR_DANGER_MIN_POS = ELEVATOR_OPERATIONAL_MIN_POS;
-    public static double ELEVATOR_DANGER_MAX_POS = 27.28;
-    public static double ELEVATOR_L2_POS = 27.210938;
-    public static double ELEVATOR_L3_POS = 51.997559;
-    public static double ELEVATOR_L4_POS = 84.572266;
-    public static double ELEVATOR_SOURCE_POS = 42;
+    public static double ELEVATOR_L2_POS = 23;
+    public static double ELEVATOR_L3_POS = 51;
+    public static double ELEVATOR_L4_POS = 88;
+    public static double ELEVATOR_SOURCE_POS = 5;
+    public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
 
   /*   public final class ElevatorConstantsLeonidas {
@@ -331,25 +333,27 @@ public final class Constants {
     public static final boolean invert = false; // TODO
     public static final boolean brake = true; // TODO
     public static final double reduction = 1; // TODO
-    public static final double INTAKE_VOLTAGE = 6;
+    public static final int proxSensor_ID = 0; // TODO
+    public static final double INTAKE_VOLTAGE = 3;
     public static final double EJECT_VOLTAGE = -INTAKE_VOLTAGE;
   }
 
   public final class IntakeConstantsLeonidas {
     public static final int canID = 24;
     public static final String canBus = "Takeover";
-    public static final int currentLimitAmps = 120;
+    public static final int currentLimitAmps = 20;
     public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 1;
-    public static final double INTAKE_FACTORY_CORAL_POSITION = 0;
+    public static final double INTAKE_FACTORY_CORAL_POSITION = 11;
     public static final double INTAKE_FACTORY_ALGAE_POSITION = 5.4;
     public static final double INTAKE_FACTORY_HOME_POSITION = 0;
     public static final double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 0;
-    public static final double INTAKE_CORAL_INTAKE_SPEED = 6;
-    public static final double INTAKE_CORAL_OUTTAKE_SPEED = -8; // TODO
-    public static final double INTAKE_ALGAE_INTAKE_SPEED = 6;
-    public static final double INTAKE_ALGAE_OUTTAKE_SPEED = -8;
+    public static final double INTAKE_CORAL_INTAKE_SPEED = 4;
+    public static final double INTAKE_CORAL_OUTTAKE_SPEED = -6; // TODO
+    public static final double INTAKE_ALGAE_INTAKE_SPEED = -6;
+    public static final double INTAKE_ALGAE_OUTTAKE_SPEED = 8;
+    public static final double HAS_ALGAE_THRESHOLD_CURRENT = 10;
   }
 
   public final class IntakeArmConstantsLeonidas {
@@ -372,9 +376,9 @@ public final class Constants {
     public static final boolean invert = false;
     public static final boolean brake = false;
     public static final double reduction = 1; // TODO
-    public static final double CLIMB_MECHANISM_POSITION = 55.2;
-    public static final double CLIMB_MAX_POSITION = 178; // 213.25 (actual)
-    public static final double CLIMB_VOLTAGE = .1;
+    public static final double CLIMB_MECHANISM_POSITION = 13; // 13
+    public static final double CLIMB_MAX_POSITION = 160; // 213.25 (actual), 189 (from 2/23)
+    public static final double CLIMB_VOLTAGE = 1;
   }
 
   public static class IntakeConstantsLarry {
