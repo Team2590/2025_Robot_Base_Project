@@ -26,6 +26,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -49,6 +50,8 @@ import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.util.LocalADStarAK;
+import frc.robot.util.LoggedTunableNumber;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -81,6 +84,20 @@ public class Drive extends SubsystemBase {
         new SwerveModulePosition()
       };
   private SwerveDrivePoseEstimator poseEstimator;
+
+  public final PIDController snapController = new PIDController(.34, 0.0, 0.0);
+  LoggedTunableNumber snapControllerP = new LoggedTunableNumber("SnapController/kP", .34);
+  LoggedTunableNumber snapControllerD = new LoggedTunableNumber("SnapController/kD", .00001);
+  LoggedTunableNumber snapControllerTolerance =
+      new LoggedTunableNumber("SnapController/tolerance", .05);
+
+  public final PIDController linearMovementController = new PIDController(.44, 0.0, .00001);
+  LoggedTunableNumber linearMovementControllerP =
+      new LoggedTunableNumber("linearMovementController/kP", .44);
+  LoggedTunableNumber linearMovementControllerD =
+      new LoggedTunableNumber("linearMovementController/kD", .00001);
+  LoggedTunableNumber linearMovementControllerTolerance =
+      new LoggedTunableNumber("linearMovementController/tolerance", .1);
 
   public Drive(
       GyroIO gyroIO,
@@ -152,6 +169,8 @@ public class Drive extends SubsystemBase {
                 (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+    
+    updateTunableNumbers();
   }
 
   public static String autoCommandMessage = "yap yap"; // need it in some periodic
@@ -217,6 +236,8 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+
+    updateTunableNumbers();
   }
 
   /**
@@ -371,5 +392,20 @@ public class Drive extends SubsystemBase {
       new Translation2d(constantsWrapper.BackLeft.LocationX, constantsWrapper.BackLeft.LocationY),
       new Translation2d(constantsWrapper.BackRight.LocationX, constantsWrapper.BackRight.LocationY)
     };
+  }
+
+  private void updateTunableNumbers() {
+    if (snapControllerP.hasChanged(hashCode())
+        || snapControllerD.hasChanged(hashCode())
+        || snapControllerTolerance.hasChanged(hashCode())) {
+      snapController.setPID(snapControllerP.get(), 0.0, snapControllerD.get());
+      snapController.setTolerance(snapControllerTolerance.get());
+    }
+    if (linearMovementControllerP.hasChanged(hashCode())
+        || linearMovementControllerD.hasChanged(hashCode())
+        || linearMovementControllerTolerance.hasChanged(hashCode())) {
+      linearMovementController.setPID(linearMovementControllerP.get(), 0.0, linearMovementControllerD.get());
+      linearMovementController.setTolerance(linearMovementControllerTolerance.get());
+    }
   }
 }

@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
+
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
   private static final double ANGLE_KP = 5.0;
@@ -317,5 +319,37 @@ public class DriveCommands {
               targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
         },
         requirements);
+  }
+
+  /**
+   * Aligns the robot to a given pose, reducing horizontal and angle error
+   * @param drive robot drive
+   * @param horizontaDoubleSupplier gets the joystick's horizontal component
+   * @param targetPose the pose which we want to align to
+   * @return command for aligning to the target pose (limiting angle and horizontal offset)
+   */
+  public static Command alignToPose(Drive drive, DoubleSupplier horizontaDoubleSupplier, Pose2d targetPose){
+    Pose2d currentPose = drive.getPose();
+    Transform2d poseTransform = targetPose.minus(currentPose);
+    double y_offset = poseTransform.getY();
+    double angle_offset = poseTransform.getRotation().getRadians();
+    if(angle_offset > 180){angle_offset -= 360;} else if(angle_offset < -180){angle_offset+=180;}
+    Logger.recordOutput("Odometry/Y Error to Pose", y_offset);
+    Logger.recordOutput("Odometry/Angle Error to Pose", angle_offset);
+
+    return Commands.run(
+        () -> {
+          drive.runVelocity(
+              new ChassisSpeeds(
+                horizontaDoubleSupplier.getAsDouble()
+                      * drive.getMaxLinearSpeedMetersPerSec()
+                      * .25, // Adjusted linear speed
+                  drive.linearMovementController.calculate(y_offset, 0)
+                      * drive.getMaxLinearSpeedMetersPerSec(), // Lateral movement
+                  drive.snapController.calculate(y_offset, 0)
+                      * .25 // Adjusted angular speed for shortest rotation path
+                  ));
+        },
+        drive);
   }
 }
