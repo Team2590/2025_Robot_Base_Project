@@ -43,7 +43,7 @@ public class EndEffector extends SubsystemBase {
   public Command runEndEffector() {
     return runEnd(
             () -> {
-              io.setVoltage(runVoltage.get());
+              io.setVoltage(-runVoltage.get());
             },
             () -> {
               io.stop();
@@ -59,7 +59,7 @@ public class EndEffector extends SubsystemBase {
             () -> {
               io.stop();
             })
-        .until(() -> hasCoral());
+        .until(() -> !hasCoral());
   }
 
   public Command runEndEffectorVelocity() {

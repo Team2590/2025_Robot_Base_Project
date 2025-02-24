@@ -2,6 +2,7 @@ package frc.robot.command_factories;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotState;
 import frc.robot.util.NemesisTimedCommand;
@@ -37,7 +38,17 @@ public class ScoringFactory {
    * @param container The RobotContainer instance
    * @return Command sequence for L4 scoring
    */
-  public static Command score(Level level) {
+  public static Command scoreL4() {
+    return new ParallelCommandGroup(
+            ElevatorFactory.setPositionBlocking(
+                Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4)
+            // NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(),
+            // 1)
+            )
+        .withName("Score L4");
+  }
+public static Command score(Level level) {
     return switch (level) {
       case L1:
         yield scoreL1();
@@ -101,12 +112,20 @@ public class ScoringFactory {
         .withName("Stow Mechanism");
   }
 
-  public static Command deployClimbMechanism() {
-    return Commands.parallel(
-            // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS),
-            // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
-            ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION))
+  public static Command prepClimb() {
+    // return new ParallelCommandGroup(
+    // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS),
+    // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
+    return new ParallelCommandGroup(
+            IntakeFactory.setIntakeCoralPosition(),
+            ArmFactory.setPositionBlocking(.33),
+            ElevatorFactory.setPositionBlocking(0.5))
         .withName("Deploy climb mechanism");
+    // , ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)
+  }
+
+  public static Command deployMechanism() {
+    return ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION);
   }
 
   public static Command climb() {

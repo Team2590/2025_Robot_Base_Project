@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -450,9 +451,18 @@ public class RobotContainer {
     /**
      * For tuning purposes: rightJoystick .button(3) .and(leftJoystick.trigger()) .whileTrue( new
      * ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
+     * elevator.setPositionLoggedTunableNumber())); controller.button(7).whileTrue( new
+     * ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
      * elevator.setPositionLoggedTunableNumber()));
      */
     // manual backup button binds
+
+    // controller
+    //     .button(7)
+    //     .whileTrue(
+    //         new ParallelCommandGroup(
+    //             arm.setPositionLoggedTunableNumber(), elevator.setPositionLoggedTunableNumber()));
+
     rightJoystick
         .button(3)
         .and(leftJoystick.button(2))
@@ -476,15 +486,22 @@ public class RobotContainer {
     rightJoystick
         .button(2)
         .and(leftJoystick.trigger())
-        .whileTrue(ScoringFactory.scoreL1().finallyDo(() -> RobotState.setIntakeNoCoral()));
+        .whileTrue(ScoringFactory.score(Level.L1).finallyDo(() -> RobotState.setIntakeNoCoral()));
 
+    // controller.a().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
+    // controller.b().whileTrue(EndEffectorFactory.runEndEffector());
+    // controller.rightBumper().onTrue(GamePieceFactory.intakeAlgaeGround());
+    // controller.leftBumper().onTrue(GamePieceFactory.intakeCoralGround());
+    controller.rightBumper().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
+    controller.leftBumper().whileTrue(EndEffectorFactory.runEndEffector());
     controller.a().whileTrue(ScoringFactory.score(Level.L1));
     controller.x().whileTrue(ScoringFactory.score(Level.L2));
     controller.b().whileTrue(ScoringFactory.score(Level.L3));
     controller.y().whileTrue(ScoringFactory.score(Level.L4));
 
-    controller.rightBumper().onTrue(GamePieceFactory.intakeAlgaeGround());
-    controller.leftBumper().onTrue(GamePieceFactory.intakeCoralGround());
+    rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
+    rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
+    rightJoystick.button(16).whileTrue(ScoringFactory.climb());
   }
 
   /**
