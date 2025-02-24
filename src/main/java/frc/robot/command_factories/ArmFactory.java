@@ -20,24 +20,14 @@ public class ArmFactory {
     return RobotContainer.getArm()
         .setPosition(position)
         .withName("Set Arm Position")
-        .onlyIf(
-            () ->
-                SafetyChecker.isSafe(
-                    SafetyChecker.MechanismType.ARM_MOVEMENT,
-                    position,
-                    RobotContainer.getElevator().getRotationCount()));
+        .onlyIf(() -> SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position));
   }
 
   public static Command setPositionBlocking(double position) {
     return RobotContainer.getArm()
         .setPositionBlocking(position)
         .withName("Set Arm Position Blocking")
-        .onlyIf(
-            () ->
-                SafetyChecker.isSafe(
-                    SafetyChecker.MechanismType.ARM_MOVEMENT,
-                    position,
-                    RobotContainer.getElevator().getRotationCount()));
+        .onlyIf(() -> SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position));
   }
 
   public static Command defaultCommand() {

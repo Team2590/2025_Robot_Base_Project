@@ -11,6 +11,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -52,12 +58,23 @@ public class ControllerApp extends Application {
   @Override
   public void start(Stage primaryStage) {
     primaryStage.setTitle("Nemesis Controller");
-
-    // Create a BorderPane to hold the content
     BorderPane root = new BorderPane();
     root.setPadding(new Insets(20));
 
     mainPane = new Pane();
+    Image backgroundImage = new Image(getClass().getResource("/field.png").toExternalForm());
+
+    // Set the background
+    BackgroundImage background =
+        new BackgroundImage(
+            backgroundImage,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.CENTER,
+            new BackgroundSize(800, 800, true, true, true, false));
+
+    // Apply background to the mainPane
+    mainPane.setBackground(new Background(background));
     createCompassButtons();
 
     selectionBox = createSelectionBox();
@@ -95,9 +112,9 @@ public class ControllerApp extends Application {
   private void createCompassButtons() {
     EventHandler<ActionEvent> buttonHandler = event -> onButtonPress(event);
 
-    double centerX = 400;
-    double centerY = 300;
-    double radius = 200;
+    double centerX = 560;
+    double centerY = 500;
+    double radius = 125;
     double angleStep = Math.PI / 3;
     double startAngle = Math.PI / 2;
 
@@ -248,8 +265,6 @@ public class ControllerApp extends Application {
       System.out.println(pendingCommand);
       selectionBox.setVisible(false);
 
-      System.out.println(pendingCommand);
-
       // Visual feedback
       goButton.setStyle(GO_BUTTON_PRESSED_STYLE);
       new Thread(
@@ -270,7 +285,7 @@ public class ControllerApp extends Application {
 
   private void refresh() {
     String moveTo = client.getValue("moveTo");
-    System.out.println("Refresh Pressed: " + moveTo);
+    // System.out.println("Refresh Pressed: " + moveTo);
 
     if (moveTo != null && !moveTo.equals("not found")) {
       String[] parts = moveTo.split("_");

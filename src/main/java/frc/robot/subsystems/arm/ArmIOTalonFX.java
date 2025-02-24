@@ -24,7 +24,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.RobotContainer;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 import frc.robot.util.StickyFaultUtil;
@@ -148,22 +147,20 @@ public class ArmIOTalonFX implements ArmIO {
   }
 
   public void setPosition(double position) {
-    double elevatorPos = RobotContainer.getElevator().getRotationCount();
 
-    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position, elevatorPos)) {
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position)) {
       arm.setControl(mmv.withPosition(position));
     } else {
-      System.out.println("CAN'T MOVE ARM, elevator not in valid position.");
+      System.out.println("CAN'T MOVE ARM, safety check failed.");
     }
   }
 
   public void setPositionLoggedNumber() {
-    double elevatorPos = RobotContainer.getElevator().getRotationCount();
 
-    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, setPos.get(), elevatorPos)) {
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, setPos.get())) {
       arm.setControl(mmv.withPosition(setPos.get()));
     } else {
-      System.out.println("CAN'T MOVE ARM, elevator not in valid position.");
+      System.out.println("CAN'T MOVE ARM, safety check failed.");
     }
   }
 
@@ -225,13 +222,12 @@ public class ArmIOTalonFX implements ArmIO {
 
   @Override
   public void setVoltage(double volts) {
-    double elevatorPos = RobotContainer.getElevator().getRotationCount();
     double armPos = getAbsolutePosition();
 
-    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, armPos, elevatorPos)) {
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, armPos)) {
       arm.setControl(new VoltageOut(volts));
     } else {
-      System.out.println("CAN'T MOVE ARM, elevator not in valid position.");
+      System.out.println("CAN'T MOVE ARM, safety check failed.");
     }
   }
 }

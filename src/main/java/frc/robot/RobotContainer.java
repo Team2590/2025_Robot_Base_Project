@@ -29,14 +29,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
-import frc.robot.autos.AutoRoutines;
-import frc.robot.command_factories.AutoFactory;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
-import frc.robot.commands.ArmDefaultCommand;
+import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorDefaultCommand;
 import frc.robot.commands.FeedForwardCharacterization;
@@ -327,6 +325,10 @@ public class RobotContainer {
         climb = null;
         break;
     }
+    RobotState.initialize(arm, drive, elevator, endEffector, intake, vision);
+
+    // setup Named Commands:
+    registerNamedCommands();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -359,17 +361,44 @@ public class RobotContainer {
         new FeedForwardCharacterization(
             intake, intake::setVoltage, intake::getCharacterizationVelocity));
 
-    autoChooser.addOption("driveThenL4", AutoRoutines.driveThenScoreL4.getCommand());
-
     // Configure the button bindings
-    configureButtonBindings();
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      configureButtonBindingsSimulation();
+    }
 
-    // setup Named Commands:
-    registerNamedCommands();
-    elevator.setDefaultCommand(new ElevatorDefaultCommand());
-    arm.setDefaultCommand(new ArmDefaultCommand());
+    configureButtonBindings();
   }
 
+  private void configureButtonBindingsSimulation() {
+
+    // Add elevator control bindings
+    leftJoystick
+        .button(4)
+        .onTrue(
+            elevator.setPosition(
+                Constants.ElevatorConstantsLeonidas
+                    .ELEVATOR_OPERATIONAL_MIN_POS)); // Move to home position
+    leftJoystick
+        .button(5)
+        .onTrue(
+            elevator.setPosition(
+                Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS)); // Just safe
+
+    // Add arm control bindings
+    leftJoystick
+        .button(6)
+        .onTrue(
+            arm.setPosition(
+                Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS)); // Min position
+    leftJoystick
+        .button(7)
+        .onTrue(
+            arm.setPosition(
+                Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS)); // Max position
+
+    leftJoystick.button(8).onTrue(ScoringFactory.score(Level.L3));
+    leftJoystick.button(9).onTrue(ScoringFactory.scoreProcessor());
+  }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -405,16 +434,11 @@ public class RobotContainer {
         .and(rightJoystick.button(3).negate())
         .and(rightJoystick.button(2).negate())
         .whileTrue(GamePieceFactory.intakeAlgaeGround());
-    leftJoystick
-        .trigger()
-        .and(rightJoystick.button(3).negate())
-        .and(rightJoystick.button(2).negate())
-        .whileTrue(ScoringFactory.scoreProcessor());
     rightJoystick
         .button(2)
         .and(rightJoystick.trigger())
         .whileTrue(GamePieceFactory.intakeCoralGround());
-    rightJoystick.button(2).and(leftJoystick.trigger()).whileTrue(ScoringFactory.scoreL1());
+
     rightJoystick
         .button(3)
         .and(rightJoystick.trigger())
@@ -427,15 +451,57 @@ public class RobotContainer {
     /**
      * For tuning purposes: rightJoystick .button(3) .and(leftJoystick.trigger()) .whileTrue( new
      * ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
+     * elevator.setPositionLoggedTunableNumber())); controller.button(7).whileTrue( new
+     * ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
      * elevator.setPositionLoggedTunableNumber()));
      */
     // manual backup button binds
+
+    // controller
+    //     .button(7)
+    //     .whileTrue(
+    //         new ParallelCommandGroup(
+    //             arm.setPositionLoggedTunableNumber(), elevator.setPositionLoggedTunableNumber()));
+
     rightJoystick
         .button(3)
         .and(leftJoystick.button(2))
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
     rightJoystick.povUp().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualUp());
     rightJoystick.povDown().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualDown());
+
+    // SCORING BUTTONS
+    // rightJoystick
+    //     .button(2)
+    //     .and(rightJoystick.trigger())
+    //     .whileTrue(GamePieceFactory.intakeCoralGround());
+    // rightJoystick.button(2).and(rightJoystick.trigger()).whileTrue(ScoringFactory.scoreL1());
+
+    leftJoystick
+        .trigger()
+        .and(rightJoystick.button(3).negate())
+        .and(rightJoystick.button(2).negate())
+        .whileTrue(ScoringFactory.scoreProcessor().finallyDo(() -> RobotState.setIntakeNoAlgae()));
+
+    rightJoystick
+        .button(2)
+        .and(leftJoystick.trigger())
+        .whileTrue(ScoringFactory.score(Level.L1).finallyDo(() -> RobotState.setIntakeNoCoral()));
+
+    // controller.a().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
+    // controller.b().whileTrue(EndEffectorFactory.runEndEffector());
+    // controller.rightBumper().onTrue(GamePieceFactory.intakeAlgaeGround());
+    // controller.leftBumper().onTrue(GamePieceFactory.intakeCoralGround());
+    controller.rightBumper().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
+    controller.leftBumper().whileTrue(EndEffectorFactory.runEndEffector());
+    controller.a().whileTrue(ScoringFactory.score(Level.L1));
+    controller.x().whileTrue(ScoringFactory.score(Level.L2));
+    controller.b().whileTrue(ScoringFactory.score(Level.L3));
+    controller.y().whileTrue(ScoringFactory.score(Level.L4));
+
+    rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
+    rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
+    rightJoystick.button(16).whileTrue(ScoringFactory.climb());
   }
 
   /**
@@ -448,16 +514,33 @@ public class RobotContainer {
   }
 
   public static void registerNamedCommands() {
-    NamedCommands.registerCommand("HoldL4", AutoFactory.holdThenL4);
-    NamedCommands.registerCommand("HoldL3", AutoFactory.holdThenL3);
-    NamedCommands.registerCommand("HoldL2", AutoFactory.holdThenL2);
-    // NamedCommands.registerCommand("HoldL1", AutoFactory.holdThenL1);
 
-    NamedCommands.registerCommand("ScoreL4", ScoringFactory.scoreL4());
-    NamedCommands.registerCommand("ScoreL3", ScoringFactory.scoreL3());
-    NamedCommands.registerCommand("ScoreL2", ScoringFactory.scoreL2());
-    NamedCommands.registerCommand("ScoreL1", ScoringFactory.scoreL1());
+    // Prime Elevator and Arm position. Useful in Autos but could also be useful to trigger in a
+    // zone
+    // if we have a coral and the controller app telling us where to score.
+    NamedCommands.registerCommand("PrimeL4", ScoringFactory.primeForLevel(ScoringFactory.Level.L4));
+    NamedCommands.registerCommand("PrimeL3", ScoringFactory.primeForLevel(ScoringFactory.Level.L3));
+    NamedCommands.registerCommand("PrimeL2", ScoringFactory.primeForLevel(ScoringFactory.Level.L2));
+    // NamedCommands.registerCommand("PrimeL1",
+    // ScoringFactory.primeForLevel(ScoringFactory.Level.L1));
+    // TODO: Prime for Source
+
+    // Scoring Commands
+    NamedCommands.registerCommand("ScoreL4", ScoringFactory.score(ScoringFactory.Level.L4));
+    NamedCommands.registerCommand("ScoreL3", ScoringFactory.score(ScoringFactory.Level.L3));
+    NamedCommands.registerCommand("ScoreL2", ScoringFactory.score(ScoringFactory.Level.L2));
+    NamedCommands.registerCommand("ScoreL1", ScoringFactory.score(ScoringFactory.Level.L1));
+
+    // Does this need priming?
+    NamedCommands.registerCommand("ScoreProcessor", ScoringFactory.scoreProcessor());
+
     NamedCommands.registerCommand("Stow-Mechanism", ScoringFactory.stow());
+    NamedCommands.registerCommand("PrimeSource", ScoringFactory.stow());
+
+    // This uses a wait command but we can make this into a WaitUntil command that can wait
+    // for a certain condition.
+    NamedCommands.registerCommand(
+        "WaitAndPrint", Commands.waitSeconds(5).andThen(Commands.print("Done waiting ...")));
   }
 
   public boolean inReef() {

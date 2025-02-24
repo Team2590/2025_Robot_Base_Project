@@ -26,11 +26,7 @@ public class ElevatorFactory {
         .setPosition(position)
         .withName("Set Elevator Position")
         .onlyIf(
-            () ->
-                SafetyChecker.isSafe(
-                    SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
-                    position,
-                    RobotContainer.getArm().getAbsolutePosition()));
+            () -> SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position));
   }
 
   /**
@@ -45,11 +41,7 @@ public class ElevatorFactory {
         .setPositionBlocking(position)
         .withName("Set Elevator Position Blocking")
         .onlyIf(
-            () ->
-                SafetyChecker.isSafe(
-                    SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
-                    position,
-                    RobotContainer.getArm().getAbsolutePosition()));
+            () -> SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position));
   }
 
   public static Command manualUp() {

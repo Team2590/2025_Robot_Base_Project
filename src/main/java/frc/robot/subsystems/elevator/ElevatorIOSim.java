@@ -2,25 +2,14 @@ package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import frc.robot.Constants;
-import frc.robot.RobotContainer;
-import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 
 public class ElevatorIOSim implements ElevatorIO {
   private ElevatorSim elevatorSim;
-  private double drumRadiusMeters;
-  private double gearing;
-  private LoggedTunableNumber cruiseVelocity = new LoggedTunableNumber("Arm/cruiseVelocity", 10);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Arm/acceleration", 15);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("Arm/jerk", 20);
   private NeutralModeValue neutralMode;
   private double rotationCount;
-  private DCMotor gearBox;
   private double requestedPositionMeters = 0;
-  private boolean holding = true;
 
   public ElevatorIOSim(
       DCMotor gearbox,
@@ -32,9 +21,6 @@ public class ElevatorIOSim implements ElevatorIO {
       boolean simulateGravity,
       double startingHeightMeters,
       double... measurementStdDevs) {
-    this.gearBox = gearbox;
-    this.drumRadiusMeters = drumRadiusMeters;
-    this.gearing = gearing;
 
     elevatorSim =
         new ElevatorSim(
@@ -51,18 +37,9 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public void updateInputs(ElevatorIOInputs io) {
-    elevatorSim.update(Constants.loopPeriodSecs);
-    rotationCount = positionToRotations(elevatorSim.getPositionMeters());
-    io.rotationCount = rotationCount;
-    io.connected = true;
-    io.positionRads = Units.rotationsToRadians(rotationCount);
-    io.velocityRadsPerSec =
-        Units.rotationsToRadians(positionToRotations(elevatorSim.getVelocityMetersPerSecond()));
-    io.appliedVoltage = elevatorSim.getCurrentDrawAmps();
-    io.supplyCurrentAmps = elevatorSim.getCurrentDrawAmps();
-    io.torqueCurrentAmps = elevatorSim.getCurrentDrawAmps();
-    io.tempCelsius = 30;
-    if (holding) elevatorSim.setState(requestedPositionMeters, cruiseVelocity.get());
+    // do nothing.  we have already set rotationCount when setter called
+    // Log current position and target position
+    io.rotationCount = this.rotationCount;
   }
 
   @Override
@@ -70,15 +47,12 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public void setPosition(double position) {
-    double armPos = RobotContainer.getArm().getAbsolutePosition();
-    double elevatorPos = this.rotationCount;
 
-    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, elevatorPos, armPos)) {
-      double positionMeters = position * 2 * Math.PI * drumRadiusMeters / gearing;
-      requestedPositionMeters = positionMeters;
-      elevatorSim.setState(positionMeters, cruiseVelocity.get());
+    System.out.println("Setting elevator position: " + position);
+    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position)) {
+      this.rotationCount = position;
     } else {
-      System.out.println("CAN'T MOVE ELEVATOR (SIM), arm not in valid position.");
+      System.out.println("CAN'T MOVE ELEVATOR (SIM), safety check failed.");
     }
   }
 
@@ -93,8 +67,6 @@ public class ElevatorIOSim implements ElevatorIO {
 
     if (neutralMode == NeutralModeValue.Brake) {
       elevatorSim.setState(currentPositionMeters, 0.0);
-    } else {
-      holding = false;
     }
   }
 
@@ -106,9 +78,5 @@ public class ElevatorIOSim implements ElevatorIO {
   @Override
   public void setNeutralMode(NeutralModeValue mode) {
     neutralMode = mode;
-  }
-
-  private double positionToRotations(double positionMeters) {
-    return positionMeters / (2 * Math.PI * drumRadiusMeters / gearing);
   }
 }
