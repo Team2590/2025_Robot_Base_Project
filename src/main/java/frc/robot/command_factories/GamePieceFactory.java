@@ -9,7 +9,8 @@ public class GamePieceFactory {
   public static Command intakeCoralFeeder() {
     return new ParallelCommandGroup(
         ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION),
-        ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS));
+        ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS),
+        EndEffectorFactory.runEndEffector());
   }
 
   public static Command intakeAlgaeGround() {

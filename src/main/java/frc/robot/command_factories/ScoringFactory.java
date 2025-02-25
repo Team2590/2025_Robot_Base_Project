@@ -4,6 +4,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants;
+import frc.robot.ControllerOrchestrator;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.util.NemesisTimedCommand;
 
@@ -99,6 +102,15 @@ public class ScoringFactory {
                     () -> Constants.IntakeConstantsLeonidas.INTAKE_ALGAE_OUTTAKE_SPEED),
                 1)
             .withName("Score Processor"));
+  }
+
+  /**
+   * Uses controller app input to set the arm and the elevator to the appropriate setpoints. 
+   * @return Parallel Command sequence for setting the arm and elevator to the appropriate setpoints using controller app input
+   */
+  public static Command prepScore() {
+    ControllerOrchestrator controllerApp = RobotContainer.getControllerApp();
+    return Commands.parallel(RobotContainer.getElevator().setPositionBlocking(controllerApp.getElevatorSetpoint()), RobotContainer.getArm().setPositionBlocking(controllerApp.getArmSetpoint()));
   }
 
   /**
