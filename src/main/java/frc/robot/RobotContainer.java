@@ -17,6 +17,8 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -410,10 +412,10 @@ public class RobotContainer {
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
 
     // Scoring buttons
-    rightJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
-    rightJoystick.povUp().whileTrue(ScoringFactory.score(Level.L3));
-    rightJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
-    leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L1));
+    leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
+    leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
+    leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
+    rightJoystick.povDown().whileTrue(ScoringFactory.score(Level.L1));
     leftJoystick.button(2).whileTrue(ScoringFactory.stow());
     leftJoystick.button(4).and(leftJoystick.trigger()).whileTrue(ScoringFactory.scoreProcessor());
     leftJoystick
@@ -435,14 +437,22 @@ public class RobotContainer {
         .trigger()
         .and(leftJoystick.button(4).negate())
         .whileTrue(GamePieceFactory.intakeCoralFeeder());
-    /** For Tuning:
-     * rightJoystick
-        .trigger()
-        .and(leftJoystick.button(4).negate())
-        .whileTrue(
-            new ParallelCommandGroup(
-                elevator.setPositionLoggedTunableNumber(),
-    arm.setPositionLoggedTunableNumber()));
+
+    // Reset Buttons
+    rightJoystick
+        .button(5)
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
+    rightJoystick.button(8).onTrue(elevator.resetRotationCountCommand());
+    /**
+     * For Tuning: rightJoystick .trigger() .and(leftJoystick.button(4).negate()) .whileTrue( new
+     * ParallelCommandGroup( elevator.setPositionLoggedTunableNumber(),
+     * arm.setPositionLoggedTunableNumber()));
      */
     // TODO - make reset gyro button
   }
