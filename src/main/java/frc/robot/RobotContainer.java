@@ -503,7 +503,8 @@ public class RobotContainer {
     controller.b().whileTrue(ScoringFactory.score(Level.L3));
     controller.y().whileTrue(ScoringFactory.score(Level.L4));
 
-    rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
+    // Causing NullPointerException on startup in SIM
+    // rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
     rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
   }
