@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants;
+import frc.robot.ControllerOrchestrator;
+import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.util.NemesisTimedCommand;
 
@@ -42,10 +44,7 @@ public class ScoringFactory {
     return new ParallelCommandGroup(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4)
-            // NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(),
-            // 1)
-            )
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
         .withName("Score L4");
   }
 
@@ -62,11 +61,22 @@ public class ScoringFactory {
   }
 
   public static Command primeForLevel(Level level) {
-    return Commands.parallel(
-            Commands.print("Priming " + level.name()),
-            ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS))
-        .withName("Prime " + level.name());
+    return switch (level) {
+      case L4:
+        yield (Commands.parallel(
+                Commands.print("Priming " + level.name()),
+                ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
+                ArmFactory.setPositionBlocking(
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
+            .withName("Prime " + level.name()));
+      default:
+        yield Commands.parallel(
+                Commands.print("Priming " + level.name()),
+                ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
+                ArmFactory.setPositionBlocking(
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS))
+            .withName("Prime " + level.name());
+    };
   }
 
   /**
@@ -102,6 +112,19 @@ public class ScoringFactory {
   }
 
   /**
+   * Uses controller app input to set the arm and the elevator to the appropriate setpoints.
+   *
+   * @return Parallel Command sequence for setting the arm and elevator to the appropriate setpoints
+   *     using controller app input
+   */
+  public static Command prepScore() {
+    ControllerOrchestrator controllerApp = RobotContainer.getControllerApp();
+    return Commands.parallel(
+        RobotContainer.getElevator().setPositionBlocking(controllerApp.getElevatorSetpoint()),
+        RobotContainer.getArm().setPositionBlocking(controllerApp.getArmSetpoint()));
+  }
+
+  /**
    * Creates a command to stow the scoring mechanism.
    *
    * @param container The RobotContainer instance
@@ -109,7 +132,7 @@ public class ScoringFactory {
    */
   public static Command stow() {
     return Commands.sequence(
-            ArmFactory.setPositionBlocking(0), ElevatorFactory.setPositionBlocking(0))
+            ArmFactory.setPositionBlocking(0), ElevatorFactory.setPositionBlocking(5))
         .withName("Stow Mechanism");
   }
 
