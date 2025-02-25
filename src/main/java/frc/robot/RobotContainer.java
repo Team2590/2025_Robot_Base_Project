@@ -397,6 +397,10 @@ public class RobotContainer {
 
     leftJoystick.button(8).onTrue(ScoringFactory.score(Level.L3));
     leftJoystick.button(9).onTrue(ScoringFactory.scoreProcessor());
+
+    // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
+    leftJoystick.button(10).onTrue(controllerApp.bindDriveToTargetCommand(drive));
+    leftJoystick.button(11).onTrue(controllerApp.bindScoringCommand(elevator, arm));
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
