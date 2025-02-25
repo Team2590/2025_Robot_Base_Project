@@ -363,9 +363,9 @@ public class RobotContainer {
     // Configure the button bindings
     if (Constants.currentMode == Constants.Mode.SIM) {
       configureButtonBindingsSimulation();
+    } else {
+      configureButtonBindings();
     }
-
-    configureButtonBindings();
   }
 
   private void configureButtonBindingsSimulation() {

@@ -39,18 +39,18 @@ public class ControllerOrchestrator extends SubsystemBase {
     }
     switch (alliance) {
       case "Red":
-        poseMap.put("Sright", FieldConstants.RedReefPoses.Sright);
-        poseMap.put("Sleft", FieldConstants.RedReefPoses.Sleft);
-        poseMap.put("SWright", FieldConstants.RedReefPoses.SWright);
-        poseMap.put("SWleft", FieldConstants.RedReefPoses.SWleft);
-        poseMap.put("NWright", FieldConstants.RedReefPoses.NWright);
-        poseMap.put("NWleft", FieldConstants.RedReefPoses.NWleft);
-        poseMap.put("Nright", FieldConstants.RedReefPoses.Nright);
-        poseMap.put("Nleft", FieldConstants.RedReefPoses.Nleft);
-        poseMap.put("NEright", FieldConstants.RedReefPoses.NEright);
-        poseMap.put("NEleft", FieldConstants.RedReefPoses.NEleft);
-        poseMap.put("SEright", FieldConstants.RedReefPoses.SEright);
-        poseMap.put("SEleft", FieldConstants.RedReefPoses.SEleft);
+        poseMap.put("Sright", FieldConstants.RedReefPoses.S_right);
+        poseMap.put("Sleft", FieldConstants.RedReefPoses.S_left);
+        poseMap.put("SWright", FieldConstants.RedReefPoses.SW_right);
+        poseMap.put("SWleft", FieldConstants.RedReefPoses.SW_left);
+        poseMap.put("NWright", FieldConstants.RedReefPoses.NW_right);
+        poseMap.put("NWleft", FieldConstants.RedReefPoses.NW_left);
+        poseMap.put("Nright", FieldConstants.RedReefPoses.N_right);
+        poseMap.put("Nleft", FieldConstants.RedReefPoses.N_left);
+        poseMap.put("NEright", FieldConstants.RedReefPoses.NE_right);
+        poseMap.put("NEleft", FieldConstants.RedReefPoses.NE_left);
+        poseMap.put("SEright", FieldConstants.RedReefPoses.SE_right);
+        poseMap.put("SEleft", FieldConstants.RedReefPoses.SE_left);
 
         // Test
         poseMap.put("sourceTop", FieldConstants.CoralStationRight);
@@ -58,18 +58,18 @@ public class ControllerOrchestrator extends SubsystemBase {
         break;
 
       case "Blue":
-        poseMap.put("Sright", FieldConstants.BlueReefPoses.Sright);
-        poseMap.put("Sleft", FieldConstants.BlueReefPoses.Sleft);
-        poseMap.put("SWright", FieldConstants.BlueReefPoses.SWright);
-        poseMap.put("SWleft", FieldConstants.BlueReefPoses.SWleft);
-        poseMap.put("NWright", FieldConstants.BlueReefPoses.NWright);
-        poseMap.put("NWleft", FieldConstants.BlueReefPoses.NWleft);
-        poseMap.put("Nright", FieldConstants.BlueReefPoses.Nright);
-        poseMap.put("Nleft", FieldConstants.BlueReefPoses.Nleft);
-        poseMap.put("NEright", FieldConstants.BlueReefPoses.NEright);
-        poseMap.put("NEleft", FieldConstants.BlueReefPoses.NEleft);
-        poseMap.put("SEright", FieldConstants.BlueReefPoses.SEright);
-        poseMap.put("SEleft", FieldConstants.BlueReefPoses.SEleft);
+        poseMap.put("Sright", FieldConstants.BlueReefPoses.S_right);
+        poseMap.put("Sleft", FieldConstants.BlueReefPoses.S_left);
+        poseMap.put("SWright", FieldConstants.BlueReefPoses.SW_right);
+        poseMap.put("SWleft", FieldConstants.BlueReefPoses.SW_left);
+        poseMap.put("NWright", FieldConstants.BlueReefPoses.NW_right);
+        poseMap.put("NWleft", FieldConstants.BlueReefPoses.NW_left);
+        poseMap.put("Nright", FieldConstants.BlueReefPoses.N_right);
+        poseMap.put("Nleft", FieldConstants.BlueReefPoses.N_left);
+        poseMap.put("NEright", FieldConstants.BlueReefPoses.NE_right);
+        poseMap.put("NEleft", FieldConstants.BlueReefPoses.NE_left);
+        poseMap.put("SEright", FieldConstants.BlueReefPoses.SE_right);
+        poseMap.put("SEleft", FieldConstants.BlueReefPoses.SE_left);
         break;
     }
 
