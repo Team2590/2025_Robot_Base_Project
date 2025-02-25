@@ -29,6 +29,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
@@ -59,6 +60,7 @@ public class DriveToPoseCommand extends Command {
 
   private final Drive drivetrainSubsystem;
   protected final Supplier<Pose2d> poseProvider;
+  private Rotation2d goalPoseHeading = new Rotation2d();
 
   /**
    * Constructs a DriveToPoseCommand
@@ -109,6 +111,7 @@ public class DriveToPoseCommand extends Command {
     thetaController.setGoal(goalPose.getRotation().getRadians());
     xController.setGoal(goalPose.getX());
     yController.setGoal(goalPose.getY());
+    goalPoseHeading = goalPose.getRotation();
   }
 
   @Override
@@ -117,6 +120,7 @@ public class DriveToPoseCommand extends Command {
     thetaController.reset(robotPose.getRotation().getRadians());
     xController.reset(robotPose.getX());
     yController.reset(robotPose.getY());
+    goalPoseHeading = new Rotation2d();
   }
 
   @Override
@@ -137,8 +141,8 @@ public class DriveToPoseCommand extends Command {
     if (thetaController.atGoal()) {
       omegaSpeed = 0;
     }
-
-    drivetrainSubsystem.runVelocity(new ChassisSpeeds(xSpeed, ySpeed, omegaSpeed));
+    // (xSpeed, ySpeed, omegaSpeed, thetaController.getSetpoint()
+    drivetrainSubsystem.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, omegaSpeed, goalPoseHeading));
   }
 
   @Override
