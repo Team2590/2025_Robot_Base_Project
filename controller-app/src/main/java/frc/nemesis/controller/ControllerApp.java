@@ -135,7 +135,7 @@ public class ControllerApp extends Application {
     // Calculate center point
     double centerX = width / 2;
     // Moved center point to 2/3 down from the top (1/3 up from bottom)
-    double centerY = height * (6.0 / 10.0);
+    double centerY = height * (1.0 / 2.0);
 
     double radius = Math.min(width, height) * 0.125;
 
