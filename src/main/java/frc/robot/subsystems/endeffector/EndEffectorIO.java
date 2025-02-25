@@ -14,6 +14,7 @@ public interface EndEffectorIO {
     public double tempCelsius = 0.0;
     public double rotationCount = 0.0;
     public double statorCurrentAmps = 0.0;
+    public double proxValue = 0.0;
   }
 
   public default void updateInputs(EndEffectorIOInputs inputs) {}

@@ -154,6 +154,8 @@ public class Drive extends SubsystemBase {
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
+  public static String autoCommandMessage = "yap yap"; // need it in some periodic
+
   @Override
   public void periodic() {
     odometryLock.lock(); // Prevents odometry updates while reading data

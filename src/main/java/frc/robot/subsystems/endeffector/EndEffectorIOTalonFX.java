@@ -15,6 +15,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.AnalogInput;
+import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.util.LoggedTunableNumber;
 
 public class EndEffectorIOTalonFX implements EndEffectorIO {
@@ -34,6 +36,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
   private StatusSignal<Current> torqueCurrent;
   private StatusSignal<Temperature> tempCelsius;
   private double statorCurrentAmps;
+  private AnalogInput proxInput = new AnalogInput(EndEffectorConstantsLeonidas.proxSensor_ID);
 
   public EndEffectorIOTalonFX(
       int canID,
@@ -85,11 +88,12 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
     inputs.tempCelsius = tempCelsius.getValueAsDouble();
     inputs.rotationCount = leader.getPosition().getValueAsDouble();
     statorCurrentAmps = leader.getStatorCurrent().getValueAsDouble();
+    inputs.proxValue = proxInput.getValue();
   }
 
   @Override
   public void setVoltage(double voltage) {
-    leader.setVoltage(voltageTunableNumber.get());
+    leader.setVoltage(voltage);
   }
 
   @Override
@@ -100,5 +104,9 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
   @Override
   public void setVelocity(double velocity) {
     leader.set(velocity);
+  }
+
+  public double getProxValue() {
+    return proxInput.getValue();
   }
 }
