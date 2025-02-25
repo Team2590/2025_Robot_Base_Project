@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FieldConstants {
   public static enum ZONES {
@@ -116,6 +118,43 @@ public class FieldConstants {
 
   public static final Pose2d CoralStationLeft =
       new Pose2d(new Translation2d(1.567, 1.424), Rotation2d.fromDegrees(231.639));
+
+  public static final Map<String, Pose2d> BLUE_REEF_POSES = buildBlueReefPosesMap();
+  public static final Map<String, Pose2d> RED_REEF_POSES = buildRedReefPosesMap();
+
+  private static final Map<String, Pose2d> buildBlueReefPosesMap() {
+    Map<String, Pose2d> poseMap = new HashMap<>();
+    poseMap.put("S_Right", FieldConstants.BlueReefPoses.Sright);
+    poseMap.put("S_Left", FieldConstants.BlueReefPoses.Sleft);
+    poseMap.put("SW_Right", FieldConstants.BlueReefPoses.SWright);
+    poseMap.put("SW_Left", FieldConstants.BlueReefPoses.SWleft);
+    poseMap.put("NW_Right", FieldConstants.BlueReefPoses.NWright);
+    poseMap.put("NW_Left", FieldConstants.BlueReefPoses.NWleft);
+    poseMap.put("N_Right", FieldConstants.BlueReefPoses.Nright);
+    poseMap.put("N_Left", FieldConstants.BlueReefPoses.Nleft);
+    poseMap.put("NE_Right", FieldConstants.BlueReefPoses.NEright);
+    poseMap.put("NE_Left", FieldConstants.BlueReefPoses.NEleft);
+    poseMap.put("SE_Right", FieldConstants.BlueReefPoses.SEright);
+    poseMap.put("SE_Left", FieldConstants.BlueReefPoses.SEleft);
+    return poseMap;
+  }
+
+  private static final Map<String, Pose2d> buildRedReefPosesMap() {
+    Map<String, Pose2d> poseMap = new HashMap<>();
+    poseMap.put("S_Right", FieldConstants.RedReefPoses.Sright);
+    poseMap.put("S_Left", FieldConstants.RedReefPoses.Sleft);
+    poseMap.put("SW_Right", FieldConstants.RedReefPoses.SWright);
+    poseMap.put("SW_Left", FieldConstants.RedReefPoses.SWleft);
+    poseMap.put("NW_Right", FieldConstants.RedReefPoses.NWright);
+    poseMap.put("NW_Left", FieldConstants.RedReefPoses.NWleft);
+    poseMap.put("N_Right", FieldConstants.RedReefPoses.Nright);
+    poseMap.put("N_Left", FieldConstants.RedReefPoses.Nleft);
+    poseMap.put("NE_Right", FieldConstants.RedReefPoses.NEright);
+    poseMap.put("NE_Left", FieldConstants.RedReefPoses.NEleft);
+    poseMap.put("SE_Right", FieldConstants.RedReefPoses.SEright);
+    poseMap.put("SE_Left", FieldConstants.RedReefPoses.SEleft);
+    return poseMap;
+  }
 }
 
 // porcesor barge feeding station
