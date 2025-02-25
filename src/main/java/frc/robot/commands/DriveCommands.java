@@ -95,10 +95,14 @@ public class DriveCommands {
           // Convert to field relative speeds & send command
           ChassisSpeeds speeds =
               new ChassisSpeeds(
-                  isFlipped? 1:-1 * linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                  isFlipped? 1:-1 * linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+                  (isFlipped ? 1 : -1)
+                      * linearVelocity.getX()
+                      * drive.getMaxLinearSpeedMetersPerSec(),
+                  (isFlipped ? 1 : -1)
+                      * linearVelocity.getY()
+                      * drive.getMaxLinearSpeedMetersPerSec(),
                   omega * drive.getMaxAngularSpeedRadPerSec());
-          
+
           drive.runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   speeds,
