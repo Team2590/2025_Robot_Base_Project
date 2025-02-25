@@ -30,18 +30,23 @@ public class ControllerApp extends Application {
   private static final String SELECTED_LEVEL_STYLE = "-fx-background-color: blue";
   private static final String SIDE_BUTTON_STYLE = "-fx-background-color: lightgray";
   private static final String SELECTED_SIDE_STYLE = "-fx-background-color: green";
+  private static final String SOURCE_BUTTON_STYLE = "-fx-background-color: orange; -fx-text-fill: white; -fx-font-weight: bold";
+  private static final String SELECTED_SOURCE_STYLE = "-fx-background-color: darkorange; -fx-text-fill: white; -fx-font-weight: bold";
 
   private final NetworkTableClient client = NetworkTableClient.getInstance();
   private final Map<String, Button> compassButtonMap = new HashMap<>();
   private final Map<String, Button> levelButtonMap = new HashMap<>();
   private final Map<String, ToggleButton> sideButtonMap = new HashMap<>();
+  private final Map<String, Button> sourceButtonMap = new HashMap<>();
   private String pendingCommand = null;
+  private String selectedSource = null;
 
   private String selectedDirection = null;
   private String selectedSide = null;
   private String selectedLevel = null;
 
-  private static final String[] compassPoints = {"S", "SW", "NW", "N", "NE", "SE"};
+  private static final String[] compassPoints = {"S", "SW", "NW", "N", "NE", "SE",};
+  private static final String[] sources = {"S1", "S2"};
   private static final String[] levels = {"L1", "L2", "L3", "L4"};
   private static final String[] sides = {"Left", "Right"};
 
@@ -50,6 +55,7 @@ public class ControllerApp extends Application {
   private VBox sideButtonBox;
   private HBox bottomButtonBox;
   private Pane compassButtonsPane;
+  private Pane sourceButtonsPane;
   private VBox topSectionBox; // VBox to hold levels and sides
 
   @Override
@@ -73,17 +79,24 @@ public class ControllerApp extends Application {
     mainPane.setBackground(new Background(background));
 
     // Add listeners for responsive sizing
-    mainPane.widthProperty().addListener((obs, oldVal, newVal) -> updateCompassButtonPositions());
-    mainPane.heightProperty().addListener((obs, oldVal, newVal) -> updateCompassButtonPositions());
+    mainPane.widthProperty().addListener((obs, oldVal, newVal) -> {
+      updateCompassButtonPositions();
+      updateSourceButtonPositions();
+    });
+    mainPane.heightProperty().addListener((obs, oldVal, newVal) -> {
+      updateCompassButtonPositions();
+      updateSourceButtonPositions();
+    });
 
     compassButtonsPane = createCompassButtons();
-    mainPane.getChildren().add(compassButtonsPane);
+    sourceButtonsPane = createSourceButtons();
+    mainPane.getChildren().addAll(compassButtonsPane, sourceButtonsPane);
 
     topButtonBox = createLevelButtons();
     sideButtonBox = createSideButtons();
     bottomButtonBox = createBottomButtons();
 
-    topSectionBox = new VBox(10); // Create VBox to hold levels and sides
+    topSectionBox = new VBox(10); 
     topSectionBox.setAlignment(Pos.TOP_CENTER);
     topSectionBox
         .getChildren()
@@ -128,6 +141,23 @@ public class ControllerApp extends Application {
     return compassPane;
   }
 
+  private Pane createSourceButtons() {
+    Pane sourcePane = new Pane();
+    EventHandler<ActionEvent> buttonHandler = event -> onSourceButtonPress(event);
+
+    for (String source : sources) {
+      Button button = new Button(source);
+      sourceButtonMap.put(source, button);
+      button.setOnAction(buttonHandler);
+      button.setPrefWidth(80);
+      button.setPrefHeight(40);
+      button.setStyle(SOURCE_BUTTON_STYLE);
+      sourcePane.getChildren().add(button);
+    }
+
+    return sourcePane;
+  }
+
   private void updateCompassButtonPositions() {
     double width = mainPane.getWidth();
     double height = mainPane.getHeight();
@@ -153,6 +183,21 @@ public class ControllerApp extends Application {
       button.setLayoutY(y - button.getPrefHeight() / 2);
     }
   }
+
+  private void updateSourceButtonPositions() {
+    double width = mainPane.getWidth();
+    double height = mainPane.getHeight();
+    
+    //S1 pos
+    Button s1Button = sourceButtonMap.get("S1");
+    s1Button.setLayoutX(width * 0.3);  
+    s1Button.setLayoutY(height * 0.3); 
+    
+    // S2 pos
+    Button s2Button = sourceButtonMap.get("S2");
+    s2Button.setLayoutX(width * 0.7 - s2Button.getPrefWidth());  
+    s2Button.setLayoutY(height * 0.3);  
+}
 
   private VBox createLevelButtons() {
     VBox levelBox = new VBox(10);
@@ -181,12 +226,12 @@ public class ControllerApp extends Application {
 
   private VBox createSideButtons() {
     VBox sideBox = new VBox(20);
-    sideBox.setAlignment(Pos.TOP_CENTER); // Center alignment for side buttons in the VBox
+    sideBox.setAlignment(Pos.TOP_CENTER); 
     sideBox.setPadding(
-        new Insets(10, 0, 0, 0)); // Add some top padding to separate from level buttons
+        new Insets(10, 0, 0, 0)); 
 
-    HBox buttonRow = new HBox(10); // Use HBox to arrange Left and Right side by side
-    buttonRow.setAlignment(Pos.CENTER); // Center buttons in HBox
+    HBox buttonRow = new HBox(10); 
+    buttonRow.setAlignment(Pos.CENTER);
 
     for (String side : sides) {
       ToggleButton sideButton = new ToggleButton(side);
@@ -233,6 +278,17 @@ public class ControllerApp extends Application {
     }
   }
 
+  private void updateSourceButtons() {
+    for (Map.Entry<String, Button> entry : sourceButtonMap.entrySet()) {
+      Button button = entry.getValue();
+      if (entry.getKey().equals(selectedSource)) {
+        button.setStyle(SELECTED_SOURCE_STYLE);
+      } else {
+        button.setStyle(SOURCE_BUTTON_STYLE);
+      }
+    }
+  }
+
   private void updateLevelButtons() {
     for (Map.Entry<String, Button> entry : levelButtonMap.entrySet()) {
       Button button = entry.getValue();
@@ -270,19 +326,20 @@ public class ControllerApp extends Application {
     if (selectedLevel != null && selectedSide != null && selectedDirection != null) {
       pendingCommand = selectedDirection + "_" + selectedSide + "_" + selectedLevel;
       System.out.println("Updated command string: " + pendingCommand);
-      sendToNetworkTables(pendingCommand);
+      sendToNetworkTables("moveTo", pendingCommand);
     }
   }
 
-  private void sendToNetworkTables(String command) {
-    if (command != null) {
-      client.publish("moveTo", command);
-      System.out.println("Sending command: " + command);
+  private void sendToNetworkTables(String key, String value) {
+    if (value != null) {
+      client.publish(key, value);
+      System.out.println("Sending " + key + ": " + value);
     }
   }
 
   private void refresh() {
     String moveTo = client.getValue("moveTo");
+    String source = client.getValue("source");
 
     if (moveTo != null && !moveTo.equals("not found")) {
       String[] parts = moveTo.split("_");
@@ -296,6 +353,11 @@ public class ControllerApp extends Application {
         updateLevelButtons();
         updateSideButtons();
       }
+    }
+    
+    if (source != null && !source.equals("not found")) {
+      selectedSource = source;
+      updateSourceButtons();
     }
   }
 
@@ -312,6 +374,17 @@ public class ControllerApp extends Application {
 
     updateCompassButtons();
     updatePendingCommand();
+  }
+  
+  private void onSourceButtonPress(ActionEvent event) {
+    if (!(event.getSource() instanceof Button)) {
+      return;
+    }
+    Button button = (Button) event.getSource();
+    selectedSource = button.getText();
+    
+    updateSourceButtons();
+    sendToNetworkTables("source", selectedSource);
   }
 
   public static void main(String[] args) {
