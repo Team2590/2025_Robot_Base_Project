@@ -359,12 +359,20 @@ public class RobotContainer {
         "Intake FF Characterization",
         new FeedForwardCharacterization(
             intake, intake::setVoltage, intake::getCharacterizationVelocity));
+  }
 
+  /**
+   * Configure buttons.
+   *
+   * <p>Called from {@link Robot#robotInit()}. Avoid calling from RobotContainer constructor as it
+   * uses Subsystems factories which in turn use RobotContainer which is not fully initialized yet
+   * since constructor is not fully executed, causing NullPointerExceptions at startup.
+   */
+  public void configureButtons() {
     // Configure the button bindings
     if (Constants.currentMode == Constants.Mode.SIM) {
       configureButtonBindingsSimulation();
     }
-
     configureButtonBindings();
   }
 
@@ -399,8 +407,8 @@ public class RobotContainer {
     leftJoystick.button(9).onTrue(ScoringFactory.scoreProcessor());
 
     // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
-    leftJoystick.button(10).onTrue(controllerApp.bindDriveToTargetCommand(drive));
-    leftJoystick.button(11).onTrue(controllerApp.bindScoringCommand(elevator, arm));
+    leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -505,12 +513,13 @@ public class RobotContainer {
 
     // Causing NullPointerException on startup in SIM
     // rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
-    rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
-    rightJoystick.button(16).whileTrue(ScoringFactory.climb());
+    // rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
+    // rightJoystick.button(16).whileTrue(ScoringFactory.climb());
   }
 
   /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
+   * drive Use this to pass the autonomous command to the main
+   * {@lifrc.robot.RobotContainer.configureButtonBindings(RobotContainer.java:509)nk Robot} class.
    *
    * @return the command to run in autonomous
    */

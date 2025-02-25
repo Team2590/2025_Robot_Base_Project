@@ -22,7 +22,7 @@ public class ControllerOrchestrator {
   private static final String CONTROLLER_TABLE_KEY = "ControllerApp/target";
   private static final String MOVE_TO_KEY = "moveTo";
   // What's a better default target location?
-  private static final String DEFAULT_REEF_TARGET = "Sleft";
+  private static final String DEFAULT_REEF_TARGET = "S_Left";
 
   private NetworkTableEntry getTableEntry(String key) {
     NetworkTable table = NetworkTableInstance.getDefault().getTable(CONTROLLER_TABLE_KEY);
@@ -73,12 +73,14 @@ public class ControllerOrchestrator {
     // If we get something else, we return null so a default
     // value can be used.
     String[] parts = targetString.split("_");
-    if (parts.length != 2) {
-      System.out.println("---> Invalid target string received from ControllerApp: " + targetString);
+    if (parts.length != 3) {
+      System.err.println("---> Invalid target string received from ControllerApp: " + targetString);
       return null;
     }
-    String poseKey = parts[0];
-    String levelString = parts[1].toUpperCase();
+    String compassDir = parts[0];
+    String leftOrRight = parts[1];
+    String poseKey = compassDir + "_" + leftOrRight;
+    String levelString = parts[2].toUpperCase();
 
     Pose2d targetPose = lookupPoseBasedOnAlliance(poseKey);
     if (targetPose == null) {
