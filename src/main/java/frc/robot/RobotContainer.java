@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -461,7 +460,8 @@ public class RobotContainer {
     //     .button(7)
     //     .whileTrue(
     //         new ParallelCommandGroup(
-    //             arm.setPositionLoggedTunableNumber(), elevator.setPositionLoggedTunableNumber()));
+    //             arm.setPositionLoggedTunableNumber(),
+    // elevator.setPositionLoggedTunableNumber()));
 
     rightJoystick
         .button(3)
@@ -502,6 +502,8 @@ public class RobotContainer {
     rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
     rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
+
+    leftJoystick.button(3).onTrue(ScoringFactory.setDefaults());
   }
 
   /**

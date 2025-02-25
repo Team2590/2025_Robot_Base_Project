@@ -48,7 +48,8 @@ public class ScoringFactory {
             )
         .withName("Score L4");
   }
-public static Command score(Level level) {
+
+  public static Command score(Level level) {
     return switch (level) {
       case L1:
         yield scoreL1();
@@ -134,5 +135,13 @@ public static Command score(Level level) {
             // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
             ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION))
         .withName("Climb");
+  }
+
+  public static Command setDefaults() {
+    return Commands.parallel(
+            ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS),
+            ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION),
+            IntakeFactory.setHomePosition())
+        .withName("Set defaults");
   }
 }
