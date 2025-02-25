@@ -36,6 +36,7 @@ import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
@@ -502,6 +503,7 @@ public class RobotContainer {
     rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
     rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
+    new DriveToPoseCommand(drive, drive::getPose).setGoal(new Pose2d());
   }
 
   /**
