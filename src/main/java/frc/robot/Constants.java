@@ -191,8 +191,8 @@ public final class Constants {
     public static Pose2d[] getReefPose(int aprilTagID) {
 
       Pose2d tagPose = VisionConstants.aprilTagLayout.getTagPose(aprilTagID).get().toPose2d();
-      double x_shift = .165 * Math.cos(180 - tagPose.getRotation().getDegrees());
-      double y_shift = .165 * Math.sin(180 - tagPose.getRotation().getDegrees());
+      double x_shift = .165 * Math.cos(Math.PI/2 - tagPose.getRotation().getRadians());
+      double y_shift = .165 * Math.sin( Math.PI/2 - tagPose.getRotation().getRadians());
       Pose2d left =
           tagPose.plus(new Transform2d(new Translation2d(-x_shift, y_shift), new Rotation2d()));
       Pose2d right =

@@ -3,6 +3,8 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.Constants.CoralPose;
+
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
@@ -46,9 +48,66 @@ public class FieldConstants {
     return new Path2D.Double(flipped);
   }
 
+//   public static class BlueReefPoses {
+//     public static final Pose2d Sright =
+//         new Pose2d(new Translation2d(3.15, 3.87), new Rotation2d(0));
+//     public static final Pose2d SEleft =
+//         new Pose2d(new Translation2d(3.62, 2.933), new Rotation2d(60));
+//     public static final Pose2d SEright =
+//         new Pose2d(new Translation2d(3.93, 2.787), new Rotation2d(60));
+//     public static final Pose2d NEleft =
+//         new Pose2d(new Translation2d(5.031, 2.787), new Rotation2d(120));
+//     public static final Pose2d NEright =
+//         new Pose2d(new Translation2d(5.304, 2.933), new Rotation2d(120));
+//     public static final Pose2d Nleft =
+//         new Pose2d(new Translation2d(5.83, 3.859), new Rotation2d(180));
+//     public static final Pose2d Nright =
+//         new Pose2d(new Translation2d(5.83, 4.17), new Rotation2d(180));
+//     public static final Pose2d NWleft =
+//         new Pose2d(new Translation2d(5.275, 5.127), new Rotation2d(-120));
+//     public static final Pose2d NWright =
+//         new Pose2d(new Translation2d(5.026, 5.24), new Rotation2d(-120));
+//     public static final Pose2d SWleft =
+//         new Pose2d(new Translation2d(3.9, 5.3), new Rotation2d(-60));
+//     public static final Pose2d SWright =
+//         new Pose2d(new Translation2d(3.676, 5), new Rotation2d(-60));
+//     public static final Pose2d Sleft = new Pose2d(new Translation2d(3.14, 4.2), new Rotation2d(0));
+//   }
+
+//   public static class RedReefPoses {
+//     public static final Pose2d Sright =
+//         new Pose2d(new Translation2d(14.411, 4.171), new Rotation2d(180));
+//     public static final Pose2d Sleft =
+//         new Pose2d(new Translation2d(14.39, 3.869), new Rotation2d(180));
+//     public static final Pose2d SWright =
+//         new Pose2d(new Translation2d(13.923, 2.933), new Rotation2d(120));
+//     public static final Pose2d SWleft =
+//         new Pose2d(new Translation2d(13.621, 2.777), new Rotation2d(120));
+//     public static final Pose2d NWright =
+//         new Pose2d(new Translation2d(12.5, 2.806), new Rotation2d(60));
+//     public static final Pose2d NWleft =
+//         new Pose2d(new Translation2d(12.236, 2.943), new Rotation2d(60));
+//     public static final Pose2d Nright =
+//         new Pose2d(new Translation2d(11.7, 3.869), new Rotation2d(0));
+//     public static final Pose2d Nleft =
+//         new Pose2d(new Translation2d(12.217, 5.127), new Rotation2d(-60));
+//     public static final Pose2d NEright =
+//         new Pose2d(new Translation2d(11.72, 4.2), new Rotation2d(0));
+//     public static final Pose2d NEleft =
+//         new Pose2d(new Translation2d(13.913, 5.088), new Rotation2d(-120));
+//     public static final Pose2d SEright =
+//         new Pose2d(new Translation2d(13.621, 5.253), new Rotation2d(-120));
+//     public static final Pose2d SEleft =
+//         new Pose2d(new Translation2d(12.47, 5.253), new Rotation2d(-60));
+//   }
+
+
   public static class BlueReefPoses {
-    public static final Pose2d Sright =
-        new Pose2d(new Translation2d(3.15, 3.87), new Rotation2d(0));
+    public static final Pose2d Sright = CoralPose.getReefPose(18)[1];
+    public static final Pose2d Sleft =CoralPose.getReefPose(18)[0];
+
+
+
     public static final Pose2d SEleft =
         new Pose2d(new Translation2d(3.62, 2.933), new Rotation2d(60));
     public static final Pose2d SEright =
@@ -69,8 +128,7 @@ public class FieldConstants {
         new Pose2d(new Translation2d(3.9, 5.3), new Rotation2d(-60));
     public static final Pose2d SWright =
         new Pose2d(new Translation2d(3.676, 5), new Rotation2d(-60));
-    public static final Pose2d Sleft = new Pose2d(new Translation2d(3.14, 4.2), new Rotation2d(0));
-  }
+    
 
   public static class RedReefPoses {
     public static final Pose2d Sright =
@@ -98,12 +156,7 @@ public class FieldConstants {
     public static final Pose2d SEleft =
         new Pose2d(new Translation2d(12.47, 5.253), new Rotation2d(-60));
   }
-
-  public static class ReefPosesForTag {
-
-    public static final Pose2d NWLeft = Constants.CoralPose.getReefPose(20)[0];
-    public static final Pose2d NWRight = Constants.CoralPose.getReefPose(20)[1];
-  }
+  
 
   public static final Pose2d Barge =
       new Pose2d(new Translation2d(7.576, 6.150), Rotation2d.fromDegrees(0));
