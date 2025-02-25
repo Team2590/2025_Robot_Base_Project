@@ -14,10 +14,14 @@
 package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.FRCPolygon;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.PolygonLocator;
@@ -182,6 +186,19 @@ public final class Constants {
       this.y = y;
       this.elevatorPosition = 0;
       this.rotationTarget = 0;
+    }
+
+    public static Pose2d[] getReefPose(int aprilTagID) {
+
+      Pose2d tagPose = VisionConstants.aprilTagLayout.getTagPose(aprilTagID).get().toPose2d();
+      double x_shift = .165 * Math.cos(180 - tagPose.getRotation().getDegrees());
+      double y_shift = .165 * Math.sin(180 - tagPose.getRotation().getDegrees());
+      Pose2d left =
+          tagPose.plus(new Transform2d(new Translation2d(-x_shift, y_shift), new Rotation2d()));
+      Pose2d right =
+          tagPose.plus(new Transform2d(new Translation2d(x_shift, -y_shift), new Rotation2d()));
+      Pose2d[] returnposes = new Pose2d[] {left, right};
+      return returnposes;
     }
   }
 

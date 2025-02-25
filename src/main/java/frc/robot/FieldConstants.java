@@ -99,6 +99,12 @@ public class FieldConstants {
         new Pose2d(new Translation2d(12.47, 5.253), new Rotation2d(-60));
   }
 
+  public static class ReefPosesForTag {
+
+    public static final Pose2d NWLeft = Constants.CoralPose.getReefPose(20)[0];
+    public static final Pose2d NWRight = Constants.CoralPose.getReefPose(20)[1];
+  }
+
   public static final Pose2d Barge =
       new Pose2d(new Translation2d(7.576, 6.150), Rotation2d.fromDegrees(0));
 
