@@ -165,7 +165,7 @@ public class ControllerApp extends Application {
     // Calculate center point
     double centerX = width / 2;
     // Moved center point to 2/3 down from the top (1/3 up from bottom)
-    double centerY = height * (6.0 / 10.0);
+    double centerY = height * (1.0 / 2.0);
 
     double radius = Math.min(width, height) * 0.125;
 
@@ -323,8 +323,11 @@ public class ControllerApp extends Application {
   }
 
   private void updatePendingCommand() {
-    if (selectedLevel != null && selectedSide != null && selectedDirection != null) {
-      pendingCommand = selectedDirection + "_" + selectedSide + "_" + selectedLevel;
+    if (selectedSide != null && selectedDirection != null) {
+      // Combine direction+side and level with underscore
+      String directionAndSide = selectedDirection + selectedSide.toLowerCase();
+      pendingCommand =
+          selectedLevel != null ? directionAndSide + "_" + selectedLevel : directionAndSide;
       System.out.println("Updated command string: " + pendingCommand);
       sendToNetworkTables("moveTo", pendingCommand);
     }
@@ -342,16 +345,32 @@ public class ControllerApp extends Application {
     String source = client.getValue("source");
 
     if (moveTo != null && !moveTo.equals("not found")) {
+      // Split on underscore to separate direction+side from level
       String[] parts = moveTo.split("_");
-      if (parts.length == 3) {
-        selectedDirection = parts[0];
-        selectedSide = parts[1];
-        selectedLevel = parts[2];
-        pendingCommand = moveTo;
+      if (parts.length > 0) {
+        // Parse direction (uppercase letters) and side (lowercase letters)
+        String directionAndSide = parts[0];
+        String direction = directionAndSide.replaceAll("[^A-Z]", "");
+        String side = directionAndSide.replaceAll("[^a-z]", "");
 
-        updateCompassButtons();
-        updateLevelButtons();
-        updateSideButtons();
+        if (!direction.isEmpty() && !side.isEmpty()) {
+          // Capitalize first letter of side to match our enum
+          side = side.substring(0, 1).toUpperCase() + side.substring(1);
+
+          selectedDirection = direction;
+          selectedSide = side;
+
+          // Update level if present
+          if (parts.length > 1) {
+            selectedLevel = parts[1];
+          }
+
+          pendingCommand = moveTo;
+
+          updateCompassButtons();
+          updateSideButtons();
+          updateLevelButtons();
+        }
       }
     }
     
