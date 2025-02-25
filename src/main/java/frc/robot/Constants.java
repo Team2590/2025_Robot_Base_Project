@@ -241,6 +241,9 @@ public final class Constants {
   //   //         .build();
 
   //   public static class BlueCoralPoses {
+  //     From driver station perspective on the blue alliance, Sleft is the left source on the SouthWest side of the blue reef and Sright is on the right side.  
+  //     p3 is at the left source of the South side and p4 is on the right and so on going counter-clockwise around the blue reef.  
+
   //     public static final CoralPose Sleft = new CoralPose(3.9, 5.3);
   //     public static final CoralPose Sright = new CoralPose(3.676, 5);
   //     public static final CoralPose p3 = new CoralPose(3.14, 4.2);
@@ -256,6 +259,8 @@ public final class Constants {
   //   }
 
   //   public static class RedCoralPoses {
+  //     Same applies to red reef but starting on the SouthEast side from driver station and from the perspective of the red alliance driver station.
+  
   //     public static final CoralPose p1 = new CoralPose(13.913, 5.088);
   //     public static final CoralPose p2 = new CoralPose(13.621, 5.253);
   //     public static final CoralPose p3 = new CoralPose(12.47, 5.253);
