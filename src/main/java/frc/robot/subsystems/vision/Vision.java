@@ -20,14 +20,19 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
+import frc.robot.util.GeometryUtil;
+
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
@@ -35,10 +40,13 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+  public Pose2d bestReefTagPose;
+  public List<Pose2d> visibleReefPoses;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
+    bestReefTagPose = new Pose2d();
 
     // Initialize inputs
     this.inputs = new VisionIOInputsAutoLogged[io.length];
@@ -93,6 +101,10 @@ public class Vision extends SubsystemBase {
         var tagPose = aprilTagLayout.getTagPose(tagId);
         if (tagPose.isPresent()) {
           tagPoses.add(tagPose.get());
+        }
+
+        if((tagId<12 && tagId>5) || (tagId<23 && tagId>16)){ //checking if its a reef tag
+          visibleReefPoses.add(tagPose.get().toPose2d());
         }
       }
 
@@ -184,5 +196,20 @@ public class Vision extends SubsystemBase {
         Pose2d visionRobotPoseMeters,
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs);
+  }
+
+  public Pose2d getBestReefPose(Supplier<Pose2d> robotPoseSupplier, boolean isLeft){
+    double translateLeft = leftPoseDisplacement;
+    double translateRight = rightPoseDisplacement;
+    double minDistance = Double.MAX_VALUE;
+    for(Pose2d tagPose : visibleReefPoses){
+      double distance = GeometryUtil.distanceBetweenPoses(tagPose, robotPoseSupplier.get());
+      if(distance < minDistance){
+        minDistance = distance;
+        bestReefTagPose = tagPose;
+      }
+    }
+    if(isLeft) {return bestReefTagPose.transformBy(new Transform2d(0, translateLeft, new Rotation2d()));}
+    else {return bestReefTagPose.plus(new Transform2d(0, translateRight, new Rotation2d()));}
   }
 }

@@ -24,6 +24,9 @@ public class VisionConstants {
   public static AprilTagFieldLayout aprilTagLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
+  public static double rightPoseDisplacement = 5;
+  public static double leftPoseDisplacement = -5;
+
   // Camera names, must match names configured on coprocessor
   public static String upperSourceCameraName = "1mp_arducam_device_6";
   public static String processorCameraName = "1mp_arducam_device_4";

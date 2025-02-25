@@ -42,6 +42,7 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOSim;
 import frc.robot.subsystems.arm.ArmIOTalonFX;
 import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.climb.ClimbIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -63,6 +64,7 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
+import frc.robot.util.GeometryUtil;
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -293,7 +295,9 @@ public class RobotContainer {
             new EndEffector(
                 new EndEffectorIOSim(
                     DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
-        climb = null;
+        climb =
+            new Climb(
+                new ClimbIOSim(DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
         break;
 
       default:
@@ -397,6 +401,7 @@ public class RobotContainer {
 
     leftJoystick.button(8).onTrue(ScoringFactory.score(Level.L3));
     leftJoystick.button(9).onTrue(ScoringFactory.scoreProcessor());
+    drive.setDefaultCommand(DriveFactory.joystickDrive());
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -503,11 +508,25 @@ public class RobotContainer {
     rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
 
-    rightJoystick
-        .trigger()
+    // aligning to the LEFT POLE
+    leftJoystick
+        .button(9).and(rightJoystick.trigger())
         .whileTrue(
             DriveCommands.alignToPose(
-                drive, () -> -leftJoystick.getX(), () -> controllerApp.getTargetPose()));
+                drive,
+                () -> -leftJoystick.getX(),
+                () -> GeometryUtil.horizontalError(vision.getBestReefPose(() -> drive.getPose(), true), drive.getPose()),
+                () -> GeometryUtil.angleError(vision.getBestReefPose(() -> drive.getPose(), true), drive.getPose())));
+                
+    // aligning to the RIGHT POLE
+    leftJoystick
+        .button(10).and(rightJoystick.trigger())
+        .whileTrue(
+            DriveCommands.alignToPose(
+                drive,
+                () -> -leftJoystick.getX(),
+                () -> GeometryUtil.horizontalError(vision.getBestReefPose(() -> drive.getPose(), false), drive.getPose()),
+                () -> GeometryUtil.angleError(vision.getBestReefPose(() -> drive.getPose(), false), drive.getPose())));
   }
 
   /**
