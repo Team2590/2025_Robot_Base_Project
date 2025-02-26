@@ -28,6 +28,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.command_factories.DriveFactory;
+import frc.robot.command_factories.ElevatorFactory;
+import frc.robot.command_factories.EndEffectorFactory;
+import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.DriveCommands;
@@ -427,108 +430,98 @@ public class RobotContainer {
             DriveCommands.alignToPose(
                 drive, getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left));
 
-    // // reset button binds
-    // rightJoystick
-    //     .button(5)
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-    //                 drive)
-    //             .ignoringDisable(true));
-    // leftJoystick.button(5).onTrue(Commands.runOnce(() -> elevator.resetRotationCount(),
-    // elevator));
-    // rightJoystick
-    //     .button(0)
+    leftJoystick.button(5).onTrue(Commands.runOnce(() -> elevator.resetRotationCount(),
+    elevator));
+    rightJoystick
+        .button(0)
+        .whileTrue(
+            DriveCommands.alignToPose(
+                drive, getLeftJoystick()::getY, () -> controllerApp.getTarget().pose()));
+
+    // climb button binds
+    /**
+     * TODO - need climb factory methods for running till end and deploying backpack
+     * rightJoystick.button(4) -> backpack activation down leftJoystick.button(4) or button 3 ->
+    run
+     * full climb
+     */
+
+    // intake button binds
+    rightJoystick
+        .trigger()
+        .and(rightJoystick.button(3).negate())
+        .and(rightJoystick.button(2).negate())
+        .whileTrue(GamePieceFactory.intakeAlgaeGround());
+    rightJoystick
+        .button(2)
+        .and(rightJoystick.trigger())
+        .whileTrue(GamePieceFactory.intakeCoralGround());
+
+    rightJoystick
+        .button(3)
+        .and(rightJoystick.trigger())
+        .whileTrue(GamePieceFactory.intakeCoralFeeder());
+    // scoring button binds
+    // TODO- controller app activation button:
+    // rightJoystick.button(3).and(leftJoystick.trigger()).whileTrue(<controller app function>);
+    // rightJoystick.button(3).onTrue(ScoringFactory.scoreL2());
+    /**
+     * For tuning purposes: rightJoystick .button(3) .and(leftJoystick.trigger()) .whileTrue( new
+     * ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
+     * elevator.setPositionLoggedTunableNumber())); controller.button(7).whileTrue( new
+     * ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
+     * elevator.setPositionLoggedTunableNumber()));
+     */
+    // manual backup button binds
+
+    // controller
+    //     .button(7)
     //     .whileTrue(
-    //         DriveCommands.alignToPose(
-    //             drive, getLeftJoystick()::getY, () -> controllerApp.getTarget().pose()));
+    //         new ParallelCommandGroup(
+    //             arm.setPositionLoggedTunableNumber(),
+    // elevator.setPositionLoggedTunableNumber()));
 
-    // // climb button binds
-    // /**
-    //  * TODO - need climb factory methods for running till end and deploying backpack
-    //  * rightJoystick.button(4) -> backpack activation down leftJoystick.button(4) or button 3 ->
-    // run
-    //  * full climb
-    //  */
+    rightJoystick
+        .button(3)
+        .and(leftJoystick.button(2))
+        .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
+    rightJoystick.povUp().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualUp());
+    rightJoystick.povDown().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualDown());
 
-    // // intake button binds
-    // rightJoystick
-    //     .trigger()
-    //     .and(rightJoystick.button(3).negate())
-    //     .and(rightJoystick.button(2).negate())
-    //     .whileTrue(GamePieceFactory.intakeAlgaeGround());
+    // SCORING BUTTONS
     // rightJoystick
     //     .button(2)
     //     .and(rightJoystick.trigger())
     //     .whileTrue(GamePieceFactory.intakeCoralGround());
+    // rightJoystick.button(2).and(rightJoystick.trigger()).whileTrue(ScoringFactory.scoreL1());
 
-    // rightJoystick
-    //     .button(3)
-    //     .and(rightJoystick.trigger())
-    //     .whileTrue(GamePieceFactory.intakeCoralFeeder());
-    // // scoring button binds
-    // // TODO- controller app activation button:
-    // // rightJoystick.button(3).and(leftJoystick.trigger()).whileTrue(<controller app function>);
-    // // rightJoystick.button(3).onTrue(ScoringFactory.scoreL2());
-    // /**
-    //  * For tuning purposes: rightJoystick .button(3) .and(leftJoystick.trigger()) .whileTrue( new
-    //  * ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
-    //  * elevator.setPositionLoggedTunableNumber())); controller.button(7).whileTrue( new
-    //  * ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
-    //  * elevator.setPositionLoggedTunableNumber()));
-    //  */
-    // // manual backup button binds
+    leftJoystick
+        .trigger()
+        .and(rightJoystick.button(3).negate())
+        .and(rightJoystick.button(2).negate())
+        .whileTrue(ScoringFactory.scoreProcessor().finallyDo(() ->
+    RobotState.setIntakeNoAlgae()));
 
-    // // controller
-    // //     .button(7)
-    // //     .whileTrue(
-    // //         new ParallelCommandGroup(
-    // //             arm.setPositionLoggedTunableNumber(),
-    // // elevator.setPositionLoggedTunableNumber()));
+    rightJoystick
+        .button(2)
+        .and(leftJoystick.trigger())
+        .whileTrue(ScoringFactory.score(Level.L1).finallyDo(() ->
+    RobotState.setIntakeNoCoral()));
 
-    // rightJoystick
-    //     .button(3)
-    //     .and(leftJoystick.button(2))
-    //     .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
-    // rightJoystick.povUp().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualUp());
-    // rightJoystick.povDown().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualDown());
+    // controller.a().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
+    // controller.b().whileTrue(EndEffectorFactory.runEndEffector());
+    // controller.rightBumper().onTrue(GamePieceFactory.intakeAlgaeGround());
+    // controller.leftBumper().onTrue(GamePieceFactory.intakeCoralGround());
+    controller.rightBumper().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
+    controller.leftBumper().whileTrue(EndEffectorFactory.runEndEffector());
+    controller.a().whileTrue(ScoringFactory.score(Level.L1));
+    controller.x().whileTrue(ScoringFactory.score(Level.L2));
+    controller.b().whileTrue(ScoringFactory.score(Level.L3));
+    controller.y().whileTrue(ScoringFactory.score(Level.L4));
 
-    // // SCORING BUTTONS
-    // // rightJoystick
-    // //     .button(2)
-    // //     .and(rightJoystick.trigger())
-    // //     .whileTrue(GamePieceFactory.intakeCoralGround());
-    // // rightJoystick.button(2).and(rightJoystick.trigger()).whileTrue(ScoringFactory.scoreL1());
-
-    // leftJoystick
-    //     .trigger()
-    //     .and(rightJoystick.button(3).negate())
-    //     .and(rightJoystick.button(2).negate())
-    //     .whileTrue(ScoringFactory.scoreProcessor().finallyDo(() ->
-    // RobotState.setIntakeNoAlgae()));
-
-    // rightJoystick
-    //     .button(2)
-    //     .and(leftJoystick.trigger())
-    //     .whileTrue(ScoringFactory.score(Level.L1).finallyDo(() ->
-    // RobotState.setIntakeNoCoral()));
-
-    // // controller.a().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
-    // // controller.b().whileTrue(EndEffectorFactory.runEndEffector());
-    // // controller.rightBumper().onTrue(GamePieceFactory.intakeAlgaeGround());
-    // // controller.leftBumper().onTrue(GamePieceFactory.intakeCoralGround());
-    // controller.rightBumper().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
-    // controller.leftBumper().whileTrue(EndEffectorFactory.runEndEffector());
-    // controller.a().whileTrue(ScoringFactory.score(Level.L1));
-    // controller.x().whileTrue(ScoringFactory.score(Level.L2));
-    // controller.b().whileTrue(ScoringFactory.score(Level.L3));
-    // controller.y().whileTrue(ScoringFactory.score(Level.L4));
-
-    // rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
-    // rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
-    // rightJoystick.button(16).whileTrue(ScoringFactory.climb());
+    rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
+    rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
+    rightJoystick.button(16).whileTrue(ScoringFactory.climb());
   }
 
   /**
