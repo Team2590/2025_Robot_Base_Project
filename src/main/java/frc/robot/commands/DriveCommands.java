@@ -40,6 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -313,13 +314,13 @@ public class DriveCommands {
   }
 
   public static Command driveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
-    System.out.println("DRIVING TO POSE " + targetPoseSupplier.get());
     HashSet<Subsystem> requirements = new HashSet<>();
     requirements.add(drive);
     return Commands.defer(
         () -> {
           Pose2d targetPose = targetPoseSupplier.get();
           if (targetPose != null) {
+            Logger.recordOutput("DriveCommands/drive_to_pose_target", targetPose);
             return AutoBuilder.pathfindToPose(
                 targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
           }
