@@ -32,7 +32,7 @@ public class FieldConstants {
   public static Path2D create_zone(double[] x, double[] y) {
 
     Path2D bounds = new Path2D.Double();
-    bounds.moveTo(x[0], y[0]);
+    bounds.moveTo(x[1], y[1]);
 
     for (int i = 1; i < x.length; ++i) {
       bounds.lineTo(x[i], y[i]);
@@ -50,34 +50,34 @@ public class FieldConstants {
   }
 
   public static class BlueReefPoses {
-    public static final Pose2d N_right = CoralPose.getReefPose(21)[0]; // right
-    public static final Pose2d N_left = CoralPose.getReefPose(21)[1]; // left
-    public static final Pose2d NE_right = CoralPose.getReefPose(22)[0]; // right
-    public static final Pose2d NE_left = CoralPose.getReefPose(22)[1]; // left
-    public static final Pose2d SE_right = CoralPose.getReefPose(17)[0]; // right
-    public static final Pose2d SE_left = CoralPose.getReefPose(17)[1]; // left
-    public static final Pose2d S_right = CoralPose.getReefPose(18)[0]; // right
-    public static final Pose2d S_left = CoralPose.getReefPose(18)[1]; // left
-    public static final Pose2d SW_right = CoralPose.getReefPose(19)[0]; // right
-    public static final Pose2d SW_left = CoralPose.getReefPose(19)[1]; // left
-    public static final Pose2d NW_right = CoralPose.getReefPose(20)[0]; // right
-    public static final Pose2d NW_left = CoralPose.getReefPose(20)[1]; // left
+    public static final Pose2d N_right = CoralPose.getReefPose(21)[1]; // right
+    public static final Pose2d N_left = CoralPose.getReefPose(21)[0]; // left
+    public static final Pose2d NE_right = CoralPose.getReefPose(22)[1]; // right
+    public static final Pose2d NE_left = CoralPose.getReefPose(22)[0]; // left
+    public static final Pose2d SE_right = CoralPose.getReefPose(17)[1]; // right
+    public static final Pose2d SE_left = CoralPose.getReefPose(17)[0]; // left
+    public static final Pose2d S_right = CoralPose.getReefPose(18)[1]; // right
+    public static final Pose2d S_left = CoralPose.getReefPose(18)[0]; // left
+    public static final Pose2d SW_right = CoralPose.getReefPose(19)[1]; // right
+    public static final Pose2d SW_left = CoralPose.getReefPose(19)[0]; // left
+    public static final Pose2d NW_right = CoralPose.getReefPose(20)[1]; // right
+    public static final Pose2d NW_left = CoralPose.getReefPose(20)[0]; // left
   }
 
   public static class RedReefPoses {
-    public static final Pose2d N_right = CoralPose.getReefPose(10)[0]; // right
-    public static final Pose2d N_left = CoralPose.getReefPose(10)[1]; // left
-    public static final Pose2d NE_right = CoralPose.getReefPose(9)[0]; // right
-    public static final Pose2d NE_left = CoralPose.getReefPose(9)[1]; // left
+    public static final Pose2d N_right = CoralPose.getReefPose(10)[1]; // right
+    public static final Pose2d N_left = CoralPose.getReefPose(10)[0]; // left
+    public static final Pose2d NE_right = CoralPose.getReefPose(9)[1]; // right
+    public static final Pose2d NE_left = CoralPose.getReefPose(9)[0]; // left
     public static final Pose2d SE_right =
-        CoralPose.getReefPose(8)[0]; // right Thisone is so annoying
-    public static final Pose2d SE_left = CoralPose.getReefPose(8)[1]; // left
-    public static final Pose2d S_right = CoralPose.getReefPose(7)[0]; // right
-    public static final Pose2d S_left = CoralPose.getReefPose(7)[1]; // left
-    public static final Pose2d SW_right = CoralPose.getReefPose(6)[0]; // right
-    public static final Pose2d SW_left = CoralPose.getReefPose(6)[1]; // left
-    public static final Pose2d NW_right = CoralPose.getReefPose(11)[0]; // right
-    public static final Pose2d NW_left = CoralPose.getReefPose(11)[1]; // left
+        CoralPose.getReefPose(8)[1]; // right Thisone is so annoying
+    public static final Pose2d SE_left = CoralPose.getReefPose(8)[0]; // left
+    public static final Pose2d S_right = CoralPose.getReefPose(7)[1]; // right
+    public static final Pose2d S_left = CoralPose.getReefPose(7)[0]; // left
+    public static final Pose2d SW_right = CoralPose.getReefPose(6)[1]; // right
+    public static final Pose2d SW_left = CoralPose.getReefPose(6)[0]; // left
+    public static final Pose2d NW_right = CoralPose.getReefPose(11)[1]; // right
+    public static final Pose2d NW_left = CoralPose.getReefPose(11)[0]; // left
   }
 
   public static final Pose2d Barge =
