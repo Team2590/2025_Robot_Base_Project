@@ -310,10 +310,13 @@ public class DriveCommands {
 
   public static Command driveToPose(Pose2d targetPose) {
     System.out.println("DRIVING TO POSE " + targetPose);
-    return AutoBuilder.pathfindToPose(targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
+    return AutoBuilder.pathfindToPose(
+        targetPose.rotateBy(new Rotation2d(Math.PI)), DriveToPoseConstraints.pathConstraints, 0.0);
   }
 
   public static Command driveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
+    System.out.println("DRIVING TO POSE " + targetPoseSupplier.get());
+    Logger.recordOutput("DriveCommand/driveToPose_target_post", targetPoseSupplier.get());
     HashSet<Subsystem> requirements = new HashSet<>();
     requirements.add(drive);
     return Commands.defer(
@@ -344,7 +347,6 @@ public class DriveCommands {
         () -> {
           Pose2d currentPose = drive.getPose();
           Pose2d targetPose = targetPoseSupplier.get();
-          targetPose.rotateBy(new Rotation2d(Math.PI/3));
           if (targetPose == null) {
             Commands.print("No target specified");
           }
@@ -359,7 +361,7 @@ public class DriveCommands {
           drive.runVelocity(
               ChassisSpeeds.fromRobotRelativeSpeeds(
                   new ChassisSpeeds(
-                      0, // Forward speed is zero for autonomous alignment
+                    forwardSupplier.getAsDouble() * drive.getMaxLinearSpeedMetersPerSec()*.5, // Forward speed is zero for autonomous alignment
                           -drive.linearMovementController.calculate(y_offset, 0)
                           * drive.getMaxLinearSpeedMetersPerSec(), // Lateral movement
                       drive.snapController.calculate(angle_offset, 0)
