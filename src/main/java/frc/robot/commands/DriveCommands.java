@@ -319,8 +319,11 @@ public class DriveCommands {
     return Commands.defer(
         () -> {
           Pose2d targetPose = targetPoseSupplier.get();
-          return AutoBuilder.pathfindToPose(
-              targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
+          if (targetPose != null) {
+            return AutoBuilder.pathfindToPose(
+                targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
+          }
+          return Commands.print("No target pose found, not running the command");
         },
         requirements);
   }
