@@ -310,10 +310,13 @@ public class DriveCommands {
 
   public static Command driveToPose(Pose2d targetPose) {
     System.out.println("DRIVING TO POSE " + targetPose);
-    return AutoBuilder.pathfindToPose(targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
+    return AutoBuilder.pathfindToPose(
+        targetPose.rotateBy(new Rotation2d(Math.PI)), DriveToPoseConstraints.pathConstraints, 0.0);
   }
 
   public static Command driveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
+    System.out.println("DRIVING TO POSE " + targetPoseSupplier.get());
+    Logger.recordOutput("DriveCommand/driveToPose_target_post", targetPoseSupplier.get());
     HashSet<Subsystem> requirements = new HashSet<>();
     requirements.add(drive);
     return Commands.defer(

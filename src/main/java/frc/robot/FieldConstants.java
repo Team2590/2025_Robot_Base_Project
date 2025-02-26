@@ -105,7 +105,7 @@ public class FieldConstants {
     Map<String, Pose2d> poseMap = new HashMap<>();
     poseMap.put("S_Right", FieldConstants.BlueReefPoses.S_right);
     poseMap.put("S_Left", FieldConstants.BlueReefPoses.S_left);
-    poseMap.put("SW_Rright", FieldConstants.BlueReefPoses.SW_right);
+    poseMap.put("SW_Right", FieldConstants.BlueReefPoses.SW_right);
     poseMap.put("SW_Left", FieldConstants.BlueReefPoses.SW_left);
     poseMap.put("NW_Right", FieldConstants.BlueReefPoses.NW_right);
     poseMap.put("NW_Left", FieldConstants.BlueReefPoses.NW_left);
