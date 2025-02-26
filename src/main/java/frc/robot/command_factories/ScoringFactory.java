@@ -4,8 +4,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants;
-import frc.robot.ControllerOrchestrator;
-import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.util.NemesisTimedCommand;
 
@@ -86,12 +84,9 @@ public class ScoringFactory {
    * @return Command sequence for L1 scoring
    */
   public static Command scoreL1() {
-    return Commands.parallel(
-        IntakeFactory.setHomePosition(),
-        NemesisTimedCommand.generateTimedCommand(
-                IntakeFactory.runIntake(
-                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED),
-                1)
+    return Commands.sequence(
+        IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.L1_POS),
+        IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)
             .withName("Score L1"));
   }
 
@@ -117,12 +112,12 @@ public class ScoringFactory {
    * @return Parallel Command sequence for setting the arm and elevator to the appropriate setpoints
    *     using controller app input
    */
-  public static Command prepScore() {
-    ControllerOrchestrator controllerApp = RobotContainer.getControllerApp();
-    return Commands.parallel(
-        RobotContainer.getElevator().setPositionBlocking(controllerApp.getElevatorSetpoint()),
-        RobotContainer.getArm().setPositionBlocking(controllerApp.getArmSetpoint()));
-  }
+  // public static Command prepScore() {
+  //   ControllerOrchestrator controllerApp = RobotContainer.getControllerApp();
+  //   return Commands.parallel(
+  //       RobotContainer.getElevator().setPositionBlocking(controllerApp.getElevatorSetpoint()),
+  //       RobotContainer.getArm().setPositionBlocking(controllerApp.getArmSetpoint()));
+  // }
 
   /**
    * Creates a command to stow the scoring mechanism.
@@ -131,8 +126,10 @@ public class ScoringFactory {
    * @return Command sequence for stowing
    */
   public static Command stow() {
-    return Commands.sequence(
-            ArmFactory.setPositionBlocking(0), ElevatorFactory.setPositionBlocking(5))
+    return Commands.parallel(
+            ArmFactory.setPositionBlocking(0),
+            ElevatorFactory.setPositionBlocking(5),
+            IntakeFactory.setHomePosition())
         .withName("Stow Mechanism");
   }
 

@@ -437,9 +437,8 @@ public class RobotContainer {
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
 
     // Controller App Buttons
-    rightJoystick.button(2).whileTrue(DriveFactory.driveToPose(controllerApp.getTargetPose()));
-    rightJoystick.button(4).whileTrue(ScoringFactory.prepScore());
-
+    rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    rightJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
     leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());
     leftJoystick
@@ -450,6 +449,12 @@ public class RobotContainer {
         .trigger()
         .and(leftJoystick.button(4).negate())
         .whileTrue(GamePieceFactory.intakeCoralFeeder());
+
+    rightJoystick
+        .povUp()
+        .whileTrue(
+            EndEffectorFactory.runEndEffectorVoltage(
+                -Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE));
 
     // Reset Buttons
     rightJoystick
