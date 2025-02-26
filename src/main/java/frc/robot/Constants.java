@@ -15,8 +15,6 @@ package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -192,21 +190,26 @@ public final class Constants {
     public static Pose2d[] getReefPose(int aprilTagID) {
       Pose2d tagPose = VisionConstants.aprilTagLayout.getTagPose(aprilTagID).get().toPose2d();
       double tagRotation = tagPose.getRotation().getRadians();
-      double adjustX = Units.inchesToMeters(12 + 3.5); // Forward offset (from the first code snippet)
+      double adjustX =
+          Units.inchesToMeters(12 + 3.5); // Forward offset (from the first code snippet)
       double adjustY_left = Units.inchesToMeters(5); // Left/Right offset (from both snippets)
       double adjustY_right = Units.inchesToMeters(5); // Left/Right offset (from both snippets)
-    
-      double rightReefX = tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right * Math.sin(tagRotation);
-      double rightReefY = tagPose.getY() + adjustX * Math.sin(tagRotation) + adjustY_right * Math.cos(tagRotation);
+
+      double rightReefX =
+          tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right * Math.sin(tagRotation);
+      double rightReefY =
+          tagPose.getY() + adjustX * Math.sin(tagRotation) + adjustY_right * Math.cos(tagRotation);
       Pose2d rightReefPose = new Pose2d(rightReefX, rightReefY, tagPose.getRotation());
-    
-      double leftReefX = tagPose.getX() + adjustX * Math.cos(tagRotation) + adjustY_left * Math.sin(tagRotation);
-      double leftReefY = tagPose.getY() + adjustX * Math.sin(tagRotation) - adjustY_left * Math.cos(tagRotation);
+
+      double leftReefX =
+          tagPose.getX() + adjustX * Math.cos(tagRotation) + adjustY_left * Math.sin(tagRotation);
+      double leftReefY =
+          tagPose.getY() + adjustX * Math.sin(tagRotation) - adjustY_left * Math.cos(tagRotation);
       Pose2d leftReefPose = new Pose2d(leftReefX, leftReefY, tagPose.getRotation());
-    
+
       Pose2d[] returnPoses = new Pose2d[] {leftReefPose, rightReefPose};
       return returnPoses;
-     }
+    }
   }
 
   // public static class CoralPoses {
