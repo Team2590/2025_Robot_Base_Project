@@ -3,9 +3,12 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.Constants.CoralPose;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FieldConstants {
   public static enum ZONES {
@@ -47,56 +50,33 @@ public class FieldConstants {
   }
 
   public static class BlueReefPoses {
-    public static final Pose2d Sright =
-        new Pose2d(new Translation2d(3.15, 3.87), new Rotation2d(0));
-    public static final Pose2d SEleft =
-        new Pose2d(new Translation2d(3.62, 2.933), new Rotation2d(60));
-    public static final Pose2d SEright =
-        new Pose2d(new Translation2d(3.93, 2.787), new Rotation2d(60));
-    public static final Pose2d NEleft =
-        new Pose2d(new Translation2d(5.031, 2.787), new Rotation2d(120));
-    public static final Pose2d NEright =
-        new Pose2d(new Translation2d(5.304, 2.933), new Rotation2d(120));
-    public static final Pose2d Nleft =
-        new Pose2d(new Translation2d(5.83, 3.859), new Rotation2d(180));
-    public static final Pose2d Nright =
-        new Pose2d(new Translation2d(5.83, 4.17), new Rotation2d(180));
-    public static final Pose2d NWleft =
-        new Pose2d(new Translation2d(5.275, 5.127), new Rotation2d(-120));
-    public static final Pose2d NWright =
-        new Pose2d(new Translation2d(5.026, 5.24), new Rotation2d(-120));
-    public static final Pose2d SWleft =
-        new Pose2d(new Translation2d(3.9, 5.3), new Rotation2d(-60));
-    public static final Pose2d SWright =
-        new Pose2d(new Translation2d(3.676, 5), new Rotation2d(-60));
-    public static final Pose2d Sleft = new Pose2d(new Translation2d(3.14, 4.2), new Rotation2d(0));
+    public static final Pose2d N_right = CoralPose.getReefPose(21)[0]; // right
+    public static final Pose2d N_left = CoralPose.getReefPose(21)[1]; // left
+    public static final Pose2d NE_right = CoralPose.getReefPose(22)[0]; // right
+    public static final Pose2d NE_left = CoralPose.getReefPose(22)[1]; // left
+    public static final Pose2d SE_right = CoralPose.getReefPose(17)[0]; // right
+    public static final Pose2d SE_left = CoralPose.getReefPose(17)[1]; // left
+    public static final Pose2d S_right = CoralPose.getReefPose(18)[0]; // right
+    public static final Pose2d S_left = CoralPose.getReefPose(18)[1]; // left
+    public static final Pose2d SW_right = CoralPose.getReefPose(19)[0]; // right
+    public static final Pose2d SW_left = CoralPose.getReefPose(19)[1]; // left
+    public static final Pose2d NW_right = CoralPose.getReefPose(20)[0]; // right
+    public static final Pose2d NW_left = CoralPose.getReefPose(20)[1]; // left
   }
 
   public static class RedReefPoses {
-    public static final Pose2d Sright =
-        new Pose2d(new Translation2d(14.411, 4.171), new Rotation2d(180));
-    public static final Pose2d Sleft =
-        new Pose2d(new Translation2d(14.39, 3.869), new Rotation2d(180));
-    public static final Pose2d SWright =
-        new Pose2d(new Translation2d(13.923, 2.933), new Rotation2d(120));
-    public static final Pose2d SWleft =
-        new Pose2d(new Translation2d(13.621, 2.777), new Rotation2d(120));
-    public static final Pose2d NWright =
-        new Pose2d(new Translation2d(12.5, 2.806), new Rotation2d(60));
-    public static final Pose2d NWleft =
-        new Pose2d(new Translation2d(12.236, 2.943), new Rotation2d(60));
-    public static final Pose2d Nright =
-        new Pose2d(new Translation2d(11.7, 3.869), new Rotation2d(0));
-    public static final Pose2d Nleft =
-        new Pose2d(new Translation2d(12.217, 5.127), new Rotation2d(-60));
-    public static final Pose2d NEright =
-        new Pose2d(new Translation2d(11.72, 4.2), new Rotation2d(0));
-    public static final Pose2d NEleft =
-        new Pose2d(new Translation2d(13.913, 5.088), new Rotation2d(-120));
-    public static final Pose2d SEright =
-        new Pose2d(new Translation2d(13.621, 5.253), new Rotation2d(-120));
-    public static final Pose2d SEleft =
-        new Pose2d(new Translation2d(12.47, 5.253), new Rotation2d(-60));
+    public static final Pose2d N_right = CoralPose.getReefPose(10)[0]; // right
+    public static final Pose2d N_left = CoralPose.getReefPose(10)[1]; // left
+    public static final Pose2d NE_right = CoralPose.getReefPose(9)[0]; // right
+    public static final Pose2d NE_left = CoralPose.getReefPose(9)[1]; // left
+    public static final Pose2d SE_right = CoralPose.getReefPose(8)[0]; // right Thisone is so annoying
+    public static final Pose2d SE_left = CoralPose.getReefPose(8)[1]; // left
+    public static final Pose2d S_right = CoralPose.getReefPose(7)[0]; // right
+    public static final Pose2d S_left = CoralPose.getReefPose(7)[1]; // left
+    public static final Pose2d SW_right = CoralPose.getReefPose(6)[0]; // right
+    public static final Pose2d SW_left = CoralPose.getReefPose(6)[1]; // left
+    public static final Pose2d NW_right = CoralPose.getReefPose(11)[0]; // right
+    public static final Pose2d NW_left = CoralPose.getReefPose(11)[1]; // left
   }
 
   public static final Pose2d Barge =
@@ -116,6 +96,43 @@ public class FieldConstants {
 
   public static final Pose2d CoralStationLeft =
       new Pose2d(new Translation2d(1.567, 1.424), Rotation2d.fromDegrees(231.639));
+
+  public static final Map<String, Pose2d> BLUE_REEF_POSES = buildBlueReefPosesMap();
+  public static final Map<String, Pose2d> RED_REEF_POSES = buildRedReefPosesMap();
+
+  private static final Map<String, Pose2d> buildBlueReefPosesMap() {
+    Map<String, Pose2d> poseMap = new HashMap<>();
+    poseMap.put("Sright", FieldConstants.BlueReefPoses.S_right);
+    poseMap.put("Sleft", FieldConstants.BlueReefPoses.S_left);
+    poseMap.put("SWright", FieldConstants.BlueReefPoses.SW_right);
+    poseMap.put("SWleft", FieldConstants.BlueReefPoses.SW_left);
+    poseMap.put("NWright", FieldConstants.BlueReefPoses.NW_right);
+    poseMap.put("NWleft", FieldConstants.BlueReefPoses.NW_left);
+    poseMap.put("Nright", FieldConstants.BlueReefPoses.N_right);
+    poseMap.put("Nleft", FieldConstants.BlueReefPoses.N_left);
+    poseMap.put("NEright", FieldConstants.BlueReefPoses.NE_right);
+    poseMap.put("NEleft", FieldConstants.BlueReefPoses.NE_left);
+    poseMap.put("SEright", FieldConstants.BlueReefPoses.SE_right);
+    poseMap.put("SEleft", FieldConstants.BlueReefPoses.SE_left);
+    return poseMap;
+  }
+
+  private static final Map<String, Pose2d> buildRedReefPosesMap() {
+    Map<String, Pose2d> poseMap = new HashMap<>();
+    poseMap.put("Sright", FieldConstants.RedReefPoses.S_right);
+    poseMap.put("Sleft", FieldConstants.RedReefPoses.S_left);
+    poseMap.put("SWright", FieldConstants.RedReefPoses.SW_right);
+    poseMap.put("SWleft", FieldConstants.RedReefPoses.SW_left);
+    poseMap.put("NWright", FieldConstants.RedReefPoses.NW_right);
+    poseMap.put("NWleft", FieldConstants.RedReefPoses.NW_left);
+    poseMap.put("Nright", FieldConstants.RedReefPoses.N_right);
+    poseMap.put("Nleft", FieldConstants.RedReefPoses.N_left);
+    poseMap.put("NEright", FieldConstants.RedReefPoses.NE_right);
+    poseMap.put("NEleft", FieldConstants.RedReefPoses.NE_left);
+    poseMap.put("SEright", FieldConstants.RedReefPoses.SE_right);
+    poseMap.put("SEleft", FieldConstants.RedReefPoses.SE_left);
+    return poseMap;
+  }
 }
 
 // porcesor barge feeding station

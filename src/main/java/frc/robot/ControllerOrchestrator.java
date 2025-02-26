@@ -1,7 +1,5 @@
 package frc.robot;
 
-// import frc.robot.Constants.BlueCoralPoses;
-// import frc.robot.Constants.RedCoralPoses;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -11,137 +9,103 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.command_factories.ScoringFactory;
+import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
-import org.littletonrobotics.junction.Logger;
 
-public class ControllerOrchestrator extends SubsystemBase {
-  private HashMap<String, Pose2d> poseMap = new HashMap<String, Pose2d>();
-  private HashMap<String, Double> elevatorSetpointMap = new HashMap<String, Double>();
-  private HashMap<String, Double> armSetpointMap = new HashMap<String, Double>();
-  private String alliance;
+public class ControllerOrchestrator {
 
-  public ControllerOrchestrator() {
-    Optional<Alliance> ally = DriverStation.getAlliance();
-    if (ally.isPresent()) {
-      if (ally.get() == Alliance.Red) {
-        alliance = "Red";
-      }
-      if (ally.get() == Alliance.Blue) {
-        alliance = "Blue";
-      }
-    } else {
-      // SIM mode
-      alliance = "Red";
-    }
-    switch (alliance) {
-      case "Red":
-        poseMap.put("Sright", FieldConstants.RedReefPoses.Sright);
-        poseMap.put("Sleft", FieldConstants.RedReefPoses.Sleft);
-        poseMap.put("SWright", FieldConstants.RedReefPoses.SWright);
-        poseMap.put("SWleft", FieldConstants.RedReefPoses.SWleft);
-        poseMap.put("NWright", FieldConstants.RedReefPoses.NWright);
-        poseMap.put("NWleft", FieldConstants.RedReefPoses.NWleft);
-        poseMap.put("Nright", FieldConstants.RedReefPoses.Nright);
-        poseMap.put("Nleft", FieldConstants.RedReefPoses.Nleft);
-        poseMap.put("NEright", FieldConstants.RedReefPoses.NEright);
-        poseMap.put("NEleft", FieldConstants.RedReefPoses.NEleft);
-        poseMap.put("SEright", FieldConstants.RedReefPoses.SEright);
-        poseMap.put("SEleft", FieldConstants.RedReefPoses.SEleft);
+  private static final String CONTROLLER_TABLE_KEY = "ControllerApp/target";
+  private static final String MOVE_TO_KEY = "moveTo";
+  // What's a better default target location?
+  private static final String DEFAULT_REEF_TARGET = "S_Left";
 
-        // Test
-        poseMap.put("sourceTop", FieldConstants.CoralStationRight);
-        poseMap.put("sourceBottom", FieldConstants.CoralStationLeft);
-        break;
-
-      case "Blue":
-        poseMap.put("Sright", FieldConstants.BlueReefPoses.Sright);
-        poseMap.put("Sleft", FieldConstants.BlueReefPoses.Sleft);
-        poseMap.put("SWright", FieldConstants.BlueReefPoses.SWright);
-        poseMap.put("SWleft", FieldConstants.BlueReefPoses.SWleft);
-        poseMap.put("NWright", FieldConstants.BlueReefPoses.NWright);
-        poseMap.put("NWleft", FieldConstants.BlueReefPoses.NWleft);
-        poseMap.put("Nright", FieldConstants.BlueReefPoses.Nright);
-        poseMap.put("Nleft", FieldConstants.BlueReefPoses.Nleft);
-        poseMap.put("NEright", FieldConstants.BlueReefPoses.NEright);
-        poseMap.put("NEleft", FieldConstants.BlueReefPoses.NEleft);
-        poseMap.put("SEright", FieldConstants.BlueReefPoses.SEright);
-        poseMap.put("SEleft", FieldConstants.BlueReefPoses.SEleft);
-        break;
-    }
-
-    // TODO: add real values
-    elevatorSetpointMap.put("source", Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS);
-    elevatorSetpointMap.put(
-        "L1", Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS); // need to find
-    elevatorSetpointMap.put("L2", Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS);
-    elevatorSetpointMap.put("L3", Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS);
-    elevatorSetpointMap.put("L4", Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS);
-
-    // TODO: add real values
-    armSetpointMap.put("source", Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION);
-    armSetpointMap.put("L1", Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS);
-    armSetpointMap.put("L2", Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS);
-    armSetpointMap.put("L3", Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS);
-    armSetpointMap.put("L4", Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4);
-  }
-
-  public NetworkTableEntry getTableEntry(String key) {
-    NetworkTable table = NetworkTableInstance.getDefault().getTable("ControllerApp/target");
+  private NetworkTableEntry getTableEntry(String key) {
+    NetworkTable table = NetworkTableInstance.getDefault().getTable(CONTROLLER_TABLE_KEY);
     return table.getEntry(key);
   }
 
-  public String getValue(String key) {
-    return getTableEntry(key).getString("not found");
+  private String getValue(String key) {
+    return getTableEntry(key).getString("<No value set in NetworkTable>");
   }
 
-  public void print() {
-    System.out.println("This is " + getValue("moveTo"));
+  public String getMoveTo() {
+    return getValue(MOVE_TO_KEY);
   }
 
-  public Pose2d getTargetPose() {
-    String poseKey = getValue("moveTo").split("_")[0];
-    Pose2d pose = poseMap.get(poseKey);
-    if (pose == null) {
-      return new Pose2d();
+  public Target getTarget() {
+    Target target = parseTargetString(getMoveTo());
+    if (target == null) {
+      System.err.println("---> Using Default Target: " + getMoveTo());
+      return new Target(lookupPoseBasedOnAlliance(DEFAULT_REEF_TARGET), ScoringFactory.Level.L4);
     }
-    return pose;
+    return target;
   }
 
-  public double getElevatorSetpoint() {
-    String elevatorSetpointKey;
-    try {
-      elevatorSetpointKey = getValue("moveTo").split("_")[1];
-    } catch (Exception e) {
-      elevatorSetpointKey = "source";
-      System.out.println("E STACK " + e);
-    }
-    Logger.recordOutput("ControllerApp/ElevatorSetpoint", elevatorSetpointKey);
-    return elevatorSetpointMap.get(elevatorSetpointKey);
-  }
-
-  public Command getElevatorSetpoint(Elevator elevator) {
-    HashSet<Subsystem> requirements = new HashSet<>();
+  /**
+   * Command that needs to be bound to a button to execute scoring at the level specified by
+   * Controller App.
+   */
+  public Command bindScoringCommand(Elevator elevator, Arm arm) {
+    var requirements = new HashSet<Subsystem>();
     requirements.add(elevator);
+    requirements.add(arm);
+
     return Commands.defer(
         () -> {
-          Double elevatorSetpoint = getElevatorSetpoint();
-          return elevator.setPosition(elevatorSetpoint);
+          Target target = getTarget();
+          return ScoringFactory.score(target.scoringLevel());
         },
         requirements);
   }
 
-  public double getArmSetpoint() {
-    String armSetpointKey;
-    try {
-      armSetpointKey = getValue("moveTo").split("_")[1];
-    } catch (Exception e) {
-      armSetpointKey = "source";
-    }
-    Logger.recordOutput("ControllerApp/ArmSetpoint", armSetpointKey);
-    return armSetpointMap.get(armSetpointKey);
+  /** Command that needs to be bound to a button to driveToTarget. */
+  public Command bindDriveToTargetCommand(Drive drive) {
+    return DriveCommands.driveToPose(drive, () -> getTarget().pose());
   }
+
+  private static Target parseTargetString(String targetString) {
+    // We expect the string to be in the form NWright_L1
+    // If we get something else, we return null so a default
+    // value can be used.
+    String[] parts = targetString.split("_");
+    if (parts.length != 3) {
+      System.err.println("---> Invalid target string received from ControllerApp: " + targetString);
+      return null;
+    }
+    String compassDir = parts[0];
+    String leftOrRight = parts[1];
+    String poseKey = compassDir + "_" + leftOrRight;
+    String levelString = parts[2].toUpperCase();
+
+    Pose2d targetPose = lookupPoseBasedOnAlliance(poseKey);
+    if (targetPose == null) {
+      System.err.println(
+          "---> Caution!!! Invalid target pose key received from ControllerApp: " + poseKey);
+      return null;
+    }
+    ScoringFactory.Level level = ScoringFactory.Level.valueOf(levelString);
+    return new Target(targetPose, level);
+  }
+
+  private static final Pose2d lookupPoseBasedOnAlliance(String poseKey) {
+    Optional<Alliance> alliance = DriverStation.getAlliance();
+
+    Alliance alianceValue;
+    if (alliance.isPresent()) {
+      alianceValue = alliance.get();
+    } else {
+      System.err.println("---> Caution!!! Alliance not found, defaulting to Red");
+      alianceValue = Alliance.Red;
+    }
+    return alianceValue == Alliance.Blue
+        ? FieldConstants.BLUE_REEF_POSES.get(poseKey)
+        : FieldConstants.RED_REEF_POSES.get(poseKey);
+  }
+
+  public record Target(Pose2d pose, ScoringFactory.Level scoringLevel) {}
 }
