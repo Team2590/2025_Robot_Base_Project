@@ -378,6 +378,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsSimulation() {
+    drive.setDefaultCommand(DriveFactory.joystickDrive());
 
     // Add elevator control bindings
     leftJoystick

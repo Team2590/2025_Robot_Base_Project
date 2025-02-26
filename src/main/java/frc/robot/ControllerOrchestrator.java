@@ -40,8 +40,10 @@ public class ControllerOrchestrator {
   public Target getTarget() {
     Target target = parseTargetString(getMoveTo());
     if (target == null) {
-      System.err.println("---> Using Default Target: " + getMoveTo());
-      return new Target(lookupPoseBasedOnAlliance(DEFAULT_REEF_TARGET), ScoringFactory.Level.L4);
+      Target defaultTarget =
+          new Target(lookupPoseBasedOnAlliance(DEFAULT_REEF_TARGET), ScoringFactory.Level.L4);
+      System.err.println("---> Using Default Target: " + defaultTarget);
+      return defaultTarget;
     }
     return target;
   }
