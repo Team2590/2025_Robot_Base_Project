@@ -393,6 +393,10 @@ public class Drive extends SubsystemBase {
     };
   }
 
+  public Rotation2d getGryoYaw() {
+    return gyroInputs.yawPosition;
+  }
+
   private void updateTunableNumbers() {
     if (snapControllerP.hasChanged(hashCode())
         || snapControllerD.hasChanged(hashCode())

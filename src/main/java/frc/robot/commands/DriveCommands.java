@@ -342,33 +342,32 @@ public class DriveCommands {
    */
   public static Command alignToPose(
       Drive drive, DoubleSupplier forwardSupplier, Supplier<Pose2d> targetPoseSupplier) {
-    drive.snapController.enableContinuousInput(-Math.PI, Math.PI);
-    return Commands.run(
-        () -> {
-          Pose2d currentPose = drive.getPose();
-          Pose2d targetPose = targetPoseSupplier.get();
-          if (targetPose == null) {
-            Commands.print("No target specified");
-          }
-          Transform2d poseTransform = targetPose.minus(currentPose);
-          double y_offset = poseTransform.getY();
+        return Commands.run(
+          () -> {
+            Pose2d targetPose = targetPoseSupplier.get();
+            double theta = drive.getGryoYaw().getDegrees() % 360;
+            double currentError = theta - targetPose.getRotation().getDegrees();
+            double lateralOffset = targetPose.getY() - drive.getPose().getY();
 
-          double angle_offset = poseTransform.getRotation().rotateBy(new Rotation2d(Math.PI)).getRadians();
-          Logger.recordOutput("Odometry/Y Error to Pose", y_offset);
-          Logger.recordOutput("Odometry/Angle Error to Pose", angle_offset);
-          Logger.recordOutput("Odometry/targetPose", targetPose);
-
-          drive.runVelocity(
-              ChassisSpeeds.fromRobotRelativeSpeeds(
-                  new ChassisSpeeds(
-                    forwardSupplier.getAsDouble() * drive.getMaxLinearSpeedMetersPerSec()*.5, // Forward speed is zero for autonomous alignment
-                          -drive.linearMovementController.calculate(y_offset, 0)
-                          * drive.getMaxLinearSpeedMetersPerSec(), // Lateral movement
-                      drive.snapController.calculate(angle_offset, 0)
-                          * drive.getMaxAngularSpeedRadPerSec()
-                          * .25),
-                  drive.getPose().getRotation()));
-        },
-        drive);
+            if (currentError > 180) {
+              currentError -= 360;
+            } else if (currentError < -180) {
+              currentError += 360;
+            }
+  
+            Logger.recordOutput("Odometry/current theta in stage", theta);
+  
+            drive.runVelocity(
+                new ChassisSpeeds(
+                    forwardSupplier.getAsDouble()
+                        * drive.getMaxLinearSpeedMetersPerSec()
+                        * .25, // Adjusted linear speed
+                    drive.linearMovementController.calculate(lateralOffset, 0)
+                        * drive.getMaxLinearSpeedMetersPerSec(), // Lateral movement
+                    drive.snapController.calculate(currentError, 0)
+                        * .25 // Adjusted angular speed for shortest rotation path
+                    ));
+          },
+          drive);
   }
 }
