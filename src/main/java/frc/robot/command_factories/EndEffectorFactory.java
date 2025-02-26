@@ -16,6 +16,10 @@ public class EndEffectorFactory {
     return RobotContainer.getEndEffector().runEndEffector().withName("Run Endeffector Intake");
   }
 
+  public static Command runEndEffectorVoltage(double voltage) {
+    return RobotContainer.getEndEffector().runEndEffectorVoltage(voltage);
+  }
+
   /**
    * Creates a command to run the endeffector outtake.
    *

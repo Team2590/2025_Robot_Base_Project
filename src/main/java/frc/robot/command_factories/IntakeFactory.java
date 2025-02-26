@@ -37,6 +37,10 @@ public class IntakeFactory {
   public static Command setPosition(double position) {
     return RobotContainer.getIntake().setPosition(position).withName("Set Position");
   }
+
+  public static Command setPositionBlocking(double position) {
+    return RobotContainer.getIntake().setPositionBlocking(position).withName("Set Position");
+  }
   /**
    * Creates a command to set the intake to the algae position.
    *

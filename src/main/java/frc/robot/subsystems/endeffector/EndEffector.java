@@ -15,10 +15,10 @@ public class EndEffector extends SubsystemBase {
       new LoggedTunableNumber("EndEffector/CURRENT_THRESHOLD", 200);
   // private LoggedTunableNumber CURRENT_THRESHOLD =
   //     new LoggedTunableNumber("EndEffector/FilteredData", 200);
-  private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 30);
+  private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 10);
   private LinearFilter filter = LinearFilter.movingAverage((int) taps.get());
   private LoggedTunableNumber PROX_THRESHOLD =
-      new LoggedTunableNumber("EndEffector/PROX_THRESHOLD", 0.5);
+      new LoggedTunableNumber("EndEffector/PROX_THRESHOLD", 500);
   double filtered_data;
   private LoggedTunableNumber runVoltage =
       new LoggedTunableNumber(
@@ -66,6 +66,18 @@ public class EndEffector extends SubsystemBase {
     return runEnd(
         () -> {
           io.setVelocity(1);
+          isRunning = true;
+        },
+        () -> {
+          io.stop();
+          isRunning = false;
+        });
+  }
+
+  public Command runEndEffectorVoltage(double voltage) {
+    return runEnd(
+        () -> {
+          io.setVelocity(voltage);
           isRunning = true;
         },
         () -> {

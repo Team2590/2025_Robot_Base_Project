@@ -2,7 +2,6 @@ package frc.nemesis.controller;
 
 import java.util.HashMap;
 import java.util.Map;
-import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,7 +21,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class ControllerApp extends Application {
 
@@ -31,29 +29,28 @@ public class ControllerApp extends Application {
   private static final String LEVEL_BUTTON_STYLE = "-fx-background-color: lightblue";
   private static final String SELECTED_LEVEL_STYLE = "-fx-background-color: blue";
   private static final String SIDE_BUTTON_STYLE = "-fx-background-color: lightgray";
-  private static final String SELECTED_SIDE_STYLE = "-fx-background-color: darkgray";
-  private static final String GO_BUTTON_STYLE =
-      "-fx-background-color: #90EE90; -fx-font-size: 18; -fx-font-weight: bold";
-  private static final String GO_BUTTON_PRESSED_STYLE =
-      "-fx-background-color: #32CD32; -fx-font-size: 18; -fx-font-weight: bold";
+  private static final String SELECTED_SIDE_STYLE = "-fx-background-color: green";
 
   private final NetworkTableClient client = NetworkTableClient.getInstance();
-  private final Map<String, Button> buttonMap = new HashMap<>();
+  private final Map<String, Button> compassButtonMap = new HashMap<>();
   private final Map<String, Button> levelButtonMap = new HashMap<>();
-  private ToggleButton leftButton;
-  private ToggleButton rightButton;
-  private Button goButton;
+  private final Map<String, ToggleButton> sideButtonMap = new HashMap<>();
   private String pendingCommand = null;
 
   private String selectedDirection = null;
-  private String selectedSide = "left";
-  private String selectedLevel = "L4";
+  private String selectedSide = null;
+  private String selectedLevel = null;
 
   private static final String[] compassPoints = {"S", "SW", "NW", "N", "NE", "SE"};
   private static final String[] levels = {"L1", "L2", "L3", "L4"};
+  private static final String[] sides = {"Left", "Right"};
 
-  private VBox selectionBox;
   private Pane mainPane;
+  private VBox topButtonBox;
+  private VBox sideButtonBox;
+  private HBox bottomButtonBox;
+  private Pane compassButtonsPane;
+  private VBox topSectionBox; // VBox to hold levels and sides
 
   @Override
   public void start(Stage primaryStage) {
@@ -62,38 +59,43 @@ public class ControllerApp extends Application {
     root.setPadding(new Insets(20));
 
     mainPane = new Pane();
-    Image backgroundImage = new Image(getClass().getResource("/field.png").toExternalForm());
+    Image backgroundImage =
+        new Image(getClass().getResource("/field-rotated-cropped.png").toExternalForm());
 
-    // Set the background
     BackgroundImage background =
         new BackgroundImage(
             backgroundImage,
             BackgroundRepeat.NO_REPEAT,
             BackgroundRepeat.NO_REPEAT,
             BackgroundPosition.CENTER,
-            new BackgroundSize(800, 800, true, true, true, false));
+            new BackgroundSize(100, 100, true, true, true, false));
 
-    // Apply background to the mainPane
     mainPane.setBackground(new Background(background));
-    createCompassButtons();
 
-    selectionBox = createSelectionBox();
-    selectionBox.setVisible(false);
-    mainPane.getChildren().add(selectionBox);
+    // Add listeners for responsive sizing
+    mainPane.widthProperty().addListener((obs, oldVal, newVal) -> updateCompassButtonPositions());
+    mainPane.heightProperty().addListener((obs, oldVal, newVal) -> updateCompassButtonPositions());
 
-    HBox buttonBox = new HBox(10);
-    buttonBox.setAlignment(Pos.CENTER);
+    compassButtonsPane = createCompassButtons();
+    mainPane.getChildren().add(compassButtonsPane);
 
-    Button connectButton = new Button("Connect");
-    connectButton.setOnAction(event -> connect());
+    topButtonBox = createLevelButtons();
+    sideButtonBox = createSideButtons();
+    bottomButtonBox = createBottomButtons();
 
-    Button refreshButton = new Button("Refresh");
-    refreshButton.setOnAction(event -> refresh());
+    topSectionBox = new VBox(10); // Create VBox to hold levels and sides
+    topSectionBox.setAlignment(Pos.TOP_CENTER);
+    topSectionBox
+        .getChildren()
+        .addAll(topButtonBox, sideButtonBox); // Add level buttons then side buttons
 
-    buttonBox.getChildren().addAll(connectButton, refreshButton);
+    BorderPane.setAlignment(topSectionBox, Pos.TOP_CENTER); // Align top section to top center
+    BorderPane.setAlignment(bottomButtonBox, Pos.BOTTOM_CENTER);
+    BorderPane.setAlignment(mainPane, Pos.CENTER);
 
+    root.setTop(topSectionBox); // Set the combined top section
     root.setCenter(mainPane);
-    root.setBottom(buttonBox);
+    root.setBottom(bottomButtonBox);
 
     Scene scene = new Scene(root, 800, 600);
     primaryStage.setScene(scene);
@@ -109,66 +111,61 @@ public class ControllerApp extends Application {
     refresh();
   }
 
-  private void createCompassButtons() {
-    EventHandler<ActionEvent> buttonHandler = event -> onButtonPress(event);
+  private Pane createCompassButtons() {
+    Pane compassPane = new Pane();
+    EventHandler<ActionEvent> buttonHandler = event -> onCompassButtonPress(event);
 
-    double centerX = 560;
-    double centerY = 500;
-    double radius = 125;
+    for (String point : compassPoints) {
+      Button button = new Button(point);
+      compassButtonMap.put(point, button);
+      button.setOnAction(buttonHandler);
+      button.setPrefWidth(80);
+      button.setPrefHeight(40);
+      button.setStyle(DEFAULT_BUTTON_STYLE);
+      compassPane.getChildren().add(button);
+    }
+
+    return compassPane;
+  }
+
+  private void updateCompassButtonPositions() {
+    double width = mainPane.getWidth();
+    double height = mainPane.getHeight();
+
+    // Calculate center point
+    double centerX = width / 2;
+    // Moved center point to 2/3 down from the top (1/3 up from bottom)
+    double centerY = height * (1.0 / 2.0);
+
+    double radius = Math.min(width, height) * 0.125;
+
     double angleStep = Math.PI / 3;
     double startAngle = Math.PI / 2;
 
     for (int i = 0; i < compassPoints.length; i++) {
+      Button button = compassButtonMap.get(compassPoints[i]);
       double angle = i * angleStep + startAngle;
+
       double x = centerX + radius * Math.cos(angle);
       double y = centerY + radius * Math.sin(angle);
 
-      Button button = new Button(compassPoints[i]);
-      buttonMap.put(compassPoints[i], button);
-      button.setOnAction(buttonHandler);
-      button.setPrefWidth(80);
-      button.setPrefHeight(40);
-      button.setLayoutX(x - button.getWidth() / 2);
-      button.setLayoutY(y - button.getHeight() / 2);
-      button.setStyle(DEFAULT_BUTTON_STYLE);
-      mainPane.getChildren().add(button);
+      button.setLayoutX(x - button.getPrefWidth() / 2);
+      button.setLayoutY(y - button.getPrefHeight() / 2);
     }
   }
 
-  private VBox createSelectionBox() {
-    VBox box = new VBox(10);
-    box.setPadding(new Insets(10));
-    box.setStyle("-fx-background-color: white; -fx-border-color: gray; -fx-border-width: 1;");
+  private VBox createLevelButtons() {
+    VBox levelBox = new VBox(10);
+    levelBox.setAlignment(Pos.TOP_CENTER);
+    HBox buttonRow = new HBox(10);
+    buttonRow.setAlignment(Pos.CENTER);
 
-    // Side selection
-    HBox sideBox = new HBox(10);
-    leftButton = new ToggleButton("Left");
-    rightButton = new ToggleButton("Right");
-
-    leftButton.setOnAction(
-        e -> {
-          selectedSide = "left";
-          leftButton.setStyle(SELECTED_SIDE_STYLE);
-          rightButton.setStyle(SIDE_BUTTON_STYLE);
-          updatePendingCommand();
-        });
-
-    rightButton.setOnAction(
-        e -> {
-          selectedSide = "right";
-          rightButton.setStyle(SELECTED_SIDE_STYLE);
-          leftButton.setStyle(SIDE_BUTTON_STYLE);
-          updatePendingCommand();
-        });
-
-    sideBox.getChildren().addAll(leftButton, rightButton);
-    sideBox.setAlignment(Pos.CENTER);
-
-    // Level selection
-    HBox levelBox = new HBox(10);
     for (String level : levels) {
       Button levelButton = new Button(level);
       levelButtonMap.put(level, levelButton);
+      levelButton.setStyle(LEVEL_BUTTON_STYLE);
+      levelButton.setPrefWidth(80);
+      levelButton.setPrefHeight(40);
 
       levelButton.setOnAction(
           e -> {
@@ -176,63 +173,57 @@ public class ControllerApp extends Application {
             updateLevelButtons();
             updatePendingCommand();
           });
-
-      levelBox.getChildren().add(levelButton);
+      buttonRow.getChildren().add(levelButton);
     }
-    levelBox.setAlignment(Pos.CENTER);
-
-    // GO button
-    goButton = new Button("GO");
-    goButton.setPrefWidth(100);
-    goButton.setPrefHeight(40);
-    goButton.setStyle(GO_BUTTON_STYLE);
-    goButton.setOnAction(e -> sendToNetworkTables());
-
-    box.getChildren().addAll(sideBox, levelBox, goButton);
-    box.setAlignment(Pos.CENTER);
-    return box;
+    levelBox.getChildren().add(buttonRow);
+    return levelBox;
   }
 
-  private void resetSelections() {
-    selectedSide = "left";
-    leftButton.setStyle(SELECTED_SIDE_STYLE);
-    rightButton.setStyle(SIDE_BUTTON_STYLE);
+  private VBox createSideButtons() {
+    VBox sideBox = new VBox(20);
+    sideBox.setAlignment(Pos.TOP_CENTER); // Center alignment for side buttons in the VBox
+    sideBox.setPadding(
+        new Insets(10, 0, 0, 0)); // Add some top padding to separate from level buttons
 
-    selectedLevel = "L4";
-    updateLevelButtons();
+    HBox buttonRow = new HBox(10); // Use HBox to arrange Left and Right side by side
+    buttonRow.setAlignment(Pos.CENTER); // Center buttons in HBox
+
+    for (String side : sides) {
+      ToggleButton sideButton = new ToggleButton(side);
+      sideButtonMap.put(side, sideButton);
+      sideButton.setStyle(SIDE_BUTTON_STYLE);
+      sideButton.setPrefWidth(80);
+      sideButton.setPrefHeight(40);
+
+      sideButton.setOnAction(
+          e -> {
+            selectedSide = side;
+            updateSideButtons();
+            updatePendingCommand();
+          });
+      buttonRow.getChildren().add(sideButton);
+    }
+    sideBox.getChildren().add(buttonRow); // Add the HBox of side buttons to the VBox
+    return sideBox;
   }
 
-  private void onButtonPress(ActionEvent event) {
-    if (!(event.getSource() instanceof Button)) {
-      return;
-    }
-    Button button = (Button) event.getSource();
-    selectedDirection = button.getText();
+  private HBox createBottomButtons() {
+    HBox buttonBox = new HBox(10);
+    buttonBox.setAlignment(Pos.BOTTOM_CENTER);
+    buttonBox.setPadding(new Insets(20));
 
-    resetSelections();
-    updateCompassButtons();
-    showSelectionBox(button);
-    updatePendingCommand();
-  }
+    Button connectButton = new Button("Connect");
+    connectButton.setOnAction(event -> connect());
 
-  private void showSelectionBox(Button sourceButton) {
-    double buttonX = sourceButton.getLayoutX();
-    double buttonY = sourceButton.getLayoutY();
+    Button refreshButton = new Button("Refresh");
+    refreshButton.setOnAction(event -> refresh());
 
-    selectionBox.setLayoutX(buttonX + sourceButton.getWidth() + 10);
-    selectionBox.setLayoutY(buttonY);
-
-    if (!selectionBox.isVisible()) {
-      selectionBox.setVisible(true);
-      FadeTransition ft = new FadeTransition(Duration.millis(200), selectionBox);
-      ft.setFromValue(0.0);
-      ft.setToValue(1.0);
-      ft.play();
-    }
+    buttonBox.getChildren().addAll(connectButton, refreshButton);
+    return buttonBox;
   }
 
   private void updateCompassButtons() {
-    for (Map.Entry<String, Button> entry : buttonMap.entrySet()) {
+    for (Map.Entry<String, Button> entry : compassButtonMap.entrySet()) {
       Button button = entry.getValue();
       if (entry.getKey().equals(selectedDirection)) {
         button.setStyle(SELECTED_BUTTON_STYLE);
@@ -253,39 +244,45 @@ public class ControllerApp extends Application {
     }
   }
 
-  private void updatePendingCommand() {
-    if (selectedDirection != null) {
-      pendingCommand = selectedDirection + selectedSide + "_" + selectedLevel;
+  private void updateSideButtons() {
+    for (Map.Entry<String, ToggleButton> entry : sideButtonMap.entrySet()) {
+      ToggleButton button = entry.getValue();
+      if (entry.getKey().equals(selectedSide)) {
+        button.setStyle(SELECTED_SIDE_STYLE);
+      } else {
+        button.setStyle(SIDE_BUTTON_STYLE);
+      }
+    }
+    if (selectedSide != null) {
+      for (Map.Entry<String, ToggleButton> entry : sideButtonMap.entrySet()) {
+        if (!entry.getKey().equals(selectedSide)) {
+          entry.getValue().setSelected(false);
+          entry.getValue().setStyle(SIDE_BUTTON_STYLE);
+        } else {
+          entry.getValue().setStyle(SELECTED_SIDE_STYLE);
+          entry.getValue().setSelected(true);
+        }
+      }
     }
   }
 
-  private void sendToNetworkTables() {
-    if (pendingCommand != null) {
-      client.publish("moveTo", pendingCommand);
-      System.out.println(pendingCommand);
-      selectionBox.setVisible(false);
+  private void updatePendingCommand() {
+    if (selectedLevel != null && selectedSide != null && selectedDirection != null) {
+      pendingCommand = selectedDirection + "_" + selectedSide + "_" + selectedLevel;
+      System.out.println("Updated command string: " + pendingCommand);
+      sendToNetworkTables(pendingCommand);
+    }
+  }
 
-      // Visual feedback
-      goButton.setStyle(GO_BUTTON_PRESSED_STYLE);
-      new Thread(
-              () -> {
-                try {
-                  Thread.sleep(200);
-                  javafx.application.Platform.runLater(
-                      () -> {
-                        goButton.setStyle(GO_BUTTON_STYLE);
-                      });
-                } catch (InterruptedException e) {
-                  e.printStackTrace();
-                }
-              })
-          .start();
+  private void sendToNetworkTables(String command) {
+    if (command != null) {
+      client.publish("moveTo", command);
+      System.out.println("Sending command: " + command);
     }
   }
 
   private void refresh() {
     String moveTo = client.getValue("moveTo");
-    // System.out.println("Refresh Pressed: " + moveTo);
 
     if (moveTo != null && !moveTo.equals("not found")) {
       String[] parts = moveTo.split("_");
@@ -297,12 +294,24 @@ public class ControllerApp extends Application {
 
         updateCompassButtons();
         updateLevelButtons();
+        updateSideButtons();
       }
     }
   }
 
   private void connect() {
     client.connect();
+  }
+
+  private void onCompassButtonPress(ActionEvent event) {
+    if (!(event.getSource() instanceof Button)) {
+      return;
+    }
+    Button button = (Button) event.getSource();
+    selectedDirection = button.getText();
+
+    updateCompassButtons();
+    updatePendingCommand();
   }
 
   public static void main(String[] args) {
