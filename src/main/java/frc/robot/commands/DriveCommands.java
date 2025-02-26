@@ -314,14 +314,17 @@ public class DriveCommands {
   }
 
   public static Command driveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
-    System.out.println("DRIVING TO POSE " + targetPoseSupplier.get());
     HashSet<Subsystem> requirements = new HashSet<>();
     requirements.add(drive);
     return Commands.defer(
         () -> {
           Pose2d targetPose = targetPoseSupplier.get().rotateBy(new Rotation2d(Math.PI));
-          return AutoBuilder.pathfindToPose(
-              targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
+          if (targetPose != null) {
+            Logger.recordOutput("DriveCommands/drive_to_pose_target", targetPose);
+            return AutoBuilder.pathfindToPose(
+                targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
+          }
+          return Commands.print("No target pose found, not running the command");
         },
         requirements);
   }

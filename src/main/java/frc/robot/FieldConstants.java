@@ -103,35 +103,35 @@ public class FieldConstants {
 
   private static final Map<String, Pose2d> buildBlueReefPosesMap() {
     Map<String, Pose2d> poseMap = new HashMap<>();
-    poseMap.put("Sright", FieldConstants.BlueReefPoses.S_right);
-    poseMap.put("Sleft", FieldConstants.BlueReefPoses.S_left);
-    poseMap.put("SWright", FieldConstants.BlueReefPoses.SW_right);
-    poseMap.put("SWleft", FieldConstants.BlueReefPoses.SW_left);
-    poseMap.put("NWright", FieldConstants.BlueReefPoses.NW_right);
-    poseMap.put("NWleft", FieldConstants.BlueReefPoses.NW_left);
-    poseMap.put("Nright", FieldConstants.BlueReefPoses.N_right);
-    poseMap.put("Nleft", FieldConstants.BlueReefPoses.N_left);
-    poseMap.put("NEright", FieldConstants.BlueReefPoses.NE_right);
-    poseMap.put("NEleft", FieldConstants.BlueReefPoses.NE_left);
-    poseMap.put("SEright", FieldConstants.BlueReefPoses.SE_right);
-    poseMap.put("SEleft", FieldConstants.BlueReefPoses.SE_left);
+    poseMap.put("S_Right", FieldConstants.BlueReefPoses.S_right);
+    poseMap.put("S_Left", FieldConstants.BlueReefPoses.S_left);
+    poseMap.put("SW_Rright", FieldConstants.BlueReefPoses.SW_right);
+    poseMap.put("SW_Left", FieldConstants.BlueReefPoses.SW_left);
+    poseMap.put("NW_Right", FieldConstants.BlueReefPoses.NW_right);
+    poseMap.put("NW_Left", FieldConstants.BlueReefPoses.NW_left);
+    poseMap.put("N_Right", FieldConstants.BlueReefPoses.N_right);
+    poseMap.put("N_Left", FieldConstants.BlueReefPoses.N_left);
+    poseMap.put("NE_Right", FieldConstants.BlueReefPoses.NE_right);
+    poseMap.put("NE_Left", FieldConstants.BlueReefPoses.NE_left);
+    poseMap.put("SE_Right", FieldConstants.BlueReefPoses.SE_right);
+    poseMap.put("SE_Left", FieldConstants.BlueReefPoses.SE_left);
     return poseMap;
   }
 
   private static final Map<String, Pose2d> buildRedReefPosesMap() {
     Map<String, Pose2d> poseMap = new HashMap<>();
-    poseMap.put("Sright", FieldConstants.RedReefPoses.S_right);
-    poseMap.put("Sleft", FieldConstants.RedReefPoses.S_left);
-    poseMap.put("SWright", FieldConstants.RedReefPoses.SW_right);
-    poseMap.put("SWleft", FieldConstants.RedReefPoses.SW_left);
-    poseMap.put("NWright", FieldConstants.RedReefPoses.NW_right);
-    poseMap.put("NWleft", FieldConstants.RedReefPoses.NW_left);
-    poseMap.put("Nright", FieldConstants.RedReefPoses.N_right);
-    poseMap.put("Nleft", FieldConstants.RedReefPoses.N_left);
-    poseMap.put("NEright", FieldConstants.RedReefPoses.NE_right);
-    poseMap.put("NEleft", FieldConstants.RedReefPoses.NE_left);
-    poseMap.put("SEright", FieldConstants.RedReefPoses.SE_right);
-    poseMap.put("SEleft", FieldConstants.RedReefPoses.SE_left);
+    poseMap.put("S_Right", FieldConstants.RedReefPoses.S_right);
+    poseMap.put("S_Left", FieldConstants.RedReefPoses.S_left);
+    poseMap.put("SW_Right", FieldConstants.RedReefPoses.SW_right);
+    poseMap.put("SW_Left", FieldConstants.RedReefPoses.SW_left);
+    poseMap.put("NW_Right", FieldConstants.RedReefPoses.NW_right);
+    poseMap.put("NW_Left", FieldConstants.RedReefPoses.NW_left);
+    poseMap.put("N_Right", FieldConstants.RedReefPoses.N_right);
+    poseMap.put("N_Left", FieldConstants.RedReefPoses.N_left);
+    poseMap.put("NE_Right", FieldConstants.RedReefPoses.NE_right);
+    poseMap.put("NE_Left", FieldConstants.RedReefPoses.NE_left);
+    poseMap.put("SE_Right", FieldConstants.RedReefPoses.SE_right);
+    poseMap.put("SE_Left", FieldConstants.RedReefPoses.SE_left);
     return poseMap;
   }
 }
