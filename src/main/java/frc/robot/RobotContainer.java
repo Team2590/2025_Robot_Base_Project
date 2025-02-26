@@ -17,6 +17,7 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.command_factories.DriveFactory;
+import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
@@ -377,6 +379,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsSimulation() {
+    drive.setDefaultCommand(DriveFactory.joystickDrive());
 
     // Add elevator control bindings
     leftJoystick
@@ -409,6 +412,11 @@ public class RobotContainer {
     // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
     leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
     leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
+    leftJoystick
+        .button(1)
+        .whileTrue(
+            DriveCommands.alignToPose(
+                drive, getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left));
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -419,7 +427,13 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
+    /**leftJoystick
+        .button(1)
+        .whileTrue(
+            DriveCommands.alignToPose(
+                drive, getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left)); */
     // climb buttons
+    // Causing NullPointerException on startup in SIM
     rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
     rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());

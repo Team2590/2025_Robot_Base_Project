@@ -321,12 +321,52 @@ public class DriveCommands {
     requirements.add(drive);
     return Commands.defer(
         () -> {
-          Pose2d targetPose = targetPoseSupplier.get();
-          return AutoBuilder.pathfindToPose(
-              targetPose.rotateBy(new Rotation2d(Math.PI)),
-              DriveToPoseConstraints.pathConstraints,
-              0.0);
+          Pose2d targetPose = targetPoseSupplier.get().rotateBy(new Rotation2d(Math.PI));
+          if (targetPose != null) {
+            Logger.recordOutput("DriveCommands/drive_to_pose_target", targetPose);
+            return AutoBuilder.pathfindToPose(
+                targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
+          }
+          return Commands.print("No target pose found, not running the command");
         },
         requirements);
+  }
+
+  /**
+   * Aligns the robot to a given pose, reducing horizontal and angle error
+   *
+   * @param drive robot drive
+   * @param horizontaDoubleSupplier gets the joystick's horizontal component
+   * @param targetPose the pose which we want to align to
+   * @return command for aligning to the target pose (limiting angle and horizontal offset)
+   */
+  public static Command alignToPose(
+      Drive drive, DoubleSupplier forwardSupplier, Supplier<Pose2d> targetPoseSupplier) {
+
+    return Commands.run(
+        () -> {
+          Pose2d currentPose = drive.getPose();
+          Pose2d targetPose = targetPoseSupplier.get();
+          if (targetPose == null) {
+            Commands.print("No target specified");
+          }
+          Transform2d poseTransform = targetPose.minus(currentPose);
+          double y_offset = poseTransform.getY();
+
+          double angle_offset = poseTransform.getRotation().getDegrees() - 180;
+          Logger.recordOutput("Odometry/Y Error to Pose", y_offset);
+          Logger.recordOutput("Odometry/Angle Error to Pose", angle_offset);
+          drive.runVelocity(
+              ChassisSpeeds.fromRobotRelativeSpeeds(
+                  new ChassisSpeeds(
+                      0, // Forward speed is zero for autonomous alignment
+                      -drive.linearMovementController.calculate(y_offset, 0)
+                          * drive.getMaxLinearSpeedMetersPerSec(), // Lateral movement
+                      0 // Target angle error is zero
+                          * .25 // Adjusted angular speed
+                      ),
+                  drive.getPose().getRotation()));
+        },
+        drive);
   }
 }
