@@ -418,6 +418,27 @@ public class RobotContainer {
         .whileTrue(
             DriveCommands.alignToPose(
                 drive, getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left));
+
+
+    leftJoystick
+    .button(12)
+    .whileTrue(
+        DriveCommands.alignToTargetLine(
+            drive,
+            getLeftJoystick()::getY, // Forward/backward control
+            getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
+            () -> FieldConstants.BlueReefPoses.NW_left,
+            1.0));
+
+    leftJoystick
+        .button(13)
+        .whileTrue(
+            DriveCommands.alignToTargetLine(
+                drive,
+                getLeftJoystick()::getY, // Forward/backward control
+                getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
+                () -> FieldConstants.BlueReefPoses.NW_left,
+                0.0));
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
