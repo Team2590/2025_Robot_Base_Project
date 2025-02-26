@@ -14,7 +14,9 @@
 package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.generated.TunerConstantsLeonidas;
+import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.FRCPolygon;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.PolygonLocator;
@@ -54,10 +57,10 @@ public final class Constants {
 
     public static PathConstraints pathConstraints =
         new PathConstraints(
-            maxVelocityMPS,
-            maxAccelerationMPSSq,
-            maxAngularVelocityRadPerSec,
-            maxAngularAccelerationRadPerSecSq);
+            maxVelocityMPS * .5,
+            maxAccelerationMPSSq * .5,
+            maxAngularVelocityRadPerSec * .5,
+            maxAngularAccelerationRadPerSecSq * .5);
   }
 
   private static List<FRCPolygon> polygons = new ArrayList<>();
@@ -191,6 +194,30 @@ public final class Constants {
       this.elevatorPosition = 0;
       this.rotationTarget = 0;
     }
+
+    public static Pose2d[] getReefPose(int aprilTagID) {
+      Pose2d tagPose = VisionConstants.aprilTagLayout.getTagPose(aprilTagID).get().toPose2d();
+      double tagRotation = tagPose.getRotation().getRadians();
+      double adjustX =
+          Units.inchesToMeters(12 + 3.5); // Forward offset (from the first code snippet)
+      double adjustY_left = Units.inchesToMeters(5); // Left/Right offset (from both snippets)
+      double adjustY_right = Units.inchesToMeters(5); // Left/Right offset (from both snippets)
+
+      double rightReefX =
+          tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right * Math.sin(tagRotation);
+      double rightReefY =
+          tagPose.getY() + adjustX * Math.sin(tagRotation) + adjustY_right * Math.cos(tagRotation);
+      Pose2d rightReefPose = new Pose2d(rightReefX, rightReefY, tagPose.getRotation());
+
+      double leftReefX =
+          tagPose.getX() + adjustX * Math.cos(tagRotation) + adjustY_left * Math.sin(tagRotation);
+      double leftReefY =
+          tagPose.getY() + adjustX * Math.sin(tagRotation) - adjustY_left * Math.cos(tagRotation);
+      Pose2d leftReefPose = new Pose2d(leftReefX, leftReefY, tagPose.getRotation());
+
+      Pose2d[] returnPoses = new Pose2d[] {leftReefPose, rightReefPose};
+      return returnPoses;
+    }
   }
   public class DriveToPoseConstants{
     public static final LinearVelocity MAX_TELEOP_VELOCITY = TunerConstantsLeonidas.kSpeedAt12Volts;
@@ -217,7 +244,7 @@ public final class Constants {
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 40;
     public static final boolean invert = false;
-    public static final boolean brake = false;
+    public static final boolean brake = true;
     public static final double reduction = 1; // was a 94.18
     public static final int cancoderID = 5;
     // public static final double magOffset = -.596436; // -.398
@@ -226,8 +253,8 @@ public final class Constants {
     public static double ARM_OPERATIONAL_MIN_POS = 0;
     public static double ARM_OPERATIONAL_MAX_POS = .7;
     public static double ARM_SCORING_CORAL_POS = 0.68; // TODO: change to actual value
-    public static double ARM_SCORING_CORAL_POS_L4 = 0.6;
-    public static double ARM_INTAKE_SOURCE_POSITION = .09;
+    public static double ARM_SCORING_CORAL_POS_L4 = 0.63;
+    public static double ARM_INTAKE_SOURCE_POSITION = .16; // .09
   }
 
   public static class ElevatorConstantsLeonidas {
@@ -242,7 +269,7 @@ public final class Constants {
     public static final double kS = 0.22720;
     public static final double kV = 0.14051;
     public static double ELEVATOR_L2_POS = 23;
-    public static double ELEVATOR_L3_POS = 51;
+    public static double ELEVATOR_L3_POS = 47;
     public static double ELEVATOR_L4_POS = 88;
     public static double ELEVATOR_SOURCE_POS = 5;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
@@ -273,7 +300,7 @@ public final class Constants {
     public static final boolean brake = true; // TODO
     public static final double reduction = 1; // TODO
     public static final int proxSensor_ID = 0; // TODO
-    public static final double INTAKE_VOLTAGE = 2;
+    public static final double INTAKE_VOLTAGE = 3;
     public static final double EJECT_VOLTAGE = -INTAKE_VOLTAGE;
   }
 
@@ -298,14 +325,15 @@ public final class Constants {
   public final class IntakeArmConstantsLeonidas {
     public static final double INTAKE_CORAL_POS = 11.4;
     public static final double INTAKE_ALGAE_POS = 6.5;
+    public static final double L1_POS = 1.65;
     public static final int canID = 15;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 120;
     public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 38.33;
-    public static final double kS = 0.25242;
-    public static final double kV = 0.34993;
+    public static final double kS = 0.25918;
+    public static final double kV = 0.29343;
   }
 
   public final class ClimbConstantsLeonidas {
@@ -316,11 +344,11 @@ public final class Constants {
     public static final boolean brake = false;
     public static final double reduction = 1; // TODO
     public static final double CLIMB_MECHANISM_POSITION = 13; // 13
-    public static final double CLIMB_MAX_POSITION = 160; // 213.25 (actual), 189 (from 2/23)
-    public static final double CLIMB_VOLTAGE = 1;
+    public static final double CLIMB_MAX_POSITION = 189; // 213.25 (actual), 189 (from 2/23)
+    public static final double CLIMB_VOLTAGE = 8.0; // 2.0 tested
   }
 
-  public static class IntakeConstantsLarry {
+  public static class IntakeConstantsLarry  {
     static int canID = 60;
     static int currentLimitAmps = 40;
     static String canBus = "Takeover";

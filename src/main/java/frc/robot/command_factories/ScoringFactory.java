@@ -42,10 +42,7 @@ public class ScoringFactory {
     return new ParallelCommandGroup(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4)
-            // NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffectorOuttake(),
-            // 1)
-            )
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
         .withName("Score L4");
   }
 
@@ -62,11 +59,22 @@ public class ScoringFactory {
   }
 
   public static Command primeForLevel(Level level) {
-    return Commands.parallel(
-            Commands.print("Priming " + level.name()),
-            ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS))
-        .withName("Prime " + level.name());
+    return switch (level) {
+      case L4:
+        yield (Commands.parallel(
+                Commands.print("Priming " + level.name()),
+                ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
+                ArmFactory.setPositionBlocking(
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
+            .withName("Prime " + level.name()));
+      default:
+        yield Commands.parallel(
+                Commands.print("Priming " + level.name()),
+                ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
+                ArmFactory.setPositionBlocking(
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS))
+            .withName("Prime " + level.name());
+    };
   }
 
   /**
@@ -76,12 +84,9 @@ public class ScoringFactory {
    * @return Command sequence for L1 scoring
    */
   public static Command scoreL1() {
-    return Commands.parallel(
-        IntakeFactory.setHomePosition(),
-        NemesisTimedCommand.generateTimedCommand(
-                IntakeFactory.runIntake(
-                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED),
-                1)
+    return Commands.sequence(
+        IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.L1_POS),
+        IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)
             .withName("Score L1"));
   }
 
@@ -102,14 +107,29 @@ public class ScoringFactory {
   }
 
   /**
+   * Uses controller app input to set the arm and the elevator to the appropriate setpoints.
+   *
+   * @return Parallel Command sequence for setting the arm and elevator to the appropriate setpoints
+   *     using controller app input
+   */
+  // public static Command prepScore() {
+  //   ControllerOrchestrator controllerApp = RobotContainer.getControllerApp();
+  //   return Commands.parallel(
+  //       RobotContainer.getElevator().setPositionBlocking(controllerApp.getElevatorSetpoint()),
+  //       RobotContainer.getArm().setPositionBlocking(controllerApp.getArmSetpoint()));
+  // }
+
+  /**
    * Creates a command to stow the scoring mechanism.
    *
    * @param container The RobotContainer instance
    * @return Command sequence for stowing
    */
   public static Command stow() {
-    return Commands.sequence(
-            ArmFactory.setPositionBlocking(0), ElevatorFactory.setPositionBlocking(0))
+    return Commands.parallel(
+            ArmFactory.setPositionBlocking(0),
+            ElevatorFactory.setPositionBlocking(5),
+            IntakeFactory.setHomePosition())
         .withName("Stow Mechanism");
   }
 

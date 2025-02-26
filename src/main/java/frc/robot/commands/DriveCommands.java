@@ -43,6 +43,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -328,33 +329,43 @@ public class DriveCommands {
           },
           requirements);
     }
-  
-      public static Command alignToReef(
-        Drive drive, DoubleSupplier xSupplier, int aprilTag, double lateralOffset) {
-      double angleSetpoint = drive.getPose().getRotation().getDegrees();
-      VisionConstants.aprilTagLayout.getTagPose(aprilTag);
 
-      if (VisionConstants.FIDUCIAL_IDS.contains(aprilTag)){
-        Pose2d tagPose = VisionConstants.aprilTagLayout.getTagPose(aprilTag).get().toPose2d();
-      }
-  
-      return Commands.run(
-          () -> {
-            double theta = drive.getPose().getRotation().getDegrees();
-            double currentError = theta - angleSetpoint;
-  
-            Logger.recordOutput("Odometry/current theta in stage", theta);
-  
-            drive.runVelocity(
-                new ChassisSpeeds(
-                    xSupplier.getAsDouble()
-                        * drive.getMaxLinearSpeedMetersPerSec()
-                        * .5, // Adjusted linear speed
-                    linearMovementController.calculate(lateralOffset, 0)
-                      * drive.getMaxLinearSpeedMetersPerSec(), // Lateral movement
-                      thetaController.calculate(currentError, 0)
-                      * .25 // Adjusted angular speed for shortest rotation path
-                  ));
+  /**
+   * Aligns the robot to a given pose, reducing horizontal and angle error
+   *
+   * @param drive robot drive
+   * @param horizontaDoubleSupplier gets the joystick's horizontal component
+   * @param targetPose the pose which we want to align to
+   * @return command for aligning to the target pose (limiting angle and horizontal offset)
+   */
+  public static Command alignToPose(
+      Drive drive, DoubleSupplier forwardSupplier, Supplier<Pose2d> targetPoseSupplier) {
+    drive.snapController.enableContinuousInput(-Math.PI, Math.PI);
+    return Commands.run(
+        () -> {
+          Pose2d currentPose = drive.getPose();
+          Pose2d targetPose = targetPoseSupplier.get();
+          if (targetPose == null) {
+            Commands.print("No target specified");
+          }
+          Transform2d poseTransform = targetPose.minus(currentPose);
+          double y_offset = poseTransform.getY();
+
+          double angle_offset = poseTransform.getRotation().rotateBy(new Rotation2d(Math.PI)).getRadians();
+          Logger.recordOutput("Odometry/Y Error to Pose", y_offset);
+          Logger.recordOutput("Odometry/Angle Error to Pose", angle_offset);
+          Logger.recordOutput("Odometry/targetPose", targetPose);
+
+          drive.runVelocity(
+              ChassisSpeeds.fromRobotRelativeSpeeds(
+                  new ChassisSpeeds(
+                    forwardSupplier.getAsDouble() * drive.getMaxLinearSpeedMetersPerSec()*.5, // Forward speed is zero for autonomous alignment
+                          -drive.linearMovementController.calculate(y_offset, 0)
+                          * drive.getMaxLinearSpeedMetersPerSec(), // Lateral movement
+                      drive.snapController.calculate(angle_offset, 0)
+                          * drive.getMaxAngularSpeedRadPerSec()
+                          * .25),
+                  drive.getPose().getRotation()));
         },
         drive);
   }
