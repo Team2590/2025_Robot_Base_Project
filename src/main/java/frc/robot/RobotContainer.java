@@ -62,6 +62,7 @@ import frc.robot.subsystems.intake.IntakeArmIOTalonFX;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
 import frc.robot.util.GeometryUtil;
@@ -510,23 +511,50 @@ public class RobotContainer {
 
     // aligning to the LEFT POLE
     leftJoystick
-        .button(9).and(rightJoystick.trigger())
+        .button(9)
+        .and(rightJoystick.trigger())
         .whileTrue(
             DriveCommands.alignToPose(
                 drive,
                 () -> -leftJoystick.getX(),
-                () -> GeometryUtil.horizontalError(vision.getBestReefPose(() -> drive.getPose(), true), drive.getPose()),
-                () -> GeometryUtil.angleError(vision.getBestReefPose(() -> drive.getPose(), true), drive.getPose())));
-                
+                () ->
+                    GeometryUtil.horizontalError(
+                        vision.getBestReefPose(() -> drive.getPose(), true), drive.getPose()),
+                () ->
+                    GeometryUtil.angleError(
+                        vision.getBestReefPose(() -> drive.getPose(), true), drive.getPose())));
+
     // aligning to the RIGHT POLE
     leftJoystick
-        .button(10).and(rightJoystick.trigger())
+        .button(10)
+        .and(rightJoystick.trigger())
         .whileTrue(
             DriveCommands.alignToPose(
                 drive,
                 () -> -leftJoystick.getX(),
-                () -> GeometryUtil.horizontalError(vision.getBestReefPose(() -> drive.getPose(), false), drive.getPose()),
-                () -> GeometryUtil.angleError(vision.getBestReefPose(() -> drive.getPose(), false), drive.getPose())));
+                () ->
+                    GeometryUtil.horizontalError(
+                        vision.getBestReefPose(() -> drive.getPose(), false), drive.getPose()),
+                () ->
+                    GeometryUtil.angleError(
+                        vision.getBestReefPose(() -> drive.getPose(), false), drive.getPose())));
+
+    // aligning to ORIGIN
+    leftJoystick
+        .button(3)
+        .and(rightJoystick.button(3))
+        .whileTrue(
+            DriveCommands.alignToPose(
+                drive,
+                () -> -leftJoystick.getX(),
+                () ->
+                    GeometryUtil.horizontalError(
+                        VisionConstants.aprilTagLayout.getTagPose(19).get().toPose2d(),
+                        drive.getPose()),
+                () ->
+                    GeometryUtil.angleError(
+                        VisionConstants.aprilTagLayout.getTagPose(19).get().toPose2d(),
+                        drive.getPose())));
   }
 
   /**
