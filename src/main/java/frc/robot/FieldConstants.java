@@ -72,6 +72,10 @@ public class FieldConstants {
     public static final Pose2d SWright =
         new Pose2d(new Translation2d(3.676, 5), new Rotation2d(-60));
     public static final Pose2d Sleft = new Pose2d(new Translation2d(3.14, 4.2), new Rotation2d(0));
+    public static final Pose2d CoralSourceRight =
+        new Pose2d(new Translation2d(1.567, 6.579), Rotation2d.fromDegrees(125.538));
+    public static final Pose2d CoralSourceLeft =
+        new Pose2d(new Translation2d(1.567, 1.424), Rotation2d.fromDegrees(231.639));
   }
 
   public static class RedReefPoses {
@@ -99,6 +103,10 @@ public class FieldConstants {
         new Pose2d(new Translation2d(13.621, 5.253), new Rotation2d(-120));
     public static final Pose2d SEleft =
         new Pose2d(new Translation2d(12.47, 5.253), new Rotation2d(-60));
+    public static final Pose2d CoralSourceRight =
+        new Pose2d(new Translation2d(16.005, 6.579), Rotation2d.fromDegrees(125.538));
+    public static final Pose2d CoralSourceLeft =
+        new Pose2d(new Translation2d(16.005, 1.424), Rotation2d.fromDegrees(231.639));
   }
 
   public static final Pose2d Barge =
@@ -112,12 +120,6 @@ public class FieldConstants {
 
   public static final Pose2d CageDeepRight =
       new Pose2d(new Translation2d(8.023, 5.059), Rotation2d.fromDegrees(0));
-
-  public static final Pose2d CoralStationRight =
-      new Pose2d(new Translation2d(1.567, 6.579), Rotation2d.fromDegrees(125.538));
-
-  public static final Pose2d CoralStationLeft =
-      new Pose2d(new Translation2d(1.567, 1.424), Rotation2d.fromDegrees(231.639));
 
   public static final Map<String, Pose2d> BLUE_REEF_POSES = buildBlueReefPosesMap();
   public static final Map<String, Pose2d> RED_REEF_POSES = buildRedReefPosesMap();
@@ -136,6 +138,8 @@ public class FieldConstants {
     poseMap.put("NE_Left", FieldConstants.BlueReefPoses.NEleft);
     poseMap.put("SE_Right", FieldConstants.BlueReefPoses.SEright);
     poseMap.put("SE_Left", FieldConstants.BlueReefPoses.SEleft);
+    poseMap.put("sourceL", FieldConstants.BlueReefPoses.CoralSourceLeft);
+    poseMap.put("sourceR", FieldConstants.BlueReefPoses.CoralSourceRight);
     return poseMap;
   }
 
@@ -153,6 +157,8 @@ public class FieldConstants {
     poseMap.put("NE_Left", FieldConstants.RedReefPoses.NEleft);
     poseMap.put("SE_Right", FieldConstants.RedReefPoses.SEright);
     poseMap.put("SE_Left", FieldConstants.RedReefPoses.SEleft);
+    poseMap.put("sourceL", FieldConstants.RedReefPoses.CoralSourceLeft);
+    poseMap.put("sourceR", FieldConstants.RedReefPoses.CoralSourceRight);
     return poseMap;
   }
 }
