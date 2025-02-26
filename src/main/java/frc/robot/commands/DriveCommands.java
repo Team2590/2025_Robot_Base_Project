@@ -339,29 +339,32 @@ public class DriveCommands {
    */
   public static Command alignToPose(
       Drive drive, DoubleSupplier forwardSupplier, Supplier<Pose2d> targetPoseSupplier) {
-
+    drive.snapController.enableContinuousInput(-Math.PI, Math.PI);
     return Commands.run(
         () -> {
           Pose2d currentPose = drive.getPose();
           Pose2d targetPose = targetPoseSupplier.get();
+          targetPose.rotateBy(new Rotation2d(Math.PI/3));
           if (targetPose == null) {
             Commands.print("No target specified");
           }
           Transform2d poseTransform = targetPose.minus(currentPose);
           double y_offset = poseTransform.getY();
 
-          double angle_offset = poseTransform.getRotation().getDegrees() - 180;
+          double angle_offset = poseTransform.getRotation().rotateBy(new Rotation2d(Math.PI)).getRadians();
           Logger.recordOutput("Odometry/Y Error to Pose", y_offset);
           Logger.recordOutput("Odometry/Angle Error to Pose", angle_offset);
+          Logger.recordOutput("Odometry/targetPose", targetPose);
+
           drive.runVelocity(
               ChassisSpeeds.fromRobotRelativeSpeeds(
                   new ChassisSpeeds(
                       0, // Forward speed is zero for autonomous alignment
-                      -drive.linearMovementController.calculate(y_offset, 0)
+                          -drive.linearMovementController.calculate(y_offset, 0)
                           * drive.getMaxLinearSpeedMetersPerSec(), // Lateral movement
-                      0 // Target angle error is zero
-                          * .25 // Adjusted angular speed
-                      ),
+                      drive.snapController.calculate(angle_offset, 0)
+                          * drive.getMaxAngularSpeedRadPerSec()
+                          * .25),
                   drive.getPose().getRotation()));
         },
         drive);

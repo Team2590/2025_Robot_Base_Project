@@ -428,21 +428,14 @@ public class RobotContainer {
         .button(1)
         .whileTrue(
             DriveCommands.alignToPose(
-                drive, getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left));
+                drive, getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.NE_left));
 
-    leftJoystick.button(5).onTrue(Commands.runOnce(() -> elevator.resetRotationCount(),
-    elevator));
-    rightJoystick
-        .button(0)
-        .whileTrue(
-            DriveCommands.alignToPose(
-                drive, getLeftJoystick()::getY, () -> controllerApp.getTarget().pose()));
+    leftJoystick.button(5).onTrue(Commands.runOnce(() -> elevator.resetRotationCount(), elevator));
 
     // climb button binds
     /**
      * TODO - need climb factory methods for running till end and deploying backpack
-     * rightJoystick.button(4) -> backpack activation down leftJoystick.button(4) or button 3 ->
-    run
+     * rightJoystick.button(4) -> backpack activation down leftJoystick.button(4) or button 3 -> run
      * full climb
      */
 
@@ -499,14 +492,12 @@ public class RobotContainer {
         .trigger()
         .and(rightJoystick.button(3).negate())
         .and(rightJoystick.button(2).negate())
-        .whileTrue(ScoringFactory.scoreProcessor().finallyDo(() ->
-    RobotState.setIntakeNoAlgae()));
+        .whileTrue(ScoringFactory.scoreProcessor().finallyDo(() -> RobotState.setIntakeNoAlgae()));
 
     rightJoystick
         .button(2)
         .and(leftJoystick.trigger())
-        .whileTrue(ScoringFactory.score(Level.L1).finallyDo(() ->
-    RobotState.setIntakeNoCoral()));
+        .whileTrue(ScoringFactory.score(Level.L1).finallyDo(() -> RobotState.setIntakeNoCoral()));
 
     // controller.a().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
     // controller.b().whileTrue(EndEffectorFactory.runEndEffector());
