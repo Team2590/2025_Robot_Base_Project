@@ -395,8 +395,10 @@ public class DriveCommands {
       double targetDistance) {
 
     // Create PID controllers for position control
-    PIDController xController = new PIDController(1.5, 0, 0.1);
-    PIDController yController = new PIDController(1.5, 0, 0.1);
+    ProfiledPIDController xController = new ProfiledPIDController(1.5, 0, 0.1, 
+        new TrapezoidProfile.Constraints(2.0, 4.0));
+    ProfiledPIDController yController = new ProfiledPIDController(1.5, 0, 0.1,
+        new TrapezoidProfile.Constraints(2.0, 4.0));
 
     // State tracking - make it a final array so we can modify it inside the lambda
     final boolean[] reachedInitialPosition = {false};
@@ -449,9 +451,9 @@ public class DriveCommands {
               // Check if we've reached the initial position
               if (!reachedInitialPosition[0] && distanceToTarget < positionThreshold) {
                 reachedInitialPosition[0] = true;
-                // Reset controllers when transitioning to phase 2
-                xController.reset();
-                yController.reset();
+                // Reset controllers with current position and velocity (0) when transitioning to phase 2
+                xController.reset(currentPose.getX(), 0);
+                yController.reset(currentPose.getY(), 0);
               }
 
               // Calculate angle error (normalized between -π and π)
@@ -513,13 +515,13 @@ public class DriveCommands {
             drive)
         .beforeStarting(
             () -> {
-              // Reset state when command starts - but keep reachedInitialPosition if we want to go
-              // direct
+              // Reset state when command starts - but keep reachedInitialPosition if we want to go direct
               if (targetDistance != 0) {
                 reachedInitialPosition[0] = false;
               }
-              xController.reset();
-              yController.reset();
+              Pose2d currentPose = drive.getPose();
+              xController.reset(currentPose.getX(), 0);
+              yController.reset(currentPose.getY(), 0);
             });
   }
 
