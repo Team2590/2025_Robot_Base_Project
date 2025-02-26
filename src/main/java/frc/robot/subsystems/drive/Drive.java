@@ -83,6 +83,7 @@ public class Drive extends SubsystemBase {
         new SwerveModulePosition()
       };
   private SwerveDrivePoseEstimator poseEstimator;
+  private double maxLinearSpeed;
 
   public PIDController snapController = new PIDController(.34, 0.0, 0.0);
   LoggedTunableNumber snapControllerP = new LoggedTunableNumber("SnapController/kP", .34);
@@ -235,6 +236,7 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+    maxLinearSpeed = constantsWrapper.kSpeedAt12Volts.in(MetersPerSecond);
 
     updateTunableNumbers();
   }
@@ -370,7 +372,11 @@ public class Drive extends SubsystemBase {
 
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
-    return constantsWrapper.kSpeedAt12Volts.in(MetersPerSecond);
+    return maxLinearSpeed;
+  }
+
+  public Command setMaxLinearSpeed(double percent) {
+    return runEnd(() -> maxLinearSpeed = constantsWrapper.kSpeedAt12Volts.in(MetersPerSecond) * percent, () -> maxLinearSpeed = constantsWrapper.kSpeedAt12Volts.in(MetersPerSecond));
   }
 
   public RobotConfig getConfig() {
