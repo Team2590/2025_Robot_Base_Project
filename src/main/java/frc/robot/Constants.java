@@ -405,11 +405,11 @@ public final class Constants {
     public static final boolean brake = false;
     public static final double reduction = 1; // TODO
     public static final double CLIMB_MECHANISM_POSITION = 13; // 13
-    public static final double CLIMB_MAX_POSITION = 160; // 213.25 (actual), 189 (from 2/23)
-    public static final double CLIMB_VOLTAGE = 1;
+    public static final double CLIMB_MAX_POSITION = 189; // 213.25 (actual), 189 (from 2/23)
+    public static final double CLIMB_VOLTAGE = 8.0; // 2.0 tested
   }
 
-  public static class IntakeConstantsLarry {
+  public static class IntakeConstantsLarry  {
     static int canID = 60;
     static int currentLimitAmps = 40;
     static String canBus = "Takeover";

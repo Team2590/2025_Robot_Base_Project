@@ -91,9 +91,7 @@ public class Intake extends SubsystemBase {
                 System.out.println("input position rads:" + intakeArmInputs.positionRads);
                 System.out.println("setpoint" + Units.rotationsToRadians(position));
                 return NemesisMathUtil.isApprox(
-                    intakeArmInputs.rotationCount,
-                    setpointTolerance,
-                    position);
+                    intakeArmInputs.rotationCount, setpointTolerance, position);
               });
     }
 
