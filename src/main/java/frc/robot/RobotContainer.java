@@ -17,7 +17,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -37,7 +36,6 @@ import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
@@ -428,11 +426,10 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
-    /**leftJoystick
-        .button(1)
-        .whileTrue(
-            DriveCommands.alignToPose(
-                drive, getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left)); */
+    /**
+     * leftJoystick .button(1) .whileTrue( DriveCommands.alignToPose( drive,
+     * getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left));
+     */
     // climb buttons
     // Causing NullPointerException on startup in SIM
     rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
@@ -452,7 +449,14 @@ public class RobotContainer {
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
 
     // Controller App Buttons
-    rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    // rightJoystick
+    //     .button(2)
+    //     .whileTrue(
+    //         DriveCommands.alignToPose(
+    //             drive, leftJoystick::getY, () -> FieldConstants.BlueReefPoses.SW_left));
+    rightJoystick
+        .button(2)
+        .whileTrue(DriveCommands.driveToPose(drive, () -> controllerApp.getTarget().pose()));
     rightJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
     leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());
@@ -470,6 +474,10 @@ public class RobotContainer {
         .whileTrue(
             EndEffectorFactory.runEndEffectorVoltage(
                 -Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE));
+
+    // Manual Elevator Control
+    rightJoystick.button(14).whileTrue(ElevatorFactory.manualDown());
+    rightJoystick.button(15).whileTrue(ElevatorFactory.manualUp());
 
     // Reset Buttons
     rightJoystick
@@ -521,12 +529,15 @@ public class RobotContainer {
     NamedCommands.registerCommand("ScoreProcessor", ScoringFactory.scoreProcessor());
 
     NamedCommands.registerCommand("Stow-Mechanism", ScoringFactory.stow());
-    NamedCommands.registerCommand("PrimeSource", ScoringFactory.stow());
+    // NamedCommands.registerCommand("PrimeSource", ScoringFactory.stow());
 
     // This uses a wait command but we can make this into a WaitUntil command that can wait
     // for a certain condition.
     NamedCommands.registerCommand(
         "WaitAndPrint", Commands.waitSeconds(5).andThen(Commands.print("Done waiting ...")));
+
+    NamedCommands.registerCommand("PrimeSource", GamePieceFactory.primeCoralSource());
+    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeCoralFeeder());
   }
 
   public boolean inReef() {
