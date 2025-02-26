@@ -17,8 +17,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -411,6 +409,11 @@ public class RobotContainer {
     // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
     leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
     leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
+    leftJoystick
+        .button(1)
+        .whileTrue(
+            DriveCommands.alignToPose(
+                drive, getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left));
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -421,23 +424,25 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
+    leftJoystick
+        .button(1)
+        .whileTrue(
+            DriveCommands.alignToPose(
+                drive, getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left));
 
-    // reset button binds
+    leftJoystick.button(5).onTrue(Commands.runOnce(() -> elevator.resetRotationCount(),
+    elevator));
     rightJoystick
-        .button(5)
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
-    leftJoystick.button(5).onTrue(Commands.runOnce(() -> elevator.resetRotationCount(), elevator));
+        .button(0)
+        .whileTrue(
+            DriveCommands.alignToPose(
+                drive, getLeftJoystick()::getY, () -> controllerApp.getTarget().pose()));
 
     // climb button binds
     /**
      * TODO - need climb factory methods for running till end and deploying backpack
-     * rightJoystick.button(4) -> backpack activation down leftJoystick.button(4) or button 3 -> run
+     * rightJoystick.button(4) -> backpack activation down leftJoystick.button(4) or button 3 ->
+    run
      * full climb
      */
 
@@ -456,7 +461,6 @@ public class RobotContainer {
         .button(3)
         .and(rightJoystick.trigger())
         .whileTrue(GamePieceFactory.intakeCoralFeeder());
-
     // scoring button binds
     // TODO- controller app activation button:
     // rightJoystick.button(3).and(leftJoystick.trigger()).whileTrue(<controller app function>);
@@ -495,12 +499,14 @@ public class RobotContainer {
         .trigger()
         .and(rightJoystick.button(3).negate())
         .and(rightJoystick.button(2).negate())
-        .whileTrue(ScoringFactory.scoreProcessor().finallyDo(() -> RobotState.setIntakeNoAlgae()));
+        .whileTrue(ScoringFactory.scoreProcessor().finallyDo(() ->
+    RobotState.setIntakeNoAlgae()));
 
     rightJoystick
         .button(2)
         .and(leftJoystick.trigger())
-        .whileTrue(ScoringFactory.score(Level.L1).finallyDo(() -> RobotState.setIntakeNoCoral()));
+        .whileTrue(ScoringFactory.score(Level.L1).finallyDo(() ->
+    RobotState.setIntakeNoCoral()));
 
     // controller.a().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
     // controller.b().whileTrue(EndEffectorFactory.runEndEffector());
@@ -513,10 +519,9 @@ public class RobotContainer {
     controller.b().whileTrue(ScoringFactory.score(Level.L3));
     controller.y().whileTrue(ScoringFactory.score(Level.L4));
 
-    // Causing NullPointerException on startup in SIM
-    // rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
-    // rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
-    // rightJoystick.button(16).whileTrue(ScoringFactory.climb());
+    rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
+    rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
+    rightJoystick.button(16).whileTrue(ScoringFactory.climb());
   }
 
   /**
