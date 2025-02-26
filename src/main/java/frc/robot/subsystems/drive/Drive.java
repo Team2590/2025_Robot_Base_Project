@@ -263,6 +263,28 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
   }
 
+  public void runVelocityOptimized(ChassisSpeeds speeds) {
+    // Calculate module setpoints
+    ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
+    SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, constantsWrapper.kSpeedAt12Volts);
+
+    // Log unoptimized setpoints and setpoint speeds
+    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
+    Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
+
+        // Optimize and send setpoints to modules
+        SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
+        for (int i = 0; i < 4; i++) {
+            Rotation2d currentRotation = modules[i].getPosition().angle;
+            setpointStates[i].optimize(currentRotation); // Use instance method
+            modules[i].runSetpoint(optimizedStates[i]);
+        }
+    // Log optimized setpoints
+    Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedStates);
+}
+
+
   /** Runs the drive in a straight line with the specified drive output. */
   public void runCharacterization(double output) {
     for (int i = 0; i < 4; i++) {
