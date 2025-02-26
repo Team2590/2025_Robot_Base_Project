@@ -338,6 +338,9 @@ public class DriveCommands {
       Drive drive, DoubleSupplier forwardSupplier, Supplier<Pose2d> targetPoseSupplier) {
     Pose2d currentPose = drive.getPose();
     Pose2d targetPose = targetPoseSupplier.get();
+    if (targetPose == null){
+      return Commands.print("No target specified");
+    }
     Transform2d poseTransform = targetPose.minus(currentPose);
     double y_offset = poseTransform.getY();
     double angle_offset = poseTransform.getRotation().getDegrees();
