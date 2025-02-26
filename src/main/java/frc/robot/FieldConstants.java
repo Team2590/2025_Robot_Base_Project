@@ -69,7 +69,8 @@ public class FieldConstants {
     public static final Pose2d N_left = CoralPose.getReefPose(10)[1]; // left
     public static final Pose2d NE_right = CoralPose.getReefPose(9)[0]; // right
     public static final Pose2d NE_left = CoralPose.getReefPose(9)[1]; // left
-    public static final Pose2d SE_right = CoralPose.getReefPose(8)[0]; // right Thisone is so annoying
+    public static final Pose2d SE_right =
+        CoralPose.getReefPose(8)[0]; // right Thisone is so annoying
     public static final Pose2d SE_left = CoralPose.getReefPose(8)[1]; // left
     public static final Pose2d S_right = CoralPose.getReefPose(7)[0]; // right
     public static final Pose2d S_left = CoralPose.getReefPose(7)[1]; // left

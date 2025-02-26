@@ -84,19 +84,19 @@ public class Drive extends SubsystemBase {
       };
   private SwerveDrivePoseEstimator poseEstimator;
 
-  public final PIDController snapController = new PIDController(.34, 0.0, 0.0);
+  public PIDController snapController = new PIDController(.34, 0.0, 0.0);
   LoggedTunableNumber snapControllerP = new LoggedTunableNumber("SnapController/kP", .34);
   LoggedTunableNumber snapControllerD = new LoggedTunableNumber("SnapController/kD", .00001);
   LoggedTunableNumber snapControllerTolerance =
       new LoggedTunableNumber("SnapController/tolerance", .05);
 
-  public final PIDController linearMovementController = new PIDController(.44, 0.0, .00001);
+  public final PIDController linearMovementController = new PIDController(1, 0.0, .00001);
   LoggedTunableNumber linearMovementControllerP =
-      new LoggedTunableNumber("linearMovementController/kP", .44);
+      new LoggedTunableNumber("linearMovementController/kP", 1);
   LoggedTunableNumber linearMovementControllerD =
-      new LoggedTunableNumber("linearMovementController/kD", .00001);
+      new LoggedTunableNumber("linearMovementController/kD", 0);
   LoggedTunableNumber linearMovementControllerTolerance =
-      new LoggedTunableNumber("linearMovementController/tolerance", .1);
+      new LoggedTunableNumber("linearMovementController/tolerance", .5);
 
   public Drive(
       GyroIO gyroIO,

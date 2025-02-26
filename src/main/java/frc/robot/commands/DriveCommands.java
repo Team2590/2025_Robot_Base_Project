@@ -15,6 +15,7 @@ package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -336,30 +337,35 @@ public class DriveCommands {
    */
   public static Command alignToPose(
       Drive drive, DoubleSupplier forwardSupplier, Supplier<Pose2d> targetPoseSupplier) {
-    Pose2d currentPose = drive.getPose();
-    Pose2d targetPose = targetPoseSupplier.get();
-    if (targetPose == null){
-      return Commands.print("No target specified");
-    }
-    Transform2d poseTransform = targetPose.minus(currentPose);
-    double y_offset = poseTransform.getY();
-    double angle_offset = poseTransform.getRotation().getDegrees();
-    Logger.recordOutput("Odometry/Y Error to Pose", y_offset);
-    Logger.recordOutput("Odometry/Angle Error to Pose", angle_offset);
+        PIDController thetaController = new PIDController(.34, 0.0, 0.0);
+        PIDController linearMovementController = new PIDController(.001, 0.0, .00001);
+
 
     return Commands.run(
+      
         () -> {
+          Pose2d currentPose = drive.getPose();
+          Pose2d targetPose = targetPoseSupplier.get();
+          if (targetPose == null) {
+            Commands.print("No target specified");
+          }
+          Transform2d poseTransform = targetPose.minus(currentPose);
+          double y_offset = poseTransform.getY();
+          
+          double angle_offset = poseTransform.getRotation().getDegrees();
+          Logger.recordOutput("Odometry/Y Error to Pose", y_offset);
+          Logger.recordOutput("Odometry/Angle Error to Pose", angle_offset);
           drive.runVelocity(
             ChassisSpeeds.fromRobotRelativeSpeeds(
               new ChassisSpeeds(
-                forwardSupplier.getAsDouble()
-                      * drive.getMaxLinearSpeedMetersPerSec()
-                      * .25, // Adjusted linear speed
-                  drive.linearMovementController.calculate(y_offset, 0)
+                  0, // Forward speed is zero for autonomous alignment
+                  linearMovementController.calculate(y_offset, 0)
                       * drive.getMaxLinearSpeedMetersPerSec(), // Lateral movement
-                  drive.snapController.calculate(angle_offset, targetPoseSupplier.get().getRotation().getDegrees())
-                      * .25 // Adjusted angular speed for shortest rotation path
-                  ), drive.getPose().getRotation()));
+                      thetaController.calculate(
+                      angle_offset, 0) // Target angle error is zero
+                      * .25 // Adjusted angular speed
+              ),
+              drive.getPose().getRotation()));
         },
         drive);
   }

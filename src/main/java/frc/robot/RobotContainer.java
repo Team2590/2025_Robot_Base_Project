@@ -378,6 +378,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsSimulation() {
+    drive.setDefaultCommand(DriveFactory.joystickDrive());
 
     // Add elevator control bindings
     leftJoystick
@@ -410,6 +411,11 @@ public class RobotContainer {
     // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
     leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
     leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
+    leftJoystick
+        .button(1)
+        .whileTrue(
+            DriveCommands.alignToPose(
+                drive, getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left));
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -432,7 +438,11 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     leftJoystick.button(5).onTrue(Commands.runOnce(() -> elevator.resetRotationCount(), elevator));
-    rightJoystick.button(0).whileTrue(DriveCommands.alignToPose(drive, getLeftJoystick()::getY, () -> controllerApp.getTarget().pose()));
+    rightJoystick
+        .button(0)
+        .whileTrue(
+            DriveCommands.alignToPose(
+                drive, getLeftJoystick()::getY, () -> controllerApp.getTarget().pose()));
 
     // climb button binds
     /**
@@ -456,9 +466,6 @@ public class RobotContainer {
         .button(3)
         .and(rightJoystick.trigger())
         .whileTrue(GamePieceFactory.intakeCoralFeeder());
-    
-    
-
     // scoring button binds
     // TODO- controller app activation button:
     // rightJoystick.button(3).and(leftJoystick.trigger()).whileTrue(<controller app function>);
