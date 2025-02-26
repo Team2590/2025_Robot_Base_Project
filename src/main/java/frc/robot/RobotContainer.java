@@ -419,6 +419,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     leftJoystick.button(5).onTrue(Commands.runOnce(() -> elevator.resetRotationCount(), elevator));
+    rightJoystick.button(0).whileTrue(DriveCommands.alignToPose(drive, getLeftJoystick()::getY, controllerApp::getTargetPose));
 
     // climb button binds
     /**
