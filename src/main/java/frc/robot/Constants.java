@@ -17,9 +17,14 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.generated.TunerConstantsLeonidas;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.FRCPolygon;
 import frc.robot.util.LoggedTunableNumber;
@@ -27,6 +32,9 @@ import frc.robot.util.PolygonLocator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -211,92 +219,23 @@ public final class Constants {
       return returnPoses;
     }
   }
-
-  // public static class CoralPoses {
-
-  //   // private final Map<String, CoralPose> bluePoses;
-  //   // private final Map<String, CoralPose> redPoses;
-
-  //   // private CoralPoses(Map<String, CoralPose> bluePoses, Map<String, CoralPose> redPoses) {
-  //   //   this.bluePoses = bluePoses;
-  //   //   this.redPoses = redPoses;
-  //   // }
-
-  //   // public CoralPose getBluePose(String locID) {
-  //   //   return bluePoses.get(locID);
-  //   // }
-
-  //   // public CoralPose getRedPose(String locID) {
-  //   //   return redPoses.get(locID);
-  //   // }
-
-  //   // public CoralPose getAllianceCoralPose(String locID) {
-  //   //   Optional<Alliance> ally = DriverStation.getAlliance();
-
-  //   //   if (ally.isPresent()) {
-  //   //     if (ally.get() == Alliance.Red) {
-  //   //       return getRedPose(locID);
-  //   //     }
-  //   //     if (ally.get() == Alliance.Blue) {
-  //   //       return getBluePose(locID);
-  //   //     }
-  //   //   } else {
-  //   //     throw new IllegalStateException("NO ALLIANCE FOUND");
-  //   //   }
-  //   // }
-
-  //   // public static class Builder {
-
-  //   //   private final Map<String, CoralPose> bluePoses = new HashMap<>();
-  //   //   private final Map<String, CoralPose> redPoses = new HashMap<>();
-
-  //   //   public Builder add(String locID, CoralPose blue, CoralPose red) {
-  //   //     bluePoses.put(locID, blue);
-  //   //     redPoses.put(locID, red);
-  //   //     return this;
-  //   //   }
-
-  //   //   public CoralPoses build() {
-  //   //     return new CoralPoses(bluePoses, redPoses);
-  //   //   }
-  //   // }
-
-  //   // public static final CoralPoses CORAL_POSSES =
-  //   //     new CoralPoses.Builder()
-  //   //         .add("reefn", new CoralPose(1, 1), new CoralPose(2, 2))
-  //   //         .add("reef2", new CoralPose(5, 5), new CoralPose(6, 6))
-  //   //         .build();
-
-  //   public static class BlueCoralPoses {
-  //     public static final CoralPose Sleft = new CoralPose(3.9, 5.3);
-  //     public static final CoralPose Sright = new CoralPose(3.676, 5);
-  //     public static final CoralPose p3 = new CoralPose(3.14, 4.2);
-  //     public static final CoralPose p4 = new CoralPose(3.15, 3.87);
-  //     public static final CoralPose p5 = new CoralPose(3.62, 2.933);
-  //     public static final CoralPose p6 = new CoralPose(3.93, 2.787);
-  //     public static final CoralPose p7 = new CoralPose(5.031, 2.787);
-  //     public static final CoralPose p8 = new CoralPose(5.304, 2.933);
-  //     public static final CoralPose p9 = new CoralPose(5.83, 3.859);
-  //     public static final CoralPose p10 = new CoralPose(5.83, 4.17);
-  //     public static final CoralPose p11 = new CoralPose(5.275, 5.127);
-  //     public static final CoralPose p12 = new CoralPose(3.968, 5.283);
-  //   }
-
-  //   public static class RedCoralPoses {
-  //     public static final CoralPose p1 = new CoralPose(13.913, 5.088);
-  //     public static final CoralPose p2 = new CoralPose(13.621, 5.253);
-  //     public static final CoralPose p3 = new CoralPose(12.47, 5.253);
-  //     public static final CoralPose p4 = new CoralPose(12.217, 5.127);
-  //     public static final CoralPose p5 = new CoralPose(11.72, 4.2);
-  //     public static final CoralPose p6 = new CoralPose(11.7, 3.869);
-  //     public static final CoralPose p7 = new CoralPose(12.236, 2.943);
-  //     public static final CoralPose p8 = new CoralPose(12.5, 2.806);
-  //     public static final CoralPose p9 = new CoralPose(13.621, 2.777);
-  //     public static final CoralPose p10 = new CoralPose(13.923, 2.933);
-  //     public static final CoralPose p11 = new CoralPose(14.39, 3.869);
-  //     public static final CoralPose p12 = new CoralPose(14.411, 4.171);
-  //   }
-  // }
+  public class DriveToPoseConstants{
+    public static final LinearVelocity MAX_TELEOP_VELOCITY = TunerConstantsLeonidas.kSpeedAt12Volts;
+    public static final AngularVelocity MAX_TELEOP_ANGULAR_VELOCITY = RotationsPerSecond.of(1.25);
+    public static LinearVelocity  MAX_DRIVE_TO_POSE_TRANSLATION_VELOCITY = MAX_TELEOP_VELOCITY.div(2.0);
+    public static LinearAcceleration  MAX_DRIVE_TO_POSE_TRANSLATION_ACCELERATION  = MetersPerSecondPerSecond.of(2.0);
+    public static AngularVelocity  MAX_DRIVE_TO_POSE_ANGULAR_VELOCITY = MAX_TELEOP_ANGULAR_VELOCITY.times(0.75);
+    public static AngularAcceleration  MAX_DRIVE_TO_POSE_ANGULAR_ACCELERATION  =  RadiansPerSecondPerSecond.of(6.0 * Math.PI);
+    public static double THETA_kD = 0;
+    public static double THETA_kI = 0;
+    public static double THETA_kP = 3.0;
+    public static double X_kD = 0;
+    public static double X_kI = 0;
+    public static double X_kP = 5;
+    public static double Y_kD = 0;
+    public static double Y_kI = 0;
+    public static double Y_kP = 5;
+  }
 
   public static class ArmConstantsLeonidas {
     public static double ARM_FACTORY_SAFETY_MIN = 0;

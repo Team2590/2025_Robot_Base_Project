@@ -13,6 +13,10 @@
 
 package frc.robot.subsystems.vision;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Stream;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -78,4 +82,6 @@ public class VisionConstants {
   public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
   public static double angularStdDevMegatag2Factor =
       Double.POSITIVE_INFINITY; // No rotation data available
+
+  public static final Set<Integer> FIDUCIAL_IDS = Set.of(17, 18, 19, 20, 21, 22, 6, 7, 8, 9, 10, 11);
 }
