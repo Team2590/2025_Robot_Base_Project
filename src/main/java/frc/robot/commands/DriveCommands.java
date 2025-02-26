@@ -329,33 +329,28 @@ public class DriveCommands {
    * @return command for aligning to the target pose (limiting angle and horizontal offset)
    */
   public static Command alignToPose(
-      Drive drive, DoubleSupplier horizontaDoubleSupplier, Supplier<Pose2d> targetPoseSupplier) {
+      Drive drive, DoubleSupplier forwardSupplier, Supplier<Pose2d> targetPoseSupplier) {
     Pose2d currentPose = drive.getPose();
     Pose2d targetPose = targetPoseSupplier.get();
-    if(targetPose == null){targetPose = new Pose2d();}
     Transform2d poseTransform = targetPose.minus(currentPose);
     double y_offset = poseTransform.getY();
-    double angle_offset = poseTransform.getRotation().getRadians();
-    if (angle_offset > 180) {
-      angle_offset -= 360;
-    } else if (angle_offset < -180) {
-      angle_offset += 180;
-    }
+    double angle_offset = poseTransform.getRotation().getDegrees();
     Logger.recordOutput("Odometry/Y Error to Pose", y_offset);
     Logger.recordOutput("Odometry/Angle Error to Pose", angle_offset);
 
     return Commands.run(
         () -> {
           drive.runVelocity(
+            ChassisSpeeds.fromRobotRelativeSpeeds(
               new ChassisSpeeds(
-                  horizontaDoubleSupplier.getAsDouble()
+                forwardSupplier.getAsDouble()
                       * drive.getMaxLinearSpeedMetersPerSec()
                       * .25, // Adjusted linear speed
                   drive.linearMovementController.calculate(y_offset, 0)
                       * drive.getMaxLinearSpeedMetersPerSec(), // Lateral movement
-                  drive.snapController.calculate(y_offset, 0)
+                  drive.snapController.calculate(angle_offset, targetPoseSupplier.get().getRotation().getDegrees())
                       * .25 // Adjusted angular speed for shortest rotation path
-                  ));
+                  ), drive.getPose().getRotation()));
         },
         drive);
   }
