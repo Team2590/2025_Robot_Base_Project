@@ -119,6 +119,32 @@ public class DriveCommands {
         drive);
   }
 
+  public static Command joystickDriveSlow(
+      Drive drive,
+      DoubleSupplier xSupplier,
+      DoubleSupplier ySupplier,
+      DoubleSupplier omegaSupplier,
+      double scaleFactor) {
+    return Commands.run(
+        () -> {
+          ChassisSpeeds speeds =
+              new ChassisSpeeds(
+                  xSupplier.getAsDouble() * drive.getMaxLinearSpeedMetersPerSec() * scaleFactor,
+                  ySupplier.getAsDouble() * drive.getMaxLinearSpeedMetersPerSec() * scaleFactor,
+                  omegaSupplier.getAsDouble() * drive.getMaxAngularSpeedRadPerSec() * scaleFactor);
+          boolean isFlipped =
+              DriverStation.getAlliance().isPresent()
+                  && DriverStation.getAlliance().get() == Alliance.Red;
+          drive.runVelocity(
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  speeds,
+                  isFlipped
+                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                      : drive.getRotation()));
+        },
+        drive);
+  }
+
   /**
    * Field relative drive command using joystick for linear control and PID for angular control.
    * Possible use cases include snapping to an angle, aiming at a vision target, or controlling
