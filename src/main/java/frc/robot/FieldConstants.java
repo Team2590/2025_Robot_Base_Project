@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -62,6 +64,8 @@ public class FieldConstants {
     public static final Pose2d SW_left = CoralPose.getReefPose(19)[0]; // left
     public static final Pose2d NW_right = CoralPose.getReefPose(20)[1]; // right
     public static final Pose2d NW_left = CoralPose.getReefPose(20)[0]; // left
+    public static final Pose2d CoralSourceRight = aprilTagLayout.getTagPose(12).get().toPose2d();
+    public static final Pose2d CoralSourceLeft = aprilTagLayout.getTagPose(13).get().toPose2d();
   }
 
   public static class RedReefPoses {
@@ -78,6 +82,8 @@ public class FieldConstants {
     public static final Pose2d SW_left = CoralPose.getReefPose(6)[0]; // left
     public static final Pose2d NW_right = CoralPose.getReefPose(11)[1]; // right
     public static final Pose2d NW_left = CoralPose.getReefPose(11)[0]; // left
+    public static final Pose2d CoralSourceRight = aprilTagLayout.getTagPose(2).get().toPose2d();
+    public static final Pose2d CoralSourceLeft = aprilTagLayout.getTagPose(1).get().toPose2d();
   }
 
   public static final Pose2d Barge =
@@ -91,12 +97,6 @@ public class FieldConstants {
 
   public static final Pose2d CageDeepRight =
       new Pose2d(new Translation2d(8.023, 5.059), Rotation2d.fromDegrees(0));
-
-  public static final Pose2d CoralStationRight =
-      new Pose2d(new Translation2d(1.567, 6.579), Rotation2d.fromDegrees(125.538));
-
-  public static final Pose2d CoralStationLeft =
-      new Pose2d(new Translation2d(1.567, 1.424), Rotation2d.fromDegrees(231.639));
 
   public static final Map<String, Pose2d> BLUE_REEF_POSES = buildBlueReefPosesMap();
   public static final Map<String, Pose2d> RED_REEF_POSES = buildRedReefPosesMap();
@@ -115,6 +115,8 @@ public class FieldConstants {
     poseMap.put("NE_Left", FieldConstants.BlueReefPoses.NE_left);
     poseMap.put("SE_Right", FieldConstants.BlueReefPoses.SE_right);
     poseMap.put("SE_Left", FieldConstants.BlueReefPoses.SE_left);
+    poseMap.put("sourceL", aprilTagLayout.getTagPose(13).get().toPose2d());
+    poseMap.put("sourceR", aprilTagLayout.getTagPose(12).get().toPose2d());
     return poseMap;
   }
 
@@ -132,6 +134,8 @@ public class FieldConstants {
     poseMap.put("NE_Left", FieldConstants.RedReefPoses.NE_left);
     poseMap.put("SE_Right", FieldConstants.RedReefPoses.SE_right);
     poseMap.put("SE_Left", FieldConstants.RedReefPoses.SE_left);
+    poseMap.put("sourceL", aprilTagLayout.getTagPose(1).get().toPose2d());
+    poseMap.put("sourceR", aprilTagLayout.getTagPose(2).get().toPose2d());
     return poseMap;
   }
 }

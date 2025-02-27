@@ -24,24 +24,39 @@ import javafx.stage.Stage;
 
 public class ControllerApp extends Application {
 
-  private static final String DEFAULT_BUTTON_STYLE = null;
-  private static final String SELECTED_BUTTON_STYLE = "-fx-background-color: green";
-  private static final String LEVEL_BUTTON_STYLE = "-fx-background-color: lightblue";
-  private static final String SELECTED_LEVEL_STYLE = "-fx-background-color: blue";
-  private static final String SIDE_BUTTON_STYLE = "-fx-background-color: lightgray";
-  private static final String SELECTED_SIDE_STYLE = "-fx-background-color: green";
+  private static final String DEFAULT_BUTTON_STYLE =
+      "-fx-background-color: #0080FF; -fx-text-fill: white; -fx-font-weight: bold";
+  private static final String SELECTED_BUTTON_STYLE =
+      "-fx-background-color: #00CC66; -fx-text-fill: white; -fx-font-weight: bold";
+  private static final String LEVEL_BUTTON_STYLE =
+      "-fx-background-color: #0080FF; -fx-text-fill: white; -fx-font-weight: bold";
+  private static final String SELECTED_LEVEL_STYLE =
+      "-fx-background-color: #00CC66; -fx-text-fill: white; -fx-font-weight: bold";
+  private static final String SIDE_BUTTON_STYLE =
+      "-fx-background-color: #0080FF; -fx-text-fill: white; -fx-font-weight: bold";
+  private static final String SELECTED_SIDE_STYLE =
+      "-fx-background-color: #00CC66; -fx-text-fill: white; -fx-font-weight: bold";
+  private static final String SOURCE_BUTTON_STYLE =
+      "-fx-background-color: #0080FF; -fx-text-fill: white; -fx-font-weight: bold";
+  private static final String SELECTED_SOURCE_STYLE =
+      "-fx-background-color: #00CC66; -fx-text-fill: white; -fx-font-weight: bold";
 
   private final NetworkTableClient client = NetworkTableClient.getInstance();
   private final Map<String, Button> compassButtonMap = new HashMap<>();
   private final Map<String, Button> levelButtonMap = new HashMap<>();
   private final Map<String, ToggleButton> sideButtonMap = new HashMap<>();
+  private final Map<String, Button> sourceButtonMap = new HashMap<>();
   private String pendingCommand = null;
+  private String selectedSource = null;
 
   private String selectedDirection = null;
   private String selectedSide = null;
   private String selectedLevel = null;
 
-  private static final String[] compassPoints = {"S", "SW", "NW", "N", "NE", "SE"};
+  private static final String[] compassPoints = {
+    "S", "SW", "NW", "N", "NE", "SE",
+  };
+  private static final String[] sources = {"sourceL", "sourceR"};
   private static final String[] levels = {"L1", "L2", "L3", "L4"};
   private static final String[] sides = {"Left", "Right"};
 
@@ -49,7 +64,9 @@ public class ControllerApp extends Application {
   private VBox topButtonBox;
   private VBox sideButtonBox;
   private HBox bottomButtonBox;
+  private VBox bottomSectionBox;
   private Pane compassButtonsPane;
+  private Pane sourceButtonsPane;
   private VBox topSectionBox; // VBox to hold levels and sides
 
   @Override
@@ -73,21 +90,40 @@ public class ControllerApp extends Application {
     mainPane.setBackground(new Background(background));
 
     // Add listeners for responsive sizing
-    mainPane.widthProperty().addListener((obs, oldVal, newVal) -> updateCompassButtonPositions());
-    mainPane.heightProperty().addListener((obs, oldVal, newVal) -> updateCompassButtonPositions());
+    mainPane
+        .widthProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              updateCompassButtonPositions();
+              updateSourceButtonPositions();
+            });
+    mainPane
+        .heightProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              updateCompassButtonPositions();
+              updateSourceButtonPositions();
+            });
 
     compassButtonsPane = createCompassButtons();
-    mainPane.getChildren().add(compassButtonsPane);
+    sourceButtonsPane = createSourceButtons();
+    mainPane.getChildren().addAll(compassButtonsPane);
 
     topButtonBox = createLevelButtons();
     sideButtonBox = createSideButtons();
     bottomButtonBox = createBottomButtons();
 
-    topSectionBox = new VBox(10); // Create VBox to hold levels and sides
+    topSectionBox = new VBox(10);
     topSectionBox.setAlignment(Pos.TOP_CENTER);
     topSectionBox
         .getChildren()
         .addAll(topButtonBox, sideButtonBox); // Add level buttons then side buttons
+
+    bottomSectionBox = new VBox(10);
+    bottomSectionBox.setAlignment(Pos.BOTTOM_CENTER);
+    bottomSectionBox.getChildren().addAll(sourceButtonsPane, bottomButtonBox);
+    // BorderPane.setAlignment(sourceButtonsPane, Pos.TOP_CENTER);
+    // root.setTop(sourceButtonsPane); // Add source buttons above the bottom section
 
     BorderPane.setAlignment(topSectionBox, Pos.TOP_CENTER); // Align top section to top center
     BorderPane.setAlignment(bottomButtonBox, Pos.BOTTOM_CENTER);
@@ -95,7 +131,7 @@ public class ControllerApp extends Application {
 
     root.setTop(topSectionBox); // Set the combined top section
     root.setCenter(mainPane);
-    root.setBottom(bottomButtonBox);
+    root.setBottom(bottomSectionBox);
 
     Scene scene = new Scene(root, 800, 600);
     primaryStage.setScene(scene);
@@ -128,6 +164,23 @@ public class ControllerApp extends Application {
     return compassPane;
   }
 
+  private Pane createSourceButtons() {
+    Pane sourcePane = new Pane();
+    EventHandler<ActionEvent> buttonHandler = event -> onSourceButtonPress(event);
+
+    for (String source : sources) {
+      Button button = new Button(source);
+      sourceButtonMap.put(source, button);
+      button.setOnAction(buttonHandler);
+      button.setPrefWidth(80);
+      button.setPrefHeight(40);
+      button.setStyle(SOURCE_BUTTON_STYLE);
+      sourcePane.getChildren().add(button);
+    }
+
+    return sourcePane;
+  }
+
   private void updateCompassButtonPositions() {
     double width = mainPane.getWidth();
     double height = mainPane.getHeight();
@@ -152,6 +205,21 @@ public class ControllerApp extends Application {
       button.setLayoutX(x - button.getPrefWidth() / 2);
       button.setLayoutY(y - button.getPrefHeight() / 2);
     }
+  }
+
+  private void updateSourceButtonPositions() {
+    double width = mainPane.getWidth();
+    double height = mainPane.getHeight();
+
+    // S1 pos
+    Button sourceLbutton = sourceButtonMap.get("sourceL");
+    sourceLbutton.setLayoutX(width * 0.3);
+    sourceLbutton.setLayoutY(-height * 0.1);
+
+    // S2 pos
+    Button sourceRbutton = sourceButtonMap.get("sourceR");
+    sourceRbutton.setLayoutX(width * 0.7 - sourceRbutton.getPrefWidth());
+    sourceRbutton.setLayoutY(-height * 0.1);
   }
 
   private VBox createLevelButtons() {
@@ -181,12 +249,11 @@ public class ControllerApp extends Application {
 
   private VBox createSideButtons() {
     VBox sideBox = new VBox(20);
-    sideBox.setAlignment(Pos.TOP_CENTER); // Center alignment for side buttons in the VBox
-    sideBox.setPadding(
-        new Insets(10, 0, 0, 0)); // Add some top padding to separate from level buttons
+    sideBox.setAlignment(Pos.TOP_CENTER);
+    sideBox.setPadding(new Insets(10, 0, 10, 0));
 
-    HBox buttonRow = new HBox(10); // Use HBox to arrange Left and Right side by side
-    buttonRow.setAlignment(Pos.CENTER); // Center buttons in HBox
+    HBox buttonRow = new HBox(10);
+    buttonRow.setAlignment(Pos.CENTER);
 
     for (String side : sides) {
       ToggleButton sideButton = new ToggleButton(side);
@@ -210,7 +277,7 @@ public class ControllerApp extends Application {
   private HBox createBottomButtons() {
     HBox buttonBox = new HBox(10);
     buttonBox.setAlignment(Pos.BOTTOM_CENTER);
-    buttonBox.setPadding(new Insets(20));
+    buttonBox.setPadding(new Insets(10, 0, 0, 0));
 
     Button connectButton = new Button("Connect");
     connectButton.setOnAction(event -> connect());
@@ -229,6 +296,17 @@ public class ControllerApp extends Application {
         button.setStyle(SELECTED_BUTTON_STYLE);
       } else {
         button.setStyle(DEFAULT_BUTTON_STYLE);
+      }
+    }
+  }
+
+  private void updateSourceButtons() {
+    for (Map.Entry<String, Button> entry : sourceButtonMap.entrySet()) {
+      Button button = entry.getValue();
+      if (entry.getKey().equals(selectedSource)) {
+        button.setStyle(SELECTED_SOURCE_STYLE);
+      } else {
+        button.setStyle(SOURCE_BUTTON_STYLE);
       }
     }
   }
@@ -270,32 +348,54 @@ public class ControllerApp extends Application {
     if (selectedLevel != null && selectedSide != null && selectedDirection != null) {
       pendingCommand = selectedDirection + "_" + selectedSide + "_" + selectedLevel;
       System.out.println("Updated command string: " + pendingCommand);
-      sendToNetworkTables(pendingCommand);
+      sendToNetworkTables("moveTo", pendingCommand);
     }
   }
 
-  private void sendToNetworkTables(String command) {
+  private void sendToNetworkTables(String key, String command) {
     if (command != null) {
-      client.publish("moveTo", command);
+      client.publish(key, command);
       System.out.println("Sending command: " + command);
     }
   }
 
   private void refresh() {
     String moveTo = client.getValue("moveTo");
+    String source = client.getValue("source");
 
     if (moveTo != null && !moveTo.equals("not found")) {
+      // Split on underscore to separate direction+side from level
       String[] parts = moveTo.split("_");
-      if (parts.length == 3) {
-        selectedDirection = parts[0];
-        selectedSide = parts[1];
-        selectedLevel = parts[2];
-        pendingCommand = moveTo;
+      if (parts.length > 0) {
+        // Parse direction (uppercase letters) and side (lowercase letters)
+        String directionAndSide = parts[0];
+        String direction = directionAndSide.replaceAll("[^A-Z]", "");
+        String side = directionAndSide.replaceAll("[^a-z]", "");
 
-        updateCompassButtons();
-        updateLevelButtons();
-        updateSideButtons();
+        if (!direction.isEmpty() && !side.isEmpty()) {
+          // Capitalize first letter of side to match our enum
+          side = side.substring(0, 1).toUpperCase() + side.substring(1);
+
+          selectedDirection = direction;
+          selectedSide = side;
+
+          // Update level if present
+          if (parts.length > 1) {
+            selectedLevel = parts[1];
+          }
+
+          pendingCommand = moveTo;
+
+          updateCompassButtons();
+          updateSideButtons();
+          updateLevelButtons();
+        }
       }
+    }
+
+    if (source != null && !source.equals("not found")) {
+      selectedSource = source;
+      updateSourceButtons();
     }
   }
 
@@ -312,6 +412,17 @@ public class ControllerApp extends Application {
 
     updateCompassButtons();
     updatePendingCommand();
+  }
+
+  private void onSourceButtonPress(ActionEvent event) {
+    if (!(event.getSource() instanceof Button)) {
+      return;
+    }
+    Button button = (Button) event.getSource();
+    selectedSource = button.getText();
+
+    updateSourceButtons();
+    sendToNetworkTables("source", selectedSource);
   }
 
   public static void main(String[] args) {

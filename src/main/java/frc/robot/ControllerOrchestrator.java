@@ -8,7 +8,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.arm.Arm;
@@ -21,6 +23,7 @@ public class ControllerOrchestrator {
 
   private static final String CONTROLLER_TABLE_KEY = "ControllerApp/target";
   private static final String MOVE_TO_KEY = "moveTo";
+  private static final String SOURCE_KEY = "source";
   // What's a better default target location?
   private static final String DEFAULT_REEF_TARGET = "S_Left";
 
@@ -37,13 +40,17 @@ public class ControllerOrchestrator {
     return getValue(MOVE_TO_KEY);
   }
 
+  public Pose2d getSourcePose() {
+    String sourceloc = getValue(SOURCE_KEY);
+    return lookupPoseBasedOnAlliance(sourceloc);
+  }
+
   public Target getTarget() {
     Target target = parseTargetString(getMoveTo());
     if (target == null) {
-      Target defaultTarget =
-          new Target(lookupPoseBasedOnAlliance(DEFAULT_REEF_TARGET), ScoringFactory.Level.L4);
-      System.err.println("---> Using Default Target: " + defaultTarget);
-      return defaultTarget;
+      target = new Target(lookupPoseBasedOnAlliance(DEFAULT_REEF_TARGET), ScoringFactory.Level.L4);
+      System.err.println("---> Using Default Target: " + target);
+      return target;
     }
     return target;
   }
@@ -68,6 +75,19 @@ public class ControllerOrchestrator {
   /** Command that needs to be bound to a button to driveToTarget. */
   public Command bindDriveToTargetCommand(Drive drive) {
     return DriveCommands.driveToPose(drive, () -> getTarget().pose());
+  }
+
+  // This commands will drive to pose while "priming for intake" at coral source
+  public Command bindDriveToSourceIntake(Drive drive) {
+    var requirements = new HashSet<Subsystem>();
+    requirements.add(drive);
+    return Commands.defer(
+        () -> {
+          return new ParallelCommandGroup(
+              DriveCommands.driveToPose(drive, () -> getSourcePose()),
+              GamePieceFactory.intakeCoralFeeder());
+        },
+        requirements);
   }
 
   private static Target parseTargetString(String targetString) {
