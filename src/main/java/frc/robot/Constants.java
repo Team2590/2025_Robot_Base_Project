@@ -256,6 +256,7 @@ public final class Constants {
     public static final boolean brake = true;
     public static final double reduction = 1; // was a 94.18
     public static final int cancoderID = 5;
+    public static final double ARM_SET_STOW = .33;
     // public static final double magOffset = -.596436; // -.398
     public static final double magOffset = -.268; // -.398
     public static final double sensorReduction = 58.8;
