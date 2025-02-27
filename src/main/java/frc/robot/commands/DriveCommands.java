@@ -13,7 +13,16 @@
 
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.ConstraintsZone;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.IdealStartingState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.RotationTarget;
+import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -30,6 +39,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveToPoseConstraints;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
@@ -38,6 +48,7 @@ import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -304,7 +315,7 @@ public class DriveCommands {
 
   public static Command driveToPose(Pose2d targetPose) {
     System.out.println("DRIVING TO POSE " + targetPose);
-    return AutoBuilder.pathfindToPose(targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
+    return AutoBuilder.pathfindToPose(targetPose, DriveToPoseConstraints.fastpathConstraints, 0.0);
   }
 
   public static Command driveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
@@ -320,7 +331,7 @@ public class DriveCommands {
           if (targetPose != null) {
             Logger.recordOutput("DriveCommands/drive_to_pose_target", targetPose);
             return AutoBuilder.pathfindToPose(
-                targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
+                targetPose, DriveToPoseConstraints.fastpathConstraints, 0.0);
           }
           return Commands.print("No target pose found, not running the command");
         },
@@ -493,5 +504,65 @@ public class DriveCommands {
       DoubleSupplier strafeSupplier,
       Supplier<Pose2d> targetPoseSupplier) {
     return alignToTargetLine(drive, forwardSupplier, strafeSupplier, targetPoseSupplier, 1.0);
+  }
+
+  public static Command preciseAlignment(Drive driveSubsystem, Supplier<Pose2d> preciseTarget) {
+    PathConstraints constraints = Constants.DriveToPoseConstraints.fastpathConstraints;
+    return Commands.defer(
+        () ->
+            AutoBuilder.followPath(
+                getPreciseAlignmentPath(
+                    constraints,
+                    driveSubsystem.getChassisSpeeds(),
+                    driveSubsystem.getPose(),
+                    preciseTarget.get(),
+                    preciseTarget.get().getRotation().plus(new Rotation2d(Math.PI)))),
+        Set.of(driveSubsystem));
+  }
+
+  private static PathPlannerPath getPreciseAlignmentPath(
+      PathConstraints constraints,
+      ChassisSpeeds measuredSpeedsFieldRelative,
+      Pose2d currentRobotPose,
+      Pose2d preciseTarget,
+      Rotation2d preciseTargetApproachDirection) {
+    Translation2d interiorWaypoint = preciseTarget.getTranslation();
+    Translation2d fieldRelativeSpeedsMPS =
+        new Translation2d(
+            measuredSpeedsFieldRelative.vxMetersPerSecond,
+            measuredSpeedsFieldRelative.vyMetersPerSecond);
+    Rotation2d startingPathDirection =
+        fieldRelativeSpeedsMPS
+            .times(0.8)
+            .plus(interiorWaypoint.minus(currentRobotPose.getTranslation()))
+            .getAngle();
+
+    List<Waypoint> waypoints =
+        PathPlannerPath.waypointsFromPoses(
+            new Pose2d(currentRobotPose.getTranslation(), startingPathDirection),
+            new Pose2d(interiorWaypoint, preciseTargetApproachDirection),
+            new Pose2d(preciseTarget.getTranslation(), preciseTargetApproachDirection));
+
+    List<RotationTarget> rotationTargets =
+        List.of(new RotationTarget(1.0, preciseTarget.getRotation()));
+    List<ConstraintsZone> constraintsZones =
+        List.of(
+            new ConstraintsZone(1.0, 2.0, Constants.DriveToPoseConstraints.slowpathConstraints));
+
+    PathPlannerPath path =
+        new PathPlannerPath(
+            waypoints,
+            rotationTargets,
+            List.of(),
+            constraintsZones,
+            List.of(),
+            constraints,
+            new IdealStartingState(
+                fieldRelativeSpeedsMPS.getNorm(), currentRobotPose.getRotation()),
+            new GoalEndState(MetersPerSecond.of(0), preciseTarget.getRotation()),
+            false);
+    path.preventFlipping = true;
+
+    return path;
   }
 }
