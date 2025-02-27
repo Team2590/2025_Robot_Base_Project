@@ -318,7 +318,7 @@ public class DriveCommands {
 
   public static Command driveToPose(Pose2d targetPose) {
     System.out.println("DRIVING TO POSE " + targetPose);
-    return AutoBuilder.pathfindToPose(targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
+    return AutoBuilder.pathfindToPose(targetPose, DriveToPoseConstraints.fastpathConstraints, 0.0);
   }
 
   public static Command driveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
@@ -334,7 +334,7 @@ public class DriveCommands {
           if (targetPose != null) {
             Logger.recordOutput("DriveCommands/drive_to_pose_target", targetPose);
             return AutoBuilder.pathfindToPose(
-                targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
+                targetPose, DriveToPoseConstraints.fastpathConstraints, 0.0);
           }
           return Commands.print("No target pose found, not running the command");
         },
@@ -513,7 +513,7 @@ public class DriveCommands {
             Drive driveSubsystem,
             Pose2d preciseTarget,
             Rotation2d preciseTargetApproachDirection) {
-        PathConstraints constraints = Constants.DriveToPoseConstraints.pathConstraints;
+        PathConstraints constraints = Constants.DriveToPoseConstraints.fastpathConstraints;
         return Commands.defer(
                         () -> AutoBuilder.followPath(getPreciseAlignmentPath(
                                 constraints,
@@ -544,10 +544,8 @@ public class DriveCommands {
                 new Pose2d(interiorWaypoint, preciseTargetApproachDirection),
                 new Pose2d(preciseTarget.getTranslation(), preciseTargetApproachDirection));
 
-        PathConstraints slowDownConstrains = Constants.DriveToPoseConstraints.pathConstraints;
-
         List<RotationTarget> rotationTargets = List.of(new RotationTarget(1.0, preciseTarget.getRotation()));
-        List<ConstraintsZone> constraintsZones = List.of(new ConstraintsZone(1.0, 2.0, slowDownConstrains));
+        List<ConstraintsZone> constraintsZones = List.of(new ConstraintsZone(1.0, 2.0, Constants.DriveToPoseConstraints.slowpathConstraints));
 
         PathPlannerPath path = new PathPlannerPath(
                 waypoints,

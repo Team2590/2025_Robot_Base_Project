@@ -56,12 +56,19 @@ public final class Constants {
     public static double maxAngularVelocityRadPerSec = 1;
     public static double maxAngularAccelerationRadPerSecSq = 1;
 
-    public static PathConstraints pathConstraints =
+    public static PathConstraints fastpathConstraints =
         new PathConstraints(
-            maxVelocityMPS * .1,
-            maxAccelerationMPSSq * .1,
-            maxAngularVelocityRadPerSec * .1,
-            maxAngularAccelerationRadPerSecSq * .1);
+            maxVelocityMPS,
+            maxAccelerationMPSSq,
+            maxAngularVelocityRadPerSec,
+            maxAngularAccelerationRadPerSecSq);
+
+    public static PathConstraints slowpathConstraints =
+            new PathConstraints(
+                maxVelocityMPS * .25,
+                maxAccelerationMPSSq * .25,
+                maxAngularVelocityRadPerSec * .25,
+                maxAngularAccelerationRadPerSecSq * .25);
   }
 
   private static List<FRCPolygon> polygons = new ArrayList<>();
