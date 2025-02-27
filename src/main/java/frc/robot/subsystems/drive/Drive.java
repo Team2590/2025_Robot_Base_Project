@@ -87,30 +87,30 @@ public class Drive extends SubsystemBase {
 
   public ProfiledPIDController thetaController =
       new ProfiledPIDController(1.5, 0, 0.1, new TrapezoidProfile.Constraints(2.0, 4.0));
-  LoggedTunableNumber thetaControllerP = new LoggedTunableNumber("thetaController/kP", .34);
-  LoggedTunableNumber thetaControllerD = new LoggedTunableNumber("thetaController/kD", .00001);
+  LoggedTunableNumber thetaControllerP = new LoggedTunableNumber("thetaController/kP", .30);
+  LoggedTunableNumber thetaControllerD = new LoggedTunableNumber("thetaController/kD", .0000);
   LoggedTunableNumber thetaControllerTolerance =
-      new LoggedTunableNumber("thetaController/tolerance", .05);
-  LoggedTunableNumber thetaControllerMaxVel = new LoggedTunableNumber("thetaController/MaxVel", 2);
+      new LoggedTunableNumber("thetaController/tolerance", .01);
+  LoggedTunableNumber thetaControllerMaxVel = new LoggedTunableNumber("thetaController/MaxVel", 1);
   LoggedTunableNumber thetaControllerMaxAccel =
-      new LoggedTunableNumber("thetaController/MaxAccel", 4);
+      new LoggedTunableNumber("thetaController/MaxAccel", 1);
 
   public ProfiledPIDController xController =
       new ProfiledPIDController(1.5, 0, 0.1, new TrapezoidProfile.Constraints(2.0, 4.0));
-  LoggedTunableNumber xControllerP = new LoggedTunableNumber("xController/kP", .34);
-  LoggedTunableNumber xControllerD = new LoggedTunableNumber("xController/kD", .00001);
-  LoggedTunableNumber xControllerMaxVel = new LoggedTunableNumber("xController/MaxVel", 2);
-  LoggedTunableNumber xControllerMaxAccel = new LoggedTunableNumber("xController/MaxAccel", 4);
-  LoggedTunableNumber xControllerTolerance = new LoggedTunableNumber("xController/tolerance", .05);
+  LoggedTunableNumber xControllerP = new LoggedTunableNumber("xController/kP", .7);
+  LoggedTunableNumber xControllerD = new LoggedTunableNumber("xController/kD", .0000);
+  LoggedTunableNumber xControllerMaxVel = new LoggedTunableNumber("xController/MaxVel", 1);
+  LoggedTunableNumber xControllerMaxAccel = new LoggedTunableNumber("xController/MaxAccel", 1);
+  LoggedTunableNumber xControllerTolerance = new LoggedTunableNumber("xController/tolerance", .01);
 
   public ProfiledPIDController yController =
       new ProfiledPIDController(1.5, 0, 0.1, new TrapezoidProfile.Constraints(2.0, 4.0));
 
-  LoggedTunableNumber yControllerP = new LoggedTunableNumber("yController/kP", .34);
-  LoggedTunableNumber yControllerD = new LoggedTunableNumber("yController/kD", .00001);
-  LoggedTunableNumber yControllerMaxVel = new LoggedTunableNumber("yController/MaxVel", 2);
-  LoggedTunableNumber yControllerMaxAccel = new LoggedTunableNumber("yController/MaxAccel", 4);
-  LoggedTunableNumber yControllerTolerance = new LoggedTunableNumber("yController/tolerance", .05);
+  LoggedTunableNumber yControllerP = new LoggedTunableNumber("yController/kP", .7);
+  LoggedTunableNumber yControllerD = new LoggedTunableNumber("yController/kD", .0000);
+  LoggedTunableNumber yControllerMaxVel = new LoggedTunableNumber("yController/MaxVel", 1);
+  LoggedTunableNumber yControllerMaxAccel = new LoggedTunableNumber("yController/MaxAccel", 1);
+  LoggedTunableNumber yControllerTolerance = new LoggedTunableNumber("yController/tolerance", .01);
 
   public Drive(
       GyroIO gyroIO,
