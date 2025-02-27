@@ -56,19 +56,11 @@ public class TunerConstantsLeonidas {
 
   // The stator current at which the wheels start to slip;
   // This needs to be tuned to your individual robot
-  private static final Current kSlipCurrent = Amps.of(80);
+  private static final Current kSlipCurrent = Amps.of(120.0);
 
   // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
   // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
-  private static final TalonFXConfiguration driveInitialConfigs =
-      new TalonFXConfiguration()
-          .withCurrentLimits(
-              new CurrentLimitsConfigs()
-                  // Swerve azimuth does not require much torque output, so we can set a relatively
-                  // low
-                  // stator current limit to help avoid brownouts without impacting performance.
-                  .withStatorCurrentLimit(Amps.of(80))
-                  .withStatorCurrentLimitEnable(true));
+  private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration();
   private static final TalonFXConfiguration steerInitialConfigs =
       new TalonFXConfiguration()
           .withCurrentLimits(
@@ -143,7 +135,6 @@ public class TunerConstantsLeonidas {
               .withDriveFrictionVoltage(kDriveFrictionVoltage);
 
   // Front Left
-  // increase for clockwise, decrease for counterclockwise?
   private static final int kFrontLeftDriveMotorId = 33;
   private static final int kFrontLeftSteerMotorId = 31;
   private static final int kFrontLeftEncoderId = 32;
@@ -158,7 +149,7 @@ public class TunerConstantsLeonidas {
   private static final int kFrontRightDriveMotorId = 13;
   private static final int kFrontRightSteerMotorId = 11;
   private static final int kFrontRightEncoderId = 12;
-  private static final Angle kFrontRightEncoderOffset = Rotations.of(.782); // .782, 0.269311328125
+  private static final Angle kFrontRightEncoderOffset = Rotations.of(-0.22998046875);
   private static final boolean kFrontRightSteerMotorInverted = true;
   private static final boolean kFrontRightEncoderInverted = false;
 
@@ -169,9 +160,8 @@ public class TunerConstantsLeonidas {
   private static final int kBackLeftDriveMotorId = 43;
   private static final int kBackLeftSteerMotorId = 41;
   private static final int kBackLeftEncoderId = 42;
-  private static final Angle kBackLeftEncoderOffset = Rotations.of(-0.06291796875);
+  private static final Angle kBackLeftEncoderOffset = Rotations.of(-0.063720703125);
   private static final boolean kBackLeftSteerMotorInverted = true;
-
   private static final boolean kBackLeftEncoderInverted = false;
 
   private static final Distance kBackLeftXPos = Inches.of(-12);
@@ -181,7 +171,7 @@ public class TunerConstantsLeonidas {
   private static final int kBackRightDriveMotorId = 23;
   private static final int kBackRightSteerMotorId = 21;
   private static final int kBackRightEncoderId = 22;
-  private static final Angle kBackRightEncoderOffset = Rotations.of(0.49365234375);
+  private static final Angle kBackRightEncoderOffset = Rotations.of(0.491943359375);
   private static final boolean kBackRightSteerMotorInverted = true;
   private static final boolean kBackRightEncoderInverted = false;
 
@@ -211,7 +201,7 @@ public class TunerConstantsLeonidas {
               kFrontRightEncoderOffset,
               kFrontRightXPos,
               kFrontRightYPos,
-              true,
+              kInvertRightSide,
               kFrontRightSteerMotorInverted,
               kFrontRightEncoderInverted);
   public static final SwerveModuleConstants<
@@ -240,16 +230,6 @@ public class TunerConstantsLeonidas {
               kInvertRightSide,
               kBackRightSteerMotorInverted,
               kBackRightEncoderInverted);
-
-  /**
-   * Creates a CommandSwerveDrivetrain instance. This should only be called once in your robot
-   * program,.
-   */
-  // public static CommandSwerveDrivetrain createDrivetrain() {
-  //     return new CommandSwerveDrivetrain(
-  //         DrivetrainConstants, FrontLeft, FrontRight, BackLeft, BackRight
-  //     );
-  // }
 
   /** Swerve Drive class utilizing CTR Electronics' Phoenix 6 API with the selected device types. */
   public static class TunerSwerveDrivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> {

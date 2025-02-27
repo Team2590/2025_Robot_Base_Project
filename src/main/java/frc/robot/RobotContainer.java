@@ -17,7 +17,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -37,7 +36,6 @@ import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.arm.Arm;
@@ -491,6 +489,10 @@ public class RobotContainer {
             EndEffectorFactory.runEndEffectorVoltage(
                 -Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE));
 
+    // Manual Elevator Control
+    rightJoystick.button(14).whileTrue(ElevatorFactory.manualDown());
+    rightJoystick.button(15).whileTrue(ElevatorFactory.manualUp());
+
     // Reset Buttons
     rightJoystick
         .button(5)
@@ -541,12 +543,15 @@ public class RobotContainer {
     NamedCommands.registerCommand("ScoreProcessor", ScoringFactory.scoreProcessor());
 
     NamedCommands.registerCommand("Stow-Mechanism", ScoringFactory.stow());
-    NamedCommands.registerCommand("PrimeSource", ScoringFactory.stow());
+    // NamedCommands.registerCommand("PrimeSource", ScoringFactory.stow());
 
     // This uses a wait command but we can make this into a WaitUntil command that can wait
     // for a certain condition.
     NamedCommands.registerCommand(
         "WaitAndPrint", Commands.waitSeconds(5).andThen(Commands.print("Done waiting ...")));
+
+    NamedCommands.registerCommand("PrimeSource", GamePieceFactory.primeCoralSource());
+    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeCoralFeeder());
   }
 
   public boolean inReef() {

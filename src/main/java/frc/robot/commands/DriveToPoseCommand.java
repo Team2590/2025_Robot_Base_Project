@@ -21,6 +21,7 @@ import static frc.robot.Constants.DriveToPoseConstants.X_kP;
 import static frc.robot.Constants.DriveToPoseConstants.Y_kD;
 import static frc.robot.Constants.DriveToPoseConstants.Y_kI;
 import static frc.robot.Constants.DriveToPoseConstants.Y_kP;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,28 +30,23 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
-
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import org.littletonrobotics.junction.Logger;
-
-/**
- * Command to drive to a pose.
- */
+/** Command to drive to a pose. */
 public class DriveToPoseCommand extends Command {
 
   private static final Distance TRANSLATION_TOLERANCE = Inches.of(0.5);
   private static final Angle THETA_TOLERANCE = Degrees.of(1.0);
 
-  protected static final TrapezoidProfile.Constraints DEFAULT_XY_CONSTRAINTS = new TrapezoidProfile.Constraints(
-      MAX_DRIVE_TO_POSE_TRANSLATION_VELOCITY.in(MetersPerSecond),
-      MAX_DRIVE_TO_POSE_TRANSLATION_ACCELERATION.in(MetersPerSecondPerSecond));
-  protected static final TrapezoidProfile.Constraints DEFAULT_OMEGA_CONSTRAINTS = new TrapezoidProfile.Constraints(
-      MAX_DRIVE_TO_POSE_ANGULAR_VELOCITY.in(RadiansPerSecond),
-      MAX_DRIVE_TO_POSE_ANGULAR_ACCELERATION.in(RadiansPerSecondPerSecond));
+  protected static final TrapezoidProfile.Constraints DEFAULT_XY_CONSTRAINTS =
+      new TrapezoidProfile.Constraints(
+          MAX_DRIVE_TO_POSE_TRANSLATION_VELOCITY.in(MetersPerSecond),
+          MAX_DRIVE_TO_POSE_TRANSLATION_ACCELERATION.in(MetersPerSecondPerSecond));
+  protected static final TrapezoidProfile.Constraints DEFAULT_OMEGA_CONSTRAINTS =
+      new TrapezoidProfile.Constraints(
+          MAX_DRIVE_TO_POSE_ANGULAR_VELOCITY.in(RadiansPerSecond),
+          MAX_DRIVE_TO_POSE_ANGULAR_ACCELERATION.in(RadiansPerSecondPerSecond));
 
   private final ProfiledPIDController xController;
   private final ProfiledPIDController yController;
@@ -62,7 +58,7 @@ public class DriveToPoseCommand extends Command {
 
   /**
    * Constructs a DriveToPoseCommand
-   * 
+   *
    * @param drivetrainSubsystem drivetrain subsystem
    * @param goalPose goal pose to drive to
    */
@@ -72,14 +68,14 @@ public class DriveToPoseCommand extends Command {
 
   /**
    * Constructs a DriveToPoseCommand with specific motion profile constraints
-   * 
+   *
    * @param drivetrainSubsystem drivetrain subsystem
    * @param poseProvider provider to call to get the robot pose
    * @param translationConstraints translation motion profile constraints
    * @param omegaConstraints rotation motion profile constraints
    */
   public DriveToPoseCommand(
-    Drive drivetrainSubsystem,
+      Drive drivetrainSubsystem,
       Supplier<Pose2d> poseProvider,
       TrapezoidProfile.Constraints translationConstraints,
       TrapezoidProfile.Constraints omegaConstraints) {
@@ -102,7 +98,7 @@ public class DriveToPoseCommand extends Command {
 
   /**
    * Sets the goal to drive to. This should be set before the command is scheduled.
-   * 
+   *
    * @param goalPose goal pose
    */
   public void setGoal(Pose2d goalPose) {
@@ -140,7 +136,8 @@ public class DriveToPoseCommand extends Command {
       omegaSpeed = 0;
     }
     // (xSpeed, ySpeed, omegaSpeed, thetaController.getSetpoint()
-    drivetrainSubsystem.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, omegaSpeed, goalPoseHeading));
+    drivetrainSubsystem.runVelocity(
+        ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, omegaSpeed, goalPoseHeading));
   }
 
   @Override
@@ -152,5 +149,4 @@ public class DriveToPoseCommand extends Command {
   public void end(boolean interrupted) {
     drivetrainSubsystem.runVelocity(new ChassisSpeeds());
   }
-
 }
