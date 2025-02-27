@@ -157,4 +157,12 @@ public class ScoringFactory {
             ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION))
         .withName("Climb");
   }
+
+  public static Command setDefaults() {
+    return Commands.parallel(
+            ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS),
+            ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION),
+            IntakeFactory.setHomePosition())
+        .withName("Set defaults");
+  }
 }
