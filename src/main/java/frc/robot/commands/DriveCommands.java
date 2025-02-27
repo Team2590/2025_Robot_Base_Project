@@ -14,6 +14,14 @@
 package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.ConstraintsZone;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.IdealStartingState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.RotationTarget;
+import com.pathplanner.lib.path.Waypoint;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -31,14 +39,20 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveToPoseConstraints;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.vision.VisionConstants;
+
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -331,49 +345,58 @@ public class DriveCommands {
         requirements);
   }
 
-  /**
-   * Aligns the robot to a given pose, reducing horizontal and angle error
-   *
-   * @param drive robot drive
-   * @param horizontaDoubleSupplier gets the joystick's horizontal component
-   * @param targetPose the pose which we want to align to
-   * @return command for aligning to the target pose (limiting angle and horizontal offset)
-   */
-  public static Command alignToPose(
-      Drive drive, DoubleSupplier forwardSupplier, Supplier<Pose2d> targetPoseSupplier) {
-    drive.snapController.enableContinuousInput(-Math.PI, Math.PI);
-    return Commands.run(
-        () -> {
-          drive.snapController.reset();
-          Pose2d currentPose = drive.getPose();
-          Pose2d targetPose = targetPoseSupplier.get();
-          if (targetPose == null) {
-            Commands.print("No target specified");
-          }
-          Transform2d poseTransform = targetPose.minus(currentPose);
-          double y_offset = poseTransform.getY();
-          double angle_offset = poseTransform.getRotation().getRadians();
-          if (drive.snapController.atSetpoint()) angle_offset = 0;
-          Logger.recordOutput("Odometry/Y Error to Pose", y_offset);
-          Logger.recordOutput("Odometry/Angle Error to Pose", angle_offset);
-          Logger.recordOutput("Odometry/targetPose", targetPose);
-          Logger.recordOutput("Odometry/SnapPID Error", drive.snapController.getError());
+public static Command preciseAlignment(
+            Drive driveSubsystem,
+            Pose2d preciseTarget,
+            Rotation2d preciseTargetApproachDirection) {
+        PathConstraints constraints = Constants.DriveToPoseConstraints.pathConstraints;
+        return Commands.defer(
+                        () -> AutoBuilder.followPath(getPreciseAlignmentPath(
+                                constraints,
+                                driveSubsystem.getChassisSpeeds(),
+                                driveSubsystem.getPose(),
+                                preciseTarget,
+                                preciseTargetApproachDirection)),
+                        Set.of(driveSubsystem));
+    }
 
-          drive.runVelocity(
-              ChassisSpeeds.fromRobotRelativeSpeeds(
-                  new ChassisSpeeds(
-                      forwardSupplier.getAsDouble()
-                          * drive.getMaxLinearSpeedMetersPerSec()
-                          * .5
-                          * 0, // Forward speed is zero for autonomous alignment
-                      -drive.linearMovementController.calculate(y_offset, 0)
-                          * drive.getMaxLinearSpeedMetersPerSec()
-                          * 0, // Lateral movement
-                      drive.snapController.calculate(angle_offset, 0)
-                          * drive.getMaxAngularSpeedRadPerSec()
-                          * 1),
-                  drive.getPose().getRotation()));
-        },
-        drive);
-  }
+    private static PathPlannerPath getPreciseAlignmentPath(
+            PathConstraints constraints,
+            ChassisSpeeds measuredSpeedsFieldRelative,
+            Pose2d currentRobotPose,
+            Pose2d preciseTarget,
+            Rotation2d preciseTargetApproachDirection) {
+        Translation2d interiorWaypoint = preciseTarget
+                .getTranslation();
+        Translation2d fieldRelativeSpeedsMPS = new Translation2d(
+                measuredSpeedsFieldRelative.vxMetersPerSecond, measuredSpeedsFieldRelative.vyMetersPerSecond);
+        Rotation2d startingPathDirection = fieldRelativeSpeedsMPS
+                .times(0.8)
+                .plus(interiorWaypoint.minus(currentRobotPose.getTranslation()))
+                .getAngle();
+
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+                new Pose2d(currentRobotPose.getTranslation(), startingPathDirection),
+                new Pose2d(interiorWaypoint, preciseTargetApproachDirection),
+                new Pose2d(preciseTarget.getTranslation(), preciseTargetApproachDirection));
+
+        PathConstraints slowDownConstrains = Constants.DriveToPoseConstraints.pathConstraints;
+
+        List<RotationTarget> rotationTargets = List.of(new RotationTarget(1.0, preciseTarget.getRotation()));
+        List<ConstraintsZone> constraintsZones = List.of(new ConstraintsZone(1.0, 2.0, slowDownConstrains));
+
+        PathPlannerPath path = new PathPlannerPath(
+                waypoints,
+                rotationTargets,
+                List.of(),
+                constraintsZones,
+                List.of(),
+                constraints,
+                new IdealStartingState(fieldRelativeSpeedsMPS.getNorm(), currentRobotPose.getRotation()),
+                new GoalEndState(MetersPerSecond.of(0), preciseTarget.getRotation()),
+                false);
+        path.preventFlipping = true;
+
+        return path;
+    }
 }
