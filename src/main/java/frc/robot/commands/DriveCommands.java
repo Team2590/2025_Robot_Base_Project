@@ -58,9 +58,6 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
-
-  private static PIDController linearMovementController = new PIDController(5, 0.0, 0.0);
-  private static PIDController thetaController = new PIDController(.34, 0.0, 0.0);
     
   
     private DriveCommands() {}
@@ -334,47 +331,6 @@ public class DriveCommands {
         requirements);
     }
 
-  /**
-   * Aligns the robot to a given pose, reducing horizontal and angle error
-   *
-   * @param drive robot drive
-   * @param horizontaDoubleSupplier gets the joystick's horizontal component
-   * @param targetPose the pose which we want to align to
-   * @return command for aligning to the target pose (limiting angle and horizontal offset)
-   */
-  public static Command alignToPose(
-      Drive drive, DoubleSupplier forwardSupplier, Supplier<Pose2d> targetPoseSupplier) {
-    drive.snapController.enableContinuousInput(-Math.PI, Math.PI);
-    return Commands.run(
-        () -> {
-          Pose2d currentPose = drive.getPose();
-          Pose2d targetPose = targetPoseSupplier.get();
-          if (targetPose == null) {
-            Commands.print("No target specified");
-          }
-          Transform2d poseTransform = targetPose.minus(currentPose);
-          double y_offset = poseTransform.getY();
-
-          double angle_offset = poseTransform.getRotation().rotateBy(new Rotation2d(Math.PI)).getRadians();
-          Logger.recordOutput("Odometry/Y Error to Pose", y_offset);
-          Logger.recordOutput("Odometry/Angle Error to Pose", angle_offset);
-          Logger.recordOutput("Odometry/targetPose", targetPose);
-
-          drive.runVelocity(
-              ChassisSpeeds.fromRobotRelativeSpeeds(
-                  new ChassisSpeeds(
-                    forwardSupplier.getAsDouble() * drive.getMaxLinearSpeedMetersPerSec()*.5, // Forward speed is zero for autonomous alignment
-                          -drive.linearMovementController.calculate(y_offset, 0)
-                          * drive.getMaxLinearSpeedMetersPerSec(), // Lateral movement
-                      drive.snapController.calculate(angle_offset, 0)
-                          * drive.getMaxAngularSpeedRadPerSec()
-                          * .25),
-                  drive.getPose().getRotation()));
-        },
-        drive);
-  }
-
-
    /**
    * Positions the robot at a fixed distance from the target pose along a line defined by the target
    * pose's rotation. Once that position is reached, the robot will proceed to the actual target
@@ -395,10 +351,6 @@ public class DriveCommands {
       double targetDistance) {
 
     // Create PID controllers for position control
-    ProfiledPIDController xController = new ProfiledPIDController(1.5, 0, 0.1, 
-        new TrapezoidProfile.Constraints(2.0, 4.0));
-    ProfiledPIDController yController = new ProfiledPIDController(1.5, 0, 0.1,
-        new TrapezoidProfile.Constraints(2.0, 4.0));
 
     // State tracking - make it a final array so we can modify it inside the lambda
     final boolean[] reachedInitialPosition = {false};
@@ -452,8 +404,8 @@ public class DriveCommands {
               if (!reachedInitialPosition[0] && distanceToTarget < positionThreshold) {
                 reachedInitialPosition[0] = true;
                 // Reset controllers with current position and velocity (0) when transitioning to phase 2
-                xController.reset(currentPose.getX(), 0);
-                yController.reset(currentPose.getY(), 0);
+                drive.xController.reset(currentPose.getX(), 0);
+                drive.yController.reset(currentPose.getY(), 0);
               }
 
               // Calculate angle error (normalized between -π and π)
@@ -477,8 +429,8 @@ public class DriveCommands {
               double driverWeight = 1.0 - autoWeight;
 
               // Calculate auto movement speeds using PID
-              double xSpeed = xController.calculate(currentPose.getX(), robotEndPose.getX());
-              double ySpeed = yController.calculate(currentPose.getY(), robotEndPose.getY());
+              double xSpeed = drive.xController.calculate(currentPose.getX(), robotEndPose.getX());
+              double ySpeed = drive.yController.calculate(currentPose.getY(), robotEndPose.getY());
 
               // Normalize speeds to avoid exceeding max velocity
               double autoSpeedMagnitude = Math.hypot(xSpeed, ySpeed);
@@ -502,7 +454,7 @@ public class DriveCommands {
                   (strafeSupplier.getAsDouble() * driverWeight) + (ySpeed * autoWeight);
 
               // Calculate rotation speed using drive's snap controller
-              double rotationSpeed = drive.snapController.calculate(currentAngle, targetAngle);
+              double rotationSpeed = drive.thetaController.calculate(currentAngle, targetAngle);
 
               // Apply speeds to drive
               drive.runVelocity(
@@ -520,8 +472,8 @@ public class DriveCommands {
                 reachedInitialPosition[0] = false;
               }
               Pose2d currentPose = drive.getPose();
-              xController.reset(currentPose.getX(), 0);
-              yController.reset(currentPose.getY(), 0);
+              drive.xController.reset(currentPose.getX(), 0);
+              drive.yController.reset(currentPose.getY(), 0);
             });
   }
 

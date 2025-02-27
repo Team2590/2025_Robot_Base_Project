@@ -413,11 +413,6 @@ public class RobotContainer {
     // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
     leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
     leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
-    leftJoystick
-        .button(1)
-        .whileTrue(
-            DriveCommands.alignToPose(
-                drive, getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left));
 
 
     leftJoystick
@@ -427,7 +422,7 @@ public class RobotContainer {
             drive,
             getLeftJoystick()::getY, // Forward/backward control
             getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
-            () -> FieldConstants.BlueReefPoses.NW_left,
+            () -> controllerApp.getTarget().pose(),
             1.0));
 
     leftJoystick
@@ -449,11 +444,15 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
-    /**leftJoystick
-        .button(1)
+    rightJoystick
+        .button(2)
         .whileTrue(
-            DriveCommands.alignToPose(
-                drive, getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left)); */
+            DriveCommands.alignToTargetLine(
+                drive,
+                getLeftJoystick()::getY, // Forward/backward control
+                getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
+                () -> FieldConstants.BlueReefPoses.NW_left,
+                0.0));
     // climb buttons
     // Causing NullPointerException on startup in SIM
     rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
@@ -473,7 +472,7 @@ public class RobotContainer {
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
 
     // Controller App Buttons
-    rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    // rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
     rightJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
     leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());
