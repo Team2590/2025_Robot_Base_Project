@@ -412,16 +412,15 @@ public class RobotContainer {
     leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
     leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
 
-
     leftJoystick
-    .button(12)
-    .whileTrue(
-        DriveCommands.alignToTargetLine(
-            drive,
-            getLeftJoystick()::getY, // Forward/backward control
-            getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
-            () -> controllerApp.getTarget().pose(),
-            1.0));
+        .button(12)
+        .whileTrue(
+            DriveCommands.alignToTargetLine(
+                drive,
+                getLeftJoystick()::getY, // Forward/backward control
+                getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
+                () -> controllerApp.getTarget().pose(),
+                1.0));
 
     leftJoystick
         .button(13)
@@ -449,7 +448,7 @@ public class RobotContainer {
                 drive,
                 getLeftJoystick()::getY, // Forward/backward control
                 getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
-                () -> FieldConstants.BlueReefPoses.NW_left,
+                () -> controllerApp.getTarget().pose(),
                 0.0));
     // climb buttons
     // Causing NullPointerException on startup in SIM

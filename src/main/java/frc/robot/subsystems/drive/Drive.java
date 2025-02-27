@@ -26,7 +26,6 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -86,34 +85,32 @@ public class Drive extends SubsystemBase {
       };
   private SwerveDrivePoseEstimator poseEstimator;
 
-  public ProfiledPIDController thetaController = new ProfiledPIDController(1.5, 0, 0.1, 
-  new TrapezoidProfile.Constraints(2.0, 4.0));
+  public ProfiledPIDController thetaController =
+      new ProfiledPIDController(1.5, 0, 0.1, new TrapezoidProfile.Constraints(2.0, 4.0));
   LoggedTunableNumber thetaControllerP = new LoggedTunableNumber("thetaController/kP", .34);
   LoggedTunableNumber thetaControllerD = new LoggedTunableNumber("thetaController/kD", .00001);
   LoggedTunableNumber thetaControllerTolerance =
       new LoggedTunableNumber("thetaController/tolerance", .05);
   LoggedTunableNumber thetaControllerMaxVel = new LoggedTunableNumber("thetaController/MaxVel", 2);
-  LoggedTunableNumber thetaControllerMaxAccel = new LoggedTunableNumber("thetaController/MaxAccel", 4);
+  LoggedTunableNumber thetaControllerMaxAccel =
+      new LoggedTunableNumber("thetaController/MaxAccel", 4);
 
-  public ProfiledPIDController xController = new ProfiledPIDController(1.5, 0, 0.1, 
-        new TrapezoidProfile.Constraints(2.0, 4.0));
+  public ProfiledPIDController xController =
+      new ProfiledPIDController(1.5, 0, 0.1, new TrapezoidProfile.Constraints(2.0, 4.0));
   LoggedTunableNumber xControllerP = new LoggedTunableNumber("xController/kP", .34);
   LoggedTunableNumber xControllerD = new LoggedTunableNumber("xController/kD", .00001);
   LoggedTunableNumber xControllerMaxVel = new LoggedTunableNumber("xController/MaxVel", 2);
   LoggedTunableNumber xControllerMaxAccel = new LoggedTunableNumber("xController/MaxAccel", 4);
-  LoggedTunableNumber xControllerTolerance =
-  new LoggedTunableNumber("yController/tolerance", .05);
+  LoggedTunableNumber xControllerTolerance = new LoggedTunableNumber("xController/tolerance", .05);
 
+  public ProfiledPIDController yController =
+      new ProfiledPIDController(1.5, 0, 0.1, new TrapezoidProfile.Constraints(2.0, 4.0));
 
-    public ProfiledPIDController yController = new ProfiledPIDController(1.5, 0, 0.1,
-        new TrapezoidProfile.Constraints(2.0, 4.0));
-
-      LoggedTunableNumber yControllerP = new LoggedTunableNumber("xController/kP", .34);
-      LoggedTunableNumber yControllerD = new LoggedTunableNumber("xController/kD", .00001);
-      LoggedTunableNumber yControllerMaxVel = new LoggedTunableNumber("xController/MaxVel", 2);
-      LoggedTunableNumber yControllerMaxAccel = new LoggedTunableNumber("xController/MaxAccel", 4);
-      LoggedTunableNumber yControllerTolerance =
-      new LoggedTunableNumber("yController/tolerance", .05);
+  LoggedTunableNumber yControllerP = new LoggedTunableNumber("yController/kP", .34);
+  LoggedTunableNumber yControllerD = new LoggedTunableNumber("yController/kD", .00001);
+  LoggedTunableNumber yControllerMaxVel = new LoggedTunableNumber("yController/MaxVel", 2);
+  LoggedTunableNumber yControllerMaxAccel = new LoggedTunableNumber("yController/MaxAccel", 4);
+  LoggedTunableNumber yControllerTolerance = new LoggedTunableNumber("yController/tolerance", .05);
 
   public Drive(
       GyroIO gyroIO,
@@ -152,6 +149,7 @@ public class Drive extends SubsystemBase {
                 constantsWrapper.FrontLeft.SlipCurrent,
                 1),
             getModuleTranslations());
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configure(
@@ -414,21 +412,29 @@ public class Drive extends SubsystemBase {
     if (thetaControllerP.hasChanged(hashCode())
         || thetaControllerD.hasChanged(hashCode())
         || thetaControllerTolerance.hasChanged(hashCode())) {
-          thetaController.setPID(thetaControllerP.get(), 0.0, thetaControllerD.get());
-          thetaController.setTolerance(thetaControllerTolerance.get());
+      thetaController.setPID(thetaControllerP.get(), 0.0, thetaControllerD.get());
+      thetaController.setTolerance(thetaControllerTolerance.get());
     }
     if (yControllerP.hasChanged(hashCode())
-    || yControllerD.hasChanged(hashCode())
-    || yControllerTolerance.hasChanged(hashCode())) {
-    yController.setPID(yControllerP.get(), 0.0, yControllerD.get());
-    yController.setTolerance(yControllerTolerance.get());
-  }
+        || yControllerD.hasChanged(hashCode())
+        || yControllerTolerance.hasChanged(hashCode())
+        || yControllerMaxVel.hasChanged(hashCode())
+        || yControllerMaxAccel.hasChanged(hashCode())) {
+      yController.setPID(yControllerP.get(), 0.0, yControllerD.get());
+      yController.setTolerance(yControllerTolerance.get());
+      yController.setConstraints(
+          new TrapezoidProfile.Constraints(yControllerMaxVel.get(), yControllerMaxAccel.get()));
+    }
 
-  if (xControllerP.hasChanged(hashCode())
-|| xControllerD.hasChanged(hashCode())
-|| xControllerTolerance.hasChanged(hashCode())) {
-xController.setPID(xControllerP.get(), 0.0, xControllerD.get());
-xController.setTolerance(xControllerTolerance.get());
-}
-}
+    if (xControllerP.hasChanged(hashCode())
+        || xControllerD.hasChanged(hashCode())
+        || xControllerTolerance.hasChanged(hashCode())
+        || xControllerMaxVel.hasChanged(hashCode())
+        || xControllerMaxAccel.hasChanged(hashCode())) {
+      xController.setPID(xControllerP.get(), 0.0, xControllerD.get());
+      xController.setTolerance(xControllerTolerance.get());
+      xController.setConstraints(
+          new TrapezoidProfile.Constraints(xControllerMaxVel.get(), xControllerMaxAccel.get()));
+    }
+  }
 }

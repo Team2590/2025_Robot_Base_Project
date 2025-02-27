@@ -127,7 +127,7 @@ public class ScoringFactory {
    */
   public static Command stow() {
     return Commands.parallel(
-            ArmFactory.setPositionBlocking(0),
+            ArmFactory.setPositionBlocking(.33), // home position is 90 degrees
             ElevatorFactory.setPositionBlocking(5),
             IntakeFactory.setHomePosition())
         .withName("Stow Mechanism");

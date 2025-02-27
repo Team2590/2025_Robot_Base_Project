@@ -15,7 +15,6 @@ package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -53,9 +52,6 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
-
-  private static PIDController linearMovementController = new PIDController(5, 0.0, 0.0);
-  private static PIDController thetaController = new PIDController(.34, 0.0, 0.0);
 
   private DriveCommands() {}
 
@@ -331,7 +327,7 @@ public class DriveCommands {
         requirements);
   }
 
-   /**
+  /**
    * Positions the robot at a fixed distance from the target pose along a line defined by the target
    * pose's rotation. Once that position is reached, the robot will proceed to the actual target
    * pose. If targetDistance is 0, robot will go directly to the target pose.
@@ -354,7 +350,7 @@ public class DriveCommands {
 
     // State tracking - make it a final array so we can modify it inside the lambda
     final boolean[] reachedInitialPosition = {false};
-    final double positionThreshold = 0.1; // meters
+    final double positionThreshold = 0.01; // meters
 
     // If targetDistance is 0, skip the first phase
     if (targetDistance == 0) {
@@ -403,7 +399,8 @@ public class DriveCommands {
               // Check if we've reached the initial position
               if (!reachedInitialPosition[0] && distanceToTarget < positionThreshold) {
                 reachedInitialPosition[0] = true;
-                // Reset controllers with current position and velocity (0) when transitioning to phase 2
+                // Reset controllers with current position and velocity (0) when transitioning to
+                // phase 2
                 drive.xController.reset(currentPose.getX(), 0);
                 drive.yController.reset(currentPose.getY(), 0);
               }
@@ -424,7 +421,7 @@ public class DriveCommands {
                   "DriveCommands/phase", reachedInitialPosition[0] ? "GoToTarget" : "Approach");
 
               // Adjust blending for more direct movement when far away
-              double blendThreshold = 0.5; // Meters where we start blending
+              double blendThreshold = 0.000001; // Meters where we start blending
               double autoWeight = Math.min(distanceToTarget / blendThreshold, 1.0);
               double driverWeight = 1.0 - autoWeight;
 
@@ -442,7 +439,7 @@ public class DriveCommands {
               // Reduce speed as we get closer to final target
               if (reachedInitialPosition[0] && distanceToTarget < 0.3) {
                 double speedScale = distanceToTarget / 0.3; // Scale down speed proportionally
-                speedScale = Math.max(0.3, speedScale); // Don't go below 30% speed
+                speedScale = Math.max(0.1, speedScale); // Don't go below 30% speed
                 xSpeed *= speedScale;
                 ySpeed *= speedScale;
               }
@@ -456,6 +453,18 @@ public class DriveCommands {
               // Calculate rotation speed using drive's snap controller
               double rotationSpeed = drive.thetaController.calculate(currentAngle, targetAngle);
 
+              if (drive.xController.atGoal()) {
+                finalXSpeed = 0;
+              }
+
+              if (drive.yController.atGoal()) {
+                finalYSpeed = 0;
+              }
+
+              if (drive.thetaController.atGoal()) {
+                rotationSpeed = 0;
+              }
+
               // Apply speeds to drive
               drive.runVelocity(
                   ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -467,7 +476,8 @@ public class DriveCommands {
             drive)
         .beforeStarting(
             () -> {
-              // Reset state when command starts - but keep reachedInitialPosition if we want to go direct
+              // Reset state when command starts - but keep reachedInitialPosition if we want to go
+              // direct
               if (targetDistance != 0) {
                 reachedInitialPosition[0] = false;
               }
@@ -478,10 +488,10 @@ public class DriveCommands {
   }
 
   public static Command alignToTargetLine(
-    Drive drive,
-    DoubleSupplier forwardSupplier,
-    DoubleSupplier strafeSupplier,
-    Supplier<Pose2d> targetPoseSupplier) {
-  return alignToTargetLine(drive, forwardSupplier, strafeSupplier, targetPoseSupplier, 1.0);
-}
+      Drive drive,
+      DoubleSupplier forwardSupplier,
+      DoubleSupplier strafeSupplier,
+      Supplier<Pose2d> targetPoseSupplier) {
+    return alignToTargetLine(drive, forwardSupplier, strafeSupplier, targetPoseSupplier, 1.0);
+  }
 }

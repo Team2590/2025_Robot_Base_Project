@@ -203,9 +203,9 @@ public final class Constants {
           Units.inchesToMeters(12 + 3.5 + 1 + 1); // Forward offset (from the first code snippet)
       double adjustY_left =
           Units.inchesToMeters(
-              2.7); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is "left
+              1.7); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is "left
       // and right", adjustY sin is + -y. Change adjust offsets
-      double adjustY_right = Units.inchesToMeters(8 + 2.3); //
+      double adjustY_right = Units.inchesToMeters(8 + 5.3); //
 
       double rightReefX =
           tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right * Math.sin(tagRotation);
@@ -325,7 +325,7 @@ public final class Constants {
     public static final double INTAKE_FACTORY_HOME_POSITION = 0;
     public static final double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 0;
     public static final double INTAKE_CORAL_INTAKE_SPEED = 4;
-    public static final double INTAKE_CORAL_OUTTAKE_SPEED = -6; // TODO
+    public static final double INTAKE_CORAL_OUTTAKE_SPEED = -4; // TODO //-
     public static final double INTAKE_ALGAE_INTAKE_SPEED = -6;
     public static final double INTAKE_ALGAE_OUTTAKE_SPEED = 8;
     public static final double HAS_ALGAE_THRESHOLD_CURRENT = 10;
