@@ -2,6 +2,7 @@ package frc.robot.util;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import org.junit.jupiter.api.Test;
 
@@ -67,5 +68,16 @@ class SafetyCheckerTest {
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS + 1));
+  }
+
+  @Test
+  void nemesisJoystick_testButtonAlreadyBinded_error() {
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> {
+          NemesisJoystick joystick = new NemesisJoystick(1);
+          joystick.button(1).onTrue(Commands.none());
+          joystick.button(1).onTrue(Commands.none());
+        });
   }
 }
