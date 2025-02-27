@@ -74,6 +74,18 @@ public class EndEffector extends SubsystemBase {
         });
   }
 
+  public Command runEndEffectorVoltage(double voltage) {
+    return runEnd(
+        () -> {
+          io.setVelocity(voltage);
+          isRunning = true;
+        },
+        () -> {
+          io.stop();
+          isRunning = false;
+        });
+  }
+
   public Command stopEndEffector() {
     return runOnce(
         () -> {

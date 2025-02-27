@@ -21,6 +21,50 @@
           "data": {
             "waitTime": 2.0
           }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "NW_R_to_source"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "PrimeSource"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeSource"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "source_to_NW_L"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4"
+          }
         }
       ]
     }
