@@ -48,8 +48,9 @@ public class ControllerOrchestrator {
   public Target getTarget() {
     Target target = parseTargetString(getMoveTo());
     if (target == null) {
-      System.err.println("---> Using Default Target: " + getMoveTo());
-      return new Target(lookupPoseBasedOnAlliance(DEFAULT_REEF_TARGET), ScoringFactory.Level.L4);
+      target = new Target(lookupPoseBasedOnAlliance(DEFAULT_REEF_TARGET), ScoringFactory.Level.L4);
+      System.err.println("---> Using Default Target: " + target);
+      return target;
     }
     return target;
   }
@@ -73,13 +74,11 @@ public class ControllerOrchestrator {
 
   /** Command that needs to be bound to a button to driveToTarget. */
   public Command bindDriveToTargetCommand(Drive drive) {
-    System.out.println("DRIVING");
     return DriveCommands.driveToPose(drive, () -> getTarget().pose());
   }
 
   // This commands will drive to pose while "priming for intake" at coral source
   public Command bindDriveToSourceIntake(Drive drive) {
-    System.out.println("TESTING THIS COMMAND" + getSourcePose());
     var requirements = new HashSet<Subsystem>();
     requirements.add(drive);
     return Commands.defer(
