@@ -412,16 +412,7 @@ public class RobotContainer {
     // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
     leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
     leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
-
-    leftJoystick
-        .button(12)
-        .whileTrue(
-            DriveCommands.alignToTargetLine(
-                drive,
-                getLeftJoystick()::getY, // Forward/backward control
-                getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
-                () -> controllerApp.getTarget().pose(),
-                1.0));
+    leftJoystick.button(12).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
 
     leftJoystick
         .button(13)
@@ -430,8 +421,8 @@ public class RobotContainer {
                 drive,
                 getLeftJoystick()::getY, // Forward/backward control
                 getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
-                () -> FieldConstants.BlueReefPoses.NW_left,
-                0.0));
+                () -> controllerApp.getTarget().pose(),
+                1.0));
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
