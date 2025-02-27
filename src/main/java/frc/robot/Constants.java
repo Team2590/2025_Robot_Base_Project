@@ -13,6 +13,10 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -32,9 +36,6 @@ import frc.robot.util.PolygonLocator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -50,17 +51,17 @@ public final class Constants {
   public static final double endEffectOffset = .2921; // Offset of the end effector to the
 
   public static class DriveToPoseConstraints {
-    public static double maxVelocityMPS = 15;
-    public static double maxAccelerationMPSSq = 10;
+    public static double maxVelocityMPS = 3;
+    public static double maxAccelerationMPSSq = 3;
     public static double maxAngularVelocityRadPerSec = 1;
     public static double maxAngularAccelerationRadPerSecSq = 1;
 
     public static PathConstraints pathConstraints =
         new PathConstraints(
-            maxVelocityMPS * .5,
-            maxAccelerationMPSSq * .5,
-            maxAngularVelocityRadPerSec * .5,
-            maxAngularAccelerationRadPerSecSq * .5);
+            maxVelocityMPS * .1,
+            maxAccelerationMPSSq * .1,
+            maxAngularVelocityRadPerSec * .1,
+            maxAngularAccelerationRadPerSecSq * .1);
   }
 
   private static List<FRCPolygon> polygons = new ArrayList<>();
@@ -199,9 +200,12 @@ public final class Constants {
       Pose2d tagPose = VisionConstants.aprilTagLayout.getTagPose(aprilTagID).get().toPose2d();
       double tagRotation = tagPose.getRotation().getRadians();
       double adjustX =
-          Units.inchesToMeters(12 + 3.5); // Forward offset (from the first code snippet)
-      double adjustY_left = Units.inchesToMeters(5); // Left/Right offset (from both snippets)
-      double adjustY_right = Units.inchesToMeters(5); // Left/Right offset (from both snippets)
+          Units.inchesToMeters(12 + 3.5 + 1 + 1); // Forward offset (from the first code snippet)
+      double adjustY_left =
+          Units.inchesToMeters(
+              2.7); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is "left
+      // and right", adjustY sin is + -y. Change adjust offsets
+      double adjustY_right = Units.inchesToMeters(8 + 2.3); //
 
       double rightReefX =
           tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right * Math.sin(tagRotation);
@@ -219,13 +223,18 @@ public final class Constants {
       return returnPoses;
     }
   }
-  public class DriveToPoseConstants{
+
+  public class DriveToPoseConstants {
     public static final LinearVelocity MAX_TELEOP_VELOCITY = TunerConstantsLeonidas.kSpeedAt12Volts;
     public static final AngularVelocity MAX_TELEOP_ANGULAR_VELOCITY = RotationsPerSecond.of(1.25);
-    public static LinearVelocity  MAX_DRIVE_TO_POSE_TRANSLATION_VELOCITY = MAX_TELEOP_VELOCITY.div(2.0);
-    public static LinearAcceleration  MAX_DRIVE_TO_POSE_TRANSLATION_ACCELERATION  = MetersPerSecondPerSecond.of(2.0);
-    public static AngularVelocity  MAX_DRIVE_TO_POSE_ANGULAR_VELOCITY = MAX_TELEOP_ANGULAR_VELOCITY.times(0.75);
-    public static AngularAcceleration  MAX_DRIVE_TO_POSE_ANGULAR_ACCELERATION  =  RadiansPerSecondPerSecond.of(6.0 * Math.PI);
+    public static LinearVelocity MAX_DRIVE_TO_POSE_TRANSLATION_VELOCITY =
+        MAX_TELEOP_VELOCITY.div(2.0);
+    public static LinearAcceleration MAX_DRIVE_TO_POSE_TRANSLATION_ACCELERATION =
+        MetersPerSecondPerSecond.of(2.0);
+    public static AngularVelocity MAX_DRIVE_TO_POSE_ANGULAR_VELOCITY =
+        MAX_TELEOP_ANGULAR_VELOCITY.times(0.75);
+    public static AngularAcceleration MAX_DRIVE_TO_POSE_ANGULAR_ACCELERATION =
+        RadiansPerSecondPerSecond.of(6.0 * Math.PI);
     public static double THETA_kD = 0;
     public static double THETA_kI = 0;
     public static double THETA_kP = 3.0;
@@ -348,7 +357,7 @@ public final class Constants {
     public static final double CLIMB_VOLTAGE = 8.0; // 2.0 tested
   }
 
-  public static class IntakeConstantsLarry  {
+  public static class IntakeConstantsLarry {
     static int canID = 60;
     static int currentLimitAmps = 40;
     static String canBus = "Takeover";

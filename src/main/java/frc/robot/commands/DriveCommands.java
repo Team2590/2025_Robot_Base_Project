@@ -343,7 +343,10 @@ public class DriveCommands {
     requirements.add(drive);
     return Commands.defer(
         () -> {
-          Pose2d targetPose = targetPoseSupplier.get().rotateBy(new Rotation2d(Math.PI));
+          Pose2d targetPose =
+              targetPoseSupplier
+                  .get()
+                  .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI)));
           if (targetPose != null) {
             Logger.recordOutput("DriveCommands/drive_to_pose_target", targetPose);
             return AutoBuilder.pathfindToPose(
@@ -367,6 +370,7 @@ public class DriveCommands {
     drive.snapController.enableContinuousInput(-Math.PI, Math.PI);
     return Commands.run(
         () -> {
+          drive.snapController.reset();
           Pose2d currentPose = drive.getPose();
           Pose2d targetPose = targetPoseSupplier.get();
           if (targetPose == null) {
@@ -374,24 +378,26 @@ public class DriveCommands {
           }
           Transform2d poseTransform = targetPose.minus(currentPose);
           double y_offset = poseTransform.getY();
-
-          double angle_offset =
-              poseTransform.getRotation().rotateBy(new Rotation2d(Math.PI)).getRadians();
+          double angle_offset = poseTransform.getRotation().getRadians();
+          if (drive.snapController.atSetpoint()) angle_offset = 0;
           Logger.recordOutput("Odometry/Y Error to Pose", y_offset);
           Logger.recordOutput("Odometry/Angle Error to Pose", angle_offset);
           Logger.recordOutput("Odometry/targetPose", targetPose);
+          Logger.recordOutput("Odometry/SnapPID Error", drive.snapController.getError());
 
           drive.runVelocity(
               ChassisSpeeds.fromRobotRelativeSpeeds(
                   new ChassisSpeeds(
                       forwardSupplier.getAsDouble()
                           * drive.getMaxLinearSpeedMetersPerSec()
-                          * .5, // Forward speed is zero for autonomous alignment
+                          * .5
+                          * 0, // Forward speed is zero for autonomous alignment
                       -drive.linearMovementController.calculate(y_offset, 0)
-                          * drive.getMaxLinearSpeedMetersPerSec(), // Lateral movement
+                          * drive.getMaxLinearSpeedMetersPerSec()
+                          * 0, // Lateral movement
                       drive.snapController.calculate(angle_offset, 0)
                           * drive.getMaxAngularSpeedRadPerSec()
-                          * .25),
+                          * 1),
                   drive.getPose().getRotation()));
         },
         drive);
