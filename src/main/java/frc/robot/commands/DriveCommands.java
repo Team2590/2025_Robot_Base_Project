@@ -15,6 +15,7 @@ package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -40,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -51,6 +53,9 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
+
+  private static PIDController linearMovementController = new PIDController(5, 0.0, 0.0);
+  private static PIDController thetaController = new PIDController(.34, 0.0, 0.0);
 
   private DriveCommands() {}
 
@@ -312,10 +317,63 @@ public class DriveCommands {
     requirements.add(drive);
     return Commands.defer(
         () -> {
-          Pose2d targetPose = targetPoseSupplier.get();
-          return AutoBuilder.pathfindToPose(
-              targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
+          Pose2d targetPose =
+              targetPoseSupplier
+                  .get()
+                  .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI)));
+          if (targetPose != null) {
+            Logger.recordOutput("DriveCommands/drive_to_pose_target", targetPose);
+            return AutoBuilder.pathfindToPose(
+                targetPose, DriveToPoseConstraints.pathConstraints, 0.0);
+          }
+          return Commands.print("No target pose found, not running the command");
         },
         requirements);
+  }
+
+  /**
+   * Aligns the robot to a given pose, reducing horizontal and angle error
+   *
+   * @param drive robot drive
+   * @param horizontaDoubleSupplier gets the joystick's horizontal component
+   * @param targetPose the pose which we want to align to
+   * @return command for aligning to the target pose (limiting angle and horizontal offset)
+   */
+  public static Command alignToPose(
+      Drive drive, DoubleSupplier forwardSupplier, Supplier<Pose2d> targetPoseSupplier) {
+    drive.snapController.enableContinuousInput(-Math.PI, Math.PI);
+    return Commands.run(
+        () -> {
+          drive.snapController.reset();
+          Pose2d currentPose = drive.getPose();
+          Pose2d targetPose = targetPoseSupplier.get();
+          if (targetPose == null) {
+            Commands.print("No target specified");
+          }
+          Transform2d poseTransform = targetPose.minus(currentPose);
+          double y_offset = poseTransform.getY();
+          double angle_offset = poseTransform.getRotation().getRadians();
+          if (drive.snapController.atSetpoint()) angle_offset = 0;
+          Logger.recordOutput("Odometry/Y Error to Pose", y_offset);
+          Logger.recordOutput("Odometry/Angle Error to Pose", angle_offset);
+          Logger.recordOutput("Odometry/targetPose", targetPose);
+          Logger.recordOutput("Odometry/SnapPID Error", drive.snapController.getError());
+
+          drive.runVelocity(
+              ChassisSpeeds.fromRobotRelativeSpeeds(
+                  new ChassisSpeeds(
+                      forwardSupplier.getAsDouble()
+                          * drive.getMaxLinearSpeedMetersPerSec()
+                          * .5
+                          * 0, // Forward speed is zero for autonomous alignment
+                      -drive.linearMovementController.calculate(y_offset, 0)
+                          * drive.getMaxLinearSpeedMetersPerSec()
+                          * 0, // Lateral movement
+                      drive.snapController.calculate(angle_offset, 0)
+                          * drive.getMaxAngularSpeedRadPerSec()
+                          * 1),
+                  drive.getPose().getRotation()));
+        },
+        drive);
   }
 }

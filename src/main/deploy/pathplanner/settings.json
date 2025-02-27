@@ -1,6 +1,6 @@
 {
-  "robotWidth": 0.794,
-  "robotLength": 0.79375,
+  "robotWidth": 0.927,
+  "robotLength": 0.927,
   "holonomicMode": true,
   "pathFolders": [
     "auton4",
@@ -14,27 +14,26 @@
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
-  "robotMass": 43.0913,
+  "robotMass": 47.627,
   "robotMOI": 6.883,
   "robotTrackwidth": 0.546,
   "driveWheelRadius": 0.051,
   "driveGearing": 5.143,
   "maxDriveSpeed": 5.8,
   "driveMotorType": "krakenX60FOC",
-  "driveCurrentLimit": 60.0,
+  "driveCurrentLimit": 80.0,
   "wheelCOF": 1.2,
-  "flModuleX": 0.18,
-  "flModuleY": 0.255,
-  "frModuleX": 0.18,
-  "frModuleY": -0.255,
-  "blModuleX": -0.18,
-  "blModuleY": 0.255,
-  "brModuleX": -0.18,
-  "brModuleY": -0.255,
+  "flModuleX": 0.305,
+  "flModuleY": 0.305,
+  "frModuleX": 0.305,
+  "frModuleY": -0.305,
+  "blModuleX": -0.305,
+  "blModuleY": 0.305,
+  "brModuleX": -0.305,
+  "brModuleY": -0.305,
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
   "robotFeatures": [
-    "{\"name\":\"EndEffector\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.102235,\"y\":0.2},\"size\":{\"width\":0.4,\"length\":0.001},\"borderRadius\":0.05,\"strokeWidth\":0.04,\"filled\":false}}",
-    "{\"name\":\"rotated EndEffector\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.102,\"y\":-0.3},\"size\":{\"width\":0.2,\"length\":0.001},\"borderRadius\":0.002,\"strokeWidth\":0.04,\"filled\":false}}"
+    "{\"name\":\"CoralOuttake\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.3,\"y\":0.1335},\"size\":{\"width\":0.01,\"length\":0.3},\"borderRadius\":0.002,\"strokeWidth\":0.04,\"filled\":true}}"
   ]
 }

@@ -82,7 +82,7 @@ public class RobotContainer {
   @Getter private static Intake intake;
   @Getter private static EndEffector endEffector;
   @Getter private static Climb climb;
-  private final ControllerOrchestrator controllerApp = new ControllerOrchestrator();
+  @Getter private static ControllerOrchestrator controllerApp = new ControllerOrchestrator();
 
   // private final Intake intake;
   public static final TunerConstantsWrapper constantsWrapper = new TunerConstantsWrapper();
@@ -359,16 +359,26 @@ public class RobotContainer {
         "Intake FF Characterization",
         new FeedForwardCharacterization(
             intake, intake::setVoltage, intake::getCharacterizationVelocity));
+  }
 
+  /**
+   * Configure buttons.
+   *
+   * <p>Called from {@link Robot#robotInit()}. Avoid calling from RobotContainer constructor as it
+   * uses Subsystems factories which in turn use RobotContainer which is not fully initialized yet
+   * since constructor is not fully executed, causing NullPointerExceptions at startup.
+   */
+  public void configureButtons() {
     // Configure the button bindings
     if (Constants.currentMode == Constants.Mode.SIM) {
       configureButtonBindingsSimulation();
+    } else {
+      configureButtonBindings();
     }
-
-    configureButtonBindings();
   }
 
   private void configureButtonBindingsSimulation() {
+    drive.setDefaultCommand(DriveFactory.joystickDrive());
 
     // Add elevator control bindings
     leftJoystick
@@ -397,6 +407,15 @@ public class RobotContainer {
 
     leftJoystick.button(8).onTrue(ScoringFactory.score(Level.L3));
     leftJoystick.button(9).onTrue(ScoringFactory.scoreProcessor());
+
+    // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
+    leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
+    leftJoystick
+        .button(1)
+        .whileTrue(
+            DriveCommands.alignToPose(
+                drive, getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left));
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -407,8 +426,60 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
+    /**
+     * leftJoystick .button(1) .whileTrue( DriveCommands.alignToPose( drive,
+     * getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left));
+     */
+    // climb buttons
+    // Causing NullPointerException on startup in SIM
+    rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
+    rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
+    rightJoystick.button(16).whileTrue(ScoringFactory.climb());
 
-    // reset button binds
+    // Scoring buttons
+    leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
+    leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
+    leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
+    rightJoystick.povDown().whileTrue(ScoringFactory.score(Level.L1));
+    leftJoystick.button(2).whileTrue(ScoringFactory.stow());
+    leftJoystick.button(4).and(leftJoystick.trigger()).whileTrue(ScoringFactory.scoreProcessor());
+    leftJoystick
+        .trigger()
+        .and(leftJoystick.button(4).negate())
+        .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
+
+    // Controller App Buttons
+    // rightJoystick
+    //     .button(2)
+    //     .whileTrue(
+    //         DriveCommands.alignToPose(
+    //             drive, leftJoystick::getY, () -> FieldConstants.BlueReefPoses.SW_left));
+    rightJoystick
+        .button(2)
+        .whileTrue(DriveCommands.driveToPose(drive, () -> controllerApp.getTarget().pose()));
+    rightJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
+    // Intake Buttons
+    leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());
+    leftJoystick
+        .button(4)
+        .and(rightJoystick.trigger())
+        .whileTrue(GamePieceFactory.intakeAlgaeGround());
+    rightJoystick
+        .trigger()
+        .and(leftJoystick.button(4).negate())
+        .whileTrue(GamePieceFactory.intakeCoralFeeder());
+
+    rightJoystick
+        .povUp()
+        .whileTrue(
+            EndEffectorFactory.runEndEffectorVoltage(
+                -Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE));
+
+    // Manual Elevator Control
+    rightJoystick.button(14).whileTrue(ElevatorFactory.manualDown());
+    rightJoystick.button(15).whileTrue(ElevatorFactory.manualUp());
+
+    // Reset Buttons
     rightJoystick
         .button(5)
         .onTrue(
@@ -418,94 +489,17 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    leftJoystick.button(5).onTrue(Commands.runOnce(() -> elevator.resetRotationCount(), elevator));
-
-    // climb button binds
+    rightJoystick.button(8).onTrue(elevator.resetRotationCountCommand());
     /**
-     * TODO - need climb factory methods for running till end and deploying backpack
-     * rightJoystick.button(4) -> backpack activation down leftJoystick.button(4) or button 3 -> run
-     * full climb
+     * For Tuning: rightJoystick .trigger() .and(leftJoystick.button(4).negate()) .whileTrue( new
+     * ParallelCommandGroup( elevator.setPositionLoggedTunableNumber(),
+     * arm.setPositionLoggedTunableNumber()));
      */
-
-    // intake button binds
-    rightJoystick
-        .trigger()
-        .and(rightJoystick.button(3).negate())
-        .and(rightJoystick.button(2).negate())
-        .whileTrue(GamePieceFactory.intakeAlgaeGround());
-    rightJoystick
-        .button(2)
-        .and(rightJoystick.trigger())
-        .whileTrue(GamePieceFactory.intakeCoralGround());
-
-    rightJoystick
-        .button(3)
-        .and(rightJoystick.trigger())
-        .whileTrue(GamePieceFactory.intakeCoralFeeder());
-
-    // scoring button binds
-    // TODO- controller app activation button:
-    // rightJoystick.button(3).and(leftJoystick.trigger()).whileTrue(<controller app function>);
-    // rightJoystick.button(3).onTrue(ScoringFactory.scoreL2());
-    /**
-     * For tuning purposes: rightJoystick .button(3) .and(leftJoystick.trigger()) .whileTrue( new
-     * ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
-     * elevator.setPositionLoggedTunableNumber())); controller.button(7).whileTrue( new
-     * ParallelCommandGroup( arm.setPositionLoggedTunableNumber(),
-     * elevator.setPositionLoggedTunableNumber()));
-     */
-    // manual backup button binds
-
-    // controller
-    //     .button(7)
-    //     .whileTrue(
-    //         new ParallelCommandGroup(
-    //             arm.setPositionLoggedTunableNumber(),
-    // elevator.setPositionLoggedTunableNumber()));
-
-    rightJoystick
-        .button(3)
-        .and(leftJoystick.button(2))
-        .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
-    rightJoystick.povUp().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualUp());
-    rightJoystick.povDown().and(leftJoystick.button(4)).whileTrue(ElevatorFactory.manualDown());
-
-    // SCORING BUTTONS
-    // rightJoystick
-    //     .button(2)
-    //     .and(rightJoystick.trigger())
-    //     .whileTrue(GamePieceFactory.intakeCoralGround());
-    // rightJoystick.button(2).and(rightJoystick.trigger()).whileTrue(ScoringFactory.scoreL1());
-
-    leftJoystick
-        .trigger()
-        .and(rightJoystick.button(3).negate())
-        .and(rightJoystick.button(2).negate())
-        .whileTrue(ScoringFactory.scoreProcessor().finallyDo(() -> RobotState.setIntakeNoAlgae()));
-
-    rightJoystick
-        .button(2)
-        .and(leftJoystick.trigger())
-        .whileTrue(ScoringFactory.score(Level.L1).finallyDo(() -> RobotState.setIntakeNoCoral()));
-
-    // controller.a().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
-    // controller.b().whileTrue(EndEffectorFactory.runEndEffector());
-    // controller.rightBumper().onTrue(GamePieceFactory.intakeAlgaeGround());
-    // controller.leftBumper().onTrue(GamePieceFactory.intakeCoralGround());
-    controller.rightBumper().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
-    controller.leftBumper().whileTrue(EndEffectorFactory.runEndEffector());
-    controller.a().whileTrue(ScoringFactory.score(Level.L1));
-    controller.x().whileTrue(ScoringFactory.score(Level.L2));
-    controller.b().whileTrue(ScoringFactory.score(Level.L3));
-    controller.y().whileTrue(ScoringFactory.score(Level.L4));
-
-    rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
-    rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
-    rightJoystick.button(16).whileTrue(ScoringFactory.climb());
   }
 
   /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
+   * drive Use this to pass the autonomous command to the main
+   * {@lifrc.robot.RobotContainer.configureButtonBindings(RobotContainer.java:509)nk Robot} class.
    *
    * @return the command to run in autonomous
    */
@@ -535,12 +529,15 @@ public class RobotContainer {
     NamedCommands.registerCommand("ScoreProcessor", ScoringFactory.scoreProcessor());
 
     NamedCommands.registerCommand("Stow-Mechanism", ScoringFactory.stow());
-    NamedCommands.registerCommand("PrimeSource", ScoringFactory.stow());
+    // NamedCommands.registerCommand("PrimeSource", ScoringFactory.stow());
 
     // This uses a wait command but we can make this into a WaitUntil command that can wait
     // for a certain condition.
     NamedCommands.registerCommand(
         "WaitAndPrint", Commands.waitSeconds(5).andThen(Commands.print("Done waiting ...")));
+
+    NamedCommands.registerCommand("PrimeSource", GamePieceFactory.primeCoralSource());
+    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeCoralFeeder());
   }
 
   public boolean inReef() {
