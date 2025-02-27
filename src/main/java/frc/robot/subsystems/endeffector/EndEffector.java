@@ -33,11 +33,11 @@ public class EndEffector extends SubsystemBase {
     io.updateInputs(inputs);
     filtered_data = filter.calculate(inputs.proxValue);
 
-    Logger.recordOutput("EndEffector/StatorCurrent", inputs.statorCurrentAmps);
-    Logger.recordOutput("EndEffector/IsRunning", isRunning);
-    Logger.recordOutput("EndEffector/CurrentThreshold", CURRENT_THRESHOLD);
-    Logger.recordOutput("EndEffector/filter", filtered_data);
-    Logger.recordOutput("EndEffector/prox", inputs.proxValue);
+    // Logger.recordOutput("EndEffector/StatorCurrent", inputs.statorCurrentAmps);
+    // Logger.recordOutput("EndEffector/IsRunning", isRunning);
+    // Logger.recordOutput("EndEffector/CurrentThreshold", CURRENT_THRESHOLD);
+    // Logger.recordOutput("EndEffector/filter", filtered_data);
+    // Logger.recordOutput("EndEffector/prox", inputs.proxValue);
   }
 
   public Command runEndEffector() {

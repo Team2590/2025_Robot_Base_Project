@@ -49,6 +49,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -448,14 +449,14 @@ public class DriveCommands {
               double angleError = MathUtil.angleModulus(targetAngle - currentAngle);
 
               // Log values for debugging
-              Logger.recordOutput("DriveCommands/targetPose", targetPose);
-              Logger.recordOutput("DriveCommands/robotEndPose", robotEndPose);
-              Logger.recordOutput("DriveCommands/distanceToTarget", distanceToTarget);
-              Logger.recordOutput("DriveCommands/angleError", angleError);
-              Logger.recordOutput(
-                  "DriveCommands/atTargetPosition", distanceToTarget < positionThreshold);
-              Logger.recordOutput(
-                  "DriveCommands/phase", reachedInitialPosition[0] ? "GoToTarget" : "Approach");
+              // Logger.recordOutput("DriveCommands/targetPose", targetPose);
+              // Logger.recordOutput("DriveCommands/robotEndPose", robotEndPose);
+              // Logger.recordOutput("DriveCommands/distanceToTarget", distanceToTarget);
+              // Logger.recordOutput("DriveCommands/angleError", angleError);
+              // Logger.recordOutput(
+              //     "DriveCommands/atTargetPosition", distanceToTarget < positionThreshold);
+              // Logger.recordOutput(
+              //     "DriveCommands/phase", reachedInitialPosition[0] ? "GoToTarget" : "Approach");
 
               // Adjust blending for more direct movement when far away
               double blendThreshold = 0.000001; // Meters where we start blending
@@ -533,16 +534,28 @@ public class DriveCommands {
   }
 
   public static Command preciseAlignment(Drive driveSubsystem, Supplier<Pose2d> preciseTarget) {
-    PathConstraints constraints = Constants.DriveToPoseConstraints.fastpathConstraints;
+    PathConstraints constraints = Constants.DriveToPoseConstraints.slowpathConstraints;
+
     return Commands.defer(
-        () ->
-            AutoBuilder.followPath(
-                getPreciseAlignmentPath(
-                    constraints,
-                    driveSubsystem.getChassisSpeeds(),
-                    driveSubsystem.getPose(),
-                    preciseTarget.get(),
-                    preciseTarget.get().getRotation().plus(new Rotation2d(Math.PI)))),
+        () -> {
+          AtomicReference<Rotation2d> preciseTargetRotation2d =
+              new AtomicReference<>(preciseTarget.get().getRotation());
+          Logger.recordOutput(
+              "PrecisetargetPose",
+              preciseTarget
+                  .get());
+          if (preciseTarget.get().getRotation() == null
+              || driveSubsystem.getPose().getRotation() == null) {
+            return Commands.none();
+          }
+          return AutoBuilder.followPath(
+              getPreciseAlignmentPath(
+                  constraints,
+                  driveSubsystem.getChassisSpeeds(),
+                  driveSubsystem.getPose(),
+                  preciseTarget.get(),
+                  preciseTargetRotation2d.get()));
+        },
         Set.of(driveSubsystem));
   }
 
@@ -575,6 +588,7 @@ public class DriveCommands {
         List.of(
             new ConstraintsZone(1.0, 2.0, Constants.DriveToPoseConstraints.slowpathConstraints));
 
+    // Logger.recordOutput("DriveCommands/GoalEndState", preciseTargetApproachDirection);
     PathPlannerPath path =
         new PathPlannerPath(
             waypoints,
@@ -585,7 +599,7 @@ public class DriveCommands {
             constraints,
             new IdealStartingState(
                 fieldRelativeSpeedsMPS.getNorm(), currentRobotPose.getRotation()),
-            new GoalEndState(MetersPerSecond.of(0), preciseTarget.getRotation()),
+            new GoalEndState(MetersPerSecond.of(0), preciseTargetApproachDirection),
             false);
     path.preventFlipping = true;
 

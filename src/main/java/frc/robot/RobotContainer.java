@@ -19,6 +19,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -439,12 +441,19 @@ public class RobotContainer {
     rightJoystick
         .button(2)
         .whileTrue(
-            DriveCommands.alignToTargetLine(
+            DriveCommands.preciseAlignment(
                 drive,
-                getLeftJoystick()::getY, // Forward/backward control
-                getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
-                () -> controllerApp.getTarget().pose(),
-                0.0));
+                () ->
+                    controllerApp
+                        .getTarget()
+                        .pose()
+                        .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI)))));
+    // DriveCommands.alignToTargetLine(
+    //     drive,
+    //     getLeftJoystick()::getY, // Forward/backward control
+    //     getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
+    //     () -> controllerApp.getTarget().pose(),
+    //     0.0));
     // climb buttons
     // Causing NullPointerException on startup in SIM
     rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
@@ -464,7 +473,7 @@ public class RobotContainer {
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
 
     // Controller App Buttons
-    rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    // rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
     rightJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
     leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());

@@ -35,7 +35,7 @@ public class PolygonLocator {
     if (Constants.locator.findContainingPolygon(robotPose.getTranslation()) != null) {
       String zone = Constants.locator.findContainingPolygon(robotPose.getTranslation()).getName();
 
-      Logger.recordOutput("FieldZone", zone);
+      // Logger.recordOutput("FieldZone", zone);
       return zone;
     }
     return "General Field";
