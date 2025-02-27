@@ -108,7 +108,7 @@ public final class Constants {
   public static LoggedTunableNumber homeSetpoint =
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
   public static final String CANBUS = "Takeover";
-
+  
   public final class ArmConstantsLarry {
     // Fill in
     public static final double HOME_SETPOINT = homeSetpoint.get();
@@ -260,7 +260,7 @@ public final class Constants {
 
   //   public static class RedCoralPoses {
   //     Same applies to red reef but starting on the SouthEast side from driver station and from the perspective of the red alliance driver station.
-  
+
   //     public static final CoralPose p1 = new CoralPose(13.913, 5.088);
   //     public static final CoralPose p2 = new CoralPose(13.621, 5.253);
   //     public static final CoralPose p3 = new CoralPose(12.47, 5.253);
@@ -395,6 +395,8 @@ public final class Constants {
     static boolean brake = true;
   }
 
+  public static final int BLINKIN_LED_CONTROLLER_PORT = 0; // TODO
+  
   public static enum Mode {
     /** Running on a real robot. */
     COMP,
