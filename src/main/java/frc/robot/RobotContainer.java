@@ -378,6 +378,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsSimulation() {
+    // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
 
     // Add elevator control bindings

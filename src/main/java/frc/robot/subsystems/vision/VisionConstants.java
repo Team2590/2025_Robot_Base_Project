@@ -55,7 +55,11 @@ public class VisionConstants {
           Units.inchesToMeters(5.0),
           Units.inchesToMeters(12.0),
           Units.inchesToMeters(10.33832),
+<<<<<<< HEAD
           new Rotation3d(0.0, 0.0, Math.toRadians(-22.5)));
+=======
+          new Rotation3d(0.0, 0.0, Math.toRadians(-22.25)));
+>>>>>>> origin
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
@@ -63,7 +67,7 @@ public class VisionConstants {
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)
-  public static double linearStdDevBaseline = 0.02; // Meters
+  public static double linearStdDevBaseline = 0.1; // Meters // .02
   public static double angularStdDevBaseline = 0.06; // Radians
 
   // Standard deviation multipliers for each camera
