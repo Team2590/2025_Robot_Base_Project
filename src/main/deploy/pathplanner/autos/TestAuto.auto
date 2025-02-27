@@ -78,15 +78,12 @@
               }
             ]
           }
-<<<<<<< HEAD
         },
         {
           "type": "named",
           "data": {
             "name": "intakeSource"
           }
-=======
->>>>>>> origin
         }
       ]
     }
