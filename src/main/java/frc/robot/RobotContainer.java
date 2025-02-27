@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.command_factories.DriveFactory;
+import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
@@ -377,7 +378,11 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsSimulation() {
+    // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
+    leftJoystick
+        .button(1)
+        .whileTrue(DriveCommands.preciseAlignment(drive, () -> controllerApp.getTarget().pose()));
 
     // Add elevator control bindings
     leftJoystick
@@ -410,11 +415,17 @@ public class RobotContainer {
     // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
     leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
     leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
+    leftJoystick.button(12).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+
     leftJoystick
-        .button(1)
+        .button(13)
         .whileTrue(
-            DriveCommands.alignToPose(
-                drive, getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left));
+            DriveCommands.alignToTargetLine(
+                drive,
+                getLeftJoystick()::getY, // Forward/backward control
+                getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
+                () -> controllerApp.getTarget().pose(),
+                1.0));
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -425,10 +436,15 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
-    /**
-     * leftJoystick .button(1) .whileTrue( DriveCommands.alignToPose( drive,
-     * getLeftJoystick()::getY, () -> FieldConstants.BlueReefPoses.N_left));
-     */
+    rightJoystick
+        .button(2)
+        .whileTrue(
+            DriveCommands.alignToTargetLine(
+                drive,
+                getLeftJoystick()::getY, // Forward/backward control
+                getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
+                () -> controllerApp.getTarget().pose(),
+                0.0));
     // climb buttons
     // Causing NullPointerException on startup in SIM
     rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
@@ -466,6 +482,10 @@ public class RobotContainer {
         .whileTrue(
             EndEffectorFactory.runEndEffectorVoltage(
                 -Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE));
+
+    // Manual Elevator Control
+    rightJoystick.button(14).whileTrue(ElevatorFactory.manualDown());
+    rightJoystick.button(15).whileTrue(ElevatorFactory.manualUp());
 
     // Reset Buttons
     rightJoystick
@@ -517,12 +537,15 @@ public class RobotContainer {
     NamedCommands.registerCommand("ScoreProcessor", ScoringFactory.scoreProcessor());
 
     NamedCommands.registerCommand("Stow-Mechanism", ScoringFactory.stow());
-    NamedCommands.registerCommand("PrimeSource", ScoringFactory.stow());
+    // NamedCommands.registerCommand("PrimeSource", ScoringFactory.stow());
 
     // This uses a wait command but we can make this into a WaitUntil command that can wait
     // for a certain condition.
     NamedCommands.registerCommand(
         "WaitAndPrint", Commands.waitSeconds(5).andThen(Commands.print("Done waiting ...")));
+
+    NamedCommands.registerCommand("PrimeSource", GamePieceFactory.primeCoralSource());
+    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeCoralFeeder());
   }
 
   public boolean inReef() {

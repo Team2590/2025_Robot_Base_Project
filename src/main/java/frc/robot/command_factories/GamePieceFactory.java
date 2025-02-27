@@ -22,6 +22,13 @@ public class GamePieceFactory {
         IntakeFactory.setHoldingAlgaePosition());
   }
 
+  public static Command primeCoralSource() {
+
+    return new ParallelCommandGroup(
+        ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION),
+        ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS));
+  }
+
   public static Command intakeCoralGround() {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(

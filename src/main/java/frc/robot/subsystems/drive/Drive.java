@@ -26,7 +26,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -39,6 +39,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -84,19 +85,32 @@ public class Drive extends SubsystemBase {
       };
   private SwerveDrivePoseEstimator poseEstimator;
 
-  public PIDController snapController = new PIDController(.34, 0.0, 0.0);
-  LoggedTunableNumber snapControllerP = new LoggedTunableNumber("SnapController/kP", .34);
-  LoggedTunableNumber snapControllerD = new LoggedTunableNumber("SnapController/kD", .00001);
-  LoggedTunableNumber snapControllerTolerance =
-      new LoggedTunableNumber("SnapController/tolerance", .05);
+  public ProfiledPIDController thetaController =
+      new ProfiledPIDController(1.5, 0, 0.1, new TrapezoidProfile.Constraints(2.0, 4.0));
+  LoggedTunableNumber thetaControllerP = new LoggedTunableNumber("thetaController/kP", .30);
+  LoggedTunableNumber thetaControllerD = new LoggedTunableNumber("thetaController/kD", .0000);
+  LoggedTunableNumber thetaControllerTolerance =
+      new LoggedTunableNumber("thetaController/tolerance", .01);
+  LoggedTunableNumber thetaControllerMaxVel = new LoggedTunableNumber("thetaController/MaxVel", 1);
+  LoggedTunableNumber thetaControllerMaxAccel =
+      new LoggedTunableNumber("thetaController/MaxAccel", 1);
 
-  public final PIDController linearMovementController = new PIDController(1, 0.0, .00001);
-  LoggedTunableNumber linearMovementControllerP =
-      new LoggedTunableNumber("linearMovementController/kP", 1);
-  LoggedTunableNumber linearMovementControllerD =
-      new LoggedTunableNumber("linearMovementController/kD", 0);
-  LoggedTunableNumber linearMovementControllerTolerance =
-      new LoggedTunableNumber("linearMovementController/tolerance", .5);
+  public ProfiledPIDController xController =
+      new ProfiledPIDController(1.5, 0, 0.1, new TrapezoidProfile.Constraints(2.0, 4.0));
+  LoggedTunableNumber xControllerP = new LoggedTunableNumber("xController/kP", .7);
+  LoggedTunableNumber xControllerD = new LoggedTunableNumber("xController/kD", .0000);
+  LoggedTunableNumber xControllerMaxVel = new LoggedTunableNumber("xController/MaxVel", 1);
+  LoggedTunableNumber xControllerMaxAccel = new LoggedTunableNumber("xController/MaxAccel", 1);
+  LoggedTunableNumber xControllerTolerance = new LoggedTunableNumber("xController/tolerance", .01);
+
+  public ProfiledPIDController yController =
+      new ProfiledPIDController(1.5, 0, 0.1, new TrapezoidProfile.Constraints(2.0, 4.0));
+
+  LoggedTunableNumber yControllerP = new LoggedTunableNumber("yController/kP", .7);
+  LoggedTunableNumber yControllerD = new LoggedTunableNumber("yController/kD", .0000);
+  LoggedTunableNumber yControllerMaxVel = new LoggedTunableNumber("yController/MaxVel", 1);
+  LoggedTunableNumber yControllerMaxAccel = new LoggedTunableNumber("yController/MaxAccel", 1);
+  LoggedTunableNumber yControllerTolerance = new LoggedTunableNumber("yController/tolerance", .01);
 
   public Drive(
       GyroIO gyroIO,
@@ -135,6 +149,7 @@ public class Drive extends SubsystemBase {
                 constantsWrapper.FrontLeft.SlipCurrent,
                 1),
             getModuleTranslations());
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configure(
@@ -321,7 +336,7 @@ public class Drive extends SubsystemBase {
 
   /** Returns the measured chassis speeds of the robot. */
   @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
-  private ChassisSpeeds getChassisSpeeds() {
+  public ChassisSpeeds getChassisSpeeds() {
     return kinematics.toChassisSpeeds(getModuleStates());
   }
 
@@ -394,18 +409,32 @@ public class Drive extends SubsystemBase {
   }
 
   private void updateTunableNumbers() {
-    if (snapControllerP.hasChanged(hashCode())
-        || snapControllerD.hasChanged(hashCode())
-        || snapControllerTolerance.hasChanged(hashCode())) {
-      snapController.setPID(snapControllerP.get(), 0.0, snapControllerD.get());
-      snapController.setTolerance(snapControllerTolerance.get());
+    if (thetaControllerP.hasChanged(hashCode())
+        || thetaControllerD.hasChanged(hashCode())
+        || thetaControllerTolerance.hasChanged(hashCode())) {
+      thetaController.setPID(thetaControllerP.get(), 0.0, thetaControllerD.get());
+      thetaController.setTolerance(thetaControllerTolerance.get());
     }
-    if (linearMovementControllerP.hasChanged(hashCode())
-        || linearMovementControllerD.hasChanged(hashCode())
-        || linearMovementControllerTolerance.hasChanged(hashCode())) {
-      linearMovementController.setPID(
-          linearMovementControllerP.get(), 0.0, linearMovementControllerD.get());
-      linearMovementController.setTolerance(linearMovementControllerTolerance.get());
+    if (yControllerP.hasChanged(hashCode())
+        || yControllerD.hasChanged(hashCode())
+        || yControllerTolerance.hasChanged(hashCode())
+        || yControllerMaxVel.hasChanged(hashCode())
+        || yControllerMaxAccel.hasChanged(hashCode())) {
+      yController.setPID(yControllerP.get(), 0.0, yControllerD.get());
+      yController.setTolerance(yControllerTolerance.get());
+      yController.setConstraints(
+          new TrapezoidProfile.Constraints(yControllerMaxVel.get(), yControllerMaxAccel.get()));
+    }
+
+    if (xControllerP.hasChanged(hashCode())
+        || xControllerD.hasChanged(hashCode())
+        || xControllerTolerance.hasChanged(hashCode())
+        || xControllerMaxVel.hasChanged(hashCode())
+        || xControllerMaxAccel.hasChanged(hashCode())) {
+      xController.setPID(xControllerP.get(), 0.0, xControllerD.get());
+      xController.setTolerance(xControllerTolerance.get());
+      xController.setConstraints(
+          new TrapezoidProfile.Constraints(xControllerMaxVel.get(), xControllerMaxAccel.get()));
     }
   }
 }

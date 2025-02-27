@@ -39,7 +39,7 @@ public class VisionConstants {
           Units.inchesToMeters(-7.8508),
           Units.inchesToMeters(9.0),
           Units.inchesToMeters(35.7347),
-          new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0 - 180)));
+          new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
 
   // Processor Camera
   public static Transform3d robotToProcessorCam =
@@ -47,7 +47,7 @@ public class VisionConstants {
           Units.inchesToMeters(-6.379),
           Units.inchesToMeters(7.2767),
           Units.inchesToMeters(29.9459),
-          new Rotation3d(0.0, Math.toRadians(-27.0), Math.toRadians(-90.0 - 180)));
+          new Rotation3d(0.0, Math.toRadians(-27.0), Math.toRadians(-90.0)));
 
   // Reef Camera
   public static Transform3d robotToReefCam =
@@ -55,7 +55,7 @@ public class VisionConstants {
           Units.inchesToMeters(5.0),
           Units.inchesToMeters(12.0),
           Units.inchesToMeters(10.33832),
-          new Rotation3d(0.0, 0.0, Math.toRadians(-25.4884 - 180)));
+          new Rotation3d(0.0, 0.0, Math.toRadians(-22.25)));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
@@ -63,7 +63,7 @@ public class VisionConstants {
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)
-  public static double linearStdDevBaseline = 0.02; // Meters
+  public static double linearStdDevBaseline = 0.1; // Meters // .02
   public static double angularStdDevBaseline = 0.06; // Radians
 
   // Standard deviation multipliers for each camera
