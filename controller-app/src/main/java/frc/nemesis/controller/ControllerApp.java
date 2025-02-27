@@ -345,20 +345,17 @@ public class ControllerApp extends Application {
   }
 
   private void updatePendingCommand() {
-    if (selectedSide != null && selectedDirection != null) {
-      // Combine direction+side and level with underscore
-      String directionAndSide = selectedDirection + selectedSide.toLowerCase();
-      pendingCommand =
-          selectedLevel != null ? directionAndSide + "_" + selectedLevel : directionAndSide;
+    if (selectedLevel != null && selectedSide != null && selectedDirection != null) {
+      pendingCommand = selectedDirection + "_" + selectedSide + "_" + selectedLevel;
       System.out.println("Updated command string: " + pendingCommand);
       sendToNetworkTables("moveTo", pendingCommand);
     }
   }
 
-  private void sendToNetworkTables(String key, String value) {
-    if (value != null) {
-      client.publish(key, value);
-      System.out.println("Sending " + key + ": " + value);
+  private void sendToNetworkTables(String key, String command) {
+    if (command != null) {
+      client.publish(key, command);
+      System.out.println("Sending command: " + command);
     }
   }
 

@@ -372,11 +372,14 @@ public class RobotContainer {
     // Configure the button bindings
     if (Constants.currentMode == Constants.Mode.SIM) {
       configureButtonBindingsSimulation();
+    } else {
+      configureButtonBindings();
     }
-    configureButtonBindings();
   }
 
   private void configureButtonBindingsSimulation() {
+    // Default drive command using new factory method, replacement for above ^^.
+    drive.setDefaultCommand(DriveFactory.joystickDrive());
 
     // Add elevator control bindings
     leftJoystick
@@ -409,6 +412,7 @@ public class RobotContainer {
     // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
     leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
     leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
+    leftJoystick.button(12).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
