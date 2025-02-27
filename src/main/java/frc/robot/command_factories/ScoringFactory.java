@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants;
+import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.RobotState;
 import frc.robot.util.NemesisTimedCommand;
 
@@ -127,7 +128,7 @@ public class ScoringFactory {
    */
   public static Command stow() {
     return Commands.parallel(
-            ArmFactory.setPositionBlocking(0),
+            ArmFactory.setPositionBlocking(ArmConstantsLeonidas.ARM_SET_STOW),
             ElevatorFactory.setPositionBlocking(5),
             IntakeFactory.setHomePosition())
         .withName("Stow Mechanism");
@@ -155,5 +156,13 @@ public class ScoringFactory {
             // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
             ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION))
         .withName("Climb");
+  }
+
+  public static Command setDefaults() {
+    return Commands.parallel(
+            ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS),
+            ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION),
+            IntakeFactory.setHomePosition())
+        .withName("Set defaults");
   }
 }

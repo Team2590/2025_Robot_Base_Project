@@ -56,12 +56,19 @@ public final class Constants {
     public static double maxAngularVelocityRadPerSec = 1;
     public static double maxAngularAccelerationRadPerSecSq = 1;
 
-    public static PathConstraints pathConstraints =
+    public static PathConstraints fastpathConstraints =
         new PathConstraints(
-            maxVelocityMPS * .1,
-            maxAccelerationMPSSq * .1,
-            maxAngularVelocityRadPerSec * .1,
-            maxAngularAccelerationRadPerSecSq * .1);
+            maxVelocityMPS,
+            maxAccelerationMPSSq,
+            maxAngularVelocityRadPerSec,
+            maxAngularAccelerationRadPerSecSq);
+
+    public static PathConstraints slowpathConstraints =
+        new PathConstraints(
+            maxVelocityMPS * .25,
+            maxAccelerationMPSSq * .25,
+            maxAngularVelocityRadPerSec * .25,
+            maxAngularAccelerationRadPerSecSq * .25);
   }
 
   private static List<FRCPolygon> polygons = new ArrayList<>();
@@ -203,9 +210,9 @@ public final class Constants {
           Units.inchesToMeters(12 + 3.5 + 1 + 1); // Forward offset (from the first code snippet)
       double adjustY_left =
           Units.inchesToMeters(
-              2.7); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is "left
+              1.7); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is "left
       // and right", adjustY sin is + -y. Change adjust offsets
-      double adjustY_right = Units.inchesToMeters(8 + 2.3); //
+      double adjustY_right = Units.inchesToMeters(8 + 5.3); //
 
       double rightReefX =
           tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right * Math.sin(tagRotation);
@@ -256,6 +263,7 @@ public final class Constants {
     public static final boolean brake = true;
     public static final double reduction = 1; // was a 94.18
     public static final int cancoderID = 5;
+    public static final double ARM_SET_STOW = .33;
     // public static final double magOffset = -.596436; // -.398
     public static final double magOffset = -.268; // -.398
     public static final double sensorReduction = 58.8;
@@ -325,7 +333,7 @@ public final class Constants {
     public static final double INTAKE_FACTORY_HOME_POSITION = 0;
     public static final double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 0;
     public static final double INTAKE_CORAL_INTAKE_SPEED = 4;
-    public static final double INTAKE_CORAL_OUTTAKE_SPEED = -6; // TODO
+    public static final double INTAKE_CORAL_OUTTAKE_SPEED = -4; // TODO //-
     public static final double INTAKE_ALGAE_INTAKE_SPEED = -6;
     public static final double INTAKE_ALGAE_OUTTAKE_SPEED = 8;
     public static final double HAS_ALGAE_THRESHOLD_CURRENT = 10;
