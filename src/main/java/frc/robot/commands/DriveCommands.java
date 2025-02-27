@@ -13,6 +13,8 @@
 
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.ConstraintsZone;
 import com.pathplanner.lib.path.GoalEndState;
@@ -21,7 +23,6 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.RotationTarget;
 import com.pathplanner.lib.path.Waypoint;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -42,10 +43,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.DriveToPoseConstraints;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.vision.VisionConstants;
-
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashSet;
@@ -509,56 +506,63 @@ public class DriveCommands {
     return alignToTargetLine(drive, forwardSupplier, strafeSupplier, targetPoseSupplier, 1.0);
   }
 
-  public static Command preciseAlignment(
-            Drive driveSubsystem,
-            Pose2d preciseTarget,
-            Rotation2d preciseTargetApproachDirection) {
-        PathConstraints constraints = Constants.DriveToPoseConstraints.fastpathConstraints;
-        return Commands.defer(
-                        () -> AutoBuilder.followPath(getPreciseAlignmentPath(
-                                constraints,
-                                driveSubsystem.getChassisSpeeds(),
-                                driveSubsystem.getPose(),
-                                preciseTarget,
-                                preciseTargetApproachDirection)),
-                        Set.of(driveSubsystem));
-    }
+  public static Command preciseAlignment(Drive driveSubsystem, Supplier<Pose2d> preciseTarget) {
+    PathConstraints constraints = Constants.DriveToPoseConstraints.fastpathConstraints;
+    return Commands.defer(
+        () ->
+            AutoBuilder.followPath(
+                getPreciseAlignmentPath(
+                    constraints,
+                    driveSubsystem.getChassisSpeeds(),
+                    driveSubsystem.getPose(),
+                    preciseTarget.get(),
+                    preciseTarget.get().getRotation().plus(new Rotation2d(Math.PI)))),
+        Set.of(driveSubsystem));
+  }
 
-    private static PathPlannerPath getPreciseAlignmentPath(
-            PathConstraints constraints,
-            ChassisSpeeds measuredSpeedsFieldRelative,
-            Pose2d currentRobotPose,
-            Pose2d preciseTarget,
-            Rotation2d preciseTargetApproachDirection) {
-        Translation2d interiorWaypoint = preciseTarget
-                .getTranslation();
-        Translation2d fieldRelativeSpeedsMPS = new Translation2d(
-                measuredSpeedsFieldRelative.vxMetersPerSecond, measuredSpeedsFieldRelative.vyMetersPerSecond);
-        Rotation2d startingPathDirection = fieldRelativeSpeedsMPS
-                .times(0.8)
-                .plus(interiorWaypoint.minus(currentRobotPose.getTranslation()))
-                .getAngle();
+  private static PathPlannerPath getPreciseAlignmentPath(
+      PathConstraints constraints,
+      ChassisSpeeds measuredSpeedsFieldRelative,
+      Pose2d currentRobotPose,
+      Pose2d preciseTarget,
+      Rotation2d preciseTargetApproachDirection) {
+    Translation2d interiorWaypoint = preciseTarget.getTranslation();
+    Translation2d fieldRelativeSpeedsMPS =
+        new Translation2d(
+            measuredSpeedsFieldRelative.vxMetersPerSecond,
+            measuredSpeedsFieldRelative.vyMetersPerSecond);
+    Rotation2d startingPathDirection =
+        fieldRelativeSpeedsMPS
+            .times(0.8)
+            .plus(interiorWaypoint.minus(currentRobotPose.getTranslation()))
+            .getAngle();
 
-        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-                new Pose2d(currentRobotPose.getTranslation(), startingPathDirection),
-                new Pose2d(interiorWaypoint, preciseTargetApproachDirection),
-                new Pose2d(preciseTarget.getTranslation(), preciseTargetApproachDirection));
+    List<Waypoint> waypoints =
+        PathPlannerPath.waypointsFromPoses(
+            new Pose2d(currentRobotPose.getTranslation(), startingPathDirection),
+            new Pose2d(interiorWaypoint, preciseTargetApproachDirection),
+            new Pose2d(preciseTarget.getTranslation(), preciseTargetApproachDirection));
 
-        List<RotationTarget> rotationTargets = List.of(new RotationTarget(1.0, preciseTarget.getRotation()));
-        List<ConstraintsZone> constraintsZones = List.of(new ConstraintsZone(1.0, 2.0, Constants.DriveToPoseConstraints.slowpathConstraints));
+    List<RotationTarget> rotationTargets =
+        List.of(new RotationTarget(1.0, preciseTarget.getRotation()));
+    List<ConstraintsZone> constraintsZones =
+        List.of(
+            new ConstraintsZone(1.0, 2.0, Constants.DriveToPoseConstraints.slowpathConstraints));
 
-        PathPlannerPath path = new PathPlannerPath(
-                waypoints,
-                rotationTargets,
-                List.of(),
-                constraintsZones,
-                List.of(),
-                constraints,
-                new IdealStartingState(fieldRelativeSpeedsMPS.getNorm(), currentRobotPose.getRotation()),
-                new GoalEndState(MetersPerSecond.of(0), preciseTarget.getRotation()),
-                false);
-        path.preventFlipping = true;
+    PathPlannerPath path =
+        new PathPlannerPath(
+            waypoints,
+            rotationTargets,
+            List.of(),
+            constraintsZones,
+            List.of(),
+            constraints,
+            new IdealStartingState(
+                fieldRelativeSpeedsMPS.getNorm(), currentRobotPose.getRotation()),
+            new GoalEndState(MetersPerSecond.of(0), preciseTarget.getRotation()),
+            false);
+    path.preventFlipping = true;
 
-        return path;
-    }
+    return path;
+  }
 }
