@@ -21,7 +21,7 @@ public class EndEffector extends SubsystemBase {
   double filtered_data;
   private LoggedTunableNumber runVoltage =
       new LoggedTunableNumber(
-          "EndEffector/runVoltage", Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE);
+          "EndEffector/runVoltage", Constants.EndEffectorConstantsLeonidas.RUN_VOLTAGE);
 
   public EndEffector(EndEffectorIO io) {
     this.io = io;
@@ -42,7 +42,7 @@ public class EndEffector extends SubsystemBase {
   public Command runEndEffector() {
     return runEnd(
             () -> {
-              io.setVoltage(-runVoltage.get());
+              io.setVoltage(-Constants.EndEffectorConstantsLeonidas.RUN_VOLTAGE);
             },
             () -> {
               io.stop();
@@ -53,12 +53,22 @@ public class EndEffector extends SubsystemBase {
   public Command runEndEffectorOuttake() {
     return runEnd(
             () -> {
-              io.setVoltage(-runVoltage.get());
+              io.setVoltage(-Constants.EndEffectorConstantsLeonidas.RUN_VOLTAGE);
             },
             () -> {
               io.stop();
             })
         .until(() -> !hasCoral());
+  }
+
+  public Command runEndEffectorDeAlgae(){
+    return runEnd(
+            () -> {
+              io.setVoltage(-Constants.EndEffectorConstantsLeonidas.DEALGAE_VOLTAGE);
+            },
+            () -> {
+              io.stop();
+            });
   }
 
   public Command runEndEffectorManual() {

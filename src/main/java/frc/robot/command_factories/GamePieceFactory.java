@@ -37,4 +37,18 @@ public class GamePieceFactory {
                 () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED)),
         IntakeFactory.setHoldingAlgaePosition());
   }
+
+  public static Command deAlgaeL2(){
+    return new ParallelCommandGroup(
+        ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS),
+        ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2),
+        EndEffectorFactory.runEndEffectorDeAlgae());
+  }
+
+  public static Command deAlgaeL3(){
+    return new ParallelCommandGroup(
+        ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS),
+        ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3),
+        EndEffectorFactory.runEndEffectorDeAlgae());
+  }
 }

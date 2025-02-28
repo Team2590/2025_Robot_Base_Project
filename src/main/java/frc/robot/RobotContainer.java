@@ -454,6 +454,10 @@ public class RobotContainer {
         .and(rightJoystick.button(4).negate())
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
 
+    //De-Algae Buttons
+    rightJoystick.povRight().whileTrue(GamePieceFactory.deAlgaeL2());
+    rightJoystick.povLeft().whileTrue(GamePieceFactory.deAlgaeL3());
+
     // Controller App Buttons
     // rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
     leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
