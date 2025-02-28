@@ -127,7 +127,7 @@ public final class Constants {
   public static LoggedTunableNumber homeSetpoint =
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
   public static final String CANBUS = "Takeover";
-  
+
   public final class ArmConstantsLarry {
     // Fill in
     public static final double HOME_SETPOINT = homeSetpoint.get();
@@ -494,11 +494,12 @@ public final class Constants {
     BLACK(+0.99);
 
     public final double value;
+
     private LEDPattern(double value) {
       this.value = value;
     }
   };
-  
+
   public static enum Mode {
     /** Running on a real robot. */
     COMP,
