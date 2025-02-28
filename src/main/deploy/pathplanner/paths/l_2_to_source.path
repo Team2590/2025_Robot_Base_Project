@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.2142090667158514,
-        "y": 4.079508490988617
+        "x": 3.21,
+        "y": 4.07
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.037231178205894,
-        "y": 2.2590541868832585
+        "x": 2.0330221114900424,
+        "y": 2.2495456958946423
       },
       "isLocked": false,
       "linkedName": "l2tos"
@@ -62,7 +62,7 @@
   "folder": "auton4",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 89.92619380674782
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

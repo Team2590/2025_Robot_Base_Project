@@ -193,6 +193,8 @@ public class Drive extends SubsystemBase {
   @Override
   public void periodic() {
 
+    FieldConstants.logBlueReefPoses();
+
     Logger.recordOutput("SW_L", FieldConstants.RedReefPoses.SW_left);
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);

@@ -11,6 +11,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.util.HashMap;
 import java.util.Map;
+import org.littletonrobotics.junction.Logger;
 
 public class FieldConstants {
   public static enum ZONES {
@@ -118,6 +119,16 @@ public class FieldConstants {
     poseMap.put("sourceL", aprilTagLayout.getTagPose(13).get().toPose2d());
     poseMap.put("sourceR", aprilTagLayout.getTagPose(12).get().toPose2d());
     return poseMap;
+  }
+
+  public static void logBlueReefPoses() {
+    Map<String, Pose2d> poseMap = buildBlueReefPosesMap();
+    for (String s : poseMap.keySet()) {
+
+      Pose2d pose = poseMap.get(s);
+      Logger.recordOutput("PoseFor" + s, pose);
+      // System.out.println("Pose for " + s + " : " + pose);
+    }
   }
 
   private static final Map<String, Pose2d> buildRedReefPosesMap() {

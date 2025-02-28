@@ -539,9 +539,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeCoralFeeder());
   }
 
-  public boolean inReef() {
-    return Constants.locator.getZoneOfField(drive.getPose()).equals("reef");
-  }
+  //   public boolean inReef() {
+  //     return Constants.locator.getZoneOfField(drive.getPose()).equals("reef");
+  //   }
 
   // Add joystick accessors if missing
   public static CommandXboxController getDriverController() {
