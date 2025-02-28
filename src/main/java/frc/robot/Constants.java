@@ -65,10 +65,11 @@ public final class Constants {
 
     public static PathConstraints slowpathConstraints =
         new PathConstraints(
-            maxVelocityMPS * .25,
-            maxAccelerationMPSSq * .25,
-            maxAngularVelocityRadPerSec * .25,
-            maxAngularAccelerationRadPerSecSq * .25);
+            maxVelocityMPS * .35,
+            maxAccelerationMPSSq * .35,
+            maxAngularVelocityRadPerSec * .35,
+            maxAngularAccelerationRadPerSecSq * .35);
+            
   }
 
   private static List<FRCPolygon> polygons = new ArrayList<>();
@@ -288,6 +289,8 @@ public final class Constants {
     public static double ELEVATOR_L2_POS = 23;
     public static double ELEVATOR_L3_POS = 47;
     public static double ELEVATOR_L4_POS = 88;
+    public static double ELEVATOR_DEALGAE_L2 = 13.57;
+    public static double ELEVATOR_DEALGAE_L3 = 37.14;
     public static double ELEVATOR_SOURCE_POS = 4.5;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
@@ -317,8 +320,8 @@ public final class Constants {
     public static final boolean brake = true; // TODO
     public static final double reduction = 1; // TODO
     public static final int proxSensor_ID = 0; // TODO
-    public static final double INTAKE_VOLTAGE = 3;
-    public static final double EJECT_VOLTAGE = -INTAKE_VOLTAGE;
+    public static final double RUN_VOLTAGE = 3;
+    public static final double DEALGAE_VOLTAGE = 5;
   }
 
   public final class IntakeConstantsLeonidas {
