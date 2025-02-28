@@ -1,6 +1,9 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -74,7 +77,10 @@ public class ControllerOrchestrator {
 
   /** Command that needs to be bound to a button to driveToTarget. */
   public Command bindDriveToTargetCommand(Drive drive) {
-    return DriveCommands.driveToPose(drive, () -> getTarget().pose());
+    return DriveCommands.preciseAlignment(
+        drive,
+        () ->
+            getTarget().pose().plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
   }
 
   // This commands will drive to pose while "priming for intake" at coral source
