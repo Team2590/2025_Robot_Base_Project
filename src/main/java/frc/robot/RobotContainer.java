@@ -459,7 +459,7 @@ public class RobotContainer {
     rightJoystick.povLeft().whileTrue(GamePieceFactory.deAlgaeL3());
 
     // Controller App Buttons
-    // rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
     leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
     leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());
