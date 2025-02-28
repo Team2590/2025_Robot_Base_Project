@@ -540,10 +540,7 @@ public class DriveCommands {
         () -> {
           AtomicReference<Rotation2d> preciseTargetRotation2d =
               new AtomicReference<>(preciseTarget.get().getRotation());
-          Logger.recordOutput(
-              "PrecisetargetPose",
-              preciseTarget
-                  .get());
+          Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
           if (preciseTarget.get().getRotation() == null
               || driveSubsystem.getPose().getRotation() == null) {
             return Commands.none();

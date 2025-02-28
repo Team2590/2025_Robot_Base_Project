@@ -466,31 +466,27 @@ public class RobotContainer {
     leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
     rightJoystick.povDown().whileTrue(ScoringFactory.score(Level.L1));
     leftJoystick.button(2).whileTrue(ScoringFactory.stow());
-    leftJoystick.button(4).and(leftJoystick.trigger()).whileTrue(ScoringFactory.scoreProcessor());
+    rightJoystick.button(4).and(leftJoystick.trigger()).whileTrue(ScoringFactory.scoreProcessor());
     leftJoystick
         .trigger()
-        .and(leftJoystick.button(4).negate())
+        .and(rightJoystick.button(4).negate())
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
 
     // Controller App Buttons
     // rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
-    rightJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
+    leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
     leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());
-    leftJoystick
+    rightJoystick
         .button(4)
         .and(rightJoystick.trigger())
         .whileTrue(GamePieceFactory.intakeAlgaeGround());
     rightJoystick
         .trigger()
-        .and(leftJoystick.button(4).negate())
+        .and(rightJoystick.button(4).negate())
         .whileTrue(GamePieceFactory.intakeCoralFeeder());
 
-    rightJoystick
-        .povUp()
-        .whileTrue(
-            EndEffectorFactory.runEndEffectorVoltage(
-                -Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE));
+    rightJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorManual());
 
     // Manual Elevator Control
     rightJoystick.button(14).whileTrue(ElevatorFactory.manualDown());

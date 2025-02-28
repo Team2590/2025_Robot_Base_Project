@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
-import org.littletonrobotics.junction.Logger;
 
 public class PolygonLocator {
 

@@ -288,7 +288,7 @@ public final class Constants {
     public static double ELEVATOR_L2_POS = 23;
     public static double ELEVATOR_L3_POS = 47;
     public static double ELEVATOR_L4_POS = 88;
-    public static double ELEVATOR_SOURCE_POS = 5;
+    public static double ELEVATOR_SOURCE_POS = 4.5;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
 
