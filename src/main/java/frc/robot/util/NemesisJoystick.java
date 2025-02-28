@@ -6,9 +6,13 @@ import java.util.HashSet;
 
 public class NemesisJoystick extends CommandJoystick {
   private HashSet<Integer> buttonIDs = new HashSet<Integer>();
+  private static HashSet<Integer> ports = new HashSet<Integer>();
 
   public NemesisJoystick(int port) {
     super(port);
+    if (ports.contains(port))
+      throw new IllegalArgumentException("Port " + port + " already in use");
+    ports.add(port);
   }
 
   @Override
