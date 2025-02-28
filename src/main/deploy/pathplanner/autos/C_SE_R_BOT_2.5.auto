@@ -5,16 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "B_N_L"
-                }
-              }
-            ]
+            "pathName": "C_SE_R"
           }
         },
         {
@@ -30,35 +23,28 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "r1_to_source"
+                  "pathName": "SE_R_to_source"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "intakeSource"
+                  "name": "PrimeSource"
                 }
               }
             ]
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "source3_to_l_2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "HoldL4"
-                }
-              }
-            ]
+            "name": "intakeSource"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BotSource_SE_L"
           }
         },
         {
@@ -74,13 +60,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "l_2_to_source"
+                  "pathName": "SE_L_to_source"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Stow-Mechanism"
+                  "name": "PrimeSource"
                 }
               }
             ]
