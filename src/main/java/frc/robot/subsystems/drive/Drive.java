@@ -194,7 +194,7 @@ public class Drive extends SubsystemBase {
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
-    Logger.recordOutput("Drive/constants", constantsWrapper.driveBaseRadius);
+    // Logger.recordOutput("Drive/constants", constantsWrapper.driveBaseRadius);
     for (var module : modules) {
       module.periodic();
     }
@@ -243,9 +243,9 @@ public class Drive extends SubsystemBase {
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
-      Logger.recordOutput(
-          "Odometry/zoneOfField",
-          Constants.locator.getZoneOfField(poseEstimator.getEstimatedPosition()));
+      // Logger.recordOutput(
+      //     "Odometry/zoneOfField",
+      //     Constants.locator.getZoneOfField(poseEstimator.getEstimatedPosition()));
     }
 
     // Update gyro alert
