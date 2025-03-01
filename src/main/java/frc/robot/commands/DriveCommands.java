@@ -533,7 +533,8 @@ public class DriveCommands {
     return alignToTargetLine(drive, forwardSupplier, strafeSupplier, targetPoseSupplier, 1.0);
   }
 
-  public static Command preciseAlignment(Drive driveSubsystem, Supplier<Pose2d> preciseTarget, Rotation2d approachDirection) {
+  public static Command preciseAlignment(
+      Drive driveSubsystem, Supplier<Pose2d> preciseTarget, Rotation2d approachDirection) {
     PathConstraints constraints = Constants.DriveToPoseConstraints.slowpathConstraints;
 
     return Commands.defer(
