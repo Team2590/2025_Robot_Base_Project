@@ -20,7 +20,8 @@ public class ScoringFactory {
     L1(0 /* Not Using Elevator at L1 */),
     L2(Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS),
     L3(Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS),
-    L4(Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS);
+    L4(Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
+    SOURCE(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS);
 
     private final double elevatorPosition;
 

@@ -63,8 +63,11 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -380,9 +383,8 @@ public class RobotContainer {
   private void configureButtonBindingsSimulation() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
-    leftJoystick
-        .button(1)
-        .whileTrue(DriveCommands.preciseAlignment(drive, () -> controllerApp.getTarget().pose()));
+    leftJoystick.button(1).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+    leftJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
 
     // Add elevator control bindings
     leftJoystick
@@ -454,7 +456,7 @@ public class RobotContainer {
         .and(rightJoystick.button(4).negate())
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
 
-    //De-Algae Buttons
+    // De-Algae Buttons
     rightJoystick.povRight().whileTrue(GamePieceFactory.deAlgaeL2());
     rightJoystick.povLeft().whileTrue(GamePieceFactory.deAlgaeL3());
 

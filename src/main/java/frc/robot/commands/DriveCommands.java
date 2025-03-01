@@ -533,25 +533,25 @@ public class DriveCommands {
     return alignToTargetLine(drive, forwardSupplier, strafeSupplier, targetPoseSupplier, 1.0);
   }
 
-  public static Command preciseAlignment(Drive driveSubsystem, Supplier<Pose2d> preciseTarget) {
+  public static Command preciseAlignment(Drive driveSubsystem, Supplier<Pose2d> preciseTarget, Rotation2d approachDirection) {
     PathConstraints constraints = Constants.DriveToPoseConstraints.slowpathConstraints;
 
     return Commands.defer(
         () -> {
-          AtomicReference<Rotation2d> preciseTargetRotation2d =
-              new AtomicReference<>(preciseTarget.get().getRotation());
-          Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
           if (preciseTarget.get().getRotation() == null
               || driveSubsystem.getPose().getRotation() == null) {
             return Commands.none();
           }
+          Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
+          AtomicReference<Rotation2d> preciseTargetRotation2d =
+              new AtomicReference<>(preciseTarget.get().getRotation());
           return AutoBuilder.followPath(
               getPreciseAlignmentPath(
                   constraints,
                   driveSubsystem.getChassisSpeeds(),
                   driveSubsystem.getPose(),
                   preciseTarget.get(),
-                  preciseTargetRotation2d.get()));
+                  approachDirection));
         },
         Set.of(driveSubsystem));
   }
