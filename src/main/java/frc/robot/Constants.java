@@ -53,8 +53,8 @@ public final class Constants {
   public static class DriveToPoseConstraints {
     public static double maxVelocityMPS = 3;
     public static double maxAccelerationMPSSq = 3;
-    public static double maxAngularVelocityRadPerSec = 1;
-    public static double maxAngularAccelerationRadPerSecSq = 1;
+    public static double maxAngularVelocityRadPerSec = 3;
+    public static double maxAngularAccelerationRadPerSecSq = 3;
 
     public static PathConstraints fastpathConstraints =
         new PathConstraints(
@@ -65,11 +65,10 @@ public final class Constants {
 
     public static PathConstraints slowpathConstraints =
         new PathConstraints(
-            maxVelocityMPS * .35,
-            maxAccelerationMPSSq * .35,
-            maxAngularVelocityRadPerSec * .35,
-            maxAngularAccelerationRadPerSecSq * .35);
-            
+            maxVelocityMPS * .6,
+            maxAccelerationMPSSq * .6,
+            maxAngularVelocityRadPerSec * .6,
+            maxAngularAccelerationRadPerSecSq * .6);
   }
 
   private static List<FRCPolygon> polygons = new ArrayList<>();
@@ -128,7 +127,7 @@ public final class Constants {
   public static LoggedTunableNumber homeSetpoint =
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
   public static final String CANBUS = "Takeover";
-  
+
   public final class ArmConstantsLarry {
     // Fill in
     public static final double HOME_SETPOINT = homeSetpoint.get();
@@ -321,7 +320,7 @@ public final class Constants {
     public static final double reduction = 1; // TODO
     public static final int proxSensor_ID = 0; // TODO
     public static final double RUN_VOLTAGE = 3;
-    public static final double DEALGAE_VOLTAGE = 5;
+    public static final double DEALGAE_VOLTAGE = 8;
   }
 
   public final class IntakeConstantsLeonidas {
@@ -497,11 +496,12 @@ public final class Constants {
     BLACK(+0.99);
 
     public final double value;
+
     private LEDPattern(double value) {
       this.value = value;
     }
   };
-  
+
   public static enum Mode {
     /** Running on a real robot. */
     COMP,
