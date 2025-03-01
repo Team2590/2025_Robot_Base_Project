@@ -20,20 +20,15 @@
         "y": 5.15
       },
       "prevControl": {
-        "x": 4.648955516898747,
-        "y": 6.141759177730521
+        "x": 3.485958904109589,
+        "y": 6.406571061643835
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "SW_R"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.6470588235294122,
-      "rotationDegrees": -59.99999999999999
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
       "name": "SlowEnter",

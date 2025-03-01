@@ -97,6 +97,15 @@ public class ControllerOrchestrator {
         getTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
   }
 
+  public Command bindDrivetoTargetCommandsim(Drive drive){
+
+    return DriveCommands.preciseAlignment(
+        drive,
+        () ->
+            getTarget().pose().plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
+        ()-> getTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
+  }
+
   // This commands will drive to pose while "priming for intake" at coral source
   public Command bindDriveToSourceIntake(Drive drive) {
     var requirements = new HashSet<Subsystem>();

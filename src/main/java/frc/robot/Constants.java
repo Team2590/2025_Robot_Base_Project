@@ -265,7 +265,7 @@ public final class Constants {
     public static final int cancoderID = 5;
     public static final double ARM_SET_STOW = .33;
     // public static final double magOffset = -.596436; // -.398
-    public static final double magOffset = -.463; // -.268; // -.398
+    public static final double magOffset = -.292; // 0; // -.463; // -.268; // -.398
     public static final double sensorReduction = 58.8;
     public static double ARM_OPERATIONAL_MIN_POS = 0;
     public static double ARM_OPERATIONAL_MAX_POS = .7;

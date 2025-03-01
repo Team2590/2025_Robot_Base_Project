@@ -381,7 +381,7 @@ public class RobotContainer {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
     leftJoystick.button(1).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
-    leftJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    leftJoystick.button(2).whileTrue(controllerApp.bindDrivetoTargetCommandsim(drive));
 
     // Add elevator control bindings
     leftJoystick
