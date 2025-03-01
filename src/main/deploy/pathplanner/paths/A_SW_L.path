@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.8916523972602737,
-        "y": 5.249593321917807
+        "x": 3.89,
+        "y": 5.15
       },
       "prevControl": {
-        "x": 4.650607914159021,
-        "y": 6.241352499648328
+        "x": 4.648955516898747,
+        "y": 6.141759177730521
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,21 @@
       "rotationDegrees": -59.99999999999999
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "SlowEnter",
+      "minWaypointRelativePos": 0.7423728813559313,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -53,7 +67,7 @@
   "folder": "auton1",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -177.96648896056467
+    "rotation": 179.8824316123414
   },
   "useDefaultConstraints": false
 }

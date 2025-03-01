@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "A_SW_R"
+            "pathName": "C_SE_R"
           }
         },
         {
@@ -23,51 +23,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SW_R_to_source"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "PrimeSource"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "intakeSource"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "source_to_SW_L"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ScoreL4"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "SW_L_to_source"
+                  "pathName": "SE_R_to_source"
                 }
               },
               {
@@ -83,6 +39,37 @@
           "type": "named",
           "data": {
             "name": "intakeSource"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BotSource_SE_L"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SE_L_to_source"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "PrimeSource"
+                }
+              }
+            ]
           }
         }
       ]

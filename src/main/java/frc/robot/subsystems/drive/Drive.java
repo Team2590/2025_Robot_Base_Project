@@ -198,6 +198,10 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("BlueSourceR", FieldConstants.BlueReefPoses.CoralSourceRight);
     Logger.recordOutput("RedSourceR", FieldConstants.RedReefPoses.CoralSourceRight);
     Logger.recordOutput("RedSourceL", FieldConstants.RedReefPoses.CoralSourceLeft);
+
+    FieldConstants.logBlueReefPoses();
+
+    Logger.recordOutput("SW_L", FieldConstants.RedReefPoses.SW_left);
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);

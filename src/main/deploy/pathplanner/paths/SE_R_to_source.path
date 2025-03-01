@@ -3,37 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.230342768497049,
-        "y": 7.025741561709527
+        "x": 4.14,
+        "y": 2.75
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.943729073518516,
-        "y": 5.962849982093721
+        "x": 3.565773654513889,
+        "y": 2.601042390046296
       },
       "isLocked": false,
-      "linkedName": "stol"
+      "linkedName": "SE_R"
     },
     {
       "anchor": {
-        "x": 3.2142090667158514,
-        "y": 4.079508490988617
+        "x": 1.1645355902777765,
+        "y": 1.089230685763888
       },
       "prevControl": {
-        "x": 2.9372034814577854,
-        "y": 4.487608096903081
+        "x": 1.653568431712962,
+        "y": 1.2670713975694434
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "l2tos"
+      "linkedName": "BOT_SOURCE"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 85.29348586578784
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -47,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 89.92619380674782
+    "rotation": 59.99999999999999
   },
   "reversed": false,
-  "folder": "auton4",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 38.13574222875343
+    "rotation": 59.99999999999999
   },
   "useDefaultConstraints": true
 }
