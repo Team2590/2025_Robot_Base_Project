@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -441,8 +442,6 @@ public class RobotContainer {
     rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
 
-
-
     // Scoring buttons
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
     leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
@@ -461,8 +460,8 @@ public class RobotContainer {
 
     // Controller App Buttons
     rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    rightJoystick.button(3).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
 
-    
     leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
     leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());
@@ -497,7 +496,7 @@ public class RobotContainer {
      * ParallelCommandGroup( elevator.setPositionLoggedTunableNumber(),
      * arm.setPositionLoggedTunableNumber()));
      */
-  }
+      }
 
   /**
    * drive Use this to pass the autonomous command to the main
