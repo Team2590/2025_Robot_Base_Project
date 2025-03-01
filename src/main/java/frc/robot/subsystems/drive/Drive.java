@@ -14,6 +14,7 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
@@ -49,6 +50,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.FieldConstants;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.LoggedTunableNumber;
@@ -191,6 +193,11 @@ public class Drive extends SubsystemBase {
 
   @Override
   public void periodic() {
+    Logger.recordOutput("BlueR_Tagpose", aprilTagLayout.getTagPose(12).get().toPose2d());
+    Logger.recordOutput("BlueSourceL", FieldConstants.BlueReefPoses.CoralSourceLeft);
+    Logger.recordOutput("BlueSourceR", FieldConstants.BlueReefPoses.CoralSourceRight);
+    Logger.recordOutput("RedSourceR", FieldConstants.RedReefPoses.CoralSourceRight);
+    Logger.recordOutput("RedSourceL", FieldConstants.RedReefPoses.CoralSourceLeft);
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);

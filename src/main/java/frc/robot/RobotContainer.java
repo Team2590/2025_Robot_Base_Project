@@ -442,6 +442,8 @@ public class RobotContainer {
     rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
 
+
+
     // Scoring buttons
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
     leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
@@ -454,12 +456,14 @@ public class RobotContainer {
         .and(rightJoystick.button(4).negate())
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
 
-    //De-Algae Buttons
+    // De-Algae Buttons
     rightJoystick.povRight().whileTrue(GamePieceFactory.deAlgaeL2());
     rightJoystick.povLeft().whileTrue(GamePieceFactory.deAlgaeL3());
 
     // Controller App Buttons
     rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+
+    
     leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
     leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());
