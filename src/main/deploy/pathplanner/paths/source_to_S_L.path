@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3823630136986302,
-        "y": 7.413291952054794
+        "x": 0.71,
+        "y": 6.79
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.9916952054794521,
-        "y": 6.211237157534247
+        "x": 0.31933219178082184,
+        "y": 5.5879452054794525
       },
       "isLocked": false,
       "linkedName": "TopSource"
@@ -48,7 +48,7 @@
   "folder": "auton4",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -52.305759533310734
+    "rotation": -55.29916187058863
   },
   "useDefaultConstraints": false
 }

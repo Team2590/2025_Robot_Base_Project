@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3823630136986302,
-        "y": 7.413291952054794
+        "x": 0.71,
+        "y": 6.79
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1826310580785337,
-        "y": 6.705368574187608
+        "x": 3.6362157534246577,
+        "y": 7.202932363013699
       },
       "isLocked": false,
       "linkedName": "TopSource"
@@ -20,8 +20,8 @@
         "y": 4.96
       },
       "prevControl": {
-        "x": 2.424531308474104,
-        "y": 5.942076961352211
+        "x": 3.2605736301369865,
+        "y": 5.685338184931506
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.5,
-      "rotationDegrees": -59.99999999999999
+      "rotationDegrees": -27.92959329237886
     }
   ],
   "constraintZones": [
@@ -67,7 +67,7 @@
   "folder": "auton1",
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": -52.305759533310734
+    "rotation": -55.29916187058863
   },
   "useDefaultConstraints": false
 }
