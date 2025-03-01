@@ -49,7 +49,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -539,20 +538,39 @@ public class DriveCommands {
 
     return Commands.defer(
         () -> {
-          if (preciseTarget.get().getRotation() == null
-              || driveSubsystem.getPose().getRotation() == null) {
+          Pose2d targetPose = preciseTarget.get();
+          Pose2d currentPose = driveSubsystem.getPose();
+
+          if (targetPose == null
+              || targetPose.getRotation() == null
+              || currentPose.getRotation() == null) {
             return Commands.none();
           }
-          Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
-          AtomicReference<Rotation2d> preciseTargetRotation2d =
-              new AtomicReference<>(preciseTarget.get().getRotation());
-          return AutoBuilder.followPath(
-              getPreciseAlignmentPath(
-                  constraints,
-                  driveSubsystem.getChassisSpeeds(),
-                  driveSubsystem.getPose(),
-                  preciseTarget.get(),
-                  approachDirection));
+
+          // Calculate distance to target
+          double distanceToTarget =
+              currentPose.getTranslation().getDistance(targetPose.getTranslation());
+
+          // If we're very close to the target, do nothing, as we'd otherwise generate an exception
+          if (distanceToTarget < 0.05) { // 5cm threshold
+            System.out.println(
+                "Too close to target, will not auto-align to avoid exception in path planner");
+            return Commands.none();
+          }
+
+          Logger.recordOutput("PrecisetargetPose", targetPose);
+          try {
+            return AutoBuilder.followPath(
+                getPreciseAlignmentPath(
+                    constraints,
+                    driveSubsystem.getChassisSpeeds(),
+                    currentPose,
+                    targetPose,
+                    approachDirection));
+          } catch (Exception e) {
+            DriverStation.reportError("Error in path planning: " + e.getMessage(), false);
+            return Commands.none();
+          }
         },
         Set.of(driveSubsystem));
   }
