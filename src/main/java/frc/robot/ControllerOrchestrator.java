@@ -106,9 +106,7 @@ public class ControllerOrchestrator {
           Logger.recordOutput("SourcePose", getSourceTarget().pose());
           return new ParallelCommandGroup(
               DriveCommands.preciseAlignment(
-                  drive,
-                  () -> getSourceTarget().pose(),
-                  getSourceTarget().pose().getRotation().plus(new Rotation2d(Math.PI))),
+                  drive, () -> getSourceTarget().pose(), getSourceTarget().pose().getRotation()),
               GamePieceFactory.intakeCoralFeeder());
         },
         requirements);

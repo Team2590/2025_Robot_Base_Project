@@ -537,58 +537,31 @@ public class DriveCommands {
       Drive driveSubsystem, Supplier<Pose2d> preciseTarget, Rotation2d approachDirection) {
     PathConstraints constraints = Constants.DriveToPoseConstraints.slowpathConstraints;
 
-    try {
-
-      return Commands.defer(
-          () -> {
-            if (preciseTarget.get().getRotation() == null
-                || driveSubsystem.getPose().getRotation() == null) {
-              return Commands.none();
-            }
-            Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
-            AtomicReference<Rotation2d> preciseTargetRotation2d =
-                new AtomicReference<>(preciseTarget.get().getRotation());
-            try {
-              return AutoBuilder.followPath(
-                  getPreciseAlignmentPath(
-                      constraints,
-                      driveSubsystem.getChassisSpeeds(),
-                      driveSubsystem.getPose(),
-                      preciseTarget.get(),
-                      approachDirection)[0]);
-            } catch (Exception e) {
-              return Commands.none();
-            }
-          },
-          Set.of(driveSubsystem));
-
-    } catch (Exception e) {
-
-      return Commands.print("IN ALIGNMENT CATCH BLOCK " + e);
-    }
-    //   return Commands.defer(
-    //       () -> {
-    //         if (preciseTarget.get().getRotation() == null
-    //             || driveSubsystem.getPose().getRotation() == null) {
-    //           return Commands.none();
-    //         }
-    //         System.out.println("I AM IN THIS CATCH");
-    //         AtomicReference<Rotation2d> preciseTargetRotation2d =
-    //             new AtomicReference<>(preciseTarget.get().getRotation());
-    //         return AutoBuilder.followPath(
-    //             getPreciseAlignmentPath(
-    //                 constraints,
-    //                 driveSubsystem.getChassisSpeeds(),
-    //                 driveSubsystem.getPose(),
-    //                 preciseTarget.get(),
-    //                 approachDirection)[1]);
-    //       },
-    //       Set.of(driveSubsystem));
-    // }
+    return Commands.defer(
+        () -> {
+          if (preciseTarget.get().getRotation() == null
+              || driveSubsystem.getPose().getRotation() == null) {
+            return Commands.none();
+          }
+          Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
+          AtomicReference<Rotation2d> preciseTargetRotation2d =
+              new AtomicReference<>(preciseTarget.get().getRotation());
+          try {
+            return AutoBuilder.followPath(
+                getPreciseAlignmentPath(
+                    constraints,
+                    driveSubsystem.getChassisSpeeds(),
+                    driveSubsystem.getPose(),
+                    preciseTarget.get(),
+                    approachDirection));
+          } catch (Exception e) {
+            return Commands.print("Follow Path");
+          }
+        },
+        Set.of(driveSubsystem));
   }
 
-  private static PathPlannerPath[] getPreciseAlignmentPath(
-      // Drive drive,
+  private static PathPlannerPath getPreciseAlignmentPath(
       PathConstraints constraints,
       ChassisSpeeds measuredSpeedsFieldRelative,
       Pose2d currentRobotPose,
@@ -655,6 +628,6 @@ public class DriveCommands {
     path.preventFlipping = true;
     // path.getIdealTrajectory(drive.getConfig())
 
-    return new PathPlannerPath[] {path, simplerpath};
+    return path;
   }
 }
