@@ -21,6 +21,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import java.util.HashSet;
 import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 
 public class ControllerOrchestrator {
 
@@ -59,12 +60,13 @@ public class ControllerOrchestrator {
   }
 
   public Target getSourceTarget() {
-    Target target = parseTargetString(getSource());
-    if (target == null) {
+    Target target;
+    try {
+      target = new Target(lookupPoseBasedOnAlliance(getSource()), ScoringFactory.Level.SOURCE);
+    } catch (Exception e) {
       target =
           new Target(lookupPoseBasedOnAlliance(DEFAULT_SOURCE_TARGET), ScoringFactory.Level.SOURCE);
       System.err.println("---> Using Default Target: " + target);
-      return target;
     }
     return target;
   }
@@ -101,6 +103,7 @@ public class ControllerOrchestrator {
     requirements.add(drive);
     return Commands.defer(
         () -> {
+          Logger.recordOutput("SourcePose", getSourceTarget().pose());
           return new ParallelCommandGroup(
               DriveCommands.preciseAlignment(
                   drive,
