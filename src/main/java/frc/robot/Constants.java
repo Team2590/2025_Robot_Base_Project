@@ -62,10 +62,10 @@ public final class Constants {
 
     public static PathConstraints slowpathConstraints =
         new PathConstraints(
-            maxVelocityMPS * .65,
-            maxAccelerationMPSSq * .65,
-            maxAngularVelocityRadPerSec * .65,
-            maxAngularAccelerationRadPerSecSq * .65);
+            maxVelocityMPS * .5,
+            maxAccelerationMPSSq * .5,
+            maxAngularVelocityRadPerSec * .5,
+            maxAngularAccelerationRadPerSecSq * .5);
   }
 
   private static List<FRCPolygon> polygons = new ArrayList<>();
@@ -270,7 +270,8 @@ public final class Constants {
     public static double ARM_OPERATIONAL_MIN_POS = 0;
     public static double ARM_OPERATIONAL_MAX_POS = .7;
     public static double ARM_SCORING_CORAL_POS = 0.68; // TODO: change to actual value
-    public static double ARM_SCORING_CORAL_POS_L4 = 0.63;
+    public static double ARM_SCORING_CORAL_POS_L3 = .6;
+    public static double ARM_SCORING_CORAL_POS_L4 = 0.54;
     public static double ARM_INTAKE_SOURCE_POSITION = .16; // .09
   }
 
@@ -287,7 +288,7 @@ public final class Constants {
     public static final double kV = 0.14051;
     public static double ELEVATOR_L2_POS = 23;
     public static double ELEVATOR_L3_POS = 47;
-    public static double ELEVATOR_L4_POS = 88;
+    public static double ELEVATOR_L4_POS = 85;
     public static double ELEVATOR_DEALGAE_L2 = 13.57;
     public static double ELEVATOR_DEALGAE_L3 = 37.14;
     public static double ELEVATOR_SOURCE_POS = 4.5;
