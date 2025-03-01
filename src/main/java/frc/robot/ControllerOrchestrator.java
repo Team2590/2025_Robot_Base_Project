@@ -38,7 +38,11 @@ public class ControllerOrchestrator {
   }
 
   private String getValue(String key) {
-    return getTableEntry(key).getString("<No value set in NetworkTable>");
+    try {
+      return getTableEntry(key).getString("<No value set in NetworkTable>");
+    } catch (Exception e) {
+      return "";
+    }
   }
 
   public String getMoveTo() {
@@ -97,13 +101,24 @@ public class ControllerOrchestrator {
         getTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
   }
 
-  public Command bindDrivetoTargetCommandsim(Drive drive){
+  public Command bindDrivetoTargetCommandsim(Drive drive) {
 
     return DriveCommands.preciseAlignment(
         drive,
         () ->
             getTarget().pose().plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
-        ()-> getTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
+        () -> getTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
+  }
+
+  public Command bindDrivetoSourceCommandsim(Drive drive) {
+
+    return DriveCommands.preciseAlignmentsim(
+        drive,
+        () ->
+            getSourceTarget()
+                .pose()
+                .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
+        () -> getSourceTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
   }
 
   // This commands will drive to pose while "priming for intake" at coral source

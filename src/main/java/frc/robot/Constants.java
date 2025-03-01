@@ -62,10 +62,10 @@ public final class Constants {
 
     public static PathConstraints slowpathConstraints =
         new PathConstraints(
-            maxVelocityMPS * .5,
-            maxAccelerationMPSSq * .5,
-            maxAngularVelocityRadPerSec * .5,
-            maxAngularAccelerationRadPerSecSq * .5);
+            maxVelocityMPS * .35,
+            maxAccelerationMPSSq * .35,
+            maxAngularVelocityRadPerSec * .35,
+            maxAngularAccelerationRadPerSecSq * .35);
   }
 
   private static List<FRCPolygon> polygons = new ArrayList<>();
@@ -212,7 +212,7 @@ public final class Constants {
           Units.inchesToMeters(
               1.7); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is "left
       // and right", adjustY sin is + -y. Change adjust offsets
-      double adjustY_right = Units.inchesToMeters(8 + 5.3); //
+      double adjustY_right = Units.inchesToMeters(8 + 5.3 - 2); //
 
       double rightReefX =
           tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right * Math.sin(tagRotation);
@@ -291,7 +291,7 @@ public final class Constants {
     public static double ELEVATOR_L4_POS = 85;
     public static double ELEVATOR_DEALGAE_L2 = 13.57;
     public static double ELEVATOR_DEALGAE_L3 = 37.14;
-    public static double ELEVATOR_SOURCE_POS = 4.5;
+    public static double ELEVATOR_SOURCE_POS = 7.7;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
 
