@@ -50,8 +50,8 @@ public final class Constants {
   public static class DriveToPoseConstraints {
     public static double maxVelocityMPS = 3;
     public static double maxAccelerationMPSSq = 3;
-    public static double maxAngularVelocityRadPerSec = 1;
-    public static double maxAngularAccelerationRadPerSecSq = 1;
+    public static double maxAngularVelocityRadPerSec = 3;
+    public static double maxAngularAccelerationRadPerSecSq = 3;
 
     public static PathConstraints fastpathConstraints =
         new PathConstraints(
@@ -320,7 +320,7 @@ public final class Constants {
     public static final double reduction = 1; // TODO
     public static final int proxSensor_ID = 0; // TODO
     public static final double RUN_VOLTAGE = 3;
-    public static final double DEALGAE_VOLTAGE = 5;
+    public static final double DEALGAE_VOLTAGE = 8;
   }
 
   public final class IntakeConstantsLeonidas {
