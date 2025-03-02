@@ -38,7 +38,11 @@ public class ControllerOrchestrator {
   }
 
   private String getValue(String key) {
-    return getTableEntry(key).getString("<No value set in NetworkTable>");
+    try {
+      return getTableEntry(key).getString("<No value set in NetworkTable>");
+    } catch (Exception e) {
+      return "";
+    }
   }
 
   public String getMoveTo() {
