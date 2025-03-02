@@ -96,28 +96,7 @@ public class ControllerOrchestrator {
     return DriveCommands.preciseAlignment(
         drive,
         () ->
-            getTarget().pose().plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
-        getTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
-  }
-
-  public Command bindDrivetoTargetCommandsim(Drive drive) {
-
-    return DriveCommands.preciseAlignment(
-        drive,
-        () ->
-            getTarget().pose().plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
-        () -> getTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
-  }
-
-  public Command bindDrivetoSourceCommandsim(Drive drive) {
-
-    return DriveCommands.preciseAlignmentsim(
-        drive,
-        () ->
-            getSourceTarget()
-                .pose()
-                .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
-        () -> getSourceTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
+            getTarget().pose().plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
   }
 
   // This commands will drive to pose while "priming for intake" at coral source
@@ -129,7 +108,7 @@ public class ControllerOrchestrator {
           Logger.recordOutput("SourcePose", getSourceTarget().pose());
           return new ParallelCommandGroup(
               DriveCommands.preciseAlignment(
-                  drive, () -> getSourceTarget().pose(), getSourceTarget().pose().getRotation()),
+                  drive, () -> getSourceTarget().pose()),
               GamePieceFactory.intakeCoralFeeder());
         },
         requirements);
