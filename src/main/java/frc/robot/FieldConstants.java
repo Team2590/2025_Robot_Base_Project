@@ -87,8 +87,12 @@ public class FieldConstants {
             .toPose2d()
             .transformBy(
                 new Transform2d(
-                    new Translation2d(-sourceTagToSetpoint.getX(), sourceTagToSetpoint.getY()),
-                    new Rotation2d())); //  aprilTagLayout.getTagPose(13).get().toPose2d();
+                    new Translation2d(sourceTagToSetpoint.getX(), -sourceTagToSetpoint.getY()),
+                    new Rotation2d()));
+    //     new Translation2d(-sourceTagToSetpoint.getX(), sourceTagToSetpoint.getY());
+    // new Transform2d(
+    //     new Translation2d(-sourceTagToSetpoint.getX(), sourceTagToSetpoint.getY()),
+    //     new Rotation2d())); //  aprilTagLayout.getTagPose(13).get().toPose2d();
   }
 
   public static class RedReefPoses {
@@ -106,7 +110,14 @@ public class FieldConstants {
     public static final Pose2d NW_right = CoralPose.getReefPose(11)[1]; // right
     public static final Pose2d NW_left = CoralPose.getReefPose(11)[0]; // left
     public static final Pose2d CoralSourceRight =
-        aprilTagLayout.getTagPose(2).get().toPose2d().transformBy(sourceTagToSetpoint);
+        aprilTagLayout
+            .getTagPose(2)
+            .get()
+            .toPose2d()
+            .transformBy(
+                new Transform2d(
+                    new Translation2d(sourceTagToSetpoint.getX(), sourceTagToSetpoint.getY()),
+                    new Rotation2d()));
 
     // aprilTagLayout.getTagPose(2).get().toPose2d();
     public static final Pose2d CoralSourceLeft =
@@ -116,7 +127,7 @@ public class FieldConstants {
             .toPose2d()
             .transformBy(
                 new Transform2d(
-                    new Translation2d(-sourceTagToSetpoint.getX(), sourceTagToSetpoint.getY()),
+                    new Translation2d(sourceTagToSetpoint.getX(), -sourceTagToSetpoint.getY()),
                     new Rotation2d())); //  aprilTagLayout.getTagPose(1).get().toPose2d();
   }
 
