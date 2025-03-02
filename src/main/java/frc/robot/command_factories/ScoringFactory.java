@@ -69,6 +69,14 @@ public class ScoringFactory {
                 ArmFactory.setPositionBlocking(
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
             .withName("Prime " + level.name()));
+
+      case L3:
+        yield (Commands.parallel(
+                Commands.print("Priming " + level.name()),
+                ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
+                ArmFactory.setPositionBlocking(
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3))
+            .withName("Prime " + level.name()));
       default:
         yield Commands.parallel(
                 Commands.print("Priming " + level.name()),

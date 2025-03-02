@@ -90,7 +90,7 @@ public class RobotState extends SubsystemBase {
 
   public void periodic() {
     robotPose = drive.getPose();
-    currentZone = Constants.locator.getZoneOfField(robotPose);
+    // currentZone = Constants.locator.getZoneOfField(robotPose);
     endEffectorhasCoral = endEffectorhasCoral();
   }
 

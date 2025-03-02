@@ -19,20 +19,17 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.generated.TunerConstantsLeonidas;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.FRCPolygon;
 import frc.robot.util.LoggedTunableNumber;
-import frc.robot.util.PolygonLocator;
+// import frc.robot.util.PolygonLocator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,10 +62,10 @@ public final class Constants {
 
     public static PathConstraints slowpathConstraints =
         new PathConstraints(
-            maxVelocityMPS * .6,
-            maxAccelerationMPSSq * .6,
-            maxAngularVelocityRadPerSec * .6,
-            maxAngularAccelerationRadPerSecSq * .6);
+            maxVelocityMPS * .35,
+            maxAccelerationMPSSq * .35,
+            maxAngularVelocityRadPerSec * .35,
+            maxAngularAccelerationRadPerSecSq * .35);
   }
 
   private static List<FRCPolygon> polygons = new ArrayList<>();
@@ -91,38 +88,41 @@ public final class Constants {
    * | |
    * (0,0)---(2,0)
    */
-  public static final FRCPolygon playBox =
-      new FRCPolygon(
-          "playBox",
-          new Translation2d(0, 0),
-          new Translation2d(2, 0),
-          new Translation2d(2, 2),
-          new Translation2d(0, 2));
+  // public static final FRCPolygon playBox =
+  //     new FRCPolygon(
+  //         "playBox",
+  //         new Translation2d(0, 0),
+  //         new Translation2d(2, 0),
+  //         new Translation2d(2, 2),
+  //         new Translation2d(0, 2));
 
-  public static final boolean flipside =
-      DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+  // public static final boolean flipside =
+  //     DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() ==
+  // Alliance.Red;
 
-  public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
-  public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTop");
-  public static final FRCPolygon BargeBoundsBot = new FRCPolygon("BargeBot", "BargeBot");
-  // public static final FRCPolygon PresetAlgae = new FRCPolygon("PresetAlgae",
-  // "FloatingAlgae");
-  public static final FRCPolygon Processor = new FRCPolygon("Processor", "Processor");
-  public static final FRCPolygon FeederStationTop = new FRCPolygon("FeederStationTop", "Station1");
-  public static final FRCPolygon FeederStationBot = new FRCPolygon("FeederStationBot", "Station2");
+  // public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
+  // public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTop");
+  // public static final FRCPolygon BargeBoundsBot = new FRCPolygon("BargeBot", "BargeBot");
+  // // public static final FRCPolygon PresetAlgae = new FRCPolygon("PresetAlgae",
+  // // "FloatingAlgae");
+  // public static final FRCPolygon Processor = new FRCPolygon("Processor", "Processor");
+  // public static final FRCPolygon FeederStationTop = new FRCPolygon("FeederStationTop",
+  // "Station1");
+  // public static final FRCPolygon FeederStationBot = new FRCPolygon("FeederStationBot",
+  // "Station2");
 
-  // Two ways to instantiate the polygons, this static initialization box is
-  // necessary
-  static {
-    polygons.add(playBox);
-    polygons.add(reefBounds);
-    polygons.add(BargeBoundsTop);
-    polygons.add(BargeBoundsBot);
-    // polygons.add(PresetAlgae);
-    polygons.add(Processor);
-  }
+  // // Two ways to instantiate the polygons, this static initialization box is
+  // // necessary
+  // static {
+  //   polygons.add(playBox);
+  //   polygons.add(reefBounds);
+  //   polygons.add(BargeBoundsTop);
+  //   polygons.add(BargeBoundsBot);
+  //   // polygons.add(PresetAlgae);
+  //   polygons.add(Processor);
+  // }
 
-  public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
+  // public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
 
   public static LoggedTunableNumber homeSetpoint =
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
@@ -212,7 +212,7 @@ public final class Constants {
           Units.inchesToMeters(
               1.7); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is "left
       // and right", adjustY sin is + -y. Change adjust offsets
-      double adjustY_right = Units.inchesToMeters(8 + 5.3); //
+      double adjustY_right = Units.inchesToMeters(8 + 5.3 - 2); //
 
       double rightReefX =
           tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right * Math.sin(tagRotation);
@@ -265,16 +265,18 @@ public final class Constants {
     public static final int cancoderID = 5;
     public static final double ARM_SET_STOW = .33;
     // public static final double magOffset = -.596436; // -.398
-    public static final double magOffset = -.268; // -.398
+    public static final double magOffset = -.292; // 0; // -.463; // -.268; // -.398
     public static final double sensorReduction = 58.8;
     public static double ARM_OPERATIONAL_MIN_POS = 0;
     public static double ARM_OPERATIONAL_MAX_POS = .7;
     public static double ARM_SCORING_CORAL_POS = 0.68; // TODO: change to actual value
-    public static double ARM_SCORING_CORAL_POS_L4 = 0.63;
+    public static double ARM_SCORING_CORAL_POS_L3 = .6;
+    public static double ARM_SCORING_CORAL_POS_L4 = 0.54;
     public static double ARM_INTAKE_SOURCE_POSITION = .16; // .09
   }
 
   public static class ElevatorConstantsLeonidas {
+    public static double OFFSET = -2.5;
     public static double ELEVATOR_OPERATIONAL_MIN_POS = 0;
     public static double ELEVATOR_OPERATIONAL_MAX_POS = 89.5;
     public static final int canID = 25;
@@ -285,12 +287,12 @@ public final class Constants {
     public static final double reduction = 7;
     public static final double kS = 0.22720;
     public static final double kV = 0.14051;
-    public static double ELEVATOR_L2_POS = 23;
-    public static double ELEVATOR_L3_POS = 47;
-    public static double ELEVATOR_L4_POS = 88;
+    public static double ELEVATOR_L2_POS = 23 + OFFSET;
+    public static double ELEVATOR_L3_POS = 47 + OFFSET;
+    public static double ELEVATOR_L4_POS = 85 + OFFSET;
     public static double ELEVATOR_DEALGAE_L2 = 13.57;
     public static double ELEVATOR_DEALGAE_L3 = 37.14;
-    public static double ELEVATOR_SOURCE_POS = 4.5;
+    public static double ELEVATOR_SOURCE_POS = 7.7 + OFFSET;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
 

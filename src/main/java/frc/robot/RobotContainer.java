@@ -380,8 +380,8 @@ public class RobotContainer {
   private void configureButtonBindingsSimulation() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
-    leftJoystick.button(1).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
-    leftJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    leftJoystick.button(1).whileTrue(controllerApp.bindDrivetoSourceCommandsim(drive));
+    leftJoystick.button(2).whileTrue(controllerApp.bindDrivetoTargetCommandsim(drive));
 
     // Add elevator control bindings
     leftJoystick
@@ -459,6 +459,8 @@ public class RobotContainer {
 
     // Controller App Buttons
     rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    rightJoystick.button(3).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+
     leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
     leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());
@@ -538,9 +540,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeCoralFeeder());
   }
 
-  public boolean inReef() {
-    return Constants.locator.getZoneOfField(drive.getPose()).equals("reef");
-  }
+  //   public boolean inReef() {
+  //     return Constants.locator.getZoneOfField(drive.getPose()).equals("reef");
+  //   }
 
   // Add joystick accessors if missing
   public static CommandXboxController getDriverController() {
