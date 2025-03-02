@@ -276,6 +276,7 @@ public final class Constants {
   }
 
   public static class ElevatorConstantsLeonidas {
+    public static double OFFSET = -2.5;
     public static double ELEVATOR_OPERATIONAL_MIN_POS = 0;
     public static double ELEVATOR_OPERATIONAL_MAX_POS = 89.5;
     public static final int canID = 25;
@@ -286,12 +287,12 @@ public final class Constants {
     public static final double reduction = 7;
     public static final double kS = 0.22720;
     public static final double kV = 0.14051;
-    public static double ELEVATOR_L2_POS = 23;
-    public static double ELEVATOR_L3_POS = 47;
-    public static double ELEVATOR_L4_POS = 85;
+    public static double ELEVATOR_L2_POS = 23 + OFFSET;
+    public static double ELEVATOR_L3_POS = 47 + OFFSET;
+    public static double ELEVATOR_L4_POS = 85 + OFFSET;
     public static double ELEVATOR_DEALGAE_L2 = 13.57;
     public static double ELEVATOR_DEALGAE_L3 = 37.14;
-    public static double ELEVATOR_SOURCE_POS = 7.7;
+    public static double ELEVATOR_SOURCE_POS = 7.7 + OFFSET;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
 
