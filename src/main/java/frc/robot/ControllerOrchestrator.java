@@ -38,11 +38,7 @@ public class ControllerOrchestrator {
   }
 
   private String getValue(String key) {
-    try {
-      return getTableEntry(key).getString("<No value set in NetworkTable>");
-    } catch (Exception e) {
-      return "";
-    }
+    return getTableEntry(key).getString("<No value set in NetworkTable>");
   }
 
   public String getMoveTo() {
@@ -65,14 +61,13 @@ public class ControllerOrchestrator {
 
   public Target getSourceTarget() {
     Target target;
-    try {
-      target = new Target(lookupPoseBasedOnAlliance(getSource()), ScoringFactory.Level.SOURCE);
-    } catch (Exception e) {
-      target =
-          new Target(lookupPoseBasedOnAlliance(DEFAULT_SOURCE_TARGET), ScoringFactory.Level.SOURCE);
-      System.err.println("---> Using Default Target: " + target);
+    Pose2d pose = lookupPoseBasedOnAlliance(getSource());
+    if (pose == null) {
+      System.err.println("---> Using Default Source Target: ");
+      return new Target(
+          lookupPoseBasedOnAlliance(DEFAULT_SOURCE_TARGET), ScoringFactory.Level.SOURCE);
     }
-    return target;
+    return new Target(lookupPoseBasedOnAlliance(getSource()), ScoringFactory.Level.SOURCE);
   }
 
   /**
