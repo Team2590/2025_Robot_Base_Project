@@ -281,7 +281,7 @@ public final class Constants {
     public static double ELEVATOR_OPERATIONAL_MAX_POS = 89.5;
     public static final int canID = 25;
     public static final String canBus = "Takeover";
-    public static final int currentLimitAmps = 120;
+    public static final int currentLimitAmps = 80;
     public static final boolean invert = false;
     public static final boolean brake = true;
     public static final double reduction = 7;
