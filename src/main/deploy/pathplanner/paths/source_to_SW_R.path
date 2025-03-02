@@ -5,6 +5,8 @@
       "anchor": {
         "x": 0.71,
         "y": 6.79
+        "x": 0.71,
+        "y": 6.79
       },
       "prevControl": null,
       "nextControl": {
@@ -31,7 +33,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.5,
-      "rotationDegrees": -59.99999999999999
+      "rotationDegrees": -27.92959329237886
     }
   ],
   "constraintZones": [
