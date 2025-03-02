@@ -4,6 +4,8 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.NemesisMathUtil;
 import org.littletonrobotics.junction.Logger;
 
@@ -11,6 +13,8 @@ public class Elevator extends SubsystemBase {
   private ElevatorIO io;
   private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
   private double setpointTolerance = 0.05;
+  private LoggedTunableNumber offset =
+      new LoggedTunableNumber("Elevator/PosOFFSET", Constants.ElevatorConstantsLeonidas.OFFSET);
 
   public Elevator(ElevatorIO io) {
     this.io = io;
@@ -32,12 +36,17 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command setPosition(double position) {
-    return runOnce(() -> io.setPosition(position));
+    return runOnce(() -> io.setPosition(position + offset.get()));
   }
 
   public Command setPositionBlocking(double position) {
-    return runEnd(() -> io.setPosition(position), () -> io.setPosition(position))
-        .until(() -> NemesisMathUtil.isApprox(inputs.rotationCount, setpointTolerance, position));
+    return runEnd(
+            () -> io.setPosition(position + offset.get()),
+            () -> io.setPosition(position + offset.get()))
+        .until(
+            () ->
+                NemesisMathUtil.isApprox(
+                    inputs.rotationCount, setpointTolerance, position + offset.get()));
   }
 
   public Command setPositionLoggedTunableNumber() {
