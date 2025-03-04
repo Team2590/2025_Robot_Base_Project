@@ -24,6 +24,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.RotationTarget;
 import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -821,5 +822,42 @@ public class DriveCommands {
     // path.getIdealTrajectory(drive.getConfig())
 
     return path;
+  }
+
+  public static Command driveToPoseStraight(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
+    PIDController xSpeedController = new PIDController(5, 0.1, 0.1);
+    PIDController ySpeedController = new PIDController(5, 0.1, 0.1);
+    PIDController angularSpeedController = new PIDController(0.34, 0, 0.3);
+    return Commands.run(
+            () -> {
+              Pose2d currentPose = drive.getPose();
+              Pose2d targetPose = targetPoseSupplier.get();
+              Rotation2d currentRotation = currentPose.getRotation();
+              Rotation2d targetRotation = targetPose.getRotation();
+              Rotation2d rotationError = targetRotation.minus(currentRotation);
+
+              double fieldVx = xSpeedController.calculate(currentPose.getX(), targetPose.getX());
+              double fieldVy = ySpeedController.calculate(currentPose.getY(), targetPose.getY());
+
+              ChassisSpeeds robotRelativeChassisSpeeds =
+                  ChassisSpeeds.fromFieldRelativeSpeeds(
+                      fieldVx,
+                      fieldVy,
+                      angularSpeedController.calculate(rotationError.getRadians(), 0),
+                      currentPose.getRotation());
+
+              drive.runVelocity(robotRelativeChassisSpeeds);
+            })
+        .beforeStarting(
+            () -> {
+              xSpeedController.reset();
+              ySpeedController.reset();
+            })
+        .finallyDo(
+            () -> {
+              xSpeedController.close();
+              ySpeedController.close();
+              angularSpeedController.close();
+            });
   }
 }
