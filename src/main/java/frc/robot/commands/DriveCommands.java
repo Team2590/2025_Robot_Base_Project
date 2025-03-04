@@ -825,16 +825,15 @@ public class DriveCommands {
   }
 
   public static Command driveToPoseStraight(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
-    PIDController xSpeedController = new PIDController(5, 0.1, 0.1);
-    PIDController ySpeedController = new PIDController(5, 0.1, 0.1);
-    PIDController angularSpeedController = new PIDController(0.34, 0, 0.3);
+    PIDController xSpeedController = new PIDController(5, 0, 0.1);
+    PIDController ySpeedController = new PIDController(5, 0, 0.1);
+    PIDController angularSpeedController = new PIDController(3, 0, 0.025);
     return Commands.run(
             () -> {
               Pose2d currentPose = drive.getPose();
               Pose2d targetPose = targetPoseSupplier.get();
               Rotation2d currentRotation = currentPose.getRotation();
               Rotation2d targetRotation = targetPose.getRotation();
-              Rotation2d rotationError = targetRotation.minus(currentRotation);
 
               double fieldVx = xSpeedController.calculate(currentPose.getX(), targetPose.getX());
               double fieldVy = ySpeedController.calculate(currentPose.getY(), targetPose.getY());
@@ -843,7 +842,8 @@ public class DriveCommands {
                   ChassisSpeeds.fromFieldRelativeSpeeds(
                       fieldVx,
                       fieldVy,
-                      angularSpeedController.calculate(rotationError.getRadians(), 0),
+                      angularSpeedController.calculate(
+                          currentRotation.getRadians(), targetRotation.getRadians()),
                       currentPose.getRotation());
 
               drive.runVelocity(robotRelativeChassisSpeeds);
@@ -852,6 +852,7 @@ public class DriveCommands {
             () -> {
               xSpeedController.reset();
               ySpeedController.reset();
+              angularSpeedController.reset();
             })
         .finallyDo(
             () -> {
