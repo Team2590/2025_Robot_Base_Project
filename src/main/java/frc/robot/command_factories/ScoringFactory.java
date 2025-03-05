@@ -189,6 +189,10 @@ public class ScoringFactory {
                     if (NemesisMathUtil.isTranslationApprox(
                         currentPose.getTranslation(), pose.getTranslation(), 0.01)) return true;
                   }
+                  for (Pose2d pose : FieldConstants.BlueReefPosesArray) {
+                    if (NemesisMathUtil.isTranslationApprox(
+                        currentPose.getTranslation(), pose.getTranslation(), 0.01)) return true;
+                  }
                   return false;
                 })
             .andThen(Commands.parallel(Commands.print("Scoring L4 while moving"), scoreL4())));

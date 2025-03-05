@@ -107,6 +107,22 @@ public class FieldConstants {
         RedReefPoses.NW_left
       };
 
+  public static final Pose2d[] BlueReefPosesArray =
+      new Pose2d[] {
+        BlueReefPoses.N_right,
+        BlueReefPoses.N_left,
+        BlueReefPoses.NE_right,
+        BlueReefPoses.NE_left,
+        BlueReefPoses.SE_right,
+        BlueReefPoses.SE_left,
+        BlueReefPoses.S_right,
+        BlueReefPoses.S_left,
+        BlueReefPoses.SW_right,
+        BlueReefPoses.SW_left,
+        BlueReefPoses.NW_right,
+        BlueReefPoses.NW_left
+      };
+
   public static class RedReefPoses {
     public static final Pose2d N_right = CoralPose.getReefPose(10)[1]; // right
     public static final Pose2d N_left = CoralPose.getReefPose(10)[0]; // left

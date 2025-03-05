@@ -32,12 +32,6 @@
                     }
                   ]
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intakeSource"
-                }
               }
             ]
           }
