@@ -16,7 +16,9 @@ public class NemesisMathUtil {
     return value.doubleValue() > min.doubleValue() && value.doubleValue() < max.doubleValue();
   }
 
-  public static boolean isTranslationApprox(Translation2d translation1, Translation2d translation2, Number tolerance) {
-    return isApprox(translation1.getX(), translation2.getX(), tolerance) && isApprox(translation1.getY(), translation2.getY(), tolerance);
+  public static boolean isTranslationApprox(
+      Translation2d translation1, Translation2d translation2, Number tolerance) {
+    return isApprox(translation1.getX(), translation2.getX(), tolerance)
+        && isApprox(translation1.getY(), translation2.getY(), tolerance);
   }
 }

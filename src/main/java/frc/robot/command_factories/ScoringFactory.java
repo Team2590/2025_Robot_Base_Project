@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants;
+import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
-import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.RobotState;
 import frc.robot.util.NemesisMathUtil;
 import frc.robot.util.NemesisTimedCommand;
@@ -180,14 +180,17 @@ public class ScoringFactory {
   }
 
   public static Command scoreL4WhileMoving() {
-    return 
-    Commands.waitUntil(() -> {
-      Pose2d currentPose = RobotContainer.getDrive().getPose();
-      for (Pose2d pose : FieldConstants.RedReefPosesArray) {
-        if (NemesisMathUtil.isTranslationApprox(currentPose.getTranslation(), pose.getTranslation(), 0.01)) return true;
-      }
-      return false;
-    })
-    .andThen(Commands.parallel(Commands.print("Scoring L4 while moving"), scoreL4()));
+    return Commands.sequence(
+        primeForLevel(Level.L4),
+        Commands.waitUntil(
+                () -> {
+                  Pose2d currentPose = RobotContainer.getDrive().getPose();
+                  for (Pose2d pose : FieldConstants.RedReefPosesArray) {
+                    if (NemesisMathUtil.isTranslationApprox(
+                        currentPose.getTranslation(), pose.getTranslation(), 0.01)) return true;
+                  }
+                  return false;
+                })
+            .andThen(Commands.parallel(Commands.print("Scoring L4 while moving"), scoreL4())));
   }
 }

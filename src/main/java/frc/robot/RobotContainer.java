@@ -529,6 +529,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("ScoreL3", ScoringFactory.score(ScoringFactory.Level.L3));
     NamedCommands.registerCommand("ScoreL2", ScoringFactory.score(ScoringFactory.Level.L2));
     NamedCommands.registerCommand("ScoreL1", ScoringFactory.score(ScoringFactory.Level.L1));
+    NamedCommands.registerCommand("ScoreL4WhileMoving", ScoringFactory.scoreL4WhileMoving());
 
     // Does this need priming?
     NamedCommands.registerCommand("ScoreProcessor", ScoringFactory.scoreProcessor());

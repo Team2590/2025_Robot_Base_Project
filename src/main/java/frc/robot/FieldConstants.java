@@ -91,21 +91,21 @@ public class FieldConstants {
                     new Rotation2d())); //  aprilTagLayout.getTagPose(13).get().toPose2d();
   }
 
-  public static final Pose2d[] RedReefPosesArray = 
-    new Pose2d[] {
-      RedReefPoses.N_right,
-      RedReefPoses.N_left,
-      RedReefPoses.NE_right,
-      RedReefPoses.NE_left,
-      RedReefPoses.SE_right,
-      RedReefPoses.SE_left,
-      RedReefPoses.S_right,
-      RedReefPoses.S_left,
-      RedReefPoses.SW_right,
-      RedReefPoses.SW_left,
-      RedReefPoses.NW_right,
-      RedReefPoses.NW_left
-    };
+  public static final Pose2d[] RedReefPosesArray =
+      new Pose2d[] {
+        RedReefPoses.N_right,
+        RedReefPoses.N_left,
+        RedReefPoses.NE_right,
+        RedReefPoses.NE_left,
+        RedReefPoses.SE_right,
+        RedReefPoses.SE_left,
+        RedReefPoses.S_right,
+        RedReefPoses.S_left,
+        RedReefPoses.SW_right,
+        RedReefPoses.SW_left,
+        RedReefPoses.NW_right,
+        RedReefPoses.NW_left
+      };
 
   public static class RedReefPoses {
     public static final Pose2d N_right = CoralPose.getReefPose(10)[1]; // right
