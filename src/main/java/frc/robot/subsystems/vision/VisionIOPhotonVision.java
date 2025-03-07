@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
@@ -69,6 +70,7 @@ public class VisionIOPhotonVision implements VisionIO {
     private final PhotonCamera camera;
     private final Transform3d robotToCamera;
     private volatile boolean connected = false;
+    private List<PhotonTrackedTarget> targets;
 
     public CameraThread(String name, Transform3d robotToCamera) {
       super("Vision-" + name);
@@ -100,6 +102,16 @@ public class VisionIOPhotonVision implements VisionIO {
             synchronized (observationLock) {
               // Update target observation
               if (result.hasTargets()) {
+                targets = result.getTargets();
+                for(int i = 0; i<targets.size(); i++){
+                  Transform3d camTransform3d = targets.get(i).bestCameraToTarget;
+                  double distance = Math.hypot(Math.hypot(camTransform3d.getX(), camTransform3d.getY()), camTransform3d.getZ());
+                  if(distance >= VisionConstants.DISTANCE_THRESHOLD){
+                    targets.remove(i);
+                    i--;
+                  }
+                }
+
                 latestTargetObservation =
                     new TargetObservation(
                         Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
@@ -107,7 +119,7 @@ public class VisionIOPhotonVision implements VisionIO {
               }
 
               // Process pose observations (existing multi-tag and single-tag logic)
-              if (result.multitagResult.isPresent()) {
+              if (targets.size()>1) {
                 var multitagResult = result.multitagResult.get();
                 Transform3d fieldToCamera = multitagResult.estimatedPose.best;
                 Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
