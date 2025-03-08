@@ -25,14 +25,14 @@
                 "data": {
                   "pathName": "SE_R_to_source"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "PrimeSource"
-                }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PrimeSource"
           }
         },
         {

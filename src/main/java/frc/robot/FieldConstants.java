@@ -81,14 +81,18 @@ public class FieldConstants {
                 .toPose2d()
                 .getRotation()); // aprilTagLayout.getTagPose(12).get().toPose2d();
     public static final Pose2d CoralSourceLeft =
-        aprilTagLayout
-            .getTagPose(13)
-            .get()
-            .toPose2d()
-            .transformBy(
-                new Transform2d(
-                    new Translation2d(-sourceTagToSetpoint.getX(), sourceTagToSetpoint.getY()),
-                    new Rotation2d())); //  aprilTagLayout.getTagPose(13).get().toPose2d();
+        new Pose2d(
+            new Translation2d(1.47, 7.34),
+            aprilTagLayout.getTagPose(13).get().toPose2d().getRotation());
+
+    // aprilTagLayout
+    //     .getTagPose(13)
+    //     .get()
+    //     .toPose2d()
+    //     .transformBy(
+    //         new Transform2d(
+    //             new Translation2d(-sourceTagToSetpoint.getX(), sourceTagToSetpoint.getY()),
+    //             new Rotation2d())); //  aprilTagLayout.getTagPose(13).get().toPose2d();
   }
 
   public static class RedReefPoses {
@@ -106,18 +110,25 @@ public class FieldConstants {
     public static final Pose2d NW_right = CoralPose.getReefPose(11)[1]; // right
     public static final Pose2d NW_left = CoralPose.getReefPose(11)[0]; // left
     public static final Pose2d CoralSourceRight =
-        aprilTagLayout.getTagPose(2).get().toPose2d().transformBy(sourceTagToSetpoint);
+        new Pose2d(
+            new Translation2d(16.08, 7.34),
+            aprilTagLayout.getTagPose(2).get().toPose2d().getRotation());
+    // aprilTagLayout.getTagPose(2).get().toPose2d().transformBy(sourceTagToSetpoint);
 
     // aprilTagLayout.getTagPose(2).get().toPose2d();
     public static final Pose2d CoralSourceLeft =
-        aprilTagLayout
-            .getTagPose(1)
-            .get()
-            .toPose2d()
-            .transformBy(
-                new Transform2d(
-                    new Translation2d(-sourceTagToSetpoint.getX(), sourceTagToSetpoint.getY()),
-                    new Rotation2d())); //  aprilTagLayout.getTagPose(1).get().toPose2d();
+        new Pose2d(
+            new Translation2d(16.08, .71),
+            aprilTagLayout.getTagPose(1).get().toPose2d().getRotation());
+
+    // aprilTagLayout
+    //     .getTagPose(1)
+    //     .get()
+    //     .toPose2d()
+    //     .transformBy(
+    //         new Transform2d(
+    //             new Translation2d(-sourceTagToSetpoint.getX(), sourceTagToSetpoint.getY()),
+    //             new Rotation2d())); //  aprilTagLayout.getTagPose(1).get().toPose2d();
   }
 
   public static final Pose2d Barge =
