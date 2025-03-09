@@ -3,48 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.71,
-        "y": 6.79
-        "x": 0.71,
-        "y": 6.79
+        "x": 3.89,
+        "y": 5.15
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5102680443799035,
-        "y": 6.0820766221328135
+        "x": 3.215496575342466,
+        "y": 5.730415239726027
       },
       "isLocked": false,
-      "linkedName": "TopSource"
+      "linkedName": "SW_L"
     },
     {
       "anchor": {
-        "x": 3.6,
-        "y": 4.99
+        "x": 1.487542808219178,
+        "y": 7.57857448630137
       },
       "prevControl": {
-        "x": 2.464531308474104,
-        "y": 5.9720769613522116
+        "x": 2.076061643835616,
+        "y": 6.975710616438357
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SW_L"
+      "linkedName": "TopSource"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": -27.92959329237886
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
-      "name": "SlowEnter",
-      "minWaypointRelativePos": 0.667796610169491,
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.4779661016949171,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 2.5,
-        "maxAcceleration": 2.0,
-        "maxAngularVelocity": 360.0,
+        "maxVelocity": 2.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
         "unlimited": false
@@ -55,21 +48,21 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 2.0,
-    "maxAngularVelocity": 360.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": -54.0
   },
   "reversed": false,
   "folder": "auton1",
   "idealStartingState": {
-    "velocity": 0.0,
-    "rotation": -55.85000000000001
+    "velocity": 0,
+    "rotation": -59.99999999999999
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
