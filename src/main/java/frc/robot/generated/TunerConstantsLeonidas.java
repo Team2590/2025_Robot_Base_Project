@@ -149,7 +149,8 @@ public class TunerConstantsLeonidas {
   private static final int kFrontRightDriveMotorId = 13;
   private static final int kFrontRightSteerMotorId = 11;
   private static final int kFrontRightEncoderId = 12;
-  private static final Angle kFrontRightEncoderOffset = Rotations.of(-0.22998046875);
+  private static final Angle kFrontRightEncoderOffset =
+      Rotations.of(-0.036133); // Rotations.of(-0.22998046875);
   private static final boolean kFrontRightSteerMotorInverted = true;
   private static final boolean kFrontRightEncoderInverted = false;
 

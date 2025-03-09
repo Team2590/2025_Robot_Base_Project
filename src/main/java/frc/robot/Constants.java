@@ -285,9 +285,13 @@ public final class Constants {
     public static final double reduction = 7;
     public static final double kS = 0.22720;
     public static final double kV = 0.14051;
+    // public static double ELEVATOR_L2_POS = 23;
+    // public static double ELEVATOR_L3_POS = 47;
+    // public static double ELEVATOR_L4_POS = 88;
+    //new, taken from hatboro day 2
     public static double ELEVATOR_L2_POS = 23;
-    public static double ELEVATOR_L3_POS = 47;
-    public static double ELEVATOR_L4_POS = 88;
+    public static double ELEVATOR_L3_POS = 44;
+    public static double ELEVATOR_L4_POS = 85;
     public static double ELEVATOR_SOURCE_POS = 5;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
