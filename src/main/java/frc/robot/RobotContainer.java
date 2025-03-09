@@ -116,7 +116,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
+                        // new CameraConfig(processorCameraName, robotToProcessorCam),
                         new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
@@ -154,7 +154,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
+                        // new CameraConfig(processorCameraName, robotToProcessorCam),
                         new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
@@ -222,7 +222,7 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
                     List.of(
-                        // new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
+                        new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
                         // new CameraConfig(processorCameraName, robotToProcessorCam),
                         new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
@@ -312,7 +312,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
+                        // new CameraConfig(processorCameraName, robotToProcessorCam),
                         new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
