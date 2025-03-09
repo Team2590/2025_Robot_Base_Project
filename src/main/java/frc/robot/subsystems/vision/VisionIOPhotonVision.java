@@ -100,14 +100,32 @@ public class VisionIOPhotonVision implements VisionIO {
             synchronized (observationLock) {
               // Update target observation
               if (result.hasTargets()) {
-                latestTargetObservation =
-                    new TargetObservation(
-                        Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
-                        Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
+                for (int i = 0; i < result.targets.size(); i++) {
+                  Transform3d camTransform3d = result.targets.get(i).getBestCameraToTarget();
+                  double distance =
+                      Math.hypot(
+                          Math.hypot(camTransform3d.getX(), camTransform3d.getY()),
+                          camTransform3d.getZ());
+                  if (distance >= VisionConstants.DISTANCE_THRESHOLD) {
+                    // System.out.println(distance);
+                    // System.out.println(targets.get(i));
+                    result.targets.remove(i);
+                    i--;
+                  }
+
+                  // System.out.println(result.targets);
+                }
+
+                if (result.hasTargets()) {
+                  latestTargetObservation =
+                      new TargetObservation(
+                          Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
+                          Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
+                }
               }
 
               // Process pose observations (existing multi-tag and single-tag logic)
-              if (result.multitagResult.isPresent()) {
+              if (result.targets != null && result.targets.size() > 1) {
                 var multitagResult = result.multitagResult.get();
                 Transform3d fieldToCamera = multitagResult.estimatedPose.best;
                 Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
