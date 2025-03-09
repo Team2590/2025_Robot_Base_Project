@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5927226027397259,
-        "y": 7.293086472602741
+        "x": 0.96,
+        "y": 6.84
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0051369863013697,
-        "y": 5.520055650684932
+        "x": 2.7806743421052627,
+        "y": 7.4984375
       },
       "isLocked": false,
       "linkedName": "TopSource"
     },
     {
       "anchor": {
-        "x": 3.2040296052631576,
-        "y": 4.053865131578948
+        "x": 3.204,
+        "y": 4.069
       },
       "prevControl": {
-        "x": 2.753008698760497,
-        "y": 4.053865131578948
+        "x": 2.4631578947368418,
+        "y": 4.044243421052631
       },
       "nextControl": null,
       "isLocked": false,
@@ -36,11 +36,11 @@
   ],
   "constraintZones": [
     {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.19999999999999996,
+      "name": "Slow Enter",
+      "minWaypointRelativePos": 0.36624775583482966,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 2.5,
+        "maxVelocity": 2.0,
         "maxAcceleration": 1.5,
         "maxAngularVelocity": 360.0,
         "maxAngularAcceleration": 720.0,
@@ -53,7 +53,7 @@
   "eventMarkers": [
     {
       "name": "PrimeL4",
-      "waypointRelativePos": 0.3,
+      "waypointRelativePos": 0.3967684021543988,
       "endWaypointRelativePos": null,
       "command": null
     }

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5927226027397259,
-        "y": 7.293086472602741
+        "x": 0.96,
+        "y": 6.84
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.392990647119629,
-        "y": 6.585163094735554
+        "x": 1.760268044379903,
+        "y": 6.132076622132813
       },
       "isLocked": false,
       "linkedName": "TopSource"
@@ -37,7 +37,7 @@
   "constraintZones": [
     {
       "name": "SlowEnter",
-      "minWaypointRelativePos": 0.667796610169491,
+      "minWaypointRelativePos": 0.5960502692998209,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 2.0,
@@ -50,7 +50,14 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "PrimeL4",
+      "waypointRelativePos": 0.6373429084380611,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 2.0,
@@ -61,7 +68,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": -60.022999999999996
   },
   "reversed": false,
   "folder": "auton1",

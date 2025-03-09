@@ -272,7 +272,7 @@ public final class Constants {
     public static double ARM_SCORING_CORAL_POS = 0.68; // TODO: change to actual value
     public static double ARM_SCORING_CORAL_POS_L3 = .6;
     public static double ARM_SCORING_CORAL_POS_L4 = 0.54;
-    public static double ARM_INTAKE_SOURCE_POSITION = .16; // .09
+    public static double ARM_INTAKE_SOURCE_POSITION = .335; // .09
   }
 
   public static class ElevatorConstantsLeonidas {
@@ -291,12 +291,12 @@ public final class Constants {
     // public static double ELEVATOR_L3_POS = 47;
     // public static double ELEVATOR_L4_POS = 88;
     // new, taken from hatboro day 2
-    public static double ELEVATOR_L2_POS = 23;
-    public static double ELEVATOR_L3_POS = 44;
-    public static double ELEVATOR_L4_POS = 85;
+    public static double ELEVATOR_L2_POS = 17.22;
+    public static double ELEVATOR_L3_POS = 40.32;
+    public static double ELEVATOR_L4_POS = 83;
     public static double ELEVATOR_DEALGAE_L2 = 13.57;
     public static double ELEVATOR_DEALGAE_L3 = 37.14;
-    public static double ELEVATOR_SOURCE_POS = 7.7;
+    public static double ELEVATOR_SOURCE_POS = 0.15;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
 
