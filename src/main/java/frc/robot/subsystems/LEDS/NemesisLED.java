@@ -23,7 +23,6 @@ public class NemesisLED extends SubsystemBase {
   private LEDPattern patternStart;
   private LEDPattern patternEnd;
 
-
   public NemesisLED(int port, int length, int halfWay) {
     // Initialize the LED hardware
     led = new AddressableLED(port);
@@ -51,24 +50,32 @@ public class NemesisLED extends SubsystemBase {
     var scrollSpeed = MetersPerSecond.of(3);
     var stripLength = Meters.of(0.05);
     var scrollingPattern = LEDPattern.gradient(GradientType.kContinuous, color1, color2);
-    return runOnce(() -> {
-      patternStart = scrollingPattern.scrollAtAbsoluteSpeed(scrollSpeed, stripLength);
-      patternEnd = scrollingPattern.scrollAtAbsoluteSpeed(scrollSpeed, stripLength);
-    });
+    return runOnce(
+        () -> {
+          patternStart = scrollingPattern.scrollAtAbsoluteSpeed(scrollSpeed, stripLength);
+          patternEnd = scrollingPattern.scrollAtAbsoluteSpeed(scrollSpeed, stripLength);
+        });
   }
 
   public Command setColor(Color color1, Color color2) {
-    return runOnce(() -> {
-      patternStart = LEDPattern.solid(color1);
-      patternStart = LEDPattern.solid(color2);
-    });
+    return runOnce(
+        () -> {
+          patternStart = LEDPattern.solid(color1);
+          patternEnd = LEDPattern.solid(color2);
+        });
+  }
+
+  public void setColorVoid(Color color1, Color color2) {
+    patternStart = LEDPattern.solid(color1);
+    patternEnd = LEDPattern.solid(color2);
   }
 
   public Command setBlink(Color color1, Color color2, double onTime) {
-    return runOnce(() -> {
-      patternStart = LEDPattern.solid(color1).blink(Seconds.of(onTime));
-      patternEnd = LEDPattern.solid(color2).blink(Seconds.of(onTime));
-    });
+    return runOnce(
+        () -> {
+          patternStart = LEDPattern.solid(color1).blink(Seconds.of(onTime));
+          patternEnd = LEDPattern.solid(color2).blink(Seconds.of(onTime));
+        });
   }
 
   public Command setAuraRizz(Color color1, Color color2) {
@@ -78,10 +85,11 @@ public class NemesisLED extends SubsystemBase {
     var base = LEDPattern.gradient(GradientType.kContinuous, color1, color2);
     var mask = LEDPattern.steps(maskSteps).scrollAtAbsoluteSpeed(scrollSpeed, stripLength);
 
-    return runOnce(() -> {
-      patternStart = base.mask(mask);
-      patternEnd = base.mask(mask);
-    });
+    return runOnce(
+        () -> {
+          patternStart = base.mask(mask);
+          patternEnd = base.mask(mask);
+        });
   }
 
   private double progressMaskCount = 0;
@@ -96,9 +104,10 @@ public class NemesisLED extends SubsystemBase {
     var pattern1 = LEDPattern.solid(color1);
     var pattern2 = LEDPattern.solid(color2);
 
-    return runOnce(() -> {
-      patternStart = pattern1.mask(progressMask);
-      patternEnd = pattern2.mask(progressMask);
-    });
+    return runOnce(
+        () -> {
+          patternStart = pattern1.mask(progressMask);
+          patternEnd = pattern2.mask(progressMask);
+        });
   }
 }

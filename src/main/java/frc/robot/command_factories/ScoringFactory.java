@@ -151,6 +151,7 @@ public class ScoringFactory {
             IntakeFactory.setIntakeCoralPosition(),
             ArmFactory.setPositionBlocking(.33),
             ElevatorFactory.setPositionBlocking(0.5))
+        .andThen(LEDFactory.blink())
         .withName("Deploy climb mechanism");
     // , ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)
   }
@@ -164,6 +165,7 @@ public class ScoringFactory {
             // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS),
             // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
             ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION))
+        .andThen(LEDFactory.auraRizz())
         .withName("Climb");
   }
 
