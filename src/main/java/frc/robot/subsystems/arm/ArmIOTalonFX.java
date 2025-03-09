@@ -81,6 +81,9 @@ public class ArmIOTalonFX implements ArmIO {
     cfg.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     cfg.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
     cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
+    cfg.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = .05;
+    cfg.ClosedLoopRamps.TorqueClosedLoopRampPeriod = .05;
+    cfg.ClosedLoopRamps.VoltageClosedLoopRampPeriod = .05;
 
     /* Configure current limits */
     mm = cfg.MotionMagic;

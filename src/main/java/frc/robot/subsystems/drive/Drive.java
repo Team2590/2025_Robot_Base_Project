@@ -14,6 +14,7 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
@@ -192,6 +193,14 @@ public class Drive extends SubsystemBase {
 
   @Override
   public void periodic() {
+<<<<<<< HEAD
+=======
+    Logger.recordOutput("BlueR_Tagpose", aprilTagLayout.getTagPose(12).get().toPose2d());
+    Logger.recordOutput("BlueSourceL", FieldConstants.BlueReefPoses.CoralSourceLeft);
+    Logger.recordOutput("BlueSourceR", FieldConstants.BlueReefPoses.CoralSourceRight);
+    Logger.recordOutput("RedSourceR", FieldConstants.RedReefPoses.CoralSourceRight);
+    Logger.recordOutput("RedSourceL", FieldConstants.RedReefPoses.CoralSourceLeft);
+>>>>>>> hatboro_day_2
 
     FieldConstants.logBlueReefPoses();
 

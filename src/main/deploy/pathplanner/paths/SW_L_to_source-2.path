@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.56,
-        "y": 4.96
+        "x": 3.89,
+        "y": 5.15
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5932024092336707,
-        "y": 5.962911919642621
+        "x": 3.215496575342466,
+        "y": 5.730415239726027
       },
       "isLocked": false,
       "linkedName": "SW_L"
     },
     {
       "anchor": {
-        "x": 1.3823630136986302,
-        "y": 7.413291952054794
+        "x": 1.487542808219178,
+        "y": 7.57857448630137
       },
       "prevControl": {
-        "x": 1.6136037698750076,
-        "y": 7.1521783874808715
+        "x": 2.076061643835616,
+        "y": 6.975710616438357
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,10 +32,10 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.8879517572944298,
-      "maxWaypointRelativePos": 0.9626885775862067,
+      "minWaypointRelativePos": 0.4779661016949171,
+      "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 1.0,
+        "maxVelocity": 2.0,
         "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -56,7 +56,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -52.305759533310734
+    "rotation": -54.0
   },
   "reversed": false,
   "folder": "auton1",

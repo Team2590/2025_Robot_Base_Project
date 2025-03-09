@@ -380,9 +380,8 @@ public class RobotContainer {
   private void configureButtonBindingsSimulation() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
-    leftJoystick
-        .button(1)
-        .whileTrue(DriveCommands.preciseAlignment(drive, () -> controllerApp.getTarget().pose()));
+    leftJoystick.button(1).whileTrue(controllerApp.bindDrivetoSourceCommandsim(drive));
+    leftJoystick.button(2).whileTrue(controllerApp.bindDrivetoTargetCommandsim(drive));
 
     // Add elevator control bindings
     leftJoystick
@@ -448,31 +447,33 @@ public class RobotContainer {
     leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
     rightJoystick.povDown().whileTrue(ScoringFactory.score(Level.L1));
     leftJoystick.button(2).whileTrue(ScoringFactory.stow());
-    leftJoystick.button(4).and(leftJoystick.trigger()).whileTrue(ScoringFactory.scoreProcessor());
+    rightJoystick.button(4).and(leftJoystick.trigger()).whileTrue(ScoringFactory.scoreProcessor());
     leftJoystick
         .trigger()
-        .and(leftJoystick.button(4).negate())
+        .and(rightJoystick.button(4).negate())
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
+
+    // De-Algae Buttons
+    rightJoystick.povRight().whileTrue(GamePieceFactory.deAlgaeL2());
+    rightJoystick.povLeft().whileTrue(GamePieceFactory.deAlgaeL3());
 
     // Controller App Buttons
     rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
-    rightJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
+    rightJoystick.button(3).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+
+    leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
     leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());
-    leftJoystick
+    rightJoystick
         .button(4)
         .and(rightJoystick.trigger())
         .whileTrue(GamePieceFactory.intakeAlgaeGround());
     rightJoystick
         .trigger()
-        .and(leftJoystick.button(4).negate())
+        .and(rightJoystick.button(4).negate())
         .whileTrue(GamePieceFactory.intakeCoralFeeder());
 
-    rightJoystick
-        .povUp()
-        .whileTrue(
-            EndEffectorFactory.runEndEffectorVoltage(
-                -Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE));
+    rightJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorManual());
 
     // Manual Elevator Control
     rightJoystick.button(14).whileTrue(ElevatorFactory.manualDown());

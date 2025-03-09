@@ -20,7 +20,8 @@ public class ScoringFactory {
     L1(0 /* Not Using Elevator at L1 */),
     L2(Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS),
     L3(Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS),
-    L4(Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS);
+    L4(Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
+    SOURCE(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS);
 
     private final double elevatorPosition;
 
@@ -67,6 +68,14 @@ public class ScoringFactory {
                 ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
                 ArmFactory.setPositionBlocking(
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
+            .withName("Prime " + level.name()));
+
+      case L3:
+        yield (Commands.parallel(
+                Commands.print("Priming " + level.name()),
+                ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
+                ArmFactory.setPositionBlocking(
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3))
             .withName("Prime " + level.name()));
       default:
         yield Commands.parallel(

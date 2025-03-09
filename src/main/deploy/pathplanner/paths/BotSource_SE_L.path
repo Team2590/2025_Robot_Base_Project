@@ -3,6 +3,7 @@
   "waypoints": [
     {
       "anchor": {
+<<<<<<< HEAD
         "x": 1.1645355902777765,
         "y": 1.089230685763888
       },
@@ -10,6 +11,15 @@
       "nextControl": {
         "x": 1.914093504808375,
         "y": 1.601239440504688
+=======
+        "x": 1.4574914383561646,
+        "y": 0.6367080479452056
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.207049352886763,
+        "y": 1.1487168026860055
+>>>>>>> hatboro_day_2
       },
       "isLocked": false,
       "linkedName": "BOT_SOURCE"
@@ -62,7 +72,11 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
+<<<<<<< HEAD
     "rotation": 59.99999999999999
+=======
+    "rotation": 54.0
+>>>>>>> hatboro_day_2
   },
   "useDefaultConstraints": true
 }

@@ -50,8 +50,8 @@ public final class Constants {
   public static class DriveToPoseConstraints {
     public static double maxVelocityMPS = 3;
     public static double maxAccelerationMPSSq = 3;
-    public static double maxAngularVelocityRadPerSec = 1;
-    public static double maxAngularAccelerationRadPerSecSq = 1;
+    public static double maxAngularVelocityRadPerSec = 3;
+    public static double maxAngularAccelerationRadPerSecSq = 3;
 
     public static PathConstraints fastpathConstraints =
         new PathConstraints(
@@ -62,10 +62,10 @@ public final class Constants {
 
     public static PathConstraints slowpathConstraints =
         new PathConstraints(
-            maxVelocityMPS * .25,
-            maxAccelerationMPSSq * .25,
-            maxAngularVelocityRadPerSec * .25,
-            maxAngularAccelerationRadPerSecSq * .25);
+            maxVelocityMPS * .35,
+            maxAccelerationMPSSq * .35,
+            maxAngularVelocityRadPerSec * .35,
+            maxAngularAccelerationRadPerSecSq * .35);
   }
 
   private static List<FRCPolygon> polygons = new ArrayList<>();
@@ -265,21 +265,23 @@ public final class Constants {
     public static final int cancoderID = 5;
     public static final double ARM_SET_STOW = .33;
     // public static final double magOffset = -.596436; // -.398
-    public static final double magOffset = -.268; // -.398
+    public static final double magOffset = -.292; // 0; // -.463; // -.268; // -.398
     public static final double sensorReduction = 58.8;
     public static double ARM_OPERATIONAL_MIN_POS = 0;
     public static double ARM_OPERATIONAL_MAX_POS = .7;
     public static double ARM_SCORING_CORAL_POS = 0.68; // TODO: change to actual value
-    public static double ARM_SCORING_CORAL_POS_L4 = 0.63;
+    public static double ARM_SCORING_CORAL_POS_L3 = .6;
+    public static double ARM_SCORING_CORAL_POS_L4 = 0.54;
     public static double ARM_INTAKE_SOURCE_POSITION = .16; // .09
   }
 
   public static class ElevatorConstantsLeonidas {
+    public static double OFFSET = -2;
     public static double ELEVATOR_OPERATIONAL_MIN_POS = 0;
     public static double ELEVATOR_OPERATIONAL_MAX_POS = 89.5;
     public static final int canID = 25;
     public static final String canBus = "Takeover";
-    public static final int currentLimitAmps = 120;
+    public static final int currentLimitAmps = 80;
     public static final boolean invert = false;
     public static final boolean brake = true;
     public static final double reduction = 7;
@@ -292,7 +294,9 @@ public final class Constants {
     public static double ELEVATOR_L2_POS = 23;
     public static double ELEVATOR_L3_POS = 44;
     public static double ELEVATOR_L4_POS = 85;
-    public static double ELEVATOR_SOURCE_POS = 5;
+    public static double ELEVATOR_DEALGAE_L2 = 13.57;
+    public static double ELEVATOR_DEALGAE_L3 = 37.14;
+    public static double ELEVATOR_SOURCE_POS = 7.7;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
 
@@ -321,8 +325,8 @@ public final class Constants {
     public static final boolean brake = true; // TODO
     public static final double reduction = 1; // TODO
     public static final int proxSensor_ID = 0; // TODO
-    public static final double INTAKE_VOLTAGE = 3;
-    public static final double EJECT_VOLTAGE = -INTAKE_VOLTAGE;
+    public static final double RUN_VOLTAGE = 3;
+    public static final double DEALGAE_VOLTAGE = 8;
   }
 
   public final class IntakeConstantsLeonidas {

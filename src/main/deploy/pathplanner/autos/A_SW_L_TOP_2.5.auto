@@ -23,6 +23,7 @@
               {
                 "type": "path",
                 "data": {
+<<<<<<< HEAD
                   "pathName": "SW_L_to_source"
                 }
               },
@@ -37,9 +38,18 @@
                       }
                     }
                   ]
+=======
+                  "pathName": "SW_L_to_source-2"
+>>>>>>> hatboro_day_2
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PrimeSource"
           }
         },
         {
@@ -51,7 +61,11 @@
         {
           "type": "path",
           "data": {
+<<<<<<< HEAD
             "pathName": "source_to_SW_R"
+=======
+            "pathName": "source_to_SW_R-2"
+>>>>>>> hatboro_day_2
           }
         },
         {
@@ -67,7 +81,11 @@
               {
                 "type": "path",
                 "data": {
+<<<<<<< HEAD
                   "pathName": "SW_R_to_source"
+=======
+                  "pathName": "SW_R_to_source-2"
+>>>>>>> hatboro_day_2
                 }
               },
               {

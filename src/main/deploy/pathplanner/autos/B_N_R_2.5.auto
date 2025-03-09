@@ -30,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "r1_to_source"
+                  "pathName": null
                 }
               },
               {
@@ -49,7 +49,11 @@
               {
                 "type": "path",
                 "data": {
+<<<<<<< HEAD
                   "pathName": "source_to_S_L"
+=======
+                  "pathName": null
+>>>>>>> hatboro_day_2
                 }
               },
               {

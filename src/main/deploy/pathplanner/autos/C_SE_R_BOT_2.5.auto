@@ -25,12 +25,15 @@
                 "data": {
                   "pathName": "SE_R_to_source"
                 }
+<<<<<<< HEAD
               },
               {
                 "type": "named",
                 "data": {
                   "name": "PrimeSource"
                 }
+=======
+>>>>>>> hatboro_day_2
               }
             ]
           }
@@ -38,6 +41,15 @@
         {
           "type": "named",
           "data": {
+<<<<<<< HEAD
+=======
+            "name": "PrimeSource"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+>>>>>>> hatboro_day_2
             "name": "intakeSource"
           }
         },
