@@ -290,7 +290,7 @@ public final class Constants {
     // public static double ELEVATOR_L2_POS = 23;
     // public static double ELEVATOR_L3_POS = 47;
     // public static double ELEVATOR_L4_POS = 88;
-    //new, taken from hatboro day 2
+    // new, taken from hatboro day 2
     public static double ELEVATOR_L2_POS = 23;
     public static double ELEVATOR_L3_POS = 44;
     public static double ELEVATOR_L4_POS = 85;
