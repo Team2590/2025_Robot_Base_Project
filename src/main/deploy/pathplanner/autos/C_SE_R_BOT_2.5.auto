@@ -23,17 +23,8 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SE_R_to_source"
+                  "pathName": null
                 }
-<<<<<<< HEAD
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "PrimeSource"
-                }
-=======
->>>>>>> hatboro_day_2
               }
             ]
           }
@@ -47,14 +38,13 @@
         {
           "type": "named",
           "data": {
-
             "name": "intakeSource"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "BotSource_SE_L"
+            "pathName": null
           }
         },
         {
@@ -70,7 +60,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SE_L_to_source"
+                  "pathName": null
                 }
               },
               {

@@ -3,87 +3,46 @@
   "waypoints": [
     {
       "anchor": {
-<<<<<<< HEAD
-        "x": 1.3823630136986302,
-        "y": 7.413291952054794
+        "x": 1.487542808219178,
+        "y": 7.57857448630137
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.9916952054794521,
-        "y": 6.211237157534247
-=======
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/SW_R_to_source.path
-        "x": 3.56,
-        "y": 4.96
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 2.5932024092336707,
-        "y": 5.962911919642621
-      },
-      "isLocked": false,
-      "linkedName": "SW_L"
-    },
-    {
-      "anchor": {
-        "x": 1.3823630136986302,
-        "y": 7.413291952054794
-      },
-      "prevControl": {
-        "x": 1.6136037698750076,
-        "y": 7.1521783874808715
-========
-        "x": 0.71,
-        "y": 6.79
-        "x": 0.71,
-        "y": 6.79
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 0.31933219178082184,
-        "y": 5.5879452054794525
-        "x": 0.31933219178082184,
-        "y": 5.5879452054794525
->>>>>>> hatboro_day_2
+        "x": 2.487542808219178,
+        "y": 7.57857448630137
       },
       "isLocked": false,
       "linkedName": "TopSource"
     },
     {
       "anchor": {
-        "x": 3.21,
-        "y": 4.07
+        "x": 3.200470890410959,
+        "y": 3.7319991438356164
       },
       "prevControl": {
-        "x": 2.932994414741934,
-        "y": 4.478099605914465
-<<<<<<< HEAD
-=======
->>>>>>>> hatboro_day_2:src/main/deploy/pathplanner/paths/source_to_S_L.path
->>>>>>> hatboro_day_2
+        "x": 1.2321061643835611,
+        "y": 1.4480950342465753
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "l2tos"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [],
-<<<<<<< HEAD
-  "constraintZones": [],
-  "pointTowardsZones": [],
-  "eventMarkers": [],
-  "globalConstraints": {
-    "maxVelocity": 2.5,
-=======
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5133689839572189,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.8879517572944298,
-      "maxWaypointRelativePos": 0.9626885775862067,
+      "minWaypointRelativePos": 0.5322033898305083,
+      "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 1.0,
-        "maxAcceleration": 3.0,
-        "maxAngularVelocity": 540.0,
+        "maxVelocity": 2.5,
+        "maxAcceleration": 1.5,
+        "maxAngularVelocity": 360.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
         "unlimited": false
@@ -91,14 +50,16 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "PrimeL4",
+      "waypointRelativePos": 0.5762711864406779,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/SW_R_to_source.path
     "maxVelocity": 3.0,
-========
-    "maxVelocity": 2.5,
->>>>>>>> hatboro_day_2:src/main/deploy/pathplanner/paths/source_to_S_L.path
->>>>>>> hatboro_day_2
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -110,16 +71,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "auton4",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-<<<<<<< HEAD
-    "rotation": -52.305759533310734
-  },
-  "useDefaultConstraints": false
-=======
-    "rotation": -55.85000000000001
+    "rotation": -54.0
   },
   "useDefaultConstraints": true
->>>>>>> hatboro_day_2
 }

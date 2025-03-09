@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "A_SW_L"
+            "pathName": "A_tl_1"
           }
         },
         {
@@ -23,7 +23,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SW_L_to_source"
+                  "pathName": "tl_1_to_source"
                 }
               },
               {
@@ -67,7 +67,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SW_R_to_source"
+                  "pathName": "SW_L_to_source-2"
                 }
               },
               {
@@ -88,7 +88,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "source_to_S_L4"
+            "pathName": "source_to_S_L"
           }
         },
         {
