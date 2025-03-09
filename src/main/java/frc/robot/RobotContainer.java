@@ -114,10 +114,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
-                        new CameraConfig(reefCameraName, robotToReefCam))));
+                    List.of(new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -152,10 +149,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
-                        new CameraConfig(reefCameraName, robotToReefCam))));
+                    List.of(new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -221,10 +215,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
-                        new CameraConfig(reefCameraName, robotToReefCam))));
+                    List.of(new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(
@@ -274,10 +265,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
-                        new CameraConfig(reefCameraName, robotToReefCam))));
+                    List.of(new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
@@ -310,10 +298,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
-                        new CameraConfig(reefCameraName, robotToReefCam))));
+                    List.of(new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),

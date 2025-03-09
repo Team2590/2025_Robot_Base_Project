@@ -26,28 +26,28 @@ public class VisionConstants {
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
   // Camera names, must match names configured on coprocessor
-  public static String upperSourceCameraName = "1mp_arducam_device_6";
-  public static String processorCameraName = "1mp_arducam_device_4";
+  //   public static String upperSourceCameraName = "1mp_arducam_device_6";
+  //   public static String processorCameraName = "1mp_arducam_device_4";
   public static String reefCameraName = "1mp_arducam_device_1";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
 
   // Upper Source Camera
-  public static Transform3d robotToUpperSourceCam =
-      new Transform3d(
-          Units.inchesToMeters(-7.8508),
-          Units.inchesToMeters(9.0),
-          Units.inchesToMeters(35.7347),
-          new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
+  //   public static Transform3d robotToUpperSourceCam =
+  //       new Transform3d(
+  //           Units.inchesToMeters(-7.8508),
+  //           Units.inchesToMeters(9.0),
+  //           Units.inchesToMeters(35.7347),
+  //           new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
 
   // Processor Camera
-  public static Transform3d robotToProcessorCam =
-      new Transform3d(
-          Units.inchesToMeters(-6.379),
-          Units.inchesToMeters(7.2767),
-          Units.inchesToMeters(29.9459),
-          new Rotation3d(0.0, Math.toRadians(-27.0), Math.toRadians(-90.0)));
+  //   public static Transform3d robotToProcessorCam =
+  //       new Transform3d(
+  //           Units.inchesToMeters(-6.379),
+  //           Units.inchesToMeters(7.2767),
+  //           Units.inchesToMeters(29.9459),
+  //           new Rotation3d(0.0, Math.toRadians(-27.0), Math.toRadians(-90.0)));
 
   // Reef Camera
   public static Transform3d robotToReefCam =
@@ -83,5 +83,5 @@ public class VisionConstants {
   public static final Set<Integer> FIDUCIAL_IDS =
       Set.of(17, 18, 19, 20, 21, 22, 6, 7, 8, 9, 10, 11);
 
-  public static double DISTANCE_THRESHOLD = Units.inchesToMeters(120);
+  public static double DISTANCE_THRESHOLD = Units.inchesToMeters(120); // TODO: TUNE VALUE FOR COMP
 }

@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
@@ -70,7 +69,6 @@ public class VisionIOPhotonVision implements VisionIO {
     private final PhotonCamera camera;
     private final Transform3d robotToCamera;
     private volatile boolean connected = false;
-    private List<PhotonTrackedTarget> targets;
 
     public CameraThread(String name, Transform3d robotToCamera) {
       super("Vision-" + name);
@@ -102,24 +100,32 @@ public class VisionIOPhotonVision implements VisionIO {
             synchronized (observationLock) {
               // Update target observation
               if (result.hasTargets()) {
-                targets = result.getTargets();
-                for(int i = 0; i<targets.size(); i++){
-                  Transform3d camTransform3d = targets.get(i).bestCameraToTarget;
-                  double distance = Math.hypot(Math.hypot(camTransform3d.getX(), camTransform3d.getY()), camTransform3d.getZ());
-                  if(distance >= VisionConstants.DISTANCE_THRESHOLD){
-                    targets.remove(i);
+                for (int i = 0; i < result.targets.size(); i++) {
+                  Transform3d camTransform3d = result.targets.get(i).getBestCameraToTarget();
+                  double distance =
+                      Math.hypot(
+                          Math.hypot(camTransform3d.getX(), camTransform3d.getY()),
+                          camTransform3d.getZ());
+                  if (distance >= VisionConstants.DISTANCE_THRESHOLD) {
+                    // System.out.println(distance);
+                    // System.out.println(targets.get(i));
+                    result.targets.remove(i);
                     i--;
                   }
+
+                  // System.out.println(result.targets);
                 }
 
-                latestTargetObservation =
-                    new TargetObservation(
-                        Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
-                        Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
+                if (result.hasTargets()) {
+                  latestTargetObservation =
+                      new TargetObservation(
+                          Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
+                          Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
+                }
               }
 
               // Process pose observations (existing multi-tag and single-tag logic)
-              if (targets.size()>1) {
+              if (result.targets != null && result.targets.size() > 1) {
                 var multitagResult = result.multitagResult.get();
                 Transform3d fieldToCamera = multitagResult.estimatedPose.best;
                 Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
