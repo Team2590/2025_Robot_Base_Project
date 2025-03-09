@@ -41,15 +41,13 @@
         {
           "type": "named",
           "data": {
-<<<<<<< HEAD
-=======
             "name": "PrimeSource"
           }
         },
         {
           "type": "named",
           "data": {
->>>>>>> hatboro_day_2
+
             "name": "intakeSource"
           }
         },

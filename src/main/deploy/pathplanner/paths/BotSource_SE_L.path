@@ -3,7 +3,6 @@
   "waypoints": [
     {
       "anchor": {
-<<<<<<< HEAD
         "x": 1.1645355902777765,
         "y": 1.089230685763888
       },
@@ -19,7 +18,6 @@
       "nextControl": {
         "x": 2.207049352886763,
         "y": 1.1487168026860055
->>>>>>> hatboro_day_2
       },
       "isLocked": false,
       "linkedName": "BOT_SOURCE"

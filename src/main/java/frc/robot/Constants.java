@@ -212,7 +212,7 @@ public final class Constants {
           Units.inchesToMeters(
               1.7); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is "left
       // and right", adjustY sin is + -y. Change adjust offsets
-      double adjustY_right = Units.inchesToMeters(8 + 5.3); //
+      double adjustY_right = Units.inchesToMeters(8 + 5.3);
 
       double rightReefX =
           tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right * Math.sin(tagRotation);

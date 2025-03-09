@@ -41,22 +41,16 @@
     },
     {
       "anchor": {
-<<<<<<< HEAD
         "x": 1.1645355902777765,
         "y": 1.089230685763888
       },
       "prevControl": {
         "x": 2.0087257667824066,
         "y": 1.730773292824074
-=======
-        "x": 1.4574914383561646,
-        "y": 0.6367080479452056
       },
       "prevControl": {
         "x": 2.3016816148607946,
         "y": 1.2782506550053916
->>>>>>>> hatboro_day_2:src/main/deploy/pathplanner/paths/SE_L_to_source.path
->>>>>>> hatboro_day_2
       },
       "nextControl": null,
       "isLocked": false,
