@@ -520,13 +520,15 @@ public class RobotContainer {
     // NamedCommands.registerCommand("PrimeL1",
     // ScoringFactory.primeForLevel(ScoringFactory.Level.L1));
     // TODO: Prime for Source
+    NamedCommands.registerCommand("PrimeSource", GamePieceFactory.primeCoralSource());
+    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeCoralFeeder());
 
     // Scoring Commands
     NamedCommands.registerCommand("ScoreL4", ScoringFactory.score(ScoringFactory.Level.L4));
     NamedCommands.registerCommand("ScoreL3", ScoringFactory.score(ScoringFactory.Level.L3));
     NamedCommands.registerCommand("ScoreL2", ScoringFactory.score(ScoringFactory.Level.L2));
     NamedCommands.registerCommand("ScoreL1", ScoringFactory.score(ScoringFactory.Level.L1));
-    NamedCommands.registerCommand("ScoreL4WhileMoving", ScoringFactory.scoreL4WhileMoving());
+    NamedCommands.registerCommand("PrimeL4WhileMoving", ScoringFactory.primeL4WhileMoving());
 
     // Does this need priming?
     NamedCommands.registerCommand("ScoreProcessor", ScoringFactory.scoreProcessor());
@@ -538,9 +540,6 @@ public class RobotContainer {
     // for a certain condition.
     NamedCommands.registerCommand(
         "WaitAndPrint", Commands.waitSeconds(5).andThen(Commands.print("Done waiting ...")));
-
-    NamedCommands.registerCommand("PrimeSource", GamePieceFactory.primeCoralSource());
-    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeCoralFeeder());
   }
 
   //   public boolean inReef() {

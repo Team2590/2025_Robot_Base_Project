@@ -22,12 +22,12 @@ public class NemesisMathUtil {
     return isApprox(Math.abs(translation2.getDistance(translation1)), tolerance, 0);
   }
 
-  public static boolean isPoseApprox(Pose2d pose1, Pose2d pose2, Number tolerance){
-    return isTranslationApprox(pose1.getTranslation(), pose2.getTranslation(), tolerance) && 
-            isApprox(pose1.getRotation().getRadians(), pose2.getRotation().getRadians(), tolerance);
+  public static boolean isPoseApprox(Pose2d pose1, Pose2d pose2, Number tolerance) {
+    return isTranslationApprox(pose1.getTranslation(), pose2.getTranslation(), tolerance)
+        && isApprox(pose1.getRotation().getRadians(), pose2.getRotation().getRadians(), tolerance);
   }
 
-  public static double distance(Pose2d pose1, Pose2d pose2){
-    return Math.hypot(pose1.getX()-pose2.getX(), pose1.getY()-pose2.getY());
+  public static double distance(Pose2d pose1, Pose2d pose2) {
+    return Math.hypot(pose1.getX() - pose2.getX(), pose1.getY() - pose2.getY());
   }
 }

@@ -179,34 +179,32 @@ public class ScoringFactory {
         .withName("Set defaults");
   }
 
-  public static Command scoreL4WhileMoving() {
+  public static Command primeL4WhileMoving() {
     return Commands.sequence(
-        Commands.waitUntil(() -> {
-                  Pose2d currentPose = RobotContainer.getDrive().getPose();
-                  for (Pose2d pose : FieldConstants.RedReefPosesArray) {
-                    if (NemesisMathUtil.distance(
-                        currentPose, pose)<1.5) return true; // 1.5 meters max distance to start raising elevator
-                  }
-                  for (Pose2d pose : FieldConstants.BlueReefPosesArray) {
-                    if (NemesisMathUtil.distance(
-                        currentPose, pose)<1.5) return true; // 1.5 meters max distance to start raising elevator
-                  }
-                  return false;
-                }),
+        Commands.waitUntil(
+            () -> {
+              Pose2d currentPose = RobotContainer.getDrive().getPose();
+              for (Pose2d pose : FieldConstants.RedReefPosesArray) {
+                if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
+                  return true; // 1.5 meters max distance to start raising elevator
+              }
+              for (Pose2d pose : FieldConstants.BlueReefPosesArray) {
+                if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
+                  return true; // 1.5 meters max distance to start raising elevator
+              }
+              return false;
+            }),
         primeForLevel(Level.L4),
         Commands.waitUntil(
-                () -> {
-                  Pose2d currentPose = RobotContainer.getDrive().getPose();
-                  for (Pose2d pose : FieldConstants.RedReefPosesArray) {
-                    if (NemesisMathUtil.isPoseApprox(
-                        currentPose, pose, 0.01)) return true;
-                  }
-                  for (Pose2d pose : FieldConstants.BlueReefPosesArray) {
-                    if (NemesisMathUtil.isPoseApprox(
-                        currentPose, pose, 0.01)) return true;
-                  }
-                  return false;
-                })
-            );
+            () -> {
+              Pose2d currentPose = RobotContainer.getDrive().getPose();
+              for (Pose2d pose : FieldConstants.RedReefPosesArray) {
+                if (NemesisMathUtil.isPoseApprox(currentPose, pose, 0.01)) return true;
+              }
+              for (Pose2d pose : FieldConstants.BlueReefPosesArray) {
+                if (NemesisMathUtil.isPoseApprox(currentPose, pose, 0.01)) return true;
+              }
+              return false;
+            }));
   }
 }
