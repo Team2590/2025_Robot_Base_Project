@@ -380,6 +380,11 @@ public class RobotContainer {
     leftJoystick.button(1).whileTrue(controllerApp.bindDrivetoSourceCommandsim(drive));
     leftJoystick.button(2).whileTrue(controllerApp.bindDrivetoTargetCommandsim(drive));
 
+    leftJoystick
+        .button(3)
+        .whileTrue(
+            DriveCommands.driveToPoseStraight(drive, () -> FieldConstants.BlueReefPoses.NE_left));
+
     // Add elevator control bindings
     leftJoystick
         .button(4)
@@ -521,6 +526,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("ScoreL3", ScoringFactory.score(ScoringFactory.Level.L3));
     NamedCommands.registerCommand("ScoreL2", ScoringFactory.score(ScoringFactory.Level.L2));
     NamedCommands.registerCommand("ScoreL1", ScoringFactory.score(ScoringFactory.Level.L1));
+    NamedCommands.registerCommand("ScoreL4WhileMoving", ScoringFactory.scoreL4WhileMoving());
 
     // Does this need priming?
     NamedCommands.registerCommand("ScoreProcessor", ScoringFactory.scoreProcessor());
