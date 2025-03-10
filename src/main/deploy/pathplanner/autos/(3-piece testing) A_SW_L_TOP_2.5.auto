@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "A_tl_1"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "A_tl_1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ScoreL4WhileMoving"
+                }
+              }
+            ]
           }
         },
         {
@@ -49,9 +62,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "source_to_SW_R"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "source_to_SW_R"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ScoreL4WhileMoving"
+                }
+              }
+            ]
           }
         },
         {
@@ -86,9 +112,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "source_to_S_L"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "source_to_S_L"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ScoreL4WhileMoving"
+                }
+              }
+            ]
           }
         },
         {
