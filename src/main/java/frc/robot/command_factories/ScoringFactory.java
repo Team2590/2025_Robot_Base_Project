@@ -186,12 +186,12 @@ public class ScoringFactory {
                 () -> {
                   Pose2d currentPose = RobotContainer.getDrive().getPose();
                   for (Pose2d pose : FieldConstants.RedReefPosesArray) {
-                    if (NemesisMathUtil.isTranslationApprox(
-                        currentPose.getTranslation(), pose.getTranslation(), 0.01)) return true;
+                    if (NemesisMathUtil.isPoseApprox(
+                        currentPose, pose, 0.01)) return true;
                   }
                   for (Pose2d pose : FieldConstants.BlueReefPosesArray) {
-                    if (NemesisMathUtil.isTranslationApprox(
-                        currentPose.getTranslation(), pose.getTranslation(), 0.01)) return true;
+                    if (NemesisMathUtil.isPoseApprox(
+                        currentPose, pose, 0.01)) return true;
                   }
                   return false;
                 })

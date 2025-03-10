@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class NemesisMathUtil {
@@ -19,5 +20,10 @@ public class NemesisMathUtil {
   public static boolean isTranslationApprox(
       Translation2d translation1, Translation2d translation2, Number tolerance) {
     return isApprox(Math.abs(translation2.getDistance(translation1)), tolerance, 0);
+  }
+
+  public static boolean isPoseApprox(Pose2d pose1, Pose2d pose2, Number tolerance){
+    return isTranslationApprox(pose1.getTranslation(), pose2.getTranslation(), tolerance) && 
+            isApprox(pose1.getRotation().getRadians(), pose2.getRotation().getRadians(), tolerance);
   }
 }
