@@ -181,6 +181,18 @@ public class ScoringFactory {
 
   public static Command scoreL4WhileMoving() {
     return Commands.sequence(
+        Commands.waitUntil(() -> {
+                  Pose2d currentPose = RobotContainer.getDrive().getPose();
+                  for (Pose2d pose : FieldConstants.RedReefPosesArray) {
+                    if (NemesisMathUtil.distance(
+                        currentPose, pose)<1.5) return true; // 1.5 meters max distance to start raising elevator
+                  }
+                  for (Pose2d pose : FieldConstants.BlueReefPosesArray) {
+                    if (NemesisMathUtil.distance(
+                        currentPose, pose)<1.5) return true; // 1.5 meters max distance to start raising elevator
+                  }
+                  return false;
+                }),
         primeForLevel(Level.L4),
         Commands.waitUntil(
                 () -> {
@@ -195,6 +207,6 @@ public class ScoringFactory {
                   }
                   return false;
                 })
-            .andThen(Commands.parallel(Commands.print("Scoring L4 while moving"), scoreL4())));
+            );
   }
 }
