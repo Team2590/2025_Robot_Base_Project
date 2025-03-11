@@ -440,9 +440,6 @@ public class RobotContainer {
                 getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
                 () -> controllerApp.getTarget().pose(),
                 1.0));
-
-    // leftJoystick.button(3).and(rightJoystick.button(3)).toggleOnTrue(elevator.getDefaultCommand().execute());
-    leftJoystick.button(4).and(rightJoystick.button(3)).toggleOnTrue(arm.getDefaultCommand());
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
