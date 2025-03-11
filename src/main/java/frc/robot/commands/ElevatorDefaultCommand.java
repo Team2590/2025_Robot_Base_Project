@@ -4,21 +4,21 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
-import frc.robot.command_factories.ArmFactory;
+import frc.robot.command_factories.ElevatorFactory;
 
-public class ArmDefaultCommand extends Command {
+public class ElevatorDefaultCommand extends Command {
   private Command hasCoralCommand =
-      ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS - 0.1);
+      ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS);
   private Command notHasCoralCommand =
-      ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION);
+      ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS);
 
-  public ArmDefaultCommand() {
+  public ElevatorDefaultCommand() {
     addRequirements(RobotContainer.getElevator());
   }
 
   @Override
   public void execute() {
-    if (RobotState.intakeHasCoral()) {
+    if (RobotState.endEffectorhasCoral()) {
       hasCoralCommand.schedule();
     } else {
       notHasCoralCommand.schedule();

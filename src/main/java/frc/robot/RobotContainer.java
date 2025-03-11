@@ -37,7 +37,7 @@ import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.ArmDefaultCommand;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ElevatorDefualtCommand;
+import frc.robot.commands.ElevatorDefaultCommand;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.LEDS.NemesisLED;
@@ -372,7 +372,7 @@ public class RobotContainer {
         new FeedForwardCharacterization(
             intake, intake::setVoltage, intake::getCharacterizationVelocity));
 
-    elevator.setDefaultCommand(new ElevatorDefualtCommand());
+    elevator.setDefaultCommand(new ElevatorDefaultCommand());
     arm.setDefaultCommand(new ArmDefaultCommand());
   }
 
@@ -440,6 +440,9 @@ public class RobotContainer {
                 getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
                 () -> controllerApp.getTarget().pose(),
                 1.0));
+
+    // leftJoystick.button(3).and(rightJoystick.button(3)).toggleOnTrue(elevator.getDefaultCommand().execute());
+    leftJoystick.button(4).and(rightJoystick.button(3)).toggleOnTrue(arm.getDefaultCommand());
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
