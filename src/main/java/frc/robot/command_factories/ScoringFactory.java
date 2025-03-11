@@ -194,17 +194,18 @@ public class ScoringFactory {
               }
               return false;
             }),
-        primeForLevel(Level.L4),
-        Commands.waitUntil(
-            () -> {
-              Pose2d currentPose = RobotContainer.getDrive().getPose();
-              for (Pose2d pose : FieldConstants.RedReefPosesArray) {
-                if (NemesisMathUtil.isPoseApprox(currentPose, pose, 0.01)) return true;
-              }
-              for (Pose2d pose : FieldConstants.BlueReefPosesArray) {
-                if (NemesisMathUtil.isPoseApprox(currentPose, pose, 0.01)) return true;
-              }
-              return false;
-            }));
+        primeForLevel(Level.L4) //,
+        // Commands.waitUntil(
+        //     () -> {
+        //       Pose2d currentPose = RobotContainer.getDrive().getPose();
+        //       for (Pose2d pose : FieldConstants.RedReefPosesArray) {
+        //         if (NemesisMathUtil.isPoseApprox(currentPose, pose, 0.01)) return true;
+        //       }
+        //       for (Pose2d pose : FieldConstants.BlueReefPosesArray) {
+        //         if (NemesisMathUtil.isPoseApprox(currentPose, pose, 0.01)) return true;
+        //       }
+        //       return false;
+        //     })
+        );
   }
 }

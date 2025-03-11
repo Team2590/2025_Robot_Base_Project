@@ -13,6 +13,12 @@
                 "data": {
                   "pathName": "A_tl_1"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "PrimeL4WhileMoving"
+                }
               }
             ]
           }
@@ -57,6 +63,12 @@
                 "data": {
                   "pathName": "source_to_SW_R"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "PrimeL4WhileMoving"
+                }
               }
             ]
           }
@@ -100,6 +112,12 @@
                 "type": "path",
                 "data": {
                   "pathName": "source_to_S_L"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "PrimeL4WhileMoving"
                 }
               }
             ]
