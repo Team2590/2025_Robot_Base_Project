@@ -18,12 +18,20 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
+import java.io.IOException;
 import java.util.Set;
 
 public class VisionConstants {
   // AprilTag layout
-  public static AprilTagFieldLayout aprilTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+  public static AprilTagFieldLayout aprilTagLayout;
+
+  static {
+    try {
+      aprilTagLayout = new AprilTagFieldLayout("../../generated/commonsFieldCal3-11-2025.json");
+    } catch (IOException e) {
+      aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+    }
+  }
 
   // Camera names, must match names configured on coprocessor
   public static String upperSourceCameraName = "1mp_arducam_device_6";

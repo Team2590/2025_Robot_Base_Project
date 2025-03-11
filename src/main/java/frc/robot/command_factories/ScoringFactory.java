@@ -67,24 +67,31 @@ public class ScoringFactory {
   public static Command primeForLevel(Level level) {
     return switch (level) {
       case L4:
-        yield (Commands.parallel(
+        yield Commands.parallel(
+                Commands.print("Priming " + level.name()),
+                ElevatorFactory.setPosition(level.getElevatorPosition()),
+                ArmFactory.setPosition(
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4 - 0.1))
+            .andThen(
+                ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
+            .withName("Prime " + level.name());
+      case L3:
+        yield Commands.parallel(
                 Commands.print("Priming " + level.name()),
                 ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
                 ArmFactory.setPositionBlocking(
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
-            .withName("Prime " + level.name()));
-
-      case L3:
-        yield (Commands.parallel(
-                Commands.print("Priming " + level.name()),
-                ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3 - 0.1))
+            .andThen(
                 ArmFactory.setPositionBlocking(
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3))
-            .withName("Prime " + level.name()));
+            .withName("Prime " + level.name());
       default:
         yield Commands.parallel(
                 Commands.print("Priming " + level.name()),
                 ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
+                ArmFactory.setPositionBlocking(
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS - 0.1))
+            .andThen(
                 ArmFactory.setPositionBlocking(
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS))
             .withName("Prime " + level.name());
@@ -140,10 +147,12 @@ public class ScoringFactory {
    * @return Command sequence for stowing
    */
   public static Command stow() {
-    return Commands.parallel(
-            ArmFactory.setPositionBlocking(ArmConstantsLeonidas.ARM_SET_STOW),
-            ElevatorFactory.setPositionBlocking(5),
-            IntakeFactory.setHomePosition())
+    return Commands.sequence(
+            ArmFactory.setPositionBlocking(ArmConstantsLeonidas.ARM_SET_STOW - 0.1),
+            Commands.parallel(
+                ArmFactory.setPositionBlocking(ArmConstantsLeonidas.ARM_SET_STOW),
+                ElevatorFactory.setPositionBlocking(5),
+                IntakeFactory.setHomePosition()))
         .withName("Stow Mechanism");
   }
 
@@ -194,7 +203,7 @@ public class ScoringFactory {
               }
               return false;
             }),
-        primeForLevel(Level.L4) //,
+        primeForLevel(Level.L4) // ,
         // Commands.waitUntil(
         //     () -> {
         //       Pose2d currentPose = RobotContainer.getDrive().getPose();
