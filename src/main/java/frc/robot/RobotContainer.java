@@ -35,7 +35,9 @@ import frc.robot.command_factories.EndEffectorFactory;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
+import frc.robot.commands.ArmDefaultCommand;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ElevatorDefualtCommand;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.LEDS.NemesisLED;
@@ -369,6 +371,9 @@ public class RobotContainer {
         "Intake FF Characterization",
         new FeedForwardCharacterization(
             intake, intake::setVoltage, intake::getCharacterizationVelocity));
+
+    elevator.setDefaultCommand(new ElevatorDefualtCommand());
+    arm.setDefaultCommand(new ArmDefaultCommand());
   }
 
   /**
