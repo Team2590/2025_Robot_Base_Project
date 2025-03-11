@@ -25,6 +25,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.generated.TunerConstantsLeonidas;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.FRCPolygon;
@@ -212,7 +213,7 @@ public final class Constants {
           Units.inchesToMeters(
               1.7); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is "left
       // and right", adjustY sin is + -y. Change adjust offsets
-      double adjustY_right = Units.inchesToMeters(8 + 5.3 - 2); //
+      double adjustY_right = Units.inchesToMeters(8 + 5.3); //
 
       double rightReefX =
           tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right * Math.sin(tagRotation);
@@ -276,7 +277,7 @@ public final class Constants {
   }
 
   public static class ElevatorConstantsLeonidas {
-    public static double OFFSET = -2.5;
+    public static double OFFSET = -2;
     public static double ELEVATOR_OPERATIONAL_MIN_POS = 0;
     public static double ELEVATOR_OPERATIONAL_MAX_POS = 89.5;
     public static final int canID = 25;
@@ -287,12 +288,12 @@ public final class Constants {
     public static final double reduction = 7;
     public static final double kS = 0.22720;
     public static final double kV = 0.14051;
-    public static double ELEVATOR_L2_POS = 23 + OFFSET;
-    public static double ELEVATOR_L3_POS = 47 + OFFSET;
-    public static double ELEVATOR_L4_POS = 85 + OFFSET;
+    public static double ELEVATOR_L2_POS = 23;
+    public static double ELEVATOR_L3_POS = 44;
+    public static double ELEVATOR_L4_POS = 85;
     public static double ELEVATOR_DEALGAE_L2 = 13.57;
     public static double ELEVATOR_DEALGAE_L3 = 37.14;
-    public static double ELEVATOR_SOURCE_POS = 7.7 + OFFSET;
+    public static double ELEVATOR_SOURCE_POS = 7.7;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
 
@@ -367,6 +368,15 @@ public final class Constants {
     public static final double CLIMB_MECHANISM_POSITION = 13; // 13
     public static final double CLIMB_MAX_POSITION = 189; // 213.25 (actual), 189 (from 2/23)
     public static final double CLIMB_VOLTAGE = 8.0; // 2.0 tested
+  }
+
+  public final class LEDConstantsLeonidas {
+    public static final int port = 0;
+    public static final int length = 56;
+    public static final int halfWay = 29;
+    public static final Color startColor = Color.kRed;
+    public static final Color endColor = Color.kWhite;
+    public static final double blinkTime = 0.2;
   }
 
   public static class IntakeConstantsLarry {
