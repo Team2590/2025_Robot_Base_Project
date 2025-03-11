@@ -1,0 +1,10 @@
+<xml version="1.0">
+<dashboard>
+	<widget field="Auto Choices" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="0" y="0"/>
+	</widget>
+</dashboard>
+<live-window>
+</live-window>
+	<hidden field="Alerts"/>
+</xml>
