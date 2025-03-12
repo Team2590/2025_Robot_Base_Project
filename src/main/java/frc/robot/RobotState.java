@@ -21,87 +21,87 @@ public class RobotState extends SubsystemBase {
   private final Elevator elevator;
   private final Vision vision;
   private static EndEffector endEffector;
-    private static Intake intake;
-    private static RobotState instance;
-    @Getter private static boolean endEffectorhasCoral;
-    private static boolean intakeHasCoral;
-    private static boolean intakeHasAlgae;
-  
-    private RobotState(
-        Arm arm,
-        Drive drive,
-        Elevator elevator,
-        EndEffector endEffector,
-        Intake intake,
-        Vision vision) {
-      this.arm = arm;
-      this.drive = drive;
-      this.elevator = elevator;
-      this.endEffector = endEffector;
-      this.intake = intake;
-      this.vision = vision;
+  private static Intake intake;
+  private static RobotState instance;
+  @Getter private static boolean endEffectorhasCoral;
+  private static boolean intakeHasCoral;
+  private static boolean intakeHasAlgae;
+
+  private RobotState(
+      Arm arm,
+      Drive drive,
+      Elevator elevator,
+      EndEffector endEffector,
+      Intake intake,
+      Vision vision) {
+    this.arm = arm;
+    this.drive = drive;
+    this.elevator = elevator;
+    this.endEffector = endEffector;
+    this.intake = intake;
+    this.vision = vision;
+  }
+
+  /**
+   * Initializes the robot state
+   *
+   * @param arm robots arm
+   * @param drive drive
+   * @param elevator elevator
+   * @param endEffector endeffector
+   * @param intake intake
+   * @param vision vision
+   * @return new robot state object
+   */
+  public static RobotState initialize(
+      Arm arm,
+      Drive drive,
+      Elevator elevator,
+      EndEffector endEffector,
+      Intake intake,
+      Vision vision) {
+    if (instance != null) {
+      throw new IllegalStateException("RobotState has already been initialized");
     }
-  
-    /**
-     * Initializes the robot state
-     *
-     * @param arm robots arm
-     * @param drive drive
-     * @param elevator elevator
-     * @param endEffector endeffector
-     * @param intake intake
-     * @param vision vision
-     * @return new robot state object
-     */
-    public static RobotState initialize(
-        Arm arm,
-        Drive drive,
-        Elevator elevator,
-        EndEffector endEffector,
-        Intake intake,
-        Vision vision) {
-      if (instance != null) {
-        throw new IllegalStateException("RobotState has already been initialized");
-      }
-      instance = new RobotState(arm, drive, elevator, endEffector, intake, vision);
-      return instance;
+    instance = new RobotState(arm, drive, elevator, endEffector, intake, vision);
+    return instance;
+  }
+
+  /**
+   * Gets the Robot State if it's initialized
+   *
+   * @return robot state
+   */
+  public static RobotState getInstance() {
+    if (instance == null) {
+      throw new IllegalStateException("RobotState has not been initialized");
     }
-  
-    /**
-     * Gets the Robot State if it's initialized
-     *
-     * @return robot state
-     */
-    public static RobotState getInstance() {
-      if (instance == null) {
-        throw new IllegalStateException("RobotState has not been initialized");
-      }
-      return instance;
-    }
-  
-    /**
-     * Gets Robot Pose
-     *
-     * @return robot pose
-     */
-    public Pose2d getPose() {
-      return drive.getPose();
-    }
-  
-    public void periodic() {
-      robotPose = drive.getPose();
-      // currentZone = Constants.locator.getZoneOfField(robotPose);
-      endEffectorhasCoral = endEffectorhasCoral();
-    }
-  
-    /**
-     * Checks if endeffector has coral
-     *
-     * @return true if the endeffector has coral, false if not
-     */
-    @AutoLogOutput(key = "EndEffector/hasCoral")
-    public static boolean endEffectorhasCoral() {
-      return endEffector.hasCoral();
+    return instance;
+  }
+
+  /**
+   * Gets Robot Pose
+   *
+   * @return robot pose
+   */
+  public Pose2d getPose() {
+    return drive.getPose();
+  }
+
+  public void periodic() {
+    robotPose = drive.getPose();
+    // currentZone = Constants.locator.getZoneOfField(robotPose);
+    endEffectorhasCoral = endEffectorhasCoral();
+  }
+
+  /**
+   * Checks if endeffector has coral
+   *
+   * @return true if the endeffector has coral, false if not
+   */
+  @AutoLogOutput(key = "EndEffector/hasCoral")
+  public static boolean endEffectorhasCoral() {
+    return endEffector.hasCoral();
   }
 
   @AutoLogOutput(key = "Intake/hasCoral")

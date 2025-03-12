@@ -13,12 +13,12 @@ public class ArmDefaultCommand extends Command {
       ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION);
 
   public ArmDefaultCommand() {
-    addRequirements(RobotContainer.getElevator());
+    addRequirements(RobotContainer.getArm());
   }
 
   @Override
   public void execute() {
-    if (RobotState.intakeHasCoral()) {
+    if (RobotState.endEffectorhasCoral()) {
       hasCoralCommand.schedule();
     } else {
       notHasCoralCommand.schedule();
