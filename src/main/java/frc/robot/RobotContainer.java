@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -36,7 +35,10 @@ import frc.robot.command_factories.EndEffectorFactory;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
+import frc.robot.commands.ArmDefaultCommand;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ElevatorDefaultCommand;
+import frc.robot.commands.EndEffectorDefaultCommand;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.LEDS.NemesisLED;
@@ -369,6 +371,13 @@ public class RobotContainer {
             intake, intake::setVoltage, intake::getCharacterizationVelocity));
   }
 
+  /** Initialize default commands */
+  public void initDefaultCommands() {
+    elevator.setDefaultCommand(new ElevatorDefaultCommand());
+    arm.setDefaultCommand(new ArmDefaultCommand());
+    endEffector.setDefaultCommand(new EndEffectorDefaultCommand());
+  }
+
   /**
    * Configure buttons.
    *
@@ -504,14 +513,15 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     rightJoystick.button(8).onTrue(elevator.resetRotationCountCommand());
-    
-    /* for tuning setpoints */ 
+
+    /* for tuning setpoints */
     // rightJoystick
     //     .trigger()
     //     .and(leftJoystick.button(4).negate())
     //     .whileTrue(
     //         new ParallelCommandGroup(
-    //             elevator.setPositionLoggedTunableNumber(), arm.setPositionLoggedTunableNumber()));
+    //             elevator.setPositionLoggedTunableNumber(),
+    // arm.setPositionLoggedTunableNumber()));
   }
 
   /**

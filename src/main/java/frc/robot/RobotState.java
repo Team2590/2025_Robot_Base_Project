@@ -20,7 +20,7 @@ public class RobotState extends SubsystemBase {
   private final Drive drive;
   private final Elevator elevator;
   private final Vision vision;
-  private final EndEffector endEffector;
+  private static EndEffector endEffector;
   private static Intake intake;
   private static RobotState instance;
   @Getter private static boolean endEffectorhasCoral;
@@ -100,7 +100,7 @@ public class RobotState extends SubsystemBase {
    * @return true if the endeffector has coral, false if not
    */
   @AutoLogOutput(key = "EndEffector/hasCoral")
-  public boolean endEffectorhasCoral() {
+  public static boolean endEffectorhasCoral() {
     return endEffector.hasCoral();
   }
 
