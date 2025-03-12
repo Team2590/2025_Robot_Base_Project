@@ -64,6 +64,7 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
+import frc.robot.util.NemesisJoystick;
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -92,9 +93,9 @@ public class RobotContainer {
   // Controller
   @Getter private static CommandXboxController controller = new CommandXboxController(2);
 
-  @Getter private static CommandJoystick leftJoystick = new CommandJoystick(0);
+  @Getter private static CommandJoystick leftJoystick = new NemesisJoystick(0);
 
-  @Getter private static CommandJoystick rightJoystick = new CommandJoystick(1);
+  @Getter private static CommandJoystick rightJoystick = new NemesisJoystick(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;

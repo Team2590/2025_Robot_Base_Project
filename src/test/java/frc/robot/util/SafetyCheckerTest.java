@@ -94,4 +94,15 @@ class SafetyCheckerTest {
           NemesisJoystick joystick2 = new NemesisJoystick(1);
         });
   }
+
+  @Test
+  void nemesisJoystick_testPortNegateAlreadyInUse_error() {
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> {
+          NemesisJoystick joystick1 = new NemesisJoystick(1);
+          joystick1.button(1).onTrue(Commands.none());
+          joystick1.button(1).and(joystick1.button(2).negate()).onTrue(Commands.none());
+        });
+  }
 }
