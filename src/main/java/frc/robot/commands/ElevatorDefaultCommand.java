@@ -8,9 +8,9 @@ import frc.robot.command_factories.ElevatorFactory;
 
 public class ElevatorDefaultCommand extends Command {
   private Command hasCoralCommand =
-      ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS);
+      ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS).withName("Elevator has coral default command");
   private Command notHasCoralCommand =
-      ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS);
+      ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS).withName("Elevator not has coral default command");
 
   public ElevatorDefaultCommand() {
     addRequirements(RobotContainer.getElevator());
