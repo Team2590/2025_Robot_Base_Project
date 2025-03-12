@@ -39,6 +39,7 @@ import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
+import frc.robot.subsystems.LEDS.NemesisLED;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOSim;
 import frc.robot.subsystems.arm.ArmIOTalonFX;
@@ -83,6 +84,7 @@ public class RobotContainer {
   @Getter private static Intake intake;
   @Getter private static EndEffector endEffector;
   @Getter private static Climb climb;
+  @Getter private static NemesisLED led;
   @Getter private static ControllerOrchestrator controllerApp = new ControllerOrchestrator();
 
   // private final Intake intake;
@@ -138,6 +140,7 @@ public class RobotContainer {
         elevator = null;
         endEffector = null;
         climb = null;
+        led = null;
         break;
       case LARRY:
         // Real robot, instantiate hardware IO implementations
@@ -186,6 +189,7 @@ public class RobotContainer {
             new EndEffector(
                 new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
         climb = null;
+        led = null;
         break;
       case Leonidas:
         drive =
@@ -261,6 +265,11 @@ public class RobotContainer {
                     Constants.ClimbConstantsLeonidas.invert,
                     Constants.ClimbConstantsLeonidas.brake,
                     Constants.ClimbConstantsLeonidas.reduction));
+        led =
+            new NemesisLED(
+                Constants.LEDConstantsLeonidas.port,
+                Constants.LEDConstantsLeonidas.length,
+                Constants.LEDConstantsLeonidas.halfWay);
         break;
       case SIM:
         drive =
@@ -292,6 +301,7 @@ public class RobotContainer {
                 new EndEffectorIOSim(
                     DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
         climb = null;
+        led = new NemesisLED(0, 56, 29);
         break;
 
       default:

@@ -26,6 +26,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.generated.TunerConstantsLeonidas;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.FRCPolygon;
@@ -385,6 +386,15 @@ public final class Constants {
     public static final double CLIMB_MECHANISM_POSITION = 13; // 13
     public static final double CLIMB_MAX_POSITION = 189; // 213.25 (actual), 189 (from 2/23)
     public static final double CLIMB_VOLTAGE = 8.0; // 2.0 tested
+  }
+
+  public final class LEDConstantsLeonidas {
+    public static final int port = 0;
+    public static final int length = 56;
+    public static final int halfWay = 29;
+    public static final Color startColor = Color.kRed;
+    public static final Color endColor = Color.kWhite;
+    public static final double blinkTime = 0.2;
   }
 
   public static class IntakeConstantsLarry {
