@@ -33,7 +33,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private LoggedTunableNumber kV =
       new LoggedTunableNumber("Elevator/kV", Constants.ElevatorConstantsLeonidas.kV);
   private LoggedTunableNumber kG = new LoggedTunableNumber("Elevator/kG", 0.18);
-  private LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP", 16);
+  private LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP", 8);
   private LoggedTunableNumber kI = new LoggedTunableNumber("Elevator/kI", 0);
   private LoggedTunableNumber kD = new LoggedTunableNumber("Elevator/kD", 0);
   private LoggedTunableNumber cruiseVelocity =
@@ -65,6 +65,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     talonFXConfig.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     talonFXConfig.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
     talonFXConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    talonFXConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = .05;
+    talonFXConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = .05;
+    talonFXConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = .05;
     StickyFaultUtil.clearMotorStickyFaults(leader, "Elevator Motor");
 
     slot0Configs.kS = kS.get();

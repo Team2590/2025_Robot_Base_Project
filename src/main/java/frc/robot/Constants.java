@@ -19,7 +19,8 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -189,6 +190,12 @@ public final class Constants {
     public final double y;
     public final double elevatorPosition;
     public final double rotationTarget;
+    public static final Transform2d tagToLeftReef =
+        new Pose2d(3.18, 4.06, new Rotation2d(Math.toRadians(-2.03)))
+            .minus(VisionConstants.aprilTagLayout.getTagPose(18).get().toPose2d());
+    public static final Transform2d tagToRightReef =
+        new Pose2d(3.18, 3.78, new Rotation2d(Math.toRadians(-0.53)))
+            .minus(VisionConstants.aprilTagLayout.getTagPose(18).get().toPose2d());
 
     public CoralPose(double x, double y, double elevatorPosition, double rotationTarget) {
       this.x = x;
@@ -206,28 +213,35 @@ public final class Constants {
 
     public static Pose2d[] getReefPose(int aprilTagID) {
       Pose2d tagPose = VisionConstants.aprilTagLayout.getTagPose(aprilTagID).get().toPose2d();
-      double tagRotation = tagPose.getRotation().getRadians();
-      double adjustX =
-          Units.inchesToMeters(12 + 3.5 + 1 + 1); // Forward offset (from the first code snippet)
-      double adjustY_left =
-          Units.inchesToMeters(
-              1.7); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is "left
-      // and right", adjustY sin is + -y. Change adjust offsets
-      double adjustY_right = Units.inchesToMeters(8 + 5.3); //
 
-      double rightReefX =
-          tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right * Math.sin(tagRotation);
-      double rightReefY =
-          tagPose.getY() + adjustX * Math.sin(tagRotation) + adjustY_right * Math.cos(tagRotation);
-      Pose2d rightReefPose = new Pose2d(rightReefX, rightReefY, tagPose.getRotation());
+      // double tagRotation = tagPose.getRotation().getRadians();
+      // double adjustX =
+      //     Units.inchesToMeters(12 + 3.5 + 1 + 1); // Forward offset (from the first code snippet)
+      // double adjustY_left =
+      //     Units.inchesToMeters(
+      //         1.7); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is
+      // "left
+      // // and right", adjustY sin is + -y. Change adjust offsets
+      // double adjustY_right = Units.inchesToMeters(8 + 5.3);
 
-      double leftReefX =
-          tagPose.getX() + adjustX * Math.cos(tagRotation) + adjustY_left * Math.sin(tagRotation);
-      double leftReefY =
-          tagPose.getY() + adjustX * Math.sin(tagRotation) - adjustY_left * Math.cos(tagRotation);
-      Pose2d leftReefPose = new Pose2d(leftReefX, leftReefY, tagPose.getRotation());
+      // double rightReefX =
+      //     tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right *
+      // Math.sin(tagRotation);
+      // double rightReefY =
+      //     tagPose.getY() + adjustX * Math.sin(tagRotation) + adjustY_right *
+      // Math.cos(tagRotation);
+      // Pose2d rightReefPose = new Pose2d(rightReefX, rightReefY, tagPose.getRotation());
 
-      Pose2d[] returnPoses = new Pose2d[] {leftReefPose, rightReefPose};
+      // double leftReefX =
+      //     tagPose.getX() + adjustX * Math.cos(tagRotation) + adjustY_left *
+      // Math.sin(tagRotation);
+      // double leftReefY =
+      //     tagPose.getY() + adjustX * Math.sin(tagRotation) - adjustY_left *
+      // Math.cos(tagRotation);
+      // Pose2d leftReefPose = new Pose2d(leftReefX, leftReefY, tagPose.getRotation());
+
+      Pose2d[] returnPoses =
+          new Pose2d[] {tagPose.transformBy(tagToLeftReef), tagPose.transformBy(tagToRightReef)};
       return returnPoses;
     }
   }
@@ -269,31 +283,35 @@ public final class Constants {
     public static final double magOffset = -.292; // 0; // -.463; // -.268; // -.398
     public static final double sensorReduction = 58.8;
     public static double ARM_OPERATIONAL_MIN_POS = 0;
-    public static double ARM_OPERATIONAL_MAX_POS = .7;
-    public static double ARM_SCORING_CORAL_POS = 0.68; // TODO: change to actual value
-    public static double ARM_SCORING_CORAL_POS_L3 = .6;
-    public static double ARM_SCORING_CORAL_POS_L4 = 0.54;
-    public static double ARM_INTAKE_SOURCE_POSITION = .16; // .09
+    public static double ARM_OPERATIONAL_MAX_POS = .9;
+    public static double ARM_SCORING_CORAL_POS = 0.75;
+    public static double ARM_SCORING_CORAL_POS_L3 = 0.75;
+    public static double ARM_SCORING_CORAL_POS_L4 = 0.75;
+    public static double ARM_INTAKE_SOURCE_POSITION = .335; // .09
   }
 
   public static class ElevatorConstantsLeonidas {
-    public static double OFFSET = -2;
+    public static double OFFSET = 0;
     public static double ELEVATOR_OPERATIONAL_MIN_POS = 0;
     public static double ELEVATOR_OPERATIONAL_MAX_POS = 89.5;
     public static final int canID = 25;
     public static final String canBus = "Takeover";
-    public static final int currentLimitAmps = 80;
+    public static final int currentLimitAmps = 120;
     public static final boolean invert = false;
     public static final boolean brake = true;
     public static final double reduction = 7;
-    public static final double kS = 0.22720;
-    public static final double kV = 0.14051;
-    public static double ELEVATOR_L2_POS = 23;
+    public static final double kS = 0.18390;
+    public static final double kV = 0.15681;
+    // public static double ELEVATOR_L2_POS = 23;
+    // public static double ELEVATOR_L3_POS = 47;
+    // public static double ELEVATOR_L4_POS = 88;
+    // new, taken from hatboro day 2
+    public static double ELEVATOR_L2_POS = 20;
     public static double ELEVATOR_L3_POS = 44;
-    public static double ELEVATOR_L4_POS = 85;
+    public static double ELEVATOR_L4_POS = 86;
     public static double ELEVATOR_DEALGAE_L2 = 13.57;
     public static double ELEVATOR_DEALGAE_L3 = 37.14;
-    public static double ELEVATOR_SOURCE_POS = 7.7;
+    public static double ELEVATOR_SOURCE_POS = 5.15;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
 

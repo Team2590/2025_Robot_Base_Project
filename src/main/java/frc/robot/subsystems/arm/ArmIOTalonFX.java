@@ -34,8 +34,8 @@ public class ArmIOTalonFX implements ArmIO {
   LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 8);
   LoggedTunableNumber kI = new LoggedTunableNumber("Arm/kI", 0);
   LoggedTunableNumber kD = new LoggedTunableNumber("Arm/kD", 0);
-  LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS", .15);
-  LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0.15);
+  LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS", 0.30645);
+  LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0.55833);
   LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", 0);
   LoggedTunableNumber MotionMagicCruiseVelocity1 =
       new LoggedTunableNumber("Arm/MotionMagicCruiseVelocity", 1500); // 1500
