@@ -381,10 +381,10 @@ public class RobotContainer {
     leftJoystick.button(1).whileTrue(controllerApp.bindDrivetoSourceCommandsim(drive));
     leftJoystick.button(2).whileTrue(controllerApp.bindDrivetoTargetCommandsim(drive));
 
-    leftJoystick
-        .button(3)
-        .whileTrue(
-            DriveCommands.driveToPoseStraight(drive, () -> FieldConstants.BlueReefPoses.NE_left));
+    // leftJoystick
+    //     .button(3)
+    //     .whileTrue(
+    //         DriveCommands.driveToPoseStraight(drive, () -> FieldConstants.BlueReefPoses.NE_left));
 
     // Add elevator control bindings
     leftJoystick
@@ -498,12 +498,6 @@ public class RobotContainer {
      * ParallelCommandGroup( elevator.setPositionLoggedTunableNumber(),
      * arm.setPositionLoggedTunableNumber()));
      */
-    rightJoystick
-        .trigger()
-        .and(leftJoystick.button(4).negate())
-        .whileTrue(
-            new ParallelCommandGroup(
-                elevator.setPositionLoggedTunableNumber(), arm.setPositionLoggedTunableNumber()));
   }
 
   /**

@@ -9,8 +9,8 @@ import frc.robot.Constants;
 public class GamePieceFactory {
   public static Command intakeCoralFeeder() {
     return new ParallelCommandGroup(
-        ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION),
-        ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS),
+        ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION),
+        ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS),
         EndEffectorFactory.runEndEffector());
   }
 
