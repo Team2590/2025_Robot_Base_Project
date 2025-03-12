@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "A_SW_L"
+            "pathName": null
           }
         },
         {
@@ -44,7 +44,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "source_to_SW_R-2"
+            "pathName": null
           }
         },
         {
@@ -60,7 +60,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SW_R_to_source-2"
+                  "pathName": null
                 }
               },
               {

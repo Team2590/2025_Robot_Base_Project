@@ -118,7 +118,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
+                        // new CameraConfig(processorCameraName, robotToProcessorCam),
                         new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
@@ -157,7 +157,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
+                        // new CameraConfig(processorCameraName, robotToProcessorCam),
                         new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
@@ -227,7 +227,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
+                        // new CameraConfig(processorCameraName, robotToProcessorCam),
                         new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
@@ -283,10 +283,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
-                        new CameraConfig(reefCameraName, robotToReefCam))));
+                    List.of(new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
@@ -322,7 +319,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
+                        // new CameraConfig(processorCameraName, robotToProcessorCam),
                         new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
@@ -392,6 +389,12 @@ public class RobotContainer {
     drive.setDefaultCommand(DriveFactory.joystickDrive());
     leftJoystick.button(1).whileTrue(controllerApp.bindDrivetoSourceCommandsim(drive));
     leftJoystick.button(2).whileTrue(controllerApp.bindDrivetoTargetCommandsim(drive));
+
+    // leftJoystick
+    //     .button(3)
+    //     .whileTrue(
+    //         DriveCommands.driveToPoseStraight(drive, () ->
+    // FieldConstants.BlueReefPoses.NE_left));
 
     // Add elevator control bindings
     leftJoystick
@@ -528,12 +531,15 @@ public class RobotContainer {
     // NamedCommands.registerCommand("PrimeL1",
     // ScoringFactory.primeForLevel(ScoringFactory.Level.L1));
     // TODO: Prime for Source
+    NamedCommands.registerCommand("PrimeSource", GamePieceFactory.primeCoralSource());
+    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeCoralFeeder());
 
     // Scoring Commands
     NamedCommands.registerCommand("ScoreL4", ScoringFactory.score(ScoringFactory.Level.L4));
     NamedCommands.registerCommand("ScoreL3", ScoringFactory.score(ScoringFactory.Level.L3));
     NamedCommands.registerCommand("ScoreL2", ScoringFactory.score(ScoringFactory.Level.L2));
     NamedCommands.registerCommand("ScoreL1", ScoringFactory.score(ScoringFactory.Level.L1));
+    NamedCommands.registerCommand("PrimeL4WhileMoving", ScoringFactory.primeL4WhileMoving());
 
     // Does this need priming?
     NamedCommands.registerCommand("ScoreProcessor", ScoringFactory.scoreProcessor());
@@ -545,9 +551,6 @@ public class RobotContainer {
     // for a certain condition.
     NamedCommands.registerCommand(
         "WaitAndPrint", Commands.waitSeconds(5).andThen(Commands.print("Done waiting ...")));
-
-    NamedCommands.registerCommand("PrimeSource", GamePieceFactory.primeCoralSource());
-    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeCoralFeeder());
   }
 
   //   public boolean inReef() {

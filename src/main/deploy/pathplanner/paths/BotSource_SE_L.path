@@ -3,6 +3,14 @@
   "waypoints": [
     {
       "anchor": {
+        "x": 1.1645355902777765,
+        "y": 1.089230685763888
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.914093504808375,
+        "y": 1.601239440504688
+=======
         "x": 1.4574914383561646,
         "y": 0.6367080479452056
       },
@@ -62,7 +70,11 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
+<<<<<<< HEAD
+    "rotation": 59.99999999999999
+=======
     "rotation": 54.0
+>>>>>>> hatboro_day_2
   },
   "useDefaultConstraints": true
 }

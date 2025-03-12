@@ -3,6 +3,31 @@
   "waypoints": [
     {
       "anchor": {
+<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/SE_L_to_source.path
+        "x": 3.81,
+        "y": 2.94
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.0744220683384356,
+        "y": 2.496371657293524
+      },
+      "isLocked": false,
+      "linkedName": "SE_L"
+    },
+    {
+      "anchor": {
+        "x": 1.1645355902777765,
+        "y": 1.089230685763888
+      },
+      "prevControl": {
+        "x": 2.0087257667824066,
+        "y": 1.730773292824074
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "BOT_SOURCE"
+========
         "x": 3.56,
         "y": 4.96
       },
@@ -26,6 +51,7 @@
       "nextControl": null,
       "isLocked": false,
       "linkedName": "TopSource"
+>>>>>>>> hatboro_day_2:src/main/deploy/pathplanner/paths/SW_R_to_source-2.path
     }
   ],
   "rotationTargets": [],
@@ -42,13 +68,21 @@
   },
   "goalEndState": {
     "velocity": 0,
+<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/SE_L_to_source.path
+    "rotation": 59.99999999999999
+========
     "rotation": -54.0
+>>>>>>>> hatboro_day_2:src/main/deploy/pathplanner/paths/SW_R_to_source-2.path
   },
   "reversed": false,
   "folder": "auton1",
   "idealStartingState": {
     "velocity": 0,
+<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/SE_L_to_source.path
+    "rotation": 59.99999999999999
+========
     "rotation": -59.99999999999999
+>>>>>>>> hatboro_day_2:src/main/deploy/pathplanner/paths/SW_R_to_source-2.path
   },
   "useDefaultConstraints": true
 }

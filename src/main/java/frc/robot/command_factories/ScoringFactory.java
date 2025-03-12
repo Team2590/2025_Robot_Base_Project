@@ -1,11 +1,15 @@
 package frc.robot.command_factories;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstantsLeonidas;
+import frc.robot.FieldConstants;
+import frc.robot.RobotContainer;
 import frc.robot.RobotState;
+import frc.robot.util.NemesisMathUtil;
 import frc.robot.util.NemesisTimedCommand;
 
 /**
@@ -61,30 +65,29 @@ public class ScoringFactory {
   }
 
   public static Command primeForLevel(Level level) {
-    return switch (level) {
+    switch (level) {
       case L4:
-        yield (Commands.parallel(
+        return Commands.parallel(
                 Commands.print("Priming " + level.name()),
                 ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
                 ArmFactory.setPositionBlocking(
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
-            .withName("Prime " + level.name()));
-
+            .withName("Prime " + level.name());
       case L3:
-        yield (Commands.parallel(
+        return Commands.parallel(
                 Commands.print("Priming " + level.name()),
                 ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
                 ArmFactory.setPositionBlocking(
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3))
-            .withName("Prime " + level.name()));
+            .withName("Prime " + level.name());
       default:
-        yield Commands.parallel(
+        return Commands.parallel(
                 Commands.print("Priming " + level.name()),
                 ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
                 ArmFactory.setPositionBlocking(
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS))
             .withName("Prime " + level.name());
-    };
+    }
   }
 
   /**
@@ -99,6 +102,10 @@ public class ScoringFactory {
         IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)
             .withName("Score L1"));
   }
+
+  // public static Command deAlgaeify() {
+  //   return Commands.sequence(ElevatorFactory.setPositionBlocking())
+  // }
 
   /**
    * Creates a command sequence for scoring at processor.
@@ -175,5 +182,35 @@ public class ScoringFactory {
             ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION),
             IntakeFactory.setHomePosition())
         .withName("Set defaults");
+  }
+
+  public static Command primeL4WhileMoving() {
+    return Commands.sequence(
+        Commands.waitUntil(
+            () -> {
+              Pose2d currentPose = RobotContainer.getDrive().getPose();
+              for (Pose2d pose : FieldConstants.RedReefPosesArray) {
+                if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
+                  return true; // 1.5 meters max distance to start raising elevator
+              }
+              for (Pose2d pose : FieldConstants.BlueReefPosesArray) {
+                if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
+                  return true; // 1.5 meters max distance to start raising elevator
+              }
+              return false;
+            }),
+        primeForLevel(Level.L4) // ,
+        // Commands.waitUntil(
+        //     () -> {
+        //       Pose2d currentPose = RobotContainer.getDrive().getPose();
+        //       for (Pose2d pose : FieldConstants.RedReefPosesArray) {
+        //         if (NemesisMathUtil.isPoseApprox(currentPose, pose, 0.01)) return true;
+        //       }
+        //       for (Pose2d pose : FieldConstants.BlueReefPosesArray) {
+        //         if (NemesisMathUtil.isPoseApprox(currentPose, pose, 0.01)) return true;
+        //       }
+        //       return false;
+        //     })
+        );
   }
 }
