@@ -369,7 +369,13 @@ public class RobotContainer {
         "Intake FF Characterization",
         new FeedForwardCharacterization(
             intake, intake::setVoltage, intake::getCharacterizationVelocity));
+  }
 
+
+  /**
+   * Initialize default commands
+   */
+  public void initDefaultCommands() {
     elevator.setDefaultCommand(new ElevatorDefaultCommand());
     arm.setDefaultCommand(new ArmDefaultCommand());
     endEffector.setDefaultCommand(new EndEffectorDefaultCommand());
