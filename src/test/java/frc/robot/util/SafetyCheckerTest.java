@@ -13,22 +13,26 @@ class SafetyCheckerTest {
     assertTrue(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS));
+            (Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS
+                + Constants.ElevatorConstantsLeonidas.OFFSET)));
 
     assertTrue(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS));
+            (Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS
+                + Constants.ElevatorConstantsLeonidas.OFFSET)));
 
     assertTrue(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS));
+            (Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS
+                + Constants.ElevatorConstantsLeonidas.OFFSET)));
 
     assertTrue(
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS));
+            (Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS
+                + Constants.ElevatorConstantsLeonidas.OFFSET)));
   }
 
   @Test

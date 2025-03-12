@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
+import org.littletonrobotics.junction.Logger;
 
 public class EndEffector extends SubsystemBase {
   private final EndEffectorIO io;
@@ -21,7 +22,7 @@ public class EndEffector extends SubsystemBase {
   double filtered_data;
   private LoggedTunableNumber runVoltage =
       new LoggedTunableNumber(
-          "EndEffector/runVoltage", Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE);
+          "EndEffector/runVoltage", Constants.EndEffectorConstantsLeonidas.RUN_VOLTAGE);
 
   public EndEffector(EndEffectorIO io) {
     this.io = io;
@@ -32,17 +33,17 @@ public class EndEffector extends SubsystemBase {
     io.updateInputs(inputs);
     filtered_data = filter.calculate(inputs.proxValue);
 
-    // Logger.recordOutput("EndEffector/StatorCurrent", inputs.statorCurrentAmps);
-    // Logger.recordOutput("EndEffector/IsRunning", isRunning);
-    // Logger.recordOutput("EndEffector/CurrentThreshold", CURRENT_THRESHOLD);
-    // Logger.recordOutput("EndEffector/filter", filtered_data);
-    // Logger.recordOutput("EndEffector/prox", inputs.proxValue);
+    Logger.recordOutput("EndEffector/StatorCurrent", inputs.statorCurrentAmps);
+    Logger.recordOutput("EndEffector/IsRunning", isRunning);
+    Logger.recordOutput("EndEffector/CurrentThreshold", CURRENT_THRESHOLD);
+    Logger.recordOutput("EndEffector/filter", filtered_data);
+    Logger.recordOutput("EndEffector/prox", inputs.proxValue);
   }
 
   public Command runEndEffector() {
     return runEnd(
             () -> {
-              io.setVoltage(-runVoltage.get());
+              io.setVoltage(-Constants.EndEffectorConstantsLeonidas.RUN_VOLTAGE);
             },
             () -> {
               io.stop();
@@ -53,12 +54,32 @@ public class EndEffector extends SubsystemBase {
   public Command runEndEffectorOuttake() {
     return runEnd(
             () -> {
-              io.setVoltage(-runVoltage.get());
+              io.setVoltage(-Constants.EndEffectorConstantsLeonidas.RUN_VOLTAGE);
             },
             () -> {
               io.stop();
             })
         .until(() -> !hasCoral());
+  }
+
+  public Command runEndEffectorDeAlgae() {
+    return runEnd(
+        () -> {
+          io.setVoltage(-Constants.EndEffectorConstantsLeonidas.DEALGAE_VOLTAGE);
+        },
+        () -> {
+          io.stop();
+        });
+  }
+
+  public Command runEndEffectorManual() {
+    return runEnd(
+        () -> {
+          io.setVoltage(-runVoltage.get());
+        },
+        () -> {
+          io.stop();
+        });
   }
 
   public Command runEndEffectorVelocity() {

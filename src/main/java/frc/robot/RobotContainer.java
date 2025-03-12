@@ -38,6 +38,7 @@ import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
+import frc.robot.subsystems.LEDS.NemesisLED;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOSim;
 import frc.robot.subsystems.arm.ArmIOTalonFX;
@@ -82,6 +83,7 @@ public class RobotContainer {
   @Getter private static Intake intake;
   @Getter private static EndEffector endEffector;
   @Getter private static Climb climb;
+  @Getter private static NemesisLED led;
   @Getter private static ControllerOrchestrator controllerApp = new ControllerOrchestrator();
 
   // private final Intake intake;
@@ -116,7 +118,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
+                        // new CameraConfig(processorCameraName, robotToProcessorCam),
                         new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
@@ -137,6 +139,7 @@ public class RobotContainer {
         elevator = null;
         endEffector = null;
         climb = null;
+        led = null;
         break;
       case LARRY:
         // Real robot, instantiate hardware IO implementations
@@ -154,7 +157,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
+                        // new CameraConfig(processorCameraName, robotToProcessorCam),
                         new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
@@ -185,6 +188,7 @@ public class RobotContainer {
             new EndEffector(
                 new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
         climb = null;
+        led = null;
         break;
       case Leonidas:
         drive =
@@ -223,7 +227,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
+                        // new CameraConfig(processorCameraName, robotToProcessorCam),
                         new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
@@ -260,6 +264,11 @@ public class RobotContainer {
                     Constants.ClimbConstantsLeonidas.invert,
                     Constants.ClimbConstantsLeonidas.brake,
                     Constants.ClimbConstantsLeonidas.reduction));
+        led =
+            new NemesisLED(
+                Constants.LEDConstantsLeonidas.port,
+                Constants.LEDConstantsLeonidas.length,
+                Constants.LEDConstantsLeonidas.halfWay);
         break;
       case SIM:
         drive =
@@ -274,10 +283,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
-                        new CameraConfig(reefCameraName, robotToReefCam))));
+                    List.of(new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
@@ -294,6 +300,7 @@ public class RobotContainer {
                 new EndEffectorIOSim(
                     DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
         climb = null;
+        led = new NemesisLED(0, 56, 29);
         break;
 
       default:
@@ -312,7 +319,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
-                        new CameraConfig(processorCameraName, robotToProcessorCam),
+                        // new CameraConfig(processorCameraName, robotToProcessorCam),
                         new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
             new Intake(
@@ -380,9 +387,14 @@ public class RobotContainer {
   private void configureButtonBindingsSimulation() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
-    leftJoystick
-        .button(1)
-        .whileTrue(DriveCommands.preciseAlignment(drive, () -> controllerApp.getTarget().pose()));
+    leftJoystick.button(1).whileTrue(controllerApp.bindDrivetoSourceCommandsim(drive));
+    leftJoystick.button(2).whileTrue(controllerApp.bindDrivetoTargetCommandsim(drive));
+
+    // leftJoystick
+    //     .button(3)
+    //     .whileTrue(
+    //         DriveCommands.driveToPoseStraight(drive, () ->
+    // FieldConstants.BlueReefPoses.NE_left));
 
     // Add elevator control bindings
     leftJoystick
@@ -448,31 +460,33 @@ public class RobotContainer {
     leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
     rightJoystick.povDown().whileTrue(ScoringFactory.score(Level.L1));
     leftJoystick.button(2).whileTrue(ScoringFactory.stow());
-    leftJoystick.button(4).and(leftJoystick.trigger()).whileTrue(ScoringFactory.scoreProcessor());
+    rightJoystick.button(4).and(leftJoystick.trigger()).whileTrue(ScoringFactory.scoreProcessor());
     leftJoystick
         .trigger()
-        .and(leftJoystick.button(4).negate())
+        .and(rightJoystick.button(4).negate())
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
+
+    // De-Algae Buttons
+    rightJoystick.povRight().whileTrue(GamePieceFactory.deAlgaeL2());
+    rightJoystick.povLeft().whileTrue(GamePieceFactory.deAlgaeL3());
 
     // Controller App Buttons
     rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
-    rightJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
+    rightJoystick.button(3).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+
+    leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
     leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());
-    leftJoystick
+    rightJoystick
         .button(4)
         .and(rightJoystick.trigger())
         .whileTrue(GamePieceFactory.intakeAlgaeGround());
     rightJoystick
         .trigger()
-        .and(leftJoystick.button(4).negate())
+        .and(rightJoystick.button(4).negate())
         .whileTrue(GamePieceFactory.intakeCoralFeeder());
 
-    rightJoystick
-        .povUp()
-        .whileTrue(
-            EndEffectorFactory.runEndEffectorVoltage(
-                -Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE));
+    rightJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorManual());
 
     // Manual Elevator Control
     rightJoystick.button(14).whileTrue(ElevatorFactory.manualDown());
@@ -517,12 +531,15 @@ public class RobotContainer {
     // NamedCommands.registerCommand("PrimeL1",
     // ScoringFactory.primeForLevel(ScoringFactory.Level.L1));
     // TODO: Prime for Source
+    NamedCommands.registerCommand("PrimeSource", GamePieceFactory.primeCoralSource());
+    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeCoralFeeder());
 
     // Scoring Commands
     NamedCommands.registerCommand("ScoreL4", ScoringFactory.score(ScoringFactory.Level.L4));
     NamedCommands.registerCommand("ScoreL3", ScoringFactory.score(ScoringFactory.Level.L3));
     NamedCommands.registerCommand("ScoreL2", ScoringFactory.score(ScoringFactory.Level.L2));
     NamedCommands.registerCommand("ScoreL1", ScoringFactory.score(ScoringFactory.Level.L1));
+    NamedCommands.registerCommand("PrimeL4WhileMoving", ScoringFactory.primeL4WhileMoving());
 
     // Does this need priming?
     NamedCommands.registerCommand("ScoreProcessor", ScoringFactory.scoreProcessor());
@@ -534,14 +551,11 @@ public class RobotContainer {
     // for a certain condition.
     NamedCommands.registerCommand(
         "WaitAndPrint", Commands.waitSeconds(5).andThen(Commands.print("Done waiting ...")));
-
-    NamedCommands.registerCommand("PrimeSource", GamePieceFactory.primeCoralSource());
-    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeCoralFeeder());
   }
 
-  public boolean inReef() {
-    return Constants.locator.getZoneOfField(drive.getPose()).equals("reef");
-  }
+  //   public boolean inReef() {
+  //     return Constants.locator.getZoneOfField(drive.getPose()).equals("reef");
+  //   }
 
   // Add joystick accessors if missing
   public static CommandXboxController getDriverController() {

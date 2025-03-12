@@ -21,6 +21,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import java.util.HashSet;
 import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 
 public class ControllerOrchestrator {
 
@@ -29,6 +30,7 @@ public class ControllerOrchestrator {
   private static final String SOURCE_KEY = "source";
   // What's a better default target location?
   private static final String DEFAULT_REEF_TARGET = "S_Left";
+  private static final String DEFAULT_SOURCE_TARGET = "sourceR";
 
   private NetworkTableEntry getTableEntry(String key) {
     NetworkTable table = NetworkTableInstance.getDefault().getTable(CONTROLLER_TABLE_KEY);
@@ -36,16 +38,19 @@ public class ControllerOrchestrator {
   }
 
   private String getValue(String key) {
-    return getTableEntry(key).getString("<No value set in NetworkTable>");
+    try {
+      return getTableEntry(key).getString("<No value set in NetworkTable>");
+    } catch (Exception e) {
+      return "";
+    }
   }
 
   public String getMoveTo() {
     return getValue(MOVE_TO_KEY);
   }
 
-  public Pose2d getSourcePose() {
-    String sourceloc = getValue(SOURCE_KEY);
-    return lookupPoseBasedOnAlliance(sourceloc);
+  public String getSource() {
+    return getValue(SOURCE_KEY);
   }
 
   public Target getTarget() {
@@ -56,6 +61,17 @@ public class ControllerOrchestrator {
       return target;
     }
     return target;
+  }
+
+  public Target getSourceTarget() {
+    Target target;
+    Pose2d pose = lookupPoseBasedOnAlliance(getSource());
+    if (pose == null) {
+      System.err.println("---> Using Default Source Target: ");
+      return new Target(
+          lookupPoseBasedOnAlliance(DEFAULT_SOURCE_TARGET), ScoringFactory.Level.SOURCE);
+    }
+    return new Target(lookupPoseBasedOnAlliance(getSource()), ScoringFactory.Level.SOURCE);
   }
 
   /**
@@ -80,7 +96,28 @@ public class ControllerOrchestrator {
     return DriveCommands.preciseAlignment(
         drive,
         () ->
-            getTarget().pose().plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
+            getTarget().pose().plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
+        getTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
+  }
+
+  public Command bindDrivetoTargetCommandsim(Drive drive) {
+
+    return DriveCommands.preciseAlignment(
+        drive,
+        () ->
+            getTarget().pose().plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
+        () -> getTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
+  }
+
+  public Command bindDrivetoSourceCommandsim(Drive drive) {
+
+    return DriveCommands.preciseAlignmentsim(
+        drive,
+        () ->
+            getSourceTarget()
+                .pose()
+                .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
+        () -> getSourceTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
   }
 
   // This commands will drive to pose while "priming for intake" at coral source
@@ -89,8 +126,10 @@ public class ControllerOrchestrator {
     requirements.add(drive);
     return Commands.defer(
         () -> {
+          Logger.recordOutput("SourcePose", getSourceTarget().pose());
           return new ParallelCommandGroup(
-              DriveCommands.driveToPose(drive, () -> getSourcePose()),
+              DriveCommands.preciseAlignment(
+                  drive, () -> getSourceTarget().pose(), getSourceTarget().pose().getRotation()),
               GamePieceFactory.intakeCoralFeeder());
         },
         requirements);

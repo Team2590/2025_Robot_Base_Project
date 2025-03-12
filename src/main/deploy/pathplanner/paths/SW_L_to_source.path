@@ -3,25 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5460616438356163,
-        "y": 4.979130993150685
+        "x": 3.8616010273972603,
+        "y": 5.189490582191781
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.579264053069287,
-        "y": 5.982042912793306
+<<<<<<< HEAD
+        "x": 2.0027241986894104,
+        "y": 6.5321213687802775
+=======
+        "x": 3.0652397260273974,
+        "y": 6.511750856164383
+>>>>>>> hatboro_day_2
       },
       "isLocked": false,
-      "linkedName": "SW_L"
+      "linkedName": "NW_R"
     },
     {
       "anchor": {
-        "x": 1.4424657534247824,
-        "y": 7.157855308222099
+<<<<<<< HEAD
+        "x": 1.3823630136986302,
+        "y": 7.413291952054794
       },
       "prevControl": {
-        "x": 1.6737065096011599,
-        "y": 6.896741743648176
+        "x": 1.7748353421048282,
+        "y": 7.162104359073759
+=======
+        "x": 0.71,
+        "y": 6.79
+        "x": 0.71,
+        "y": 6.79
+      },
+      "prevControl": {
+        "x": 1.3072345890410957,
+        "y": 6.977547089041095
+>>>>>>> hatboro_day_2
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,34 +45,20 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.8879517572944298,
-      "maxWaypointRelativePos": 0.9626885775862067,
-      "constraints": {
-        "maxVelocity": 1.0,
-        "maxAcceleration": 3.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 2.0,
     "maxAcceleration": 3.0,
-    "maxAngularVelocity": 540.0,
+    "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -52.305759533310734
+    "rotation": -55.85000000000001
   },
   "reversed": false,
   "folder": "auton1",
@@ -64,5 +66,5 @@
     "velocity": 0,
     "rotation": -59.99999999999999
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

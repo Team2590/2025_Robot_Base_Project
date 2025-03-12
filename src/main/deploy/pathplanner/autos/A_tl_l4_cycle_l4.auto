@@ -15,7 +15,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "A_SW_R"
+                        "pathName": "A_SW_L"
                       }
                     },
                     {
@@ -34,7 +34,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "SW_R_to_source"
+                        "pathName": null
                       }
                     },
                     {
@@ -53,7 +53,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "source_to_SW_L"
+                        "pathName": null
                       }
                     },
                     {
@@ -72,7 +72,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "tl_1_to_source2"
+                        "pathName": null
                       }
                     },
                     {
@@ -97,7 +97,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "SW_L_to_source"
+                        "pathName": null
                       }
                     }
                   ]

@@ -13,13 +13,24 @@ public class EndEffectorFactory {
    * @return Command to run the intake
    */
   public static Command runEndEffector() {
-    return RobotContainer.getEndEffector().runEndEffector().withName("Run Endeffector Intake");
+    return RobotContainer.getEndEffector()
+        .runEndEffector()
+        // .raceWith(LEDFactory.blink())
+        // .andThen(LEDFactory.solid())
+        .withName("Run Endeffector Intake");
   }
 
   public static Command runEndEffectorVoltage(double voltage) {
     return RobotContainer.getEndEffector().runEndEffectorVoltage(voltage);
   }
 
+  public static Command runEndEffectorManual() {
+    return RobotContainer.getEndEffector().runEndEffectorManual();
+  }
+
+  public static Command runEndEffectorDeAlgae() {
+    return RobotContainer.getEndEffector().runEndEffectorDeAlgae();
+  }
   /**
    * Creates a command to run the endeffector outtake.
    *
@@ -30,6 +41,8 @@ public class EndEffectorFactory {
   public static Command runEndEffectorOuttake() {
     return RobotContainer.getEndEffector()
         .runEndEffectorOuttake()
+        // .raceWith(LEDFactory.blink())
+        // .andThen(LEDFactory.solid())
         .withName("Run Endeffector Outtake");
   }
 

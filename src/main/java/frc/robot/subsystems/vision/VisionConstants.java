@@ -18,16 +18,24 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
+import java.io.IOException;
 import java.util.Set;
 
 public class VisionConstants {
   // AprilTag layout
-  public static AprilTagFieldLayout aprilTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+  public static AprilTagFieldLayout aprilTagLayout;
+
+  static {
+    try {
+      aprilTagLayout = new AprilTagFieldLayout("../../generated/commonsFieldCal3-11-2025.json");
+    } catch (IOException e) {
+      aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+    }
+  }
 
   // Camera names, must match names configured on coprocessor
   public static String upperSourceCameraName = "1mp_arducam_device_6";
-  public static String processorCameraName = "1mp_arducam_device_4";
+  //   public static String processorCameraName = "1mp_arducam_device_4";
   public static String reefCameraName = "1mp_arducam_device_1";
 
   // Robot to camera transforms
@@ -42,12 +50,12 @@ public class VisionConstants {
           new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
 
   // Processor Camera
-  public static Transform3d robotToProcessorCam =
-      new Transform3d(
-          Units.inchesToMeters(-6.379),
-          Units.inchesToMeters(7.2767),
-          Units.inchesToMeters(29.9459),
-          new Rotation3d(0.0, Math.toRadians(-27.0), Math.toRadians(-90.0)));
+  //   public static Transform3d robotToProcessorCam =
+  //       new Transform3d(
+  //           Units.inchesToMeters(-6.379),
+  //           Units.inchesToMeters(7.2767),
+  //           Units.inchesToMeters(29.9459),
+  //           new Rotation3d(0.0, Math.toRadians(-27.0), Math.toRadians(-90.0)));
 
   // Reef Camera
   public static Transform3d robotToReefCam =
@@ -70,9 +78,9 @@ public class VisionConstants {
   // (Adjust to trust some cameras more than others)
   public static double[] cameraStdDevFactors =
       new double[] {
-        0.01, // Upper Source Camera
-        0.01, // Processor Camera
-        0.01 // Reef Camera
+        0.25, // Upper Source Camera
+        // 0.25, // Processor Camera
+        0.25 // Reef Camera
       };
 
   // Multipliers to apply for MegaTag 2 observations
@@ -82,4 +90,6 @@ public class VisionConstants {
 
   public static final Set<Integer> FIDUCIAL_IDS =
       Set.of(17, 18, 19, 20, 21, 22, 6, 7, 8, 9, 10, 11);
+
+  public static double DISTANCE_THRESHOLD = Units.inchesToMeters(120); // TODO: TUNE VALUE FOR COMP
 }

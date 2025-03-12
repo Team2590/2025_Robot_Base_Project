@@ -21,6 +21,7 @@ import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 import frc.robot.util.StickyFaultUtil;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * @author Dhruv Shah, copied a bit from Vidur's 2024 code ngl
@@ -32,7 +33,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private LoggedTunableNumber kV =
       new LoggedTunableNumber("Elevator/kV", Constants.ElevatorConstantsLeonidas.kV);
   private LoggedTunableNumber kG = new LoggedTunableNumber("Elevator/kG", 0.18);
-  private LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP", 16);
+  private LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP", 8);
   private LoggedTunableNumber kI = new LoggedTunableNumber("Elevator/kI", 0);
   private LoggedTunableNumber kD = new LoggedTunableNumber("Elevator/kD", 0);
   private LoggedTunableNumber cruiseVelocity =
@@ -64,6 +65,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     talonFXConfig.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     talonFXConfig.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
     talonFXConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    talonFXConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = .05;
+    talonFXConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = .05;
+    talonFXConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = .05;
     StickyFaultUtil.clearMotorStickyFaults(leader, "Elevator Motor");
 
     slot0Configs.kS = kS.get();
@@ -164,6 +168,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setPosition(double position) {
+    Logger.recordOutput("targetPositionForReal", position);
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position)) {
       var request = new MotionMagicVoltage(0);
       if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {
