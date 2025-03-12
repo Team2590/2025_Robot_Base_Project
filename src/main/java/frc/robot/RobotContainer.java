@@ -482,10 +482,10 @@ public class RobotContainer {
         .button(4)
         .and(rightJoystick.trigger())
         .whileTrue(GamePieceFactory.intakeAlgaeGround());
-    // rightJoystick
-    //     .trigger()
-    //     .and(rightJoystick.button(4).negate())
-    //     .whileTrue(GamePieceFactory.intakeCoralFeeder());
+    rightJoystick
+        .trigger()
+        .and(rightJoystick.button(4).negate())
+        .whileTrue(GamePieceFactory.intakeCoralFeeder());
 
     rightJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorManual());
 
@@ -504,17 +504,14 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     rightJoystick.button(8).onTrue(elevator.resetRotationCountCommand());
-    /**
-     * For Tuning: rightJoystick .trigger() .and(leftJoystick.button(4).negate()) .whileTrue( new
-     * ParallelCommandGroup( elevator.setPositionLoggedTunableNumber(),
-     * arm.setPositionLoggedTunableNumber()));
-     */
-    rightJoystick
-        .trigger()
-        .and(leftJoystick.button(4).negate())
-        .whileTrue(
-            new ParallelCommandGroup(
-                elevator.setPositionLoggedTunableNumber(), arm.setPositionLoggedTunableNumber()));
+    
+    /* for tuning setpoints */ 
+    // rightJoystick
+    //     .trigger()
+    //     .and(leftJoystick.button(4).negate())
+    //     .whileTrue(
+    //         new ParallelCommandGroup(
+    //             elevator.setPositionLoggedTunableNumber(), arm.setPositionLoggedTunableNumber()));
   }
 
   /**
