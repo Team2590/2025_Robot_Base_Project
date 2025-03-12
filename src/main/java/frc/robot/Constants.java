@@ -288,6 +288,7 @@ public final class Constants {
     public static double ARM_SCORING_CORAL_POS_L3 = 0.75;
     public static double ARM_SCORING_CORAL_POS_L4 = 0.52;
     public static double ARM_INTAKE_SOURCE_POSITION = .05; // .09
+    public static double ARM_DEALGAE_POSITION = .65;
   }
 
   public static class ElevatorConstantsLeonidas {
@@ -309,8 +310,8 @@ public final class Constants {
     public static double ELEVATOR_L2_POS = 34;
     public static double ELEVATOR_L3_POS = 60;
     public static double ELEVATOR_L4_POS = 87;
-    public static double ELEVATOR_DEALGAE_L2 = 13.57;
-    public static double ELEVATOR_DEALGAE_L3 = 37.14;
+    public static double ELEVATOR_DEALGAE_L2 = 32;
+    public static double ELEVATOR_DEALGAE_L3 = 60;
     public static double ELEVATOR_SOURCE_POS = 5.15;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
@@ -341,7 +342,7 @@ public final class Constants {
     public static final double reduction = 1; // TODO
     public static final int proxSensor_ID = 0; // TODO
     public static final double RUN_VOLTAGE = 3;
-    public static final double DEALGAE_VOLTAGE = 8;
+    public static final double DEALGAE_VOLTAGE = 3;
   }
 
   public final class IntakeConstantsLeonidas {
