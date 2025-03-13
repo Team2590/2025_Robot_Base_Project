@@ -43,6 +43,14 @@ public class ElevatorFactory {
             () -> SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position));
   }
 
+  public static Command setPositionRun(double position) {
+    return RobotContainer.getElevator()
+        .setPositionRun(position)
+        .withName("Set Elevator Position Run")
+        .onlyIf(
+            () -> SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position));
+  }
+
   public static Command manualUp() {
     return RobotContainer.getElevator()
         .setVoltageCommand(Constants.ElevatorConstantsLeonidas.ELEVATOR_MANUAL_VOLTAGE)
