@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+
 import java.util.Map;
 
 public class NemesisLED extends SubsystemBase {
@@ -35,7 +37,12 @@ public class NemesisLED extends SubsystemBase {
     patternStart = LEDPattern.kOff;
     patternEnd = LEDPattern.kOff;
 
-    setDefaultCommand(runOnce(() -> LEDPattern.kOff.applyTo(buffer)));
+    setDefaultCommand(
+      runEnd(() -> {
+        patternStart = LEDPattern.solid(Constants.LEDConstantsLeonidas.startColor);
+        patternEnd = LEDPattern.solid(Constants.LEDConstantsLeonidas.endColor);  
+      }, () -> {})
+    );
   }
 
   @Override
@@ -76,6 +83,14 @@ public class NemesisLED extends SubsystemBase {
           patternStart = LEDPattern.solid(color1).blink(Seconds.of(onTime));
           patternEnd = LEDPattern.solid(color2).blink(Seconds.of(onTime));
         });
+  }
+
+  public Command setBlinkRunEnd(Color color1, Color color2, double onTime) {
+    return runEnd(
+        () -> {
+          patternStart = LEDPattern.solid(color1).blink(Seconds.of(onTime));
+          patternEnd = LEDPattern.solid(color2).blink(Seconds.of(onTime));
+        }, () -> {});
   }
 
   public Command setAuraRizz(Color color1, Color color2) {

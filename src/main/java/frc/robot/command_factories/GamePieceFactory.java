@@ -11,7 +11,7 @@ public class GamePieceFactory {
     return new ParallelCommandGroup(
         ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION),
         ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS),
-        EndEffectorFactory.runEndEffector());
+        EndEffectorFactory.runEndEffector(), LEDFactory.blink());
   }
 
   public static Command intakeAlgaeGround() {

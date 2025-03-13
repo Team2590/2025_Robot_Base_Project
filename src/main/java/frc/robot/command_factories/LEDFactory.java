@@ -1,5 +1,6 @@
 package frc.robot.command_factories;
 
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -19,10 +20,26 @@ public class LEDFactory {
 
   public static Command blink() {
     return RobotContainer.getLed()
-        .setBlink(
+        .setBlinkRunEnd(
             Constants.LEDConstantsLeonidas.startColor,
             Constants.LEDConstantsLeonidas.endColor,
             Constants.LEDConstantsLeonidas.blinkTime);
+  }
+
+  public static Command blink(Color color1, Color color2) {
+    return RobotContainer.getLed()
+    .setBlinkRunEnd(
+        color1,
+        color2,
+        Constants.LEDConstantsLeonidas.blinkTime);
+  }
+
+  public static Command blink(Color color1, Color color2, double blinkPeriod) {
+    return RobotContainer.getLed()
+    .setBlinkRunEnd(
+        color1,
+        color2,
+        blinkPeriod);
   }
 
   public static Command auraRizz() {

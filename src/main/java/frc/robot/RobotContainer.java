@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -33,6 +34,7 @@ import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
 import frc.robot.command_factories.GamePieceFactory;
+import frc.robot.command_factories.LEDFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.ArmDefaultCommand;
@@ -481,8 +483,8 @@ public class RobotContainer {
     rightJoystick.povLeft().whileTrue(GamePieceFactory.deAlgaeL3());
 
     // Controller App Buttons
-    rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
-    rightJoystick.button(3).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+    rightJoystick.button(2).whileTrue(Commands.parallel(controllerApp.bindDriveToTargetCommand(drive), LEDFactory.blink(Color.kGreen, Color.kWhite)));
+    rightJoystick.button(3).whileTrue(Commands.parallel(controllerApp.bindDriveToSourceIntake(drive), LEDFactory.blink(Color.kGreen, Color.kWhite)));
 
     leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
