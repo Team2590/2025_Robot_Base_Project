@@ -69,7 +69,7 @@ public class EndEffector extends SubsystemBase {
   public Command runEndEffectorDeAlgae() {
     return runEnd(
         () -> {
-          io.setVoltage(-Constants.EndEffectorConstantsLeonidas.DEALGAE_VOLTAGE);
+          io.setVoltage(Constants.EndEffectorConstantsLeonidas.DEALGAE_VOLTAGE);
         },
         () -> {
           io.stop();
