@@ -39,6 +39,10 @@ public class Arm extends SubsystemBase {
         .until(() -> NemesisMathUtil.isApprox(inputs.armabspos, setpointTolerance, setpoint));
   }
 
+  public Command setPositionRun(double setpoint) {
+    return run(() -> arm.setPosition(setpoint));
+  }
+
   public Command setPositionLoggedTunableNumber() {
     return runEnd(() -> arm.setPositionLoggedNumber(), () -> arm.setPositionLoggedNumber());
   }
