@@ -29,6 +29,13 @@ public class ArmFactory {
         .onlyIf(() -> SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position));
   }
 
+  public static Command setPositionRun(double position) {
+    return RobotContainer.getArm()
+        .setPosition(position)
+        .withName("Set Arm Position Run")
+        .onlyIf(() -> SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position));
+  }
+
   //
 
   /**

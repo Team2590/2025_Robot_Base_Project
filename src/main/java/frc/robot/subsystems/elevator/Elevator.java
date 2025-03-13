@@ -49,6 +49,10 @@ public class Elevator extends SubsystemBase {
                     inputs.rotationCount, setpointTolerance, position + offset.get()));
   }
 
+  public Command setPositionRun(double setpoint) {
+    return run(() -> io.setPosition(setpoint));
+  }
+
   public Command setPositionLoggedTunableNumber() {
     return runEnd(() -> io.setPositionLoggedNumber(), () -> io.setPositionLoggedNumber());
   }
