@@ -2,6 +2,8 @@ package frc.robot.util;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.FieldConstants;
+import java.util.function.Supplier;
 
 public class NemesisMathUtil {
   public static boolean isApprox(Number value, Number tolerance, Number desired) {
@@ -29,5 +31,26 @@ public class NemesisMathUtil {
 
   public static double distance(Pose2d pose1, Pose2d pose2) {
     return Math.hypot(pose1.getX() - pose2.getX(), pose1.getY() - pose2.getY());
+  }
+
+  public static boolean isNearReef(Pose2d robotPose, double tolerance) {
+    for (Pose2d pose : FieldConstants.RedReefPosesArray) {
+      if (NemesisMathUtil.distance(robotPose, pose) < tolerance) return true;
+    }
+    for (Pose2d pose : FieldConstants.BlueReefPosesArray) {
+      if (NemesisMathUtil.distance(robotPose, pose) < tolerance) return true;
+    }
+    return false;
+  }
+
+  public static boolean isNearSource(Supplier<Pose2d> robotPoseSupplier, double tolerance) {
+    return (distance(robotPoseSupplier.get(), FieldConstants.BlueReefPoses.CoralSourceLeft)
+            < tolerance)
+        || (distance(robotPoseSupplier.get(), FieldConstants.BlueReefPoses.CoralSourceRight)
+            < tolerance)
+        || (distance(robotPoseSupplier.get(), FieldConstants.RedReefPoses.CoralSourceLeft)
+            < tolerance)
+        || (distance(robotPoseSupplier.get(), FieldConstants.RedReefPoses.CoralSourceRight)
+            < tolerance);
   }
 }
