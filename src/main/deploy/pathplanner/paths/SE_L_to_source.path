@@ -3,31 +3,6 @@
   "waypoints": [
     {
       "anchor": {
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/SE_L_to_source.path
-=======
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/SE_R_to_source.path
-        "x": 4.14,
-        "y": 2.75
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 3.565773654513889,
-        "y": 2.601042390046296
-      },
-      "isLocked": false,
-      "linkedName": "SE_R"
-    },
-    {
-      "anchor": {
-        "x": 1.1645355902777765,
-        "y": 1.089230685763888
-      },
-      "prevControl": {
-        "x": 1.653568431712962,
-        "y": 1.2670713975694434
-========
->>>>>>> hatboro_day_2
         "x": 3.81,
         "y": 2.94
       },
@@ -41,12 +16,8 @@
     },
     {
       "anchor": {
-        "x": 1.1645355902777765,
-        "y": 1.089230685763888
-      },
-      "prevControl": {
-        "x": 2.0087257667824066,
-        "y": 1.730773292824074
+        "x": 1.4574914383561646,
+        "y": 0.6367080479452056
       },
       "prevControl": {
         "x": 2.3016816148607946,
@@ -55,34 +26,6 @@
       "nextControl": null,
       "isLocked": false,
       "linkedName": "BOT_SOURCE"
-<<<<<<< HEAD
-========
-        "x": 3.56,
-        "y": 4.96
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 2.8699058219178086,
-        "y": 5.880672089041095
-      },
-      "isLocked": false,
-      "linkedName": "SW_R"
-    },
-    {
-      "anchor": {
-        "x": 1.487542808219178,
-        "y": 7.57857448630137
-      },
-      "prevControl": {
-        "x": 1.7905736301369861,
-        "y": 7.065864726027398
-      },
-      "nextControl": null,
-      "isLocked": false,
-      "linkedName": "TopSource"
->>>>>>>> hatboro_day_2:src/main/deploy/pathplanner/paths/SW_R_to_source-2.path
-=======
->>>>>>> hatboro_day_2
     }
   ],
   "rotationTargets": [],
@@ -99,35 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/SE_L_to_source.path
-    "rotation": 59.99999999999999
-========
-    "rotation": -54.0
->>>>>>>> hatboro_day_2:src/main/deploy/pathplanner/paths/SW_R_to_source-2.path
-  },
-  "reversed": false,
-  "folder": "auton1",
-  "idealStartingState": {
-    "velocity": 0,
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/SE_L_to_source.path
-    "rotation": 59.99999999999999
-========
-    "rotation": -59.99999999999999
->>>>>>>> hatboro_day_2:src/main/deploy/pathplanner/paths/SW_R_to_source-2.path
-=======
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/SE_R_to_source.path
-    "rotation": 59.99999999999999
-========
     "rotation": 54.0
->>>>>>>> hatboro_day_2:src/main/deploy/pathplanner/paths/SE_L_to_source.path
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 59.99999999999999
->>>>>>> hatboro_day_2
   },
   "useDefaultConstraints": true
 }

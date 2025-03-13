@@ -8,27 +8,14 @@
       },
       "prevControl": null,
       "nextControl": {
-<<<<<<< HEAD
-        "x": 2.0027241986894104,
-        "y": 6.5321213687802775
-=======
         "x": 3.0652397260273974,
         "y": 6.511750856164383
->>>>>>> hatboro_day_2
       },
       "isLocked": false,
       "linkedName": "NW_R"
     },
     {
       "anchor": {
-<<<<<<< HEAD
-        "x": 1.3823630136986302,
-        "y": 7.413291952054794
-      },
-      "prevControl": {
-        "x": 1.7748353421048282,
-        "y": 7.162104359073759
-=======
         "x": 0.71,
         "y": 6.79
         "x": 0.71,
@@ -37,7 +24,6 @@
       "prevControl": {
         "x": 1.3072345890410957,
         "y": 6.977547089041095
->>>>>>> hatboro_day_2
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,7 +35,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.0,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 720.0,
