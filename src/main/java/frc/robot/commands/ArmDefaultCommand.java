@@ -8,7 +8,7 @@ import frc.robot.command_factories.ArmFactory;
 
 public class ArmDefaultCommand extends Command {
   private Command hasCoralCommand =
-      ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS - 0.1)
+      ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS - 0.2)
           .withName("Arm has coral default command");
   private Command notHasCoralCommand =
       ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION)

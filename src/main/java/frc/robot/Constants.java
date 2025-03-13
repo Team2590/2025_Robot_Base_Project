@@ -280,14 +280,15 @@ public final class Constants {
     public static final int cancoderID = 5;
     public static final double ARM_SET_STOW = .33;
     // public static final double magOffset = -.596436; // -.398
-    public static final double magOffset = -.292; // 0; // -.463; // -.268; // -.398
+    // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measure app on iPhone :) )
+    public static final double magOffset = -0.398; // 0; // -.463; // -.268; // -.398
     public static final double sensorReduction = 58.8;
     public static double ARM_OPERATIONAL_MIN_POS = 0;
     public static double ARM_OPERATIONAL_MAX_POS = .9;
-    public static double ARM_SCORING_CORAL_POS = 0.75;
-    public static double ARM_SCORING_CORAL_POS_L3 = 0.75;
-    public static double ARM_SCORING_CORAL_POS_L4 = 0.52;
-    public static double ARM_INTAKE_SOURCE_POSITION = .05; // .09
+    public static double ARM_SCORING_CORAL_POS = 0.6;
+    public static double ARM_SCORING_CORAL_POS_L3 = 0.6;
+    public static double ARM_SCORING_CORAL_POS_L4 = 0.57;
+    public static double ARM_INTAKE_SOURCE_POSITION = .18; // .09
   }
 
   public static class ElevatorConstantsLeonidas {
@@ -306,8 +307,8 @@ public final class Constants {
     // public static double ELEVATOR_L3_POS = 47;
     // public static double ELEVATOR_L4_POS = 88;
     // new, taken from hatboro day 2
-    public static double ELEVATOR_L2_POS = 34;
-    public static double ELEVATOR_L3_POS = 60;
+    public static double ELEVATOR_L2_POS = 17;
+    public static double ELEVATOR_L3_POS = 44;
     public static double ELEVATOR_L4_POS = 87;
     public static double ELEVATOR_DEALGAE_L2 = 13.57;
     public static double ELEVATOR_DEALGAE_L3 = 37.14;
