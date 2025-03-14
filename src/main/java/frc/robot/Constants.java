@@ -21,6 +21,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -214,34 +215,29 @@ public final class Constants {
     public static Pose2d[] getReefPose(int aprilTagID) {
       Pose2d tagPose = VisionConstants.aprilTagLayout.getTagPose(aprilTagID).get().toPose2d();
 
-      // double tagRotation = tagPose.getRotation().getRadians();
-      // double adjustX =
-      //     Units.inchesToMeters(12 + 3.5 + 1 + 1); // Forward offset (from the first code snippet)
-      // double adjustY_left =
-      //     Units.inchesToMeters(
-      //         1.7); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is
+      double tagRotation = tagPose.getRotation().getRadians();
+      double adjustX =
+          Units.inchesToMeters(12 + 3.5 + 1 + 1); // Forward offset (from the first code snippet)
+      double adjustY_left =
+          Units.inchesToMeters(
+              1.7); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is
       // "left
       // // and right", adjustY sin is + -y. Change adjust offsets
-      // double adjustY_right = Units.inchesToMeters(8 + 5.3);
+      double adjustY_right = Units.inchesToMeters(8 + 5.3);
 
-      // double rightReefX =
-      //     tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right *
-      // Math.sin(tagRotation);
-      // double rightReefY =
-      //     tagPose.getY() + adjustX * Math.sin(tagRotation) + adjustY_right *
-      // Math.cos(tagRotation);
-      // Pose2d rightReefPose = new Pose2d(rightReefX, rightReefY, tagPose.getRotation());
+      double rightReefX =
+          tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right * Math.sin(tagRotation);
+      double rightReefY =
+          tagPose.getY() + adjustX * Math.sin(tagRotation) + adjustY_right * Math.cos(tagRotation);
+      Pose2d rightReefPose = new Pose2d(rightReefX, rightReefY, tagPose.getRotation());
 
-      // double leftReefX =
-      //     tagPose.getX() + adjustX * Math.cos(tagRotation) + adjustY_left *
-      // Math.sin(tagRotation);
-      // double leftReefY =
-      //     tagPose.getY() + adjustX * Math.sin(tagRotation) - adjustY_left *
-      // Math.cos(tagRotation);
-      // Pose2d leftReefPose = new Pose2d(leftReefX, leftReefY, tagPose.getRotation());
+      double leftReefX =
+          tagPose.getX() + adjustX * Math.cos(tagRotation) + adjustY_left * Math.sin(tagRotation);
+      double leftReefY =
+          tagPose.getY() + adjustX * Math.sin(tagRotation) - adjustY_left * Math.cos(tagRotation);
+      Pose2d leftReefPose = new Pose2d(leftReefX, leftReefY, tagPose.getRotation());
 
-      Pose2d[] returnPoses =
-          new Pose2d[] {tagPose.transformBy(tagToLeftReef), tagPose.transformBy(tagToRightReef)};
+      Pose2d[] returnPoses = new Pose2d[] {leftReefPose, rightReefPose};
       return returnPoses;
     }
   }
@@ -281,7 +277,7 @@ public final class Constants {
     public static final double ARM_SET_STOW = .33;
     // public static final double magOffset = -.596436; // -.398
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
-    public static final double magOffset = -.54;
+    public static final double magOffset = -.274; // -.54;
     //    -.674; // -0.779; // -.883// - -0.398; // 0; // -.463; // -.268; // -.398
     public static final double sensorReduction = 58.8;
     public static double ARM_OPERATIONAL_MIN_POS = 0;

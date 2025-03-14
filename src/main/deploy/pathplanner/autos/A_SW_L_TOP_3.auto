@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "A_SW_L"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ScoreL4"
+            "name": "ScoreL2"
           }
         },
         {
@@ -24,43 +24,6 @@
                 "type": "path",
                 "data": {
                   "pathName": "SW_L_to_source-2"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PrimeSource"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "intakeSource"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": null
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ScoreL4"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": null
                 }
               },
               {
@@ -76,6 +39,55 @@
           "type": "named",
           "data": {
             "name": "intakeSource"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "source_to_SW_R-2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL2"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SW_R_to_source-2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "PrimeSource"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeSource"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "source_to_S_L"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL2"
           }
         }
       ]

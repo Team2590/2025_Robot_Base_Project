@@ -3,17 +3,11 @@
   "waypoints": [
     {
       "anchor": {
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/SE_R_to_source.path
-=======
->>>>>>> hatboro_day_2
         "x": 4.14,
         "y": 2.75
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.565773654513889,
-        "y": 2.601042390046296
         "x": 3.565773654513889,
         "y": 2.601042390046296
       },
@@ -22,41 +16,12 @@
     },
     {
       "anchor": {
-<<<<<<< HEAD
-        "x": 1.1645355902777765,
-        "y": 1.089230685763888
-      },
-      "prevControl": {
-        "x": 1.653568431712962,
-        "y": 1.2670713975694434
-========
-        "x": 3.81,
-        "y": 2.94
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 3.0744220683384356,
-        "y": 2.496371657293524
-      },
-      "isLocked": false,
-      "linkedName": "SE_L"
-    },
-    {
-      "anchor": {
-=======
->>>>>>> hatboro_day_2
         "x": 1.4574914383561646,
         "y": 0.6367080479452056
       },
       "prevControl": {
-<<<<<<< HEAD
-        "x": 2.3016816148607946,
-        "y": 1.2782506550053916
->>>>>>>> hatboro_day_2:src/main/deploy/pathplanner/paths/SE_L_to_source.path
-=======
         "x": 1.9465242797913498,
         "y": 0.8145487597507609
->>>>>>> hatboro_day_2
       },
       "nextControl": null,
       "isLocked": false,
@@ -64,9 +29,6 @@
     }
   ],
   "rotationTargets": [],
-<<<<<<< HEAD
-  "constraintZones": [],
-=======
   "constraintZones": [
     {
       "name": "Constraints Zone",
@@ -82,7 +44,6 @@
       }
     }
   ],
->>>>>>> hatboro_day_2
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -95,15 +56,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/SE_R_to_source.path
-    "rotation": 59.99999999999999
-========
     "rotation": 54.0
->>>>>>>> hatboro_day_2:src/main/deploy/pathplanner/paths/SE_L_to_source.path
-=======
-    "rotation": 54.0
->>>>>>> hatboro_day_2
   },
   "reversed": false,
   "folder": null,

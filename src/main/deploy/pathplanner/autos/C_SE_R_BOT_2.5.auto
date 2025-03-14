@@ -23,7 +23,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": null
+                  "pathName": "SE_R_to_source"
                 }
               }
             ]
@@ -44,7 +44,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "BotSource_SE_L"
           }
         },
         {
@@ -60,7 +60,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": null
+                  "pathName": "SE_L_to_source"
                 }
               },
               {
