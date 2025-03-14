@@ -59,7 +59,7 @@ public class ScoringFactory {
       default:
         yield primeForLevel(level)
             .andThen(EndEffectorFactory.runEndEffectorOuttake())
-            .until(() -> !RobotState.getInstance().endEffectorhasCoral())
+            .until(() -> !RobotState.endEffectorhasCoral())
             .withName("Score " + level.name());
     };
   }
@@ -67,29 +67,23 @@ public class ScoringFactory {
   public static Command primeForLevel(Level level) {
     switch (level) {
       case L4:
-        return Commands.sequence(
-                Commands.parallel(
-                    Commands.print("Priming " + level.name()),
-                    ElevatorFactory.setPositionBlocking(level.getElevatorPosition())),
-                ArmFactory.setPositionBlocking(
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
-            .withName("Prime " + level.name());
+        return Commands.parallel(
+            Commands.print("Priming " + level.name()),
+            ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4)
+                .withName("Prime " + level.name()));
       case L3:
-        return Commands.sequence(
-                Commands.parallel(
-                    Commands.print("Priming " + level.name()),
-                    ElevatorFactory.setPositionBlocking(level.getElevatorPosition())),
-                ArmFactory.setPositionBlocking(
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3))
-            .withName("Prime " + level.name());
+        Commands.parallel(
+            Commands.print("Priming " + level.name()),
+            ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3)
+                .withName("Prime " + level.name()));
       default:
-        return Commands.sequence(
-                Commands.parallel(
-                    Commands.print("Priming " + level.name()),
-                    ElevatorFactory.setPositionBlocking(level.getElevatorPosition())),
-                ArmFactory.setPositionBlocking(
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS))
-            .withName("Prime " + level.name());
+        return Commands.parallel(
+            Commands.print("Priming " + level.name()),
+            ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
+            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS)
+                .withName("Prime " + level.name()));
     }
   }
 
@@ -199,7 +193,7 @@ public class ScoringFactory {
             IntakeFactory.setIntakeCoralPosition(),
             ArmFactory.setPositionBlocking(.33),
             ElevatorFactory.setPositionBlocking(0.5))
-        .andThen(LEDFactory.blink())
+        // .andThen(LEDFactory.blink())
         .withName("Deploy climb mechanism");
     // , ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)
   }
@@ -213,7 +207,7 @@ public class ScoringFactory {
             // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS),
             // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
             ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION))
-        .andThen(LEDFactory.auraRizz())
+        // .andThen(LEDFactory.auraRizz())
         .withName("Climb");
   }
 

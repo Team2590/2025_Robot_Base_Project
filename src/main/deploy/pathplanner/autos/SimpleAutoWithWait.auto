@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "A_tl_1"
+            "pathName": null
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "tl_1_to_source"
+            "pathName": null
           }
         }
       ]

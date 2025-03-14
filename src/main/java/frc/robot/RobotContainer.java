@@ -303,7 +303,7 @@ public class RobotContainer {
                 new EndEffectorIOSim(
                     DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
         climb = null;
-        led = new NemesisLED(0, 56, 29);
+        led = new NemesisLED(2, 56, 29);
         break;
 
       default:
