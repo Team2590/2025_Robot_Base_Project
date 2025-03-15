@@ -25,14 +25,14 @@
                 "data": {
                   "pathName": "SE_R_to_source"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "PrimeSource"
+                }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PrimeSource"
           }
         },
         {
@@ -70,6 +70,24 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeSource"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "source_S_R"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4"
           }
         }
       ]
