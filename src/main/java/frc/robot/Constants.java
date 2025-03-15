@@ -219,17 +219,15 @@ public final class Constants {
       double adjustX =
           Units.inchesToMeters(12 + 3.5 + 1 + 1); // Forward offset (from the first code snippet)
       /**
-       * orig pose: 144 inches, 158.5 --> 3.658, 4.0266
-       * left pose: 3.19, 4.1
-       * right pose: 3.17, 3.77
-       * 
+       * orig pose: 144 inches, 158.5 --> 3.658, 4.0266 left pose: 3.19, 4.1 right pose: 3.17, 3.77
        */
       double adjustY_left =
-      4.1 - Units.inchesToMeters(
-              158.5); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is
+          4.1
+              - Units.inchesToMeters(
+                  158.5); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is
       // "left
       // // and right", adjustY sin is + -y. Change adjust offsets
-      double adjustY_right = Units.inchesToMeters(158.5)-3.77;
+      double adjustY_right = Units.inchesToMeters(158.5 + 3.5) - 3.77;
 
       double rightReefX =
           tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right * Math.sin(tagRotation);
@@ -283,7 +281,7 @@ public final class Constants {
     public static final double ARM_SET_STOW = .33;
     // public static final double magOffset = -.596436; // -.398
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
-    public static final double magOffset = -.274; // -.54;
+    public static final double magOffset = -.635; // -.274; // -.54;
     //    -.674; // -0.779; // -.883// - -0.398; // 0; // -.463; // -.268; // -.398
     public static final double sensorReduction = 58.8;
     public static double ARM_OPERATIONAL_MIN_POS = 0;
@@ -305,8 +303,8 @@ public final class Constants {
     public static final boolean invert = false;
     public static final boolean brake = true;
     public static final double reduction = 7;
-    public static final double kS = 0.18390;
-    public static final double kV = 0.15681;
+    public static final double kS = 0.22812;
+    public static final double kV = 0.14885;
     // public static double ELEVATOR_L2_POS = 23;
     // public static double ELEVATOR_L3_POS = 47;
     // public static double ELEVATOR_L4_POS = 88;
