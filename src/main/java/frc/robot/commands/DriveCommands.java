@@ -653,7 +653,7 @@ public class DriveCommands {
     List<Waypoint> altwaypoints = List.of(w1, w2);
 
     List<RotationTarget> rotationTargets =
-        List.of(new RotationTarget(1.0, preciseTarget.getRotation()));
+        List.of(new RotationTarget(.1, preciseTarget.getRotation()));
     List<ConstraintsZone> constraintsZones =
         List.of(
             new ConstraintsZone(1.0, 2.0, Constants.DriveToPoseConstraints.slowpathConstraints));
