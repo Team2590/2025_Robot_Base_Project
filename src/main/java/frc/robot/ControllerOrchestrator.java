@@ -83,12 +83,18 @@ public class ControllerOrchestrator {
     requirements.add(elevator);
     requirements.add(arm);
 
-    return Commands.defer(
-        () -> {
-          Target target = getTarget();
-          return ScoringFactory.score(target.scoringLevel());
-        },
-        requirements);
+    return Commands.parallel(
+        Commands.defer(
+            () -> {
+              Target target = getTarget();
+              return ScoringFactory.score(target.scoringLevel());
+            },
+            requirements),
+        DriveCommands.joystickDriveAtAngle(
+            RobotContainer.getDrive(),
+            () -> RobotContainer.getLeftJoystick().getY(),
+            () -> RobotContainer.getLeftJoystick().getX(),
+            () -> getTarget().pose().getRotation().plus(new Rotation2d(Math.PI))));
   }
 
   /** Command that needs to be bound to a button to driveToTarget. */
@@ -139,6 +145,7 @@ public class ControllerOrchestrator {
     // We expect the string to be in the form NWright_L1
     // If we get something else, we return null so a default
     // value can be used.
+    Logger.recordOutput("ControllerApp/moveToString", targetString);
     String[] parts = targetString.split("_");
     if (parts.length != 3) {
       System.err.println("---> Invalid target string received from ControllerApp: " + targetString);

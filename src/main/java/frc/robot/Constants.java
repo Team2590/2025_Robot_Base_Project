@@ -217,17 +217,26 @@ public final class Constants {
 
       double tagRotation = tagPose.getRotation().getRadians();
       double adjustX =
-          Units.inchesToMeters(12 + 3.5 + 1 + 1); // Forward offset (from the first code snippet)
+          Units.inchesToMeters(
+              12 + 3.5 + 1 + 1 + 3); // Forward offset (from the first code snippet)
       /**
        * orig pose: 144 inches, 158.5 --> 3.658, 4.0266 left pose: 3.19, 4.1 right pose: 3.17, 3.77
        */
+      // double adjustY_left =
+      //     4.1
+      //         - Units.inchesToMeters(
+      //             158.5
+      //                 + 2); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y
+      // is
+      // // "left
+      // // // and right", adjustY sin is + -y. Change adjust offsets
+      // double adjustY_right = Units.inchesToMeters(158.5 + 2.5) - 3.77;
       double adjustY_left =
-          4.1
-              - Units.inchesToMeters(
-                  158.5); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is
-      // "left
-      // // and right", adjustY sin is + -y. Change adjust offsets
-      double adjustY_right = Units.inchesToMeters(158.5 + 3.5) - 3.77;
+          Units.inchesToMeters(
+              1.7); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is "left,
+      // 1.3 inch diff
+      // and right", adjustY sin is + -y. Change adjust offsets
+      double adjustY_right = Units.inchesToMeters(8 + 5.3 - .5); // off by .725 inches
 
       double rightReefX =
           tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right * Math.sin(tagRotation);
@@ -311,10 +320,10 @@ public final class Constants {
     // new, taken from hatboro day 2
     public static double ELEVATOR_L2_POS = 17;
     public static double ELEVATOR_L3_POS = 44;
-    public static double ELEVATOR_L4_POS = 87;
-    public static double ELEVATOR_DEALGAE_L2 = 32;
-    public static double ELEVATOR_DEALGAE_L3 = 60;
-    public static double ELEVATOR_SOURCE_POS = 5.15;
+    public static double ELEVATOR_L4_POS = 82 + 2;
+    public static double ELEVATOR_DEALGAE_L2 = 15;
+    public static double ELEVATOR_DEALGAE_L3 = 43;
+    public static double ELEVATOR_SOURCE_POS = 5.15 - 1;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
   }
 
@@ -366,7 +375,7 @@ public final class Constants {
   }
 
   public final class IntakeArmConstantsLeonidas {
-    public static final double INTAKE_CORAL_POS = 11.4;
+    public static final double INTAKE_CORAL_POS = 13.5;
     public static final double INTAKE_ALGAE_POS = 6.5;
     public static final double L1_POS = 1.65;
     public static final int canID = 15;
@@ -388,7 +397,7 @@ public final class Constants {
     public static final double reduction = 1; // TODO
     public static final double CLIMB_MECHANISM_POSITION = 13; // 13
     public static final double CLIMB_MAX_POSITION = 189; // 213.25 (actual), 189 (from 2/23)
-    public static final double CLIMB_VOLTAGE = 8.0; // 2.0 tested
+    public static final double CLIMB_VOLTAGE = 11.0; // 2.0 tested
   }
 
   public final class LEDConstantsLeonidas {
