@@ -34,19 +34,17 @@ public class GamePieceFactory {
   }
 
   public static Command intakeCoralGround() {
-    return Commands.parallel(
-      IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_CORAL_POS), 
-      ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_HANDOFF_POSITION), 
-      ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS)
+    return Commands.sequence(
+	  ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS),
+	  ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_HANDOFF_POSITION),
+      IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_CORAL_POS),
+	  IntakeFactory.runIntake(() -> 6).until(RobotState.intakeHasCoral()),
+	  IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS),
+	  Commands.parallel(
+		IntakeFactory.runIntake(() -> -6),
+		EndEffectorFactory.runEndEffector();
+	  ).until(RobotState.endEffectorhasCoral())
     )
-    .until(() -> RobotState.intakeHasCoral())
-    .andThen(
-      NemesisTimedCommand.generateTimedCommand(
-        Commands.parallel(IntakeFactory.runIntake(() -> 6),
-        EndEffectorFactory.runEndEffector()), 
-        0
-      )
-    );
   }
 
   public static Command deAlgaeL2() {
