@@ -11,7 +11,7 @@ public class ArmDefaultCommand extends Command {
       ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS - 0.2)
           .withName("Arm has coral default command");
   private Command notHasCoralCommand =
-      ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION)
+      ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_HANDOFF_POSITION)
           .withName("Arm not has coral default command");
 
   public ArmDefaultCommand() {

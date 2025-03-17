@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
+import frc.robot.RobotState;
+import frc.robot.util.NemesisTimedCommand;
 
 public class GamePieceFactory {
   public static Command intakeCoralFeeder() {
@@ -32,12 +34,19 @@ public class GamePieceFactory {
   }
 
   public static Command intakeCoralGround() {
-    return new SequentialCommandGroup(
-        new ParallelCommandGroup(
-            IntakeFactory.setIntakeCoralPosition(),
-            IntakeFactory.runIntake(
-                () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED)),
-        IntakeFactory.setHoldingAlgaePosition());
+    return Commands.parallel(
+      IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_CORAL_POS), 
+      ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_HANDOFF_POSITION), 
+      ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS)
+    )
+    .until(() -> RobotState.intakeHasCoral())
+    .andThen(
+      NemesisTimedCommand.generateTimedCommand(
+        Commands.parallel(IntakeFactory.runIntake(() -> 6),
+        EndEffectorFactory.runEndEffector()), 
+        0
+      )
+    );
   }
 
   public static Command deAlgaeL2() {
