@@ -10,7 +10,7 @@ public class EndEffectorDefaultCommand extends Command {
   private Command notHasCoralCommand =
       Commands.waitSeconds(0.1)
           .andThen(EndEffectorFactory.runEndEffector())
-          .withName("EndEffector has coral default command");
+          .withName("EndEffector not has coral default command");
 
   public EndEffectorDefaultCommand() {
     addRequirements(RobotContainer.getEndEffector());
