@@ -2,11 +2,13 @@ package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import frc.robot.Constants.CoralPose;
+import edu.wpi.first.math.util.Units;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
@@ -21,6 +23,11 @@ public class FieldConstants {
     PROCCESOR,
     NOTE
   }
+
+  public static AprilTagFieldLayout aprilTagLayout =
+      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+
+  public static double fieldLength = aprilTagLayout.getFieldLength();
 
   public static double[] Reef_x = {2.16, 6.61, 2.16, 6.61};
   public static double[] Reef_y = {6.08, 6.08, 1.57, 1.56};
@@ -60,18 +67,32 @@ public class FieldConstants {
           .minus((aprilTagLayout.getTagPose(12).get().toPose2d()));
 
   public static class BlueReefPoses {
-    public static final Pose2d N_right = CoralPose.getReefPose(21)[1]; // right
-    public static final Pose2d N_left = CoralPose.getReefPose(21)[0]; // left
-    public static final Pose2d NE_right = CoralPose.getReefPose(22)[1]; // right
-    public static final Pose2d NE_left = CoralPose.getReefPose(22)[0]; // left
-    public static final Pose2d SE_right = CoralPose.getReefPose(17)[1]; // right
-    public static final Pose2d SE_left = CoralPose.getReefPose(17)[0]; // left
-    public static final Pose2d S_right = CoralPose.getReefPose(18)[1]; // right
-    public static final Pose2d S_left = CoralPose.getReefPose(18)[0]; // left
-    public static final Pose2d SW_right = CoralPose.getReefPose(19)[1]; // right
-    public static final Pose2d SW_left = CoralPose.getReefPose(19)[0]; // left
-    public static final Pose2d NW_right = CoralPose.getReefPose(20)[1]; // right
-    public static final Pose2d NW_left = CoralPose.getReefPose(20)[0]; // left
+    static Pose2d[] centerFaces =
+        new Pose2d[6]; // Starting facing the driver station in clockwise order
+
+    static {
+      centerFaces[0] = aprilTagLayout.getTagPose(18).get().toPose2d();
+      centerFaces[1] = aprilTagLayout.getTagPose(19).get().toPose2d();
+      centerFaces[2] = aprilTagLayout.getTagPose(20).get().toPose2d();
+      centerFaces[3] = aprilTagLayout.getTagPose(21).get().toPose2d();
+      centerFaces[4] = aprilTagLayout.getTagPose(22).get().toPose2d();
+      centerFaces[5] = aprilTagLayout.getTagPose(17).get().toPose2d();
+    }
+
+    static Pose2d[][] reef = getReefPoses(centerFaces, false);
+    public static final Pose2d S_left = reef[0][0]; // left
+    public static final Pose2d S_right = reef[0][1]; // right
+    public static final Pose2d SW_left = reef[1][0];
+    public static final Pose2d SW_right = reef[1][1];
+    public static final Pose2d NW_right =
+        reef[2][1]; // flip all north poses to keep robot-centri left/right
+    public static final Pose2d NW_left = reef[2][0];
+    public static final Pose2d N_right = reef[3][1];
+    public static final Pose2d N_left = reef[3][0];
+    public static final Pose2d NE_right = reef[4][1];
+    public static final Pose2d NE_left = reef[4][0];
+    public static final Pose2d SE_right = reef[5][1];
+    public static final Pose2d SE_left = reef[5][0];
     public static final Pose2d CoralSourceRight =
         new Pose2d(
             new Translation2d(1.47, .71),
@@ -128,19 +149,33 @@ public class FieldConstants {
       };
 
   public static class RedReefPoses {
-    public static final Pose2d N_right = CoralPose.getReefPose(10)[1]; // right
-    public static final Pose2d N_left = CoralPose.getReefPose(10)[0]; // left
-    public static final Pose2d NE_right = CoralPose.getReefPose(9)[1]; // right
-    public static final Pose2d NE_left = CoralPose.getReefPose(9)[0]; // left
-    public static final Pose2d SE_right =
-        CoralPose.getReefPose(8)[1]; // right Thisone is so annoying
-    public static final Pose2d SE_left = CoralPose.getReefPose(8)[0]; // left
-    public static final Pose2d S_right = CoralPose.getReefPose(7)[1]; // right
-    public static final Pose2d S_left = CoralPose.getReefPose(7)[0]; // left
-    public static final Pose2d SW_right = CoralPose.getReefPose(6)[1]; // right
-    public static final Pose2d SW_left = CoralPose.getReefPose(6)[0]; // left
-    public static final Pose2d NW_right = CoralPose.getReefPose(11)[1]; // right
-    public static final Pose2d NW_left = CoralPose.getReefPose(11)[0]; // left
+    static Pose2d[] centerFaces =
+        new Pose2d[6]; // Starting facing the driver station in clockwise order
+
+    static {
+      centerFaces[0] = aprilTagLayout.getTagPose(7).get().toPose2d();
+      centerFaces[1] = aprilTagLayout.getTagPose(8).get().toPose2d();
+      centerFaces[2] = aprilTagLayout.getTagPose(9).get().toPose2d();
+      centerFaces[3] = aprilTagLayout.getTagPose(10).get().toPose2d();
+      centerFaces[4] = aprilTagLayout.getTagPose(11).get().toPose2d();
+      centerFaces[5] = aprilTagLayout.getTagPose(6).get().toPose2d();
+    }
+
+    static Pose2d[][] reef = getReefPoses(centerFaces, true);
+    public static final Pose2d S_left = reef[3][0]; // left
+    public static final Pose2d S_right = reef[3][1]; // right
+    public static final Pose2d SW_left = reef[4][0];
+    public static final Pose2d SW_right = reef[4][1];
+    public static final Pose2d NW_right =
+        reef[5][1]; // flip all north poses to keep robot-centri left/right
+    public static final Pose2d NW_left = reef[5][0];
+    public static final Pose2d N_right = reef[0][1];
+    public static final Pose2d N_left = reef[0][0];
+    public static final Pose2d NE_right = reef[1][1];
+    public static final Pose2d NE_left = reef[1][0];
+    public static final Pose2d SE_right = reef[2][1];
+    public static final Pose2d SE_left = reef[2][0];
+
     public static final Pose2d CoralSourceRight =
         new Pose2d(
             new Translation2d(16.08, 7.34),
@@ -152,15 +187,6 @@ public class FieldConstants {
         new Pose2d(
             new Translation2d(16.08, .71),
             aprilTagLayout.getTagPose(1).get().toPose2d().getRotation());
-
-    // aprilTagLayout
-    //     .getTagPose(1)
-    //     .get()
-    //     .toPose2d()
-    //     .transformBy(
-    //         new Transform2d(
-    //             new Translation2d(-sourceTagToSetpoint.getX(), sourceTagToSetpoint.getY()),
-    //             new Rotation2d())); //  aprilTagLayout.getTagPose(1).get().toPose2d();
   }
 
   public static final Pose2d Barge =
@@ -231,6 +257,57 @@ public class FieldConstants {
     poseMap.put("sourceL", FieldConstants.RedReefPoses.CoralSourceLeft);
     poseMap.put("sourceR", FieldConstants.RedReefPoses.CoralSourceRight);
     return poseMap;
+  }
+
+  public static Pose2d[][] getReefPoses(Pose2d[] centerFaces, boolean redAlliance) {
+    Translation2d center;
+    if (redAlliance) {
+      double midX = (centerFaces[0].getX() + centerFaces[3].getX()) / 2.0;
+      double midY = (centerFaces[0].getY() + centerFaces[3].getY()) / 2.0;
+      center = new Translation2d(midX, midY);
+    } else {
+      center =
+          new Translation2d(Units.inchesToMeters(176.746), aprilTagLayout.getFieldWidth() / 2.0);
+    }
+
+    Logger.recordOutput("Center", new Pose2d(center, new Rotation2d()));
+    Pose2d[][] returnPoses = new Pose2d[6][2];
+
+    for (int face = 0; face < 6; face++) {
+      Pose2d poseDirection = new Pose2d(center, Rotation2d.fromDegrees(180 - (60 * face)));
+      double adjustX = Units.inchesToMeters(45.738);
+      double adjustY = Units.inchesToMeters(6.469);
+
+      var rightBranchPose =
+          new Pose2d(
+              new Translation2d(
+                  poseDirection
+                      .transformBy(new Transform2d(adjustX, adjustY, Rotation2d.kZero))
+                      .getX(),
+                  poseDirection
+                      .transformBy(new Transform2d(adjustX, adjustY, Rotation2d.kZero))
+                      .getY()),
+              poseDirection.getRotation());
+      var leftBranchPose =
+          new Pose2d(
+              new Translation2d(
+                  poseDirection
+                      .transformBy(new Transform2d(adjustX, -adjustY, Rotation2d.kZero))
+                      .getX(),
+                  poseDirection
+                      .transformBy(new Transform2d(adjustX, -adjustY, Rotation2d.kZero))
+                      .getY()),
+              poseDirection.getRotation());
+      returnPoses[face][0] = leftBranchPose; // Assign left pose
+      returnPoses[face][1] = rightBranchPose; // Assign right pose
+    }
+    return returnPoses;
+  }
+
+  public static Pose2d rotateAround(Pose2d originalPose, Translation2d point, Rotation2d rot) {
+    return new Pose2d(
+        originalPose.getTranslation().rotateAround(point, rot),
+        originalPose.getRotation().rotateBy(rot));
   }
 }
 
