@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotState;
-import frc.robot.util.NemesisTimedCommand;
 
 public class GamePieceFactory {
   public static Command intakeCoralFeeder() {
@@ -33,18 +32,18 @@ public class GamePieceFactory {
             Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS));
   }
 
-  public static Command intakeCoralGround() {
+  public static Command intakeCoralGround() {    
     return Commands.sequence(
-	  ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS),
-	  ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_HANDOFF_POSITION),
+      ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS),
+      ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_HANDOFF_POSITION),
       IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_CORAL_POS),
-	  IntakeFactory.runIntake(() -> 6).until(RobotState.intakeHasCoral()),
-	  IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS),
-	  Commands.parallel(
-		IntakeFactory.runIntake(() -> -6),
-		EndEffectorFactory.runEndEffector();
-	  ).until(RobotState.endEffectorhasCoral())
-    )
+      IntakeFactory.runIntake(() -> 6).until(() -> RobotState.intakeHasCoral()),
+      IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS),
+      Commands.parallel(
+        IntakeFactory.runIntake(() -> -6),
+        EndEffectorFactory.runEndEffector()
+      ).until(() -> RobotState.endEffectorhasCoral())
+    );
   }
 
   public static Command deAlgaeL2() {
