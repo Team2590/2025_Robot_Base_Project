@@ -463,8 +463,6 @@ public class Drive extends SubsystemBase {
                 .minus(targetPose.getRotation())
                 .plus(new Rotation2d(Math.PI))
                 .getRadians());
-    Logger.recordOutput("FrontDifference", differencefromFront);
-    Logger.recordOutput("BackDifference", differencefromBack);
     if (differencefromFront >= differencefromBack) {
       return false;
     }

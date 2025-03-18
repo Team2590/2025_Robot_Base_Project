@@ -287,7 +287,7 @@ public class FieldConstants {
                   poseDirection
                       .transformBy(new Transform2d(adjustX, adjustY, Rotation2d.kZero))
                       .getY()),
-              poseDirection.getRotation());
+              poseDirection.getRotation().plus(new Rotation2d(Math.PI)));
       var leftBranchPose =
           new Pose2d(
               new Translation2d(
@@ -297,7 +297,7 @@ public class FieldConstants {
                   poseDirection
                       .transformBy(new Transform2d(adjustX, -adjustY, Rotation2d.kZero))
                       .getY()),
-              poseDirection.getRotation());
+              poseDirection.getRotation().plus(new Rotation2d(Math.PI)));
       returnPoses[face][0] = leftBranchPose; // Assign left pose
       returnPoses[face][1] = rightBranchPose; // Assign right pose
     }
