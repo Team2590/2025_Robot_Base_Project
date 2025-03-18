@@ -38,18 +38,13 @@ public class GamePieceFactory {
   public static Command intakeCoralGround() {   
     boolean elevatorSafe = RobotContainer.getElevator().getRotationCount() > Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS;
     boolean armSafe = RobotContainer.getArm().getAbsolutePosition() > Constants.ArmConstantsLeonidas.ARM_HANDOFF_POSITION;
+
+    Command[] group = { 
+      ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS), 
+      ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_HANDOFF_POSITION) 
+    };
     
-    Command moveToHandOffCommand = Commands.either(
-      Commands.parallel(
-        ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS),
-        ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_HANDOFF_POSITION)
-      ),
-      Commands.sequence(
-        ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS),
-        ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_HANDOFF_POSITION)
-      ), 
-      () -> elevatorSafe && armSafe
-    );
+    Command moveToHandOffCommand = Commands.either(Commands.parallel(group), Commands.sequence(group), () -> elevatorSafe && armSafe);
 
     return moveToHandOffCommand
     .alongWith(IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_CORAL_POS))
