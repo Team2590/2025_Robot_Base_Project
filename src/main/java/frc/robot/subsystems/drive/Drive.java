@@ -51,6 +51,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.FieldConstants;
+import frc.robot.RobotContainer;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.LoggedTunableNumber;
@@ -198,6 +199,9 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("BlueSourceR", FieldConstants.BlueReefPoses.CoralSourceRight);
     Logger.recordOutput("RedSourceR", FieldConstants.RedReefPoses.CoralSourceRight);
     Logger.recordOutput("RedSourceL", FieldConstants.RedReefPoses.CoralSourceLeft);
+
+    Logger.recordOutput(
+        "FrontScore", frontScore(RobotContainer.getControllerApp().getTarget().pose()));
 
     FieldConstants.logBlueReefPoses();
 
@@ -447,5 +451,23 @@ public class Drive extends SubsystemBase {
       xController.setConstraints(
           new TrapezoidProfile.Constraints(xControllerMaxVel.get(), xControllerMaxAccel.get()));
     }
+  }
+
+  public boolean frontScore(Pose2d targetPose) {
+    double differencefromFront =
+        Math.abs(this.getPose().getRotation().minus(targetPose.getRotation()).getRadians());
+    double differencefromBack =
+        Math.abs(
+            this.getPose()
+                .getRotation()
+                .minus(targetPose.getRotation())
+                .plus(new Rotation2d(Math.PI))
+                .getRadians());
+    Logger.recordOutput("FrontDifference", differencefromFront);
+    Logger.recordOutput("BackDifference", differencefromBack);
+    if (differencefromFront >= differencefromBack) {
+      return false;
+    }
+    return true;
   }
 }
