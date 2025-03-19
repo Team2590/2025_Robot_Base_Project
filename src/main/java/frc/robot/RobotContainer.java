@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -190,8 +189,7 @@ public class RobotContainer {
                     ElevatorConstantsLarry.reduction,
                     0,
                     "",
-                    false
-                ));
+                    false));
         endEffector =
             new EndEffector(
                 new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
@@ -230,9 +228,8 @@ public class RobotContainer {
                     Constants.ElevatorConstantsLeonidas.reduction,
                     Constants.ElevatorConstantsLeonidas.followerCanID,
                     Constants.ElevatorConstantsLeonidas.followerCanBus,
-                    Constants.ElevatorConstantsLeonidas.followerOpposeLeader
-                    ));
-            elevator.resetRotationCount();
+                    Constants.ElevatorConstantsLeonidas.followerOpposeLeader));
+        elevator.resetRotationCount();
         vision =
             new Vision(
                 drive::addVisionMeasurement,

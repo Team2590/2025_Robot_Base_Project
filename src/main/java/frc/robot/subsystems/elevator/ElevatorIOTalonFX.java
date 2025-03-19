@@ -63,8 +63,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
       double reduction,
       int followerCanID,
       String followerCanBus,
-      boolean followerOpposeLeader
-    ) {
+      boolean followerOpposeLeader) {
     leader = new TalonFX(canID, canBus);
     talonFXConfig.MotorOutput.Inverted =
         invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
@@ -92,7 +91,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
     follower = new TalonFX(followerCanID, followerCanBus);
     follower.setControl(new Follower(canID, followerOpposeLeader));
-        
+
     position = leader.getPosition();
     velocity = leader.getVelocity();
     appliedVoltage = leader.getMotorVoltage();

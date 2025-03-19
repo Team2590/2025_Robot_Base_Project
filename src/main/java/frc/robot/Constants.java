@@ -303,9 +303,9 @@ public final class Constants {
     public static final boolean invert = false;
     public static final boolean brake = true;
     public static final double reduction = 7;
-    public static final int followerCanID = 1000; // TODO: find real id 
-    public static final String followerCanBus = "Takeover"; 
-    public static final boolean followerOpposeLeader = false; 
+    public static final int followerCanID = 1000; // TODO: find real id
+    public static final String followerCanBus = "Takeover";
+    public static final boolean followerOpposeLeader = false;
     public static final double kS = 0.22812;
     public static final double kV = 0.14885;
     // public static double ELEVATOR_L2_POS = 23;
