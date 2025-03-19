@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -68,6 +67,7 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -286,8 +286,9 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    List.of(new CameraConfig(reefCameraName, robotToReefCam))));
+                new VisionIOPhotonVisionSim(
+                    List.of(new CameraConfig(reefCameraName, robotToReefCam)),
+                    () -> drive.getPose()));
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),

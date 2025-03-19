@@ -44,6 +44,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.DriveToPoseConstraints;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.vision.VisionConstants;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashSet;
@@ -577,17 +578,23 @@ public class DriveCommands {
           Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
           // AtomicReference<Rotation2d> preciseTargetRotation2d =
           //     new AtomicReference<>(preciseTarget.get().getRotation());
+          Command pathCommand;
           try {
-            return AutoBuilder.followPath(
-                getPreciseAlignmentPath(
-                    constraints,
-                    driveSubsystem.getChassisSpeeds(),
-                    driveSubsystem.getPose(),
-                    preciseTarget.get(),
-                    approachDirection.get()));
+            pathCommand =
+                AutoBuilder.followPath(
+                    getPreciseAlignmentPath(
+                        constraints,
+                        driveSubsystem.getChassisSpeeds(),
+                        driveSubsystem.getPose(),
+                        preciseTarget.get(),
+                        approachDirection.get()));
           } catch (Exception e) {
-            return Commands.print("Follow Path");
+            pathCommand = Commands.print("Follow Path");
           }
+
+          return pathCommand
+              .beforeStarting(() -> VisionConstants.isAligning = true)
+              .finallyDo(() -> VisionConstants.isAligning = false);
         },
         Set.of(driveSubsystem));
   }
