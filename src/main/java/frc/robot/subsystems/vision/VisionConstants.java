@@ -36,7 +36,7 @@ public class VisionConstants {
   // Camera names, must match names configured on coprocessor
   public static String upperSourceCameraName = "1mp_arducam_device_6";
   //   public static String processorCameraName = "1mp_arducam_device_4";
-  public static String reefCameraName = "1mp_arducam_device_1";
+  public static String reefCameraName = "1mp_arducam_device_6";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
@@ -71,7 +71,7 @@ public class VisionConstants {
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)
-  public static double linearStdDevBaseline = 0.1; // Meters // .02
+  public static double linearStdDevBaseline = 0.25; // Meters // .02 //. 1
   public static double angularStdDevBaseline = 0.06; // Radians
 
   // Standard deviation multipliers for each camera

@@ -482,7 +482,7 @@ public class RobotContainer {
 
     // Controller App Buttons
     rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
-    rightJoystick.button(3).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+    rightJoystick.button(3).whileTrue(controllerApp.bindJoystickAngleCommand(drive));
 
     leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
