@@ -92,4 +92,6 @@ public class VisionConstants {
       Set.of(17, 18, 19, 20, 21, 22, 6, 7, 8, 9, 10, 11);
 
   public static double DISTANCE_THRESHOLD = Units.inchesToMeters(120); // TODO: TUNE VALUE FOR COMP
+
+  public static boolean isAligning = false;
 }
