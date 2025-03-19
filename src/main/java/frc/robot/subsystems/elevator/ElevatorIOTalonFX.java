@@ -5,6 +5,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -28,6 +29,7 @@ import org.littletonrobotics.junction.Logger;
  */
 public class ElevatorIOTalonFX implements ElevatorIO {
   private TalonFX leader;
+  private TalonFX follower;
   private LoggedTunableNumber kS =
       new LoggedTunableNumber("Elevator/kS", Constants.ElevatorConstantsLeonidas.kS);
   private LoggedTunableNumber kV =
@@ -58,7 +60,10 @@ public class ElevatorIOTalonFX implements ElevatorIO {
       int currentLimitAmps,
       boolean invert,
       boolean brake,
-      double reduction) {
+      double reduction,
+      int followerCanID,
+      String followerCanBus,
+      boolean followerOpposeLeader) {
     leader = new TalonFX(canID, canBus);
     talonFXConfig.MotorOutput.Inverted =
         invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
@@ -83,6 +88,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     motionMagicConfigs.MotionMagicJerk = jerk.get();
 
     leader.getConfigurator().apply(talonFXConfig);
+
+    follower = new TalonFX(followerCanID, followerCanBus);
+    follower.setControl(new Follower(canID, followerOpposeLeader));
 
     position = leader.getPosition();
     velocity = leader.getVelocity();
