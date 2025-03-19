@@ -1,6 +1,7 @@
 package frc.robot.command_factories;
 
-import edu.wpi.first.math.controller.PIDController;
+import java.util.Set;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -8,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
-import frc.robot.util.NemesisMathUtil;
 
 public class GamePieceFactory {
   public static Command intakeCoralFeeder() {
@@ -44,8 +44,8 @@ public class GamePieceFactory {
       ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_HANDOFF_POSITION) 
     };
     
-    Command moveToHandOffCommand = Commands.either(Commands.parallel(group), Commands.sequence(group), () -> elevatorSafe && armSafe);
-
+    Command moveToHandOffCommand = Commands.defer(() -> elevatorSafe && armSafe ? Commands.parallel(group) : Commands.sequence(group), Set.of(RobotContainer.getElevator(), RobotContainer.getArm()));
+    
     return moveToHandOffCommand
     .alongWith(IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_CORAL_POS))
     .andThen(IntakeFactory.runIntake(() -> 6).until(() -> RobotState.intakeHasCoral()))
