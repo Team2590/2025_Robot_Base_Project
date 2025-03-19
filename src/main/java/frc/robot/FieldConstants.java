@@ -309,6 +309,11 @@ public class FieldConstants {
         originalPose.getTranslation().rotateAround(point, rot),
         originalPose.getRotation().rotateBy(rot));
   }
+
+  public static Pose2d redSourceRightIntakePose = new Pose2d(); // TODO: change to real value
+  public static Pose2d redSourceLeftIntakePose = new Pose2d(); // TODO: change to real value
+  public static Pose2d blueSourceRightIntakePose = new Pose2d(); // TODO: change to real value
+  public static Pose2d blueSourceLeftIntakePose = new Pose2d(); // TODO: change to real value
 }
 
 // porcesor barge feeding station
