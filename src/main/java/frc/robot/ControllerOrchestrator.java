@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -91,13 +92,13 @@ public class ControllerOrchestrator {
   /** Command that needs to be bound to a button to driveToTarget. */
   public Command bindDriveToTargetCommand(Drive drive) {
     return DriveCommands.preciseAlignment(
-        drive, () -> getTarget().pose(), getTarget().pose().getRotation());
+        drive, () -> drive.flipScoringSide(getTarget().pose()), drive.flipScoringSide(getTarget().pose()).getRotation());
   }
 
   public Command bindDrivetoTargetCommandsim(Drive drive) {
 
     return DriveCommands.preciseAlignment(
-        drive, () -> getTarget().pose(), () -> getTarget().pose().getRotation());
+        drive, () -> drive.flipScoringSide(getTarget().pose()), drive.flipScoringSide(getTarget().pose()).getRotation());
   }
 
   public Command bindDrivetoSourceCommandsim(Drive drive) {

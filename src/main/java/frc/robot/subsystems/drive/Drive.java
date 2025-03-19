@@ -31,6 +31,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -201,7 +202,7 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("RedSourceL", FieldConstants.RedReefPoses.CoralSourceLeft);
 
     Logger.recordOutput(
-        "FrontScore", frontScore(RobotContainer.getControllerApp().getTarget().pose()));
+        "FrontScore", flipScoringSide(RobotContainer.getControllerApp().getTarget().pose()));
 
     FieldConstants.logBlueReefPoses();
 
@@ -453,7 +454,7 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  public boolean frontScore(Pose2d targetPose) {
+  public Pose2d flipScoringSide(Pose2d targetPose) {
     double differencefromFront =
         Math.abs(this.getPose().getRotation().minus(targetPose.getRotation()).getRadians());
     double differencefromBack =
@@ -464,8 +465,8 @@ public class Drive extends SubsystemBase {
                 .plus(new Rotation2d(Math.PI))
                 .getRadians());
     if (differencefromFront >= differencefromBack) {
-      return false;
+      return targetPose.plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI)));
     }
-    return true;
+    return targetPose;
   }
 }

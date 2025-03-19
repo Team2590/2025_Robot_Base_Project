@@ -605,7 +605,7 @@ public class DriveCommands {
             measuredSpeedsFieldRelative.vyMetersPerSecond);
     Rotation2d startingPathDirection =
         fieldRelativeSpeedsMPS
-            .times(0.8)
+            .times(0)
             .plus(interiorWaypoint.minus(currentRobotPose.getTranslation()))
             .getAngle();
 
