@@ -92,4 +92,10 @@ public class VisionConstants {
       Set.of(17, 18, 19, 20, 21, 22, 6, 7, 8, 9, 10, 11);
 
   public static double DISTANCE_THRESHOLD = Units.inchesToMeters(120); // TODO: TUNE VALUE FOR COMP
+  public class CoralAlgaeCameraConstants {
+    public static double OBJECT_CAMERA_HEIGHT_METERS = 0;
+    public static double OBJECT_CAMERA_PITCH = 0;
+    public static double OBJECT_CAMERA_X_DISTANCE_FROM_CENTER_METERS = 0;
+    public static double OBJECT_CAMERA_Y_DISTANCE_FROM_CENTER_METERS = 0;
+  }
 }
