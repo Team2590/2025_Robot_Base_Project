@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
+import frc.robot.command_factories.AutoFactory;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
@@ -67,6 +68,7 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
+import frc.robot.util.NemesisAutoBuilder;
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -345,8 +347,15 @@ public class RobotContainer {
     // setup Named Commands:
     registerNamedCommands();
 
+    NemesisAutoBuilder.addAuto(
+        "Nemesis Auto Builder Test", AutoFactory.driveTo(FieldConstants.BlueReefPoses.NE_left));
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    // autoChooser =
+    //     new LoggedDashboardChooser<>("Auto Choices", NemesisAutoBuilder.buildAutoChooser());
+
+    // NemesisAutoBuilder.addRoutinesToChooser(autoChooser);
 
     // // Set up SysId routines
     autoChooser.addOption(
