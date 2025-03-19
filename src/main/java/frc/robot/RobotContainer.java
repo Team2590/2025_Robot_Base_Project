@@ -354,9 +354,16 @@ public class RobotContainer {
     NemesisAutoBuilder.addRoutine(
         "Nemesis Auto Builder Test 2", SourceSide.LEFT, FieldConstants.BlueReefPoses.NE_left);
 
-    NemesisAutoBuilder.addRoutine("Nemesis Auto Builder Test 3", 
-        NemesisAutoBuilder.generateScoringSequence(ReefTarget.NE_LEFT, Level.L4, SourceSide.LEFT)
-    );
+    NemesisAutoBuilder.addRoutine(
+        "Nemesis Auto Builder Test 3",
+        NemesisAutoBuilder.generateScoringSequence(ReefTarget.NE_LEFT, Level.L4, SourceSide.LEFT));
+
+    NemesisAutoBuilder.addRoutine(
+        "Nemesis Auto Builder Test 4",
+        NemesisAutoBuilder.generateScoringSequence(ReefTarget.NE_RIGHT, SourceSide.LEFT),
+        NemesisAutoBuilder.generateScoringSequence(ReefTarget.NE_LEFT, SourceSide.LEFT),
+        NemesisAutoBuilder.generateScoringSequence(ReefTarget.SE_RIGHT, SourceSide.LEFT),
+        NemesisAutoBuilder.generateScoringSequence(ReefTarget.SE_LEFT, SourceSide.LEFT));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

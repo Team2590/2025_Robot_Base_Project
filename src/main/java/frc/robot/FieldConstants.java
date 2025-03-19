@@ -310,10 +310,14 @@ public class FieldConstants {
         originalPose.getRotation().rotateBy(rot));
   }
 
-  public static Pose2d redSourceRightIntakePose = new Pose2d(); // TODO: change to real value
-  public static Pose2d redSourceLeftIntakePose = new Pose2d(); // TODO: change to real value
-  public static Pose2d blueSourceRightIntakePose = new Pose2d(); // TODO: change to real value
-  public static Pose2d blueSourceLeftIntakePose = new Pose2d(); // TODO: change to real value
+  public static Pose2d redSourceRightIntakePose =
+      new Pose2d(15.536, 6.728, new Rotation2d(Math.toRadians(55)));
+  public static Pose2d redSourceLeftIntakePose =
+      new Pose2d(15.632, 1.106, new Rotation2d(Math.toRadians(-55)));
+  public static Pose2d blueSourceRightIntakePose =
+      new Pose2d(1.510, 1.334, new Rotation2d(Math.toRadians(-125)));
+  public static Pose2d blueSourceLeftIntakePose =
+      new Pose2d(1.510, 1.334, new Rotation2d(Math.toRadians(125)));
 }
 
 // porcesor barge feeding station

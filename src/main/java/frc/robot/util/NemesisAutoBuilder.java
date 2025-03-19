@@ -4,18 +4,18 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.RobotContainer;
 import frc.robot.command_factories.AutoFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.function.Supplier;
-
+import java.util.Set;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class NemesisAutoBuilder {
   private static HashMap<String, Command> autoRoutines = new HashMap<String, Command>();
-    
+
   public enum SourceSide {
     LEFT,
     RIGHT
@@ -36,24 +36,22 @@ public class NemesisAutoBuilder {
     SE_LEFT
   }
 
-  public static Command generateScoringSequence(ReefTarget reefTarget, Level level, SourceSide sourceSide) {
+  public static Command generateScoringSequence(
+      ReefTarget reefTarget, Level level, SourceSide sourceSide) {
     return Commands.sequence(
-      AutoFactory.driveTo(NemesisAutoBuilderPoses.getPose(reefTarget)), 
-      ScoringFactory.score(level),
-      sourceSide == SourceSide.LEFT
-      ? AutoFactory.intakeCoralAroundSourceLeft()
-      : AutoFactory.intakeCoralAroundSourceRight()
-    );
+        AutoFactory.driveTo(NemesisAutoBuilderPoses.getPose(reefTarget)),
+        ScoringFactory.score(level),
+        Commands.defer(
+            () -> {
+              return sourceSide == SourceSide.LEFT
+                  ? AutoFactory.intakeCoralAroundSourceLeft()
+                  : AutoFactory.intakeCoralAroundSourceRight();
+            },
+            Set.of(RobotContainer.getDrive())));
   }
 
   public static Command generateScoringSequence(ReefTarget reefTarget, SourceSide sourceSide) {
-    return Commands.sequence(
-      AutoFactory.driveTo(NemesisAutoBuilderPoses.getPose(reefTarget)), 
-      ScoringFactory.score(Level.L4),
-      sourceSide == SourceSide.LEFT
-      ? AutoFactory.intakeCoralAroundSourceLeft()
-      : AutoFactory.intakeCoralAroundSourceRight()
-    );
+    return generateScoringSequence(reefTarget, Level.L4, sourceSide);
   }
 
   public static void addRoutine(String name, Command... sequences) {
