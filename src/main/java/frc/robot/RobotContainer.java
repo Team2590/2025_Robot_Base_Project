@@ -69,6 +69,8 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
 import frc.robot.util.NemesisAutoBuilder;
+import frc.robot.util.NemesisAutoBuilder.ReefTarget;
+import frc.robot.util.NemesisAutoBuilder.SourceSide;
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -347,15 +349,18 @@ public class RobotContainer {
     // setup Named Commands:
     registerNamedCommands();
 
-    NemesisAutoBuilder.addAuto(
+    NemesisAutoBuilder.addRoutine(
         "Nemesis Auto Builder Test", AutoFactory.driveTo(FieldConstants.BlueReefPoses.NE_left));
+    NemesisAutoBuilder.addRoutine(
+        "Nemesis Auto Builder Test 2", SourceSide.LEFT, FieldConstants.BlueReefPoses.NE_left);
+
+    NemesisAutoBuilder.addRoutine("Nemesis Auto Builder Test 3", 
+        NemesisAutoBuilder.generateScoringSequence(ReefTarget.NE_LEFT, Level.L4, SourceSide.LEFT)
+    );
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    // autoChooser =
-    //     new LoggedDashboardChooser<>("Auto Choices", NemesisAutoBuilder.buildAutoChooser());
-
-    // NemesisAutoBuilder.addRoutinesToChooser(autoChooser);
+    NemesisAutoBuilder.addRoutinesToChooser(autoChooser);
 
     // // Set up SysId routines
     autoChooser.addOption(
