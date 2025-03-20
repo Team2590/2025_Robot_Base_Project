@@ -77,7 +77,7 @@ public class ControllerApp extends Application {
 
     mainPane = new Pane();
     Image backgroundImage =
-        new Image(getClass().getResource("/field-rotated-more-cropped.png").toExternalForm());
+        new Image(getClass().getResource("/field-rotated-cropped.png").toExternalForm());
 
     BackgroundImage background =
         new BackgroundImage(
@@ -190,7 +190,7 @@ public class ControllerApp extends Application {
     // Moved center point to 2/3 down from the top (1/3 up from bottom)
     double centerY = height * (1.06 / 2.0);
 
-    double radius = Math.min(width, height) * 0.3;
+    double radius = Math.min(width, height) * 0.225;
 
     double angleStep = Math.PI / 3;
     double startAngle = Math.PI / 2;
