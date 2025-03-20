@@ -186,10 +186,11 @@ public class RobotContainer {
                     ElevatorConstantsLarry.currentLimitAmps,
                     ElevatorConstantsLarry.invert,
                     ElevatorConstantsLarry.brake,
-                    ElevatorConstantsLarry.reduction,
-                    0,
-                    "",
-                    false));
+                    ElevatorConstantsLarry.reduction
+                    // 0,
+                    // "",
+                    // false
+                    ));
         endEffector =
             new EndEffector(
                 new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
@@ -225,10 +226,11 @@ public class RobotContainer {
                     Constants.ElevatorConstantsLeonidas.currentLimitAmps,
                     Constants.ElevatorConstantsLeonidas.invert,
                     Constants.ElevatorConstantsLeonidas.brake,
-                    Constants.ElevatorConstantsLeonidas.reduction,
-                    Constants.ElevatorConstantsLeonidas.followerCanID,
-                    Constants.ElevatorConstantsLeonidas.followerCanBus,
-                    Constants.ElevatorConstantsLeonidas.followerOpposeLeader));
+                    Constants.ElevatorConstantsLeonidas.reduction
+                    // Constants.ElevatorConstantsLeonidas.followerCanID,
+                    // Constants.ElevatorConstantsLeonidas.followerCanBus,
+                    // Constants.ElevatorConstantsLeonidas.followerOpposeLeader
+                    ));
         elevator.resetRotationCount();
         vision =
             new Vision(
