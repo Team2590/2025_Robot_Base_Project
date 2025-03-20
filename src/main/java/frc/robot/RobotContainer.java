@@ -186,11 +186,10 @@ public class RobotContainer {
                     ElevatorConstantsLarry.currentLimitAmps,
                     ElevatorConstantsLarry.invert,
                     ElevatorConstantsLarry.brake,
-                    ElevatorConstantsLarry.reduction
-                    // 0,
-                    // "",
-                    // false
-                    ));
+                    ElevatorConstantsLarry.reduction,
+                    0,
+                    "",
+                    false));
         endEffector =
             new EndEffector(
                 new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
@@ -226,11 +225,10 @@ public class RobotContainer {
                     Constants.ElevatorConstantsLeonidas.currentLimitAmps,
                     Constants.ElevatorConstantsLeonidas.invert,
                     Constants.ElevatorConstantsLeonidas.brake,
-                    Constants.ElevatorConstantsLeonidas.reduction
-                    // Constants.ElevatorConstantsLeonidas.followerCanID,
-                    // Constants.ElevatorConstantsLeonidas.followerCanBus,
-                    // Constants.ElevatorConstantsLeonidas.followerOpposeLeader
-                    ));
+                    Constants.ElevatorConstantsLeonidas.reduction,
+                    Constants.ElevatorConstantsLeonidas.followerCanID,
+                    Constants.ElevatorConstantsLeonidas.followerCanBus,
+                    Constants.ElevatorConstantsLeonidas.followerOpposeLeader));
         elevator.resetRotationCount();
         vision =
             new Vision(
@@ -473,10 +471,10 @@ public class RobotContainer {
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
 
     // Scoring buttons
-    leftJoystick.povRight().whileTrue(ScoringFactory.scoreTeleop(Level.L2));
-    leftJoystick.povDown().whileTrue(ScoringFactory.scoreTeleop(Level.L3));
-    leftJoystick.povLeft().whileTrue(ScoringFactory.scoreTeleop(Level.L4));
-    rightJoystick.povDown().whileTrue(ScoringFactory.scoreTeleop(Level.L1));
+    leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
+    leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
+    leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
+    rightJoystick.povDown().whileTrue(ScoringFactory.score(Level.L1));
     leftJoystick.button(2).whileTrue(ScoringFactory.stow());
     rightJoystick.button(4).and(leftJoystick.trigger()).whileTrue(ScoringFactory.scoreProcessor());
     leftJoystick
