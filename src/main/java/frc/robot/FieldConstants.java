@@ -275,7 +275,7 @@ public class FieldConstants {
 
     for (int face = 0; face < 6; face++) {
       Pose2d poseDirection = new Pose2d(center, Rotation2d.fromDegrees(180 - (60 * face)));
-      double adjustX = Units.inchesToMeters(45.738);
+      double adjustX = Units.inchesToMeters(52.738);
       double adjustY = Units.inchesToMeters(6.469);
 
       var rightBranchPose =
