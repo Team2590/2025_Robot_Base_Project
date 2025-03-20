@@ -16,7 +16,6 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import frc.robot.subsystems.vision.VisionConstants.AligningState;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -104,8 +103,8 @@ public class VisionIOPhotonVision implements VisionIO {
     private void setEstimatedGlobalPose(
         Pose3d prevEstimatedRobotPose, PhotonPipelineResult result) {
       boolean isAligning =
-          VisionConstants.aligningState == VisionConstants.AligningState.ALIGNING_FRONT
-              || VisionConstants.aligningState == VisionConstants.AligningState.ALIGNING_BACK;
+          Vision.aligningState == Vision.aligningState.ALIGNING_FRONT
+              || Vision.aligningState == Vision.aligningState.ALIGNING_BACK;
       if (isAligning) {
         photonPoseEstimator.setPrimaryStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
       } else {
@@ -139,11 +138,11 @@ public class VisionIOPhotonVision implements VisionIO {
           latestTagIds.add((short) result.getBestTarget().getFiducialId());
 
           boolean logResults =
-              (VisionConstants.aligningState == AligningState.ALIGNING_FRONT
+              (Vision.aligningState == Vision.AligningState.ALIGNING_FRONT
                       && this.getName().equals("Vision-" + VisionConstants.frontReefCameraName))
-                  || (VisionConstants.aligningState == AligningState.ALIGNING_BACK
+                  || (Vision.aligningState == Vision.AligningState.ALIGNING_BACK
                       && this.getName().equals("Vision-" + VisionConstants.backReefCameraName))
-                  || (VisionConstants.aligningState == AligningState.NOT_ALIGNING);
+                  || (Vision.aligningState == Vision.AligningState.NOT_ALIGNING);
 
           if (logResults) {
             latestPoseObservations.add(

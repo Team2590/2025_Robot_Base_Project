@@ -44,7 +44,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.DriveToPoseConstraints;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.Vision;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashSet;
@@ -564,18 +564,15 @@ public class DriveCommands {
           return pathCommand
               .beforeStarting(
                   () -> {
-                    if (Math.abs(
-                            driveSubsystem.getPose().getRotation().getDegrees()
-                                - preciseTarget.get().getRotation().getDegrees())
-                        < 90) {
-                      VisionConstants.aligningState = VisionConstants.AligningState.ALIGNING_FRONT;
+                    if (driveSubsystem.frontScore(preciseTarget.get())) {
+                      Vision.aligningState = Vision.AligningState.ALIGNING_FRONT;
                     } else {
-                      VisionConstants.aligningState = VisionConstants.AligningState.ALIGNING_BACK;
+                      Vision.aligningState = Vision.aligningState.ALIGNING_BACK;
                     }
                   })
               .finallyDo(
                   () -> {
-                    VisionConstants.aligningState = VisionConstants.AligningState.NOT_ALIGNING;
+                    Vision.aligningState = Vision.aligningState.NOT_ALIGNING;
                   });
         },
         Set.of(driveSubsystem));
@@ -597,7 +594,6 @@ public class DriveCommands {
           // AtomicReference<Rotation2d> preciseTargetRotation2d =
           //     new AtomicReference<>(preciseTarget.get().getRotation());
           Command pathCommand;
-          Command pathCommand;
           try {
             pathCommand =
                 AutoBuilder.followPath(
@@ -609,24 +605,20 @@ public class DriveCommands {
                         approachDirection.get()));
           } catch (Exception e) {
             pathCommand = Commands.print("Follow Path");
-            pathCommand = Commands.print("Follow Path");
           }
 
           return pathCommand
               .beforeStarting(
                   () -> {
-                    if (Math.abs(
-                            driveSubsystem.getPose().getRotation().getDegrees()
-                                - preciseTarget.get().getRotation().getDegrees())
-                        < 90) {
-                      VisionConstants.aligningState = VisionConstants.AligningState.ALIGNING_FRONT;
+                    if (driveSubsystem.frontScore(preciseTarget.get())) {
+                      Vision.aligningState = Vision.aligningState.ALIGNING_FRONT;
                     } else {
-                      VisionConstants.aligningState = VisionConstants.AligningState.ALIGNING_BACK;
+                      Vision.aligningState = Vision.aligningState.ALIGNING_BACK;
                     }
                   })
               .finallyDo(
                   () -> {
-                    VisionConstants.aligningState = VisionConstants.AligningState.NOT_ALIGNING;
+                    Vision.aligningState = Vision.aligningState.NOT_ALIGNING;
                   });
         },
         Set.of(driveSubsystem));
@@ -764,18 +756,15 @@ public class DriveCommands {
           return pathCommand
               .beforeStarting(
                   () -> {
-                    if (Math.abs(
-                            driveSubsystem.getPose().getRotation().getDegrees()
-                                - preciseTarget.get().getRotation().getDegrees())
-                        < 90) {
-                      VisionConstants.aligningState = VisionConstants.AligningState.ALIGNING_FRONT;
+                    if (driveSubsystem.frontScore(preciseTarget.get())) {
+                      Vision.aligningState = Vision.aligningState.ALIGNING_FRONT;
                     } else {
-                      VisionConstants.aligningState = VisionConstants.AligningState.ALIGNING_BACK;
+                      Vision.aligningState = Vision.aligningState.ALIGNING_BACK;
                     }
                   })
               .finallyDo(
                   () -> {
-                    VisionConstants.aligningState = VisionConstants.AligningState.NOT_ALIGNING;
+                    Vision.aligningState = Vision.aligningState.NOT_ALIGNING;
                   });
         },
         Set.of(driveSubsystem));

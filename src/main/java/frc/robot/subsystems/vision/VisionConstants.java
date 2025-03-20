@@ -82,12 +82,4 @@ public class VisionConstants {
       Set.of(17, 18, 19, 20, 21, 22, 6, 7, 8, 9, 10, 11);
 
   public static double DISTANCE_THRESHOLD = Units.inchesToMeters(1200); // TODO: TUNE VALUE FOR COMP
-
-  public static enum AligningState {
-    NOT_ALIGNING,
-    ALIGNING_FRONT,
-    ALIGNING_BACK
-  }
-
-  public static AligningState aligningState = AligningState.NOT_ALIGNING;
 }
