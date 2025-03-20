@@ -42,19 +42,11 @@ public class VisionConstants {
 
   // Front Reef Camera
   public static Transform3d robotToFrontReefCam =
-      new Transform3d(
-          Units.inchesToMeters(0),
-          Units.inchesToMeters(-12),
-          Units.inchesToMeters(35.7347),
-          new Rotation3d(0.0, Math.toRadians(-50.0), Math.toRadians(0)));
+    new Transform3d(Units.inchesToMeters(5.0), Units.inchesToMeters(12.0), Units.inchesToMeters(10.33832), new Rotation3d(0.0, 0.0, Math.toRadians(-22.25)));
 
   // Back Reef Camera
   public static Transform3d robotToBackReefCam =
-      new Transform3d(
-          Units.inchesToMeters(0),
-          Units.inchesToMeters(0),
-          Units.inchesToMeters(10.33832),
-          new Rotation3d(0.0, 0.0, Math.toRadians(180)));
+    new Transform3d(Units.inchesToMeters(-7.8508), Units.inchesToMeters(9.0), Units.inchesToMeters(35.7347), new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
