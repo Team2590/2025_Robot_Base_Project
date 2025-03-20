@@ -31,7 +31,7 @@ public class TrajectoryFollowerCommand extends Command {
       new NemesisHolonomicDriveController(
           new PIDController(8.0, 0, 0.0),
           new PIDController(8.0, 0, 0.0),
-          new PIDController(7.0, 0, 0.2));
+          new PIDController(6.0, 0, 0.2));
 
   public TrajectoryFollowerCommand(
       Supplier<PathPlannerPath> path,
