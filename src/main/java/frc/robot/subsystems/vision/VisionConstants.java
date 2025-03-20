@@ -34,9 +34,9 @@ public class VisionConstants {
   // }
 
   // Camera names, must match names configured on coprocessor
-  public static String upperSourceCameraName = "1mp_arducam_device_6";
+  public static String upperSourceCameraName = "1mp_arducam_device_1";
   //   public static String processorCameraName = "1mp_arducam_device_4";
-  public static String reefCameraName = "1mp_arducam_device_1";
+  public static String reefCameraName = "1mp_arducam_device_6";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)

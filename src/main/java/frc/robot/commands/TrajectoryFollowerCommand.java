@@ -92,11 +92,10 @@ public class TrajectoryFollowerCommand extends Command {
       Logger.recordOutput(
           "TrajectoryFollower/InitialHolonomicPose", path.getStartingHolonomicPose().get());
       drive.setPose(path.getStartingHolonomicPose().get());
+    } else {
+      trajectory =
+          path.generateTrajectory(startingSpeeds, drive.getPose().getRotation(), drive.getConfig());
     }
-    // else {
-    //   trajectory =
-    //       path.getTrajectory(startingSpeeds, drive.getAutoPose().getRotation());
-    // }
     timer.reset();
     timer.start();
     System.out.println("\n\n\n\nTrajectory time seconds:" + trajectory.getTotalTimeSeconds());
