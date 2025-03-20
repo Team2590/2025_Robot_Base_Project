@@ -92,10 +92,7 @@ public class ScoringFactory {
       case L1:
         yield scoreL1();
       default:
-        yield primeForLevelTeleop(level)
-            .andThen(EndEffectorFactory.runEndEffectorOuttake())
-            .until(() -> !RobotState.getInstance().endEffectorhasCoral())
-            .withName("Score " + level.name());
+        yield primeForLevelTeleop(level).withName("Score " + level.name());
     };
   }
 
