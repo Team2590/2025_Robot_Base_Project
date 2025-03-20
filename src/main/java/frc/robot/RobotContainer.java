@@ -351,8 +351,6 @@ public class RobotContainer {
 
     NemesisAutoBuilder.addRoutine(
         "Nemesis Auto Builder Test", AutoFactory.driveTo(FieldConstants.BlueReefPoses.NE_left));
-    NemesisAutoBuilder.addRoutine(
-        "Nemesis Auto Builder Test 2", SourceSide.LEFT, FieldConstants.BlueReefPoses.NE_left);
 
     NemesisAutoBuilder.addRoutine(
         "Nemesis Auto Builder Test 3",

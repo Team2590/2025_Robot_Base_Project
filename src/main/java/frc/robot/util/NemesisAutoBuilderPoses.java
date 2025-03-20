@@ -5,11 +5,22 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.FieldConstants;
 import frc.robot.util.NemesisAutoBuilder.ReefTarget;
+import frc.robot.util.NemesisAutoBuilder.SourceSide;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
 public class NemesisAutoBuilderPoses {
   private static HashMap<String, Supplier<Pose2d>> map = new HashMap<>();
+  // private static Predicate<SourceSide> sourcePoseSupplier = (SourceSide sourceSide) -> {
+  //   Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+  //   return alliance == Alliance.Red
+  //       ? (sourceSide == SourceSide.LEFT
+  //           ? FieldConstants.redSourceLeftIntakePose
+  //           : FieldConstants.redSourceRightIntakePose)
+  //       : (sourceSide == SourceSide.LEFT
+  //           ? FieldConstants.blueSourceLeftIntakePose
+  //           : FieldConstants.blueSourceRightIntakePose);
+  // }
 
   static {
     map.put(
@@ -109,7 +120,18 @@ public class NemesisAutoBuilderPoses {
                 : FieldConstants.BlueReefPoses.SE_left);
   }
 
-  public static Pose2d getPose(ReefTarget reefTarget) {
+  public static Pose2d getReefPose(ReefTarget reefTarget) {
     return map.get(reefTarget.name()).get();
+  }
+
+  public static Pose2d getSourcePose(SourceSide sourceSide) {
+    Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+    return alliance == Alliance.Red
+        ? (sourceSide == SourceSide.LEFT
+            ? FieldConstants.redSourceLeftIntakePose
+            : FieldConstants.redSourceRightIntakePose)
+        : (sourceSide == SourceSide.LEFT
+            ? FieldConstants.blueSourceLeftIntakePose
+            : FieldConstants.blueSourceRightIntakePose);
   }
 }

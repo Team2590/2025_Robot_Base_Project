@@ -1,16 +1,13 @@
 package frc.robot.util;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.RobotContainer;
 import frc.robot.command_factories.AutoFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
-import java.util.ArrayList;
+import frc.robot.util.NemesisAutoBuilder.SourceSide;
 import java.util.HashMap;
-import java.util.Set;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class NemesisAutoBuilder {
@@ -39,15 +36,9 @@ public class NemesisAutoBuilder {
   public static Command generateScoringSequence(
       ReefTarget reefTarget, Level level, SourceSide sourceSide) {
     return Commands.sequence(
-        AutoFactory.driveTo(NemesisAutoBuilderPoses.getPose(reefTarget)),
+        AutoFactory.driveTo(NemesisAutoBuilderPoses.getReefPose(reefTarget)),
         ScoringFactory.score(level),
-        Commands.defer(
-            () -> {
-              return sourceSide == SourceSide.LEFT
-                  ? AutoFactory.intakeCoralAroundSourceLeft()
-                  : AutoFactory.intakeCoralAroundSourceRight();
-            },
-            Set.of(RobotContainer.getDrive())));
+        AutoFactory.driveTo(NemesisAutoBuilderPoses.getSourcePose(sourceSide)));
   }
 
   public static Command generateScoringSequence(ReefTarget reefTarget, SourceSide sourceSide) {
@@ -60,20 +51,6 @@ public class NemesisAutoBuilder {
 
   public static void addRoutine(String name, Command routine) {
     autoRoutines.put(name, routine);
-  }
-
-  public static void addRoutine(String name, SourceSide side, Pose2d... targets) {
-    ArrayList<Command> generated = new ArrayList<Command>();
-    for (Pose2d target : targets) {
-      generated.add(
-          Commands.sequence(
-              AutoFactory.driveTo(target),
-              ScoringFactory.score(Level.L4),
-              side == SourceSide.LEFT
-                  ? AutoFactory.intakeCoralAroundSourceLeft()
-                  : AutoFactory.intakeCoralAroundSourceRight()));
-    }
-    autoRoutines.put(name, Commands.sequence(generated.toArray(Command[]::new)));
   }
 
   public static SendableChooser<Command> buildAutoChooser() {
