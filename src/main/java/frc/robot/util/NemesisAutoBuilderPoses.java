@@ -11,16 +11,6 @@ import java.util.function.Supplier;
 
 public class NemesisAutoBuilderPoses {
   private static HashMap<String, Supplier<Pose2d>> map = new HashMap<>();
-  // private static Predicate<SourceSide> sourcePoseSupplier = (SourceSide sourceSide) -> {
-  //   Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
-  //   return alliance == Alliance.Red
-  //       ? (sourceSide == SourceSide.LEFT
-  //           ? FieldConstants.redSourceLeftIntakePose
-  //           : FieldConstants.redSourceRightIntakePose)
-  //       : (sourceSide == SourceSide.LEFT
-  //           ? FieldConstants.blueSourceLeftIntakePose
-  //           : FieldConstants.blueSourceRightIntakePose);
-  // }
 
   static {
     map.put(
@@ -124,7 +114,7 @@ public class NemesisAutoBuilderPoses {
     return map.get(reefTarget.name()).get();
   }
 
-  public static Pose2d getSourcePose(SourceSide sourceSide) {
+  public static Pose2d getNearSourcePose(SourceSide sourceSide) {
     Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
     return alliance == Alliance.Red
         ? (sourceSide == SourceSide.LEFT

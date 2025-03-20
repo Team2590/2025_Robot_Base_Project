@@ -38,7 +38,7 @@ public class NemesisAutoBuilder {
     return Commands.sequence(
         AutoFactory.driveTo(NemesisAutoBuilderPoses.getReefPose(reefTarget)),
         ScoringFactory.score(level),
-        AutoFactory.driveTo(NemesisAutoBuilderPoses.getSourcePose(sourceSide)));
+        AutoFactory.driveTo(NemesisAutoBuilderPoses.getNearSourcePose(sourceSide)));
   }
 
   public static Command generateScoringSequence(ReefTarget reefTarget, SourceSide sourceSide) {
