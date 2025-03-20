@@ -77,7 +77,7 @@ public class DriveCommands {
    * Logger dedicated to determining if the robot is aligned to the target pose. Returns true if all
    * alignment errors are within tolerance, false otherwise
    */
-  private static boolean logAlignmentData(Pose2d currentPose, Pose2d targetPose, String phase) {
+  private static void logAlignmentData(Pose2d currentPose, Pose2d targetPose, String phase) {
     // Calculate errors
     double xError = targetPose.getX() - currentPose.getX();
     double yError = targetPose.getY() - currentPose.getY();
@@ -106,8 +106,6 @@ public class DriveCommands {
     Logger.recordOutput("Alignment/YErrorPercent", Math.abs(yError) / Y_ALIGNMENT_TOLERANCE);
     Logger.recordOutput(
         "Alignment/RotationErrorPercent", Math.abs(rotationError) / ROTATION_ALIGNMENT_TOLERANCE);
-
-    return fullyAligned;
   }
 
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
@@ -488,7 +486,7 @@ public class DriveCommands {
 
               // Log alignment data
               String phase = reachedInitialPosition[0] ? "Final" : "Approach";
-              boolean isAligned = logAlignmentData(currentPose, robotEndPose, phase);
+              logAlignmentData(currentPose, robotEndPose, phase);
               // Calculate angle error (normalized between -π and π)
               double targetAngle = robotEndPose.getRotation().getRadians();
               double currentAngle = currentPose.getRotation().getRadians();
