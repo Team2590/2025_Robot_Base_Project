@@ -597,6 +597,7 @@ public class DriveCommands {
           // AtomicReference<Rotation2d> preciseTargetRotation2d =
           //     new AtomicReference<>(preciseTarget.get().getRotation());
           Command pathCommand;
+          Command pathCommand;
           try {
             pathCommand =
                 AutoBuilder.followPath(
@@ -607,6 +608,7 @@ public class DriveCommands {
                         preciseTarget.get(),
                         approachDirection.get()));
           } catch (Exception e) {
+            pathCommand = Commands.print("Follow Path");
             pathCommand = Commands.print("Follow Path");
           }
 
