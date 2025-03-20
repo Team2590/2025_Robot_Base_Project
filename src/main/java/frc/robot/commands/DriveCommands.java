@@ -548,17 +548,35 @@ public class DriveCommands {
           Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
           AtomicReference<Rotation2d> preciseTargetRotation2d =
               new AtomicReference<>(preciseTarget.get().getRotation());
+          Command pathCommand;
           try {
-            return AutoBuilder.followPath(
-                getPreciseAlignmentPath(
-                    constraints,
-                    driveSubsystem.getChassisSpeeds(),
-                    driveSubsystem.getPose(),
-                    preciseTarget.get(),
-                    approachDirection));
+            pathCommand =
+                AutoBuilder.followPath(
+                    getPreciseAlignmentPath(
+                        constraints,
+                        driveSubsystem.getChassisSpeeds(),
+                        driveSubsystem.getPose(),
+                        preciseTarget.get(),
+                        approachDirection));
           } catch (Exception e) {
-            return Commands.print("Follow Path");
+            pathCommand = Commands.print("Follow Path");
           }
+          return pathCommand
+              .beforeStarting(
+                  () -> {
+                    if (Math.abs(
+                            driveSubsystem.getPose().getRotation().getDegrees()
+                                - preciseTarget.get().getRotation().getDegrees())
+                        < 90) {
+                      VisionConstants.aligningState = VisionConstants.AligningState.ALIGNING_FRONT;
+                    } else {
+                      VisionConstants.aligningState = VisionConstants.AligningState.ALIGNING_BACK;
+                    }
+                  })
+              .finallyDo(
+                  () -> {
+                    VisionConstants.aligningState = VisionConstants.AligningState.NOT_ALIGNING;
+                  });
         },
         Set.of(driveSubsystem));
   }
@@ -593,8 +611,21 @@ public class DriveCommands {
           }
 
           return pathCommand
-              .beforeStarting(() -> VisionConstants.isAligning = true)
-              .finallyDo(() -> VisionConstants.isAligning = false);
+              .beforeStarting(
+                  () -> {
+                    if (Math.abs(
+                            driveSubsystem.getPose().getRotation().getDegrees()
+                                - preciseTarget.get().getRotation().getDegrees())
+                        < 90) {
+                      VisionConstants.aligningState = VisionConstants.AligningState.ALIGNING_FRONT;
+                    } else {
+                      VisionConstants.aligningState = VisionConstants.AligningState.ALIGNING_BACK;
+                    }
+                  })
+              .finallyDo(
+                  () -> {
+                    VisionConstants.aligningState = VisionConstants.AligningState.NOT_ALIGNING;
+                  });
         },
         Set.of(driveSubsystem));
   }
@@ -715,17 +746,35 @@ public class DriveCommands {
           Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
           // AtomicReference<Rotation2d> preciseTargetRotation2d =
           //     new AtomicReference<>(preciseTarget.get().getRotation());
+          Command pathCommand;
           try {
-            return AutoBuilder.followPath(
-                getPreciseAlignmentPathsim(
-                    constraints,
-                    driveSubsystem.getChassisSpeeds(),
-                    driveSubsystem.getPose(),
-                    preciseTarget.get(),
-                    approachDirection.get()));
+            pathCommand =
+                AutoBuilder.followPath(
+                    getPreciseAlignmentPathsim(
+                        constraints,
+                        driveSubsystem.getChassisSpeeds(),
+                        driveSubsystem.getPose(),
+                        preciseTarget.get(),
+                        approachDirection.get()));
           } catch (Exception e) {
-            return Commands.print("Follow Path");
+            pathCommand = Commands.print("Follow Path");
           }
+          return pathCommand
+              .beforeStarting(
+                  () -> {
+                    if (Math.abs(
+                            driveSubsystem.getPose().getRotation().getDegrees()
+                                - preciseTarget.get().getRotation().getDegrees())
+                        < 90) {
+                      VisionConstants.aligningState = VisionConstants.AligningState.ALIGNING_FRONT;
+                    } else {
+                      VisionConstants.aligningState = VisionConstants.AligningState.ALIGNING_BACK;
+                    }
+                  })
+              .finallyDo(
+                  () -> {
+                    VisionConstants.aligningState = VisionConstants.AligningState.NOT_ALIGNING;
+                  });
         },
         Set.of(driveSubsystem));
   }
