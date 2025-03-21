@@ -399,6 +399,12 @@ public class RobotContainer {
     drive.setDefaultCommand(DriveFactory.joystickDrive());
     leftJoystick.button(1).whileTrue(controllerApp.bindDrivetoSourceCommandsim(drive));
     leftJoystick.button(2).whileTrue(controllerApp.bindDrivetoTargetCommandsim(drive));
+    leftJoystick
+        .button(3)
+        .whileTrue(
+            DriveFactory.hybridPreciseAlignmentSim(
+                () -> controllerApp.getTarget().pose(),
+                controllerApp.getTarget().pose().getRotation().plus(new Rotation2d(Math.PI))));
 
     // leftJoystick
     //     .button(3)

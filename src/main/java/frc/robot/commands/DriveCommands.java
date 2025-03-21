@@ -50,7 +50,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -567,19 +566,151 @@ public class DriveCommands {
     return alignToTargetLine(drive, forwardSupplier, strafeSupplier, targetPoseSupplier, 1.0);
   }
 
+  /**
+   * Logs alignment data consistently across different alignment methods.
+   *
+   * @param methodName Name of the alignment method being used
+   * @param drive Drive subsystem
+   * @param targetPose Target pose
+   * @param xAtSetpoint Whether x position is at setpoint
+   * @param yAtSetpoint Whether y position is at setpoint
+   * @param rotAtSetpoint Whether rotation is at setpoint
+   */
+  private static void logAlignmentData(
+      String currentPhase,
+      Drive drive,
+      Pose2d targetPose,
+      boolean xAtSetpoint,
+      boolean yAtSetpoint,
+      boolean rotAtSetpoint) {
+
+    Pose2d currentPose = drive.getPose();
+
+    Logger.recordOutput("AlignToTarget/CurrentPhase", currentPhase);
+    Logger.recordOutput("AlignToTarget/TargetPose", targetPose);
+    Logger.recordOutput("AlignToTarget/xError", targetPose.getX() - currentPose.getX());
+    Logger.recordOutput("AlignToTarget/yError", targetPose.getY() - currentPose.getY());
+    Logger.recordOutput(
+        "AlignToTarget/RotError",
+        MathUtil.angleModulus(
+            targetPose.getRotation().minus(currentPose.getRotation()).getRadians()));
+    Logger.recordOutput("AlignToTarget/xAtSetpoint", xAtSetpoint);
+    Logger.recordOutput("AlignToTarget/yAtSetpoint", yAtSetpoint);
+    Logger.recordOutput("AlignToTarget/rotAtSetpoint", rotAtSetpoint);
+  }
+
+  /**
+   * Fine-tunes robot position and rotation using PID controllers. This is designed to be used after
+   * path following to achieve precise alignment.
+   */
+  public static Command pidAlignment(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
+    // Create PID controllers with appropriate gains
+    PIDController xController = new PIDController(3.0, 0.0, 0.1);
+    PIDController yController = new PIDController(3.0, 0.0, 0.1);
+    PIDController thetaController = new PIDController(4.0, 0.0, 0.2);
+
+    // Enable continuous input for rotation controller
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    // Set tolerances for position and rotation
+    xController.setTolerance(0.01); // 1 cm
+    yController.setTolerance(0.01); // 1 cm
+    thetaController.setTolerance(0.02); // ~1 degree
+
+    return Commands.run(
+            () -> {
+              // Get current pose and target pose
+              Pose2d currentPose = drive.getPose();
+
+              if (targetPoseSupplier.get() == null) {
+                drive.runVelocity(new ChassisSpeeds());
+                return;
+              }
+
+              // Create an internal target pose rotated 180 degrees
+              /*               Pose2d internalTargetPose =
+              new Pose2d(
+                  targetPoseSupplier.get().getTranslation(),
+                  targetPoseSupplier.get().getRotation().plus(new Rotation2d(Math.PI)));
+                   */
+
+              // Calculate PID outputs using the rotated internal target
+              double xSpeed =
+                  xController.calculate(currentPose.getX(), targetPoseSupplier.get().getX());
+              double ySpeed =
+                  yController.calculate(currentPose.getY(), targetPoseSupplier.get().getY());
+              double rotSpeed =
+                  thetaController.calculate(
+                      currentPose.getRotation().getRadians(),
+                      targetPoseSupplier.get().getRotation().getRadians());
+
+              // Limit speeds for fine adjustment
+              double maxLinearSpeed = 1.0; // m/s
+              double maxRotSpeed = 2.0; // rad/s
+
+              xSpeed = MathUtil.clamp(xSpeed, -maxLinearSpeed, maxLinearSpeed);
+              ySpeed = MathUtil.clamp(ySpeed, -maxLinearSpeed, maxLinearSpeed);
+              rotSpeed = MathUtil.clamp(rotSpeed, -maxRotSpeed, maxRotSpeed);
+
+              // Log alignment data
+              logAlignmentData(
+                  "PID Alignment",
+                  drive,
+                  targetPoseSupplier.get(),
+                  xController.atSetpoint(),
+                  yController.atSetpoint(),
+                  thetaController.atSetpoint());
+
+              // Apply field-relative speeds
+              drive.runVelocity(
+                  ChassisSpeeds.fromFieldRelativeSpeeds(
+                      xSpeed, ySpeed, rotSpeed, currentPose.getRotation()));
+            },
+            drive)
+        .until(
+            () ->
+                xController.atSetpoint()
+                    && yController.atSetpoint()
+                    && thetaController.atSetpoint())
+        .finallyDo(
+            (interrupted) -> {
+              // Stop the drive when done
+              drive.runVelocity(new ChassisSpeeds());
+
+              // Clean up controllers
+              xController.close();
+              yController.close();
+              thetaController.close();
+            });
+  }
+
   public static Command preciseAlignment(
       Drive driveSubsystem, Supplier<Pose2d> preciseTarget, Rotation2d approachDirection) {
     PathConstraints constraints = Constants.DriveToPoseConstraints.slowpathConstraints;
 
     return Commands.defer(
         () -> {
-          if (preciseTarget.get().getRotation() == null
+          if (preciseTarget.get() == null
+              || preciseTarget.get().getRotation() == null
               || driveSubsystem.getPose().getRotation() == null) {
             return Commands.none();
           }
-          Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
-          AtomicReference<Rotation2d> preciseTargetRotation2d =
-              new AtomicReference<>(preciseTarget.get().getRotation());
+
+          /*           Pose2d rotatedTargetPose =
+          new Pose2d(
+              preciseTarget.get().getTranslation(),
+              preciseTarget.get().getRotation().plus(new Rotation2d(Math.PI)));
+              */
+
+          // Log initial alignment data
+          logAlignmentData(
+              "Path Following",
+              driveSubsystem,
+              preciseTarget.get(),
+              false, // Not at setpoint yet
+              false,
+              false);
+
           try {
             // Log alignment data before following path
             logAlignmentData(driveSubsystem.getPose(), preciseTarget.get(), "Precise");
@@ -590,14 +721,15 @@ public class DriveCommands {
                     driveSubsystem.getPose(),
                     preciseTarget.get(),
                     approachDirection));
+
           } catch (Exception e) {
-            return Commands.print("Follow Path");
+            return Commands.print("Follow Path Error: " + e.getMessage());
           }
         },
         Set.of(driveSubsystem));
   }
 
-  public static Command preciseAlignment(
+  public static Command preciseAlignmentOld(
       Drive driveSubsystem,
       Supplier<Pose2d> preciseTarget,
       Supplier<Rotation2d> approachDirection) {
@@ -740,8 +872,8 @@ public class DriveCommands {
               || driveSubsystem.getPose().getRotation() == null) {
             return Commands.none();
           }
-          Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
-          // AtomicReference<Rotation2d> preciseTargetRotation2d =
+          Logger.recordOutput("AlignToTarget/TargetPose", preciseTarget.get());
+          // AtomicRefer() -> ence<Rotation2d> preciseTargetRotation2d =
           //     new AtomicReference<>(preciseTarget.get().getRotation());
           try {
             return AutoBuilder.followPath(

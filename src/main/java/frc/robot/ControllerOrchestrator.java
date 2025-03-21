@@ -112,7 +112,7 @@ public class ControllerOrchestrator {
         drive,
         () ->
             getTarget().pose().plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
-        () -> getTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
+        getTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
   }
 
   public Command bindDrivetoSourceCommandsim(Drive drive) {
