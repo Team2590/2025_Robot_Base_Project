@@ -31,6 +31,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -447,5 +448,21 @@ public class Drive extends SubsystemBase {
       xController.setConstraints(
           new TrapezoidProfile.Constraints(xControllerMaxVel.get(), xControllerMaxAccel.get()));
     }
+  }
+
+  public Pose2d flipScoringSide(Pose2d targetPose) {
+    double differencefromFront =
+        Math.abs(this.getPose().getRotation().minus(targetPose.getRotation()).getRadians());
+    double differencefromBack =
+        Math.abs(
+            this.getPose()
+                .getRotation()
+                .minus(targetPose.getRotation())
+                .plus(new Rotation2d(Math.PI))
+                .getRadians());
+    if (differencefromFront >= differencefromBack) {
+      return targetPose.plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI)));
+    }
+    return targetPose;
   }
 }

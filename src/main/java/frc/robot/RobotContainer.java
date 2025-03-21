@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -188,7 +187,10 @@ public class RobotContainer {
                     ElevatorConstantsLarry.currentLimitAmps,
                     ElevatorConstantsLarry.invert,
                     ElevatorConstantsLarry.brake,
-                    ElevatorConstantsLarry.reduction));
+                    ElevatorConstantsLarry.reduction,
+                    0,
+                    "",
+                    false));
         endEffector =
             new EndEffector(
                 new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
@@ -224,7 +226,10 @@ public class RobotContainer {
                     Constants.ElevatorConstantsLeonidas.currentLimitAmps,
                     Constants.ElevatorConstantsLeonidas.invert,
                     Constants.ElevatorConstantsLeonidas.brake,
-                    Constants.ElevatorConstantsLeonidas.reduction));
+                    Constants.ElevatorConstantsLeonidas.reduction,
+                    Constants.ElevatorConstantsLeonidas.followerCanID,
+                    Constants.ElevatorConstantsLeonidas.followerCanBus,
+                    Constants.ElevatorConstantsLeonidas.followerOpposeLeader));
         elevator.resetRotationCount();
         vision =
             new Vision(
@@ -400,8 +405,8 @@ public class RobotContainer {
   private void configureButtonBindingsSimulation() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
-    leftJoystick.button(1).whileTrue(controllerApp.bindDrivetoSourceCommandsim(drive));
-    leftJoystick.button(2).whileTrue(controllerApp.bindDrivetoTargetCommandsim(drive));
+    leftJoystick.button(1).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+    leftJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
 
     // leftJoystick
     //     .button(3)
@@ -438,19 +443,19 @@ public class RobotContainer {
     leftJoystick.button(9).onTrue(ScoringFactory.scoreProcessor());
 
     // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
-    leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
-    leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
-    leftJoystick.button(12).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+    // leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    // leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
+    // leftJoystick.button(12).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
 
-    leftJoystick
-        .button(13)
-        .whileTrue(
-            DriveCommands.alignToTargetLine(
-                drive,
-                getLeftJoystick()::getY, // Forward/backward control
-                getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
-                () -> controllerApp.getTarget().pose(),
-                1.0));
+    // leftJoystick
+    //     .button(13)
+    //     .whileTrue(
+    //         DriveCommands.alignToTargetLine(
+    //             drive,
+    //             getLeftJoystick()::getY, // Forward/backward control
+    //             getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
+    //             () -> controllerApp.getTarget().pose(),
+    //             1.0));
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by

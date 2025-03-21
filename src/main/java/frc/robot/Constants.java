@@ -21,7 +21,6 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -211,39 +210,6 @@ public final class Constants {
       this.elevatorPosition = 0;
       this.rotationTarget = 0;
     }
-
-    public static Pose2d[] getReefPose(int aprilTagID) {
-      Pose2d tagPose = VisionConstants.aprilTagLayout.getTagPose(aprilTagID).get().toPose2d();
-
-      double tagRotation = tagPose.getRotation().getRadians();
-      double adjustX =
-          Units.inchesToMeters(12 + 3.5 + 1 + 1); // Forward offset (from the first code snippet)
-      /**
-       * orig pose: 144 inches, 158.5 --> 3.658, 4.0266 left pose: 3.19, 4.1 right pose: 3.17, 3.77
-       */
-      double adjustY_left =
-          4.1
-              - Units.inchesToMeters(
-                  158.5); // Forward (X) is towards the Reef !. Forward cosine is "+ - x" and Y is
-      // "left
-      // // and right", adjustY sin is + -y. Change adjust offsets
-      double adjustY_right = Units.inchesToMeters(158.5 + 3.5) - 3.77;
-
-      double rightReefX =
-          tagPose.getX() + adjustX * Math.cos(tagRotation) - adjustY_right * Math.sin(tagRotation);
-      double rightReefY =
-          tagPose.getY() + adjustX * Math.sin(tagRotation) + adjustY_right * Math.cos(tagRotation);
-      Pose2d rightReefPose = new Pose2d(rightReefX, rightReefY, tagPose.getRotation());
-
-      double leftReefX =
-          tagPose.getX() + adjustX * Math.cos(tagRotation) + adjustY_left * Math.sin(tagRotation);
-      double leftReefY =
-          tagPose.getY() + adjustX * Math.sin(tagRotation) - adjustY_left * Math.cos(tagRotation);
-      Pose2d leftReefPose = new Pose2d(leftReefX, leftReefY, tagPose.getRotation());
-
-      Pose2d[] returnPoses = new Pose2d[] {leftReefPose, rightReefPose};
-      return returnPoses;
-    }
   }
 
   public class DriveToPoseConstants {
@@ -304,6 +270,9 @@ public final class Constants {
     public static final boolean invert = false;
     public static final boolean brake = true;
     public static final double reduction = 7;
+    public static final int followerCanID = 1000; // TODO: find real id
+    public static final String followerCanBus = "Takeover";
+    public static final boolean followerOpposeLeader = false;
     public static final double kS = 0.22812;
     public static final double kV = 0.14885;
     // public static double ELEVATOR_L2_POS = 23;
