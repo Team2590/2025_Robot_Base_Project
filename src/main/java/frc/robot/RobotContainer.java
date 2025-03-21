@@ -403,8 +403,8 @@ public class RobotContainer {
   private void configureButtonBindingsSimulation() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
-    leftJoystick.button(1).whileTrue(controllerApp.bindDrivetoSourceCommandsim(drive));
-    leftJoystick.button(2).whileTrue(controllerApp.bindDrivetoTargetCommandsim(drive));
+    leftJoystick.button(1).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+    leftJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
 
     // leftJoystick
     //     .button(3)
@@ -441,19 +441,19 @@ public class RobotContainer {
     leftJoystick.button(9).onTrue(ScoringFactory.scoreProcessor());
 
     // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
-    leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
-    leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
-    leftJoystick.button(12).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+    // leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    // leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
+    // leftJoystick.button(12).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
 
-    leftJoystick
-        .button(13)
-        .whileTrue(
-            DriveCommands.alignToTargetLine(
-                drive,
-                getLeftJoystick()::getY, // Forward/backward control
-                getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
-                () -> controllerApp.getTarget().pose(),
-                1.0));
+    // leftJoystick
+    //     .button(13)
+    //     .whileTrue(
+    //         DriveCommands.alignToTargetLine(
+    //             drive,
+    //             getLeftJoystick()::getY, // Forward/backward control
+    //             getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
+    //             () -> controllerApp.getTarget().pose(),
+    //             1.0));
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
