@@ -68,6 +68,7 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -187,10 +188,8 @@ public class RobotContainer {
                     ElevatorConstantsLarry.currentLimitAmps,
                     ElevatorConstantsLarry.invert,
                     ElevatorConstantsLarry.brake,
-                    ElevatorConstantsLarry.reduction,
-                    0,
-                    "",
-                    false));
+                    ElevatorConstantsLarry.reduction
+                ));
         endEffector =
             new EndEffector(
                 new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
@@ -292,8 +291,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    List.of(new CameraConfig(reefCameraName, robotToReefCam))));
+                new VisionIOPhotonVisionSim(
+                    List.of(new CameraConfig(reefCameraName, robotToReefCam)), drive::getPose));
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
