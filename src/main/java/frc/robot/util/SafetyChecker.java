@@ -5,7 +5,8 @@ import frc.robot.Constants;
 public class SafetyChecker {
   public enum MechanismType {
     ARM_MOVEMENT,
-    ELEVATOR_MOVEMENT
+    ELEVATOR_MOVEMENT,
+    INTAKE_MOVEMENT
   }
 
   /**
@@ -60,18 +61,32 @@ public class SafetyChecker {
 
         return true;
 
-      default:
+      case INTAKE_MOVEMENT:
+        if (!isIntakeInOperationalRange(movingPosition)) {
+          System.out.println("Intake is out of operational range, movingPosition: "
+                  + movingPosition
+                  + " operational range: "
+                  + Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MIN_POS
+                  + " to "
+                  + Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MAX_POS);
+          return false;  
+        }
+        return true;
+
+        default:
         return false;
     }
   }
 
+  private static boolean isIntakeInOperationalRange(double intakePosition) {
+    return NemesisMathUtil.isBetweenInclusive(intakePosition, Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MIN_POS, Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MAX_POS);
+  }
+
   private static boolean isElevatorInOperationalRange(double elevatorPosition) {
-    return elevatorPosition >= Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS
-        && elevatorPosition <= Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS;
+    return NemesisMathUtil.isBetweenInclusive(elevatorPosition, Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS, Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS);
   }
 
   private static boolean isArmInOperationalRange(double armPosition) {
-    return armPosition >= Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS
-        && armPosition <= Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS;
+    return NemesisMathUtil.isBetweenInclusive(armPosition, Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS, Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS);
   }
 }
