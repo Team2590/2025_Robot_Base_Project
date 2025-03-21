@@ -89,10 +89,10 @@ public class VisionConstants {
       Double.POSITIVE_INFINITY; // No rotation data available
 
   public static final Set<Integer> FIDUCIAL_IDS_RED =
-      Set.of(1, 2, 3, 4, 5, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
+      Set.of(6,7,8,9,10,11);
 
   public static final Set<Integer> FIDUCIAL_IDS_BLUE =
-      Set.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      Set.of(17,18,19,20,21,22);
 
   public static double DISTANCE_THRESHOLD = Units.inchesToMeters(120); // TODO: TUNE VALUE FOR COMP
 }

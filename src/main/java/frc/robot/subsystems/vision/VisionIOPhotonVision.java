@@ -116,7 +116,7 @@ public class VisionIOPhotonVision implements VisionIO {
                               || (VisionConstants.FIDUCIAL_IDS_BLUE.contains(
                                       result.targets.get(i).getFiducialId())
                                   && DriverStation.getAlliance().get().equals(Alliance.Blue))));
-                  if ((distance >= VisionConstants.DISTANCE_THRESHOLD) || isInWhiteList) {
+                  if ((distance >= VisionConstants.DISTANCE_THRESHOLD) || !isInWhiteList) {
                     // System.out.println(distance);
                     // System.out.println(targets.get(i));
                     result.targets.remove(i);
