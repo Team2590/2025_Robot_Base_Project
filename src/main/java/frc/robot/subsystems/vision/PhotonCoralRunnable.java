@@ -7,6 +7,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.vision.VisionConstants;
 
 public class PhotonCoralRunnable implements Runnable {
@@ -84,7 +86,21 @@ public class PhotonCoralRunnable implements Runnable {
     }
   }
 
-  public static Pose2d getCoralPose(Pose2d robotPose){
+  public static Rotation2d getRotation() {
+    try {
+      if (target != null && result.hasTargets()) {
+        return new Rotation2d(-coralYaw);
+      } else {
+        return new Rotation2d();
+      }
+    } catch (NullPointerException e) {
+      e.printStackTrace();
+      return new Rotation2d();
+    }
+  }
+
+  public static Pose2d getCoralPose(){
+    Pose2d robotPose = RobotContainer.getDrive().getPose();
     try {
       if (result.hasTargets()) {
         return robotPose.plus(robotToCoral);

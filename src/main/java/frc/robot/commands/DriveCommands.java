@@ -44,6 +44,8 @@ import frc.robot.Constants;
 import frc.robot.Constants.DriveToPoseConstraints;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.vision.PhotonCoralRunnable;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashSet;
@@ -860,5 +862,9 @@ public class DriveCommands {
               ySpeedController.close();
               angularSpeedController.close();
             });
+  }
+  
+  public static Command joystickDriveToCoral(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+    return joystickDriveAtAngle(drive, xSupplier, ySupplier, () -> PhotonCoralRunnable.getRotation());
   }
 }
