@@ -97,5 +97,7 @@ public class VisionConstants {
     public static double OBJECT_CAMERA_PITCH = 0;
     public static double OBJECT_CAMERA_X_DISTANCE_FROM_CENTER_METERS = 0;
     public static double OBJECT_CAMERA_Y_DISTANCE_FROM_CENTER_METERS = 0;
+    public static int CORAL_PIPELINE_INDEX = 0;
+    public static double OBJECT_CAMERA_FOCAL_LENGTH = 0.39;
   }
 }

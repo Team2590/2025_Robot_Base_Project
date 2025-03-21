@@ -1,5 +1,8 @@
 package frc.robot.subsystems.vision;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -15,22 +18,33 @@ public class PhotonCoralRunnable implements Runnable {
   private static double camPitch = VisionConstants.CoralAlgaeCameraConstants.OBJECT_CAMERA_PITCH;
   private static double camXOffset = VisionConstants.CoralAlgaeCameraConstants.OBJECT_CAMERA_X_DISTANCE_FROM_CENTER_METERS;
   private static double camYOffset = VisionConstants.CoralAlgaeCameraConstants.OBJECT_CAMERA_Y_DISTANCE_FROM_CENTER_METERS;
+  private static double camFocalLength = VisionConstants.CoralAlgaeCameraConstants.OBJECT_CAMERA_FOCAL_LENGTH;
   private static double coralXOffset = 0;
   private static double coralYOffset = 0;
+  private static double coralYaw;
+  private static Transform2d robotToCoral;
 
   public PhotonCoralRunnable() {
-    CoralCam.setPipelineIndex(1);
+    CoralCam.setPipelineIndex(VisionConstants.CoralAlgaeCameraConstants.CORAL_PIPELINE_INDEX);
+    robotToCoral = new Transform2d();
   }
 
   /** Updates results on the note detection camera. */
   @Override
   public void run() {
     for (var result : CoralCam.getAllUnreadResults()) {
-        if (result.hasTargets()) {
-            target = result.getBestTarget();
-            coralXOffset = camHeight / (Math.tan(camPitch - Math.toRadians(target.getPitch())));
-            coralYOffset = coralXOffset * Math.tan(Math.toRadians(target.getYaw())) + camYOffset;
-            } else {
+      if (result.hasTargets()) {
+        target = result.getBestTarget();
+        double mPitch = Math.toRadians(target.getPitch());
+        double mYaw = Math.toRadians(target.getYaw());
+        double realPitch = Math.atan2(mPitch, camFocalLength);
+        double realYaw = Math.atan2(mYaw, camFocalLength);
+        double distanceToNote = camHeight / (Math.tan(camPitch - realPitch));
+        double xToNote = distanceToNote * Math.cos(realYaw);
+        double yToNote = distanceToNote * Math.sin(realYaw);
+        coralYaw = Math.toDegrees(Math.atan(yToNote / (xToNote + camXOffset)));
+        robotToCoral = new Transform2d(coralXOffset, -coralYOffset - camYOffset, new Rotation2d());
+      } else {
             target = null;
                 coralXOffset = 0;
                 coralYOffset = 0;
@@ -60,7 +74,7 @@ public class PhotonCoralRunnable implements Runnable {
   public static double getYaw() {
     try {
       if (target != null && result.hasTargets()) {
-        return target.getYaw();
+        return coralYaw;
       } else {
         return 0;
       }
@@ -70,21 +84,16 @@ public class PhotonCoralRunnable implements Runnable {
     }
   }
 
-  /**
-   * Gets the pitch of target in DEGREES.
-   *
-   * @return pitch of target in degrees
-   */
-  public static double getPitch() {
+  public static Pose2d getCoralPose(Pose2d robotPose){
     try {
       if (result.hasTargets()) {
-        return target.getPitch();
+        return robotPose.plus(robotToCoral);
       } else {
-        return 0;
+        return robotPose;
       }
     } catch (NullPointerException e) {
       e.printStackTrace();
-      return 0;
+      return robotPose;
     }
   }
 }
