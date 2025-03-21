@@ -65,7 +65,47 @@ public class DriveCommands {
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
+  // Alignment tolerances
+  private static final double X_ALIGNMENT_TOLERANCE = 0.02; // meters
+  private static final double Y_ALIGNMENT_TOLERANCE = 0.02; // meters
+  private static final double ROTATION_ALIGNMENT_TOLERANCE = 0.05; // radians
+
   private DriveCommands() {}
+
+  /**
+   * Logger dedicated to determining if the robot is aligned to the target pose. Returns true if all
+   * alignment errors are within tolerance, false otherwise
+   */
+  private static void logAlignmentData(Pose2d currentPose, Pose2d targetPose, String phase) {
+    // Calculate errors
+    double xError = targetPose.getX() - currentPose.getX();
+    double yError = targetPose.getY() - currentPose.getY();
+    double rotationError =
+        MathUtil.angleModulus(
+            targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians());
+
+    // Check if within tolerances
+    boolean xAligned = Math.abs(xError) <= X_ALIGNMENT_TOLERANCE;
+    boolean yAligned = Math.abs(yError) <= Y_ALIGNMENT_TOLERANCE;
+    boolean rotationAligned = Math.abs(rotationError) <= ROTATION_ALIGNMENT_TOLERANCE;
+    boolean fullyAligned = xAligned && yAligned && rotationAligned;
+
+    // Log all data to Shuffleboard
+    Logger.recordOutput("Alignment/Phase", phase);
+    Logger.recordOutput("Alignment/CurrentPose", currentPose);
+    Logger.recordOutput("Alignment/TargetPose", targetPose);
+    Logger.recordOutput("Alignment/XError", xError);
+    Logger.recordOutput("Alignment/YError", yError);
+    Logger.recordOutput("Alignment/RotationError", rotationError);
+    Logger.recordOutput("Alignment/XAligned", xAligned);
+    Logger.recordOutput("Alignment/YAligned", yAligned);
+    Logger.recordOutput("Alignment/RotationAligned", rotationAligned);
+    Logger.recordOutput("Alignment/FullyAligned", fullyAligned);
+    Logger.recordOutput("Alignment/XErrorPercent", Math.abs(xError) / X_ALIGNMENT_TOLERANCE);
+    Logger.recordOutput("Alignment/YErrorPercent", Math.abs(yError) / Y_ALIGNMENT_TOLERANCE);
+    Logger.recordOutput(
+        "Alignment/RotationErrorPercent", Math.abs(rotationError) / ROTATION_ALIGNMENT_TOLERANCE);
+  }
 
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
     // Apply deadband
@@ -443,20 +483,13 @@ public class DriveCommands {
                 drive.yController.reset(currentPose.getY(), 0);
               }
 
+              // Log alignment data
+              String phase = reachedInitialPosition[0] ? "Final" : "Approach";
+              logAlignmentData(currentPose, robotEndPose, phase);
               // Calculate angle error (normalized between -π and π)
               double targetAngle = robotEndPose.getRotation().getRadians();
               double currentAngle = currentPose.getRotation().getRadians();
               double angleError = MathUtil.angleModulus(targetAngle - currentAngle);
-
-              // Log values for debugging
-              // Logger.recordOutput("DriveCommands/targetPose", targetPose);
-              // Logger.recordOutput("DriveCommands/robotEndPose", robotEndPose);
-              // Logger.recordOutput("DriveCommands/distanceToTarget", distanceToTarget);
-              // Logger.recordOutput("DriveCommands/angleError", angleError);
-              // Logger.recordOutput(
-              //     "DriveCommands/atTargetPosition", distanceToTarget < positionThreshold);
-              // Logger.recordOutput(
-              //     "DriveCommands/phase", reachedInitialPosition[0] ? "GoToTarget" : "Approach");
 
               // Adjust blending for more direct movement when far away
               double blendThreshold = 0.000001; // Meters where we start blending
@@ -679,46 +712,16 @@ public class DriveCommands {
               false);
 
           try {
-            Command pathCommand =
-                AutoBuilder.followPath(
-                    getPreciseAlignmentPath(
-                        constraints,
-                        driveSubsystem.getChassisSpeeds(),
-                        driveSubsystem.getPose(),
-                        preciseTarget.get(),
-                        approachDirection));
+            // Log alignment data before following path
+            logAlignmentData(driveSubsystem.getPose(), preciseTarget.get(), "Precise");
+            return AutoBuilder.followPath(
+                getPreciseAlignmentPath(
+                    constraints,
+                    driveSubsystem.getChassisSpeeds(),
+                    driveSubsystem.getPose(),
+                    preciseTarget.get(),
+                    approachDirection));
 
-            // Wrap the path command to update logs when it completes
-            return pathCommand.finallyDo(
-                () -> {
-                  // Calculate position errors
-                  Pose2d finalPose = driveSubsystem.getPose();
-                  Pose2d targetPose = preciseTarget.get();
-
-                  // Calculate if we're at setpoint using similar tolerances as PID
-                  double xError = Math.abs(targetPose.getX() - finalPose.getX());
-                  double yError = Math.abs(targetPose.getY() - finalPose.getY());
-                  double rotError =
-                      Math.abs(
-                          MathUtil.angleModulus(
-                              targetPose
-                                  .getRotation()
-                                  .minus(finalPose.getRotation())
-                                  .getRadians()));
-
-                  boolean xAtSetpoint = xError < 0.01;
-                  boolean yAtSetpoint = yError < 0.01;
-                  boolean rotAtSetpoint = rotError < 0.02;
-
-                  // Log final alignment data
-                  logAlignmentData(
-                      "Path Following Complete",
-                      driveSubsystem,
-                      targetPose,
-                      xAtSetpoint,
-                      yAtSetpoint,
-                      rotAtSetpoint);
-                });
           } catch (Exception e) {
             return Commands.print("Follow Path Error: " + e.getMessage());
           }
@@ -1024,5 +1027,21 @@ public class DriveCommands {
               ySpeedController.close();
               angularSpeedController.close();
             });
+  }
+
+  /**
+   * Creates a command that continuously logs alignment data for a given target pose. This is useful
+   * for monitoring alignment status even when not actively aligning.
+   */
+  public static Command logAlignmentPeriodically(Drive drive, Supplier<Pose2d> targetPose) {
+    return Commands.run(
+        () -> {
+          Pose2d currentPose = drive.getPose();
+          Pose2d target = targetPose.get();
+          if (target != null) {
+            logAlignmentData(currentPose, target, "Monitoring");
+          }
+        },
+        drive);
   }
 }
