@@ -63,30 +63,40 @@ public class SafetyChecker {
 
       case INTAKE_MOVEMENT:
         if (!isIntakeInOperationalRange(movingPosition)) {
-          System.out.println("Intake is out of operational range, movingPosition: "
+          System.out.println(
+              "Intake is out of operational range, movingPosition: "
                   + movingPosition
                   + " operational range: "
                   + Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MIN_POS
                   + " to "
                   + Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MAX_POS);
-          return false;  
+          return false;
         }
         return true;
 
-        default:
+      default:
         return false;
     }
   }
 
   private static boolean isIntakeInOperationalRange(double intakePosition) {
-    return NemesisMathUtil.isBetweenInclusive(intakePosition, Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MIN_POS, Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MAX_POS);
+    return NemesisMathUtil.isBetweenInclusive(
+        intakePosition,
+        Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MIN_POS,
+        Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MAX_POS);
   }
 
   private static boolean isElevatorInOperationalRange(double elevatorPosition) {
-    return NemesisMathUtil.isBetweenInclusive(elevatorPosition, Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS, Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS);
+    return NemesisMathUtil.isBetweenInclusive(
+        elevatorPosition,
+        Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS,
+        Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS);
   }
 
   private static boolean isArmInOperationalRange(double armPosition) {
-    return NemesisMathUtil.isBetweenInclusive(armPosition, Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS, Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS);
+    return NemesisMathUtil.isBetweenInclusive(
+        armPosition,
+        Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS,
+        Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS);
   }
 }
