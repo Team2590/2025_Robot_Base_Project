@@ -18,15 +18,6 @@ public class GamePieceFactory {
         EndEffectorFactory.runEndEffector());
   }
 
-  public static Command intakeAlgaeGround() {
-    return new SequentialCommandGroup(
-        new ParallelCommandGroup(
-            IntakeFactory.setIntakeAlgaePosition(),
-            IntakeFactory.runIntake(
-                () -> Constants.IntakeConstantsLeonidas.INTAKE_ALGAE_INTAKE_SPEED)),
-        IntakeFactory.setHoldingAlgaePosition());
-  }
-
   public static Command primeCoralSource() {
 
     return Commands.parallel(
@@ -48,13 +39,13 @@ public class GamePieceFactory {
     
     return moveToHandOffCommand
     .alongWith(IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_CORAL_POS))
-    .andThen(IntakeFactory.runIntake(() -> 6).until(() -> RobotState.intakeHasCoral()))
+    .andThen(IntakeFactory.runIntake(() -> 6))
     .andThen(IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS))
     .andThen(
       Commands.parallel(
-        IntakeFactory.runIntake(() -> -6),
+        IntakeFactory.runIntakeVoltage(() -> -6),
         EndEffectorFactory.runEndEffector()
-      ).until(() -> RobotState.endEffectorhasCoral())
+      )
     );
   }
 
