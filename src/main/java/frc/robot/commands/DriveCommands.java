@@ -378,161 +378,166 @@ public class DriveCommands {
    * @param targetDistance distance in meters to stop from the target (0 to go directly to target)
    * @return command that drives to the calculated position
    */
-  public static Command alignToTargetLine(
-      Drive drive,
-      DoubleSupplier forwardSupplier,
-      DoubleSupplier strafeSupplier,
-      Supplier<Pose2d> targetPoseSupplier,
-      double targetDistance) {
+  // public static Command alignToTargetLine(
+  //     Drive drive,
+  //     DoubleSupplier forwardSupplier,
+  //     DoubleSupplier strafeSupplier,
+  //     Supplier<Pose2d> targetPoseSupplier,
+  //     double targetDistance) {
 
-    // Create PID controllers for position control
+  //   // Create PID controllers for position control
 
-    // State tracking - make it a final array so we can modify it inside the lambda
-    final boolean[] reachedInitialPosition = {false};
-    final double positionThreshold = 0.01; // meters
+  //   // State tracking - make it a final array so we can modify it inside the lambda
+  //   final boolean[] reachedInitialPosition = {false};
+  //   final double positionThreshold = 0.01; // meters
 
-    // If targetDistance is 0, skip the first phase
-    if (targetDistance == 0) {
-      reachedInitialPosition[0] = true;
-    }
+  //   // If targetDistance is 0, skip the first phase
+  //   if (targetDistance == 0) {
+  //     reachedInitialPosition[0] = true;
+  //   }
 
-    return Commands.run(
-            () -> {
-              Pose2d currentPose = drive.getPose();
-              Pose2d targetPose = targetPoseSupplier.get();
+  //   return Commands.run(
+  //           () -> {
+  //             Pose2d currentPose = drive.getPose();
+  //             Pose2d targetPose = targetPoseSupplier.get();
 
-              if (targetPose == null) {
-                drive.runVelocity(new ChassisSpeeds(0, 0, 0));
-                return;
-              }
+  //             if (targetPose == null) {
+  //               drive.runVelocity(new ChassisSpeeds(0, 0, 0));
+  //               return;
+  //             }
 
-              // Define initial position and final target
-              Pose2d robotEndPose;
+  //             // Define initial position and final target
+  //             Pose2d robotEndPose;
 
-              if (!reachedInitialPosition[0]) {
-                // Phase 1: Go to position at specified distance from target
-                double targetX =
-                    targetPose.getX()
-                        + Math.cos(targetPose.getRotation().getRadians()) * targetDistance;
-                double targetY =
-                    targetPose.getY()
-                        + Math.sin(targetPose.getRotation().getRadians()) * targetDistance;
-                robotEndPose =
-                    new Pose2d(
-                        targetX, targetY, targetPose.getRotation().plus(new Rotation2d(Math.PI)));
-              } else {
-                // Phase 2: Go directly to target pose
-                // Keep the same rotation (facing the original direction)
-                robotEndPose =
-                    new Pose2d(
-                        targetPose.getX(),
-                        targetPose.getY(),
-                        targetPose.getRotation().plus(new Rotation2d(Math.PI)));
-              }
+  //             if (!reachedInitialPosition[0]) {
+  //               // Phase 1: Go to position at specified distance from target
+  //               double targetX =
+  //                   targetPose.getX()
+  //                       + Math.cos(targetPose.getRotation().getRadians()) * targetDistance;
+  //               double targetY =
+  //                   targetPose.getY()
+  //                       + Math.sin(targetPose.getRotation().getRadians()) * targetDistance;
+  //               robotEndPose =
+  //                   new Pose2d(
+  //                       targetX, targetY, targetPose.getRotation().plus(new
+  // Rotation2d(Math.PI)));
+  //             } else {
+  //               // Phase 2: Go directly to target pose
+  //               // Keep the same rotation (facing the original direction)
+  //               robotEndPose =
+  //                   new Pose2d(
+  //                       targetPose.getX(),
+  //                       targetPose.getY(),
+  //                       targetPose.getRotation().plus(new Rotation2d(Math.PI)));
+  //             }
 
-              // Calculate distance to target position
-              double dx = robotEndPose.getX() - currentPose.getX();
-              double dy = robotEndPose.getY() - currentPose.getY();
-              double distanceToTarget = Math.hypot(dx, dy);
+  //             // Calculate distance to target position
+  //             double dx = robotEndPose.getX() - currentPose.getX();
+  //             double dy = robotEndPose.getY() - currentPose.getY();
+  //             double distanceToTarget = Math.hypot(dx, dy);
 
-              // Check if we've reached the initial position
-              if (!reachedInitialPosition[0] && distanceToTarget < positionThreshold) {
-                reachedInitialPosition[0] = true;
-                // Reset controllers with current position and velocity (0) when transitioning to
-                // phase 2
-                drive.xController.reset(currentPose.getX(), 0);
-                drive.yController.reset(currentPose.getY(), 0);
-              }
+  //             // Check if we've reached the initial position
+  //             if (!reachedInitialPosition[0] && distanceToTarget < positionThreshold) {
+  //               reachedInitialPosition[0] = true;
+  //               // Reset controllers with current position and velocity (0) when transitioning to
+  //               // phase 2
+  //               drive.xController.reset(currentPose.getX(), 0);
+  //               drive.yController.reset(currentPose.getY(), 0);
+  //             }
 
-              // Calculate angle error (normalized between -π and π)
-              double targetAngle = robotEndPose.getRotation().getRadians();
-              double currentAngle = currentPose.getRotation().getRadians();
-              double angleError = MathUtil.angleModulus(targetAngle - currentAngle);
+  //             // Calculate angle error (normalized between -π and π)
+  //             double targetAngle = robotEndPose.getRotation().getRadians();
+  //             double currentAngle = currentPose.getRotation().getRadians();
+  //             double angleError = MathUtil.angleModulus(targetAngle - currentAngle);
 
-              // Log values for debugging
-              // Logger.recordOutput("DriveCommands/targetPose", targetPose);
-              // Logger.recordOutput("DriveCommands/robotEndPose", robotEndPose);
-              // Logger.recordOutput("DriveCommands/distanceToTarget", distanceToTarget);
-              // Logger.recordOutput("DriveCommands/angleError", angleError);
-              // Logger.recordOutput(
-              //     "DriveCommands/atTargetPosition", distanceToTarget < positionThreshold);
-              // Logger.recordOutput(
-              //     "DriveCommands/phase", reachedInitialPosition[0] ? "GoToTarget" : "Approach");
+  //             // Log values for debugging
+  //             // Logger.recordOutput("DriveCommands/targetPose", targetPose);
+  //             // Logger.recordOutput("DriveCommands/robotEndPose", robotEndPose);
+  //             // Logger.recordOutput("DriveCommands/distanceToTarget", distanceToTarget);
+  //             // Logger.recordOutput("DriveCommands/angleError", angleError);
+  //             // Logger.recordOutput(
+  //             //     "DriveCommands/atTargetPosition", distanceToTarget < positionThreshold);
+  //             // Logger.recordOutput(
+  //             //     "DriveCommands/phase", reachedInitialPosition[0] ? "GoToTarget" :
+  // "Approach");
 
-              // Adjust blending for more direct movement when far away
-              double blendThreshold = 0.000001; // Meters where we start blending
-              double autoWeight = Math.min(distanceToTarget / blendThreshold, 1.0);
-              double driverWeight = 1.0 - autoWeight;
+  //             // Adjust blending for more direct movement when far away
+  //             double blendThreshold = 0.000001; // Meters where we start blending
+  //             double autoWeight = Math.min(distanceToTarget / blendThreshold, 1.0);
+  //             double driverWeight = 1.0 - autoWeight;
 
-              // Calculate auto movement speeds using PID
-              double xSpeed = drive.xController.calculate(currentPose.getX(), robotEndPose.getX());
-              double ySpeed = drive.yController.calculate(currentPose.getY(), robotEndPose.getY());
+  //             // Calculate auto movement speeds using PID
+  //             double xSpeed = drive.xController.calculate(currentPose.getX(),
+  // robotEndPose.getX());
+  //             double ySpeed = drive.yController.calculate(currentPose.getY(),
+  // robotEndPose.getY());
 
-              // Normalize speeds to avoid exceeding max velocity
-              double autoSpeedMagnitude = Math.hypot(xSpeed, ySpeed);
-              if (autoSpeedMagnitude > 1.0) {
-                xSpeed /= autoSpeedMagnitude;
-                ySpeed /= autoSpeedMagnitude;
-              }
+  //             // Normalize speeds to avoid exceeding max velocity
+  //             double autoSpeedMagnitude = Math.hypot(xSpeed, ySpeed);
+  //             if (autoSpeedMagnitude > 1.0) {
+  //               xSpeed /= autoSpeedMagnitude;
+  //               ySpeed /= autoSpeedMagnitude;
+  //             }
 
-              // Reduce speed as we get closer to final target
-              if (reachedInitialPosition[0] && distanceToTarget < 0.3) {
-                double speedScale = distanceToTarget / 0.3; // Scale down speed proportionally
-                speedScale = Math.max(0.1, speedScale); // Don't go below 30% speed
-                xSpeed *= speedScale;
-                ySpeed *= speedScale;
-              }
+  //             // Reduce speed as we get closer to final target
+  //             if (reachedInitialPosition[0] && distanceToTarget < 0.3) {
+  //               double speedScale = distanceToTarget / 0.3; // Scale down speed proportionally
+  //               speedScale = Math.max(0.1, speedScale); // Don't go below 30% speed
+  //               xSpeed *= speedScale;
+  //               ySpeed *= speedScale;
+  //             }
 
-              // Blend driver control with automatic movement
-              double finalXSpeed =
-                  (forwardSupplier.getAsDouble() * driverWeight) + (xSpeed * autoWeight);
-              double finalYSpeed =
-                  (strafeSupplier.getAsDouble() * driverWeight) + (ySpeed * autoWeight);
+  //             // Blend driver control with automatic movement
+  //             double finalXSpeed =
+  //                 (forwardSupplier.getAsDouble() * driverWeight) + (xSpeed * autoWeight);
+  //             double finalYSpeed =
+  //                 (strafeSupplier.getAsDouble() * driverWeight) + (ySpeed * autoWeight);
 
-              // Calculate rotation speed using drive's snap controller
-              double rotationSpeed = drive.thetaController.calculate(currentAngle, targetAngle);
+  //             // Calculate rotation speed using drive's snap controller
+  //             double rotationSpeed = drive.thetaController.calculate(currentAngle, targetAngle);
 
-              if (drive.xController.atGoal()) {
-                finalXSpeed = 0;
-              }
+  //             if (drive.xController.atGoal()) {
+  //               finalXSpeed = 0;
+  //             }
 
-              if (drive.yController.atGoal()) {
-                finalYSpeed = 0;
-              }
+  //             if (drive.yController.atGoal()) {
+  //               finalYSpeed = 0;
+  //             }
 
-              if (drive.thetaController.atGoal()) {
-                rotationSpeed = 0;
-              }
+  //             if (drive.thetaController.atGoal()) {
+  //               rotationSpeed = 0;
+  //             }
 
-              // Apply speeds to drive
-              drive.runVelocity(
-                  ChassisSpeeds.fromFieldRelativeSpeeds(
-                      finalXSpeed * drive.getMaxLinearSpeedMetersPerSec(),
-                      finalYSpeed * drive.getMaxLinearSpeedMetersPerSec(),
-                      rotationSpeed * drive.getMaxAngularSpeedRadPerSec(),
-                      currentPose.getRotation()));
-            },
-            drive)
-        .beforeStarting(
-            () -> {
-              // Reset state when command starts - but keep reachedInitialPosition if we want to go
-              // direct
-              if (targetDistance != 0) {
-                reachedInitialPosition[0] = false;
-              }
-              Pose2d currentPose = drive.getPose();
-              drive.xController.reset(currentPose.getX(), 0);
-              drive.yController.reset(currentPose.getY(), 0);
-            });
-  }
+  //             // Apply speeds to drive
+  //             drive.runVelocity(
+  //                 ChassisSpeeds.fromFieldRelativeSpeeds(
+  //                     finalXSpeed * drive.getMaxLinearSpeedMetersPerSec(),
+  //                     finalYSpeed * drive.getMaxLinearSpeedMetersPerSec(),
+  //                     rotationSpeed * drive.getMaxAngularSpeedRadPerSec(),
+  //                     currentPose.getRotation()));
+  //           },
+  //           drive)
+  //       .beforeStarting(
+  //           () -> {
+  //             // Reset state when command starts - but keep reachedInitialPosition if we want to
+  // go
+  //             // direct
+  //             if (targetDistance != 0) {
+  //               reachedInitialPosition[0] = false;
+  //             }
+  //             Pose2d currentPose = drive.getPose();
+  //             drive.xController.reset(currentPose.getX());
+  //             drive.yController.reset(currentPose.getY());
+  //           });
+  // }
 
-  public static Command alignToTargetLine(
-      Drive drive,
-      DoubleSupplier forwardSupplier,
-      DoubleSupplier strafeSupplier,
-      Supplier<Pose2d> targetPoseSupplier) {
-    return alignToTargetLine(drive, forwardSupplier, strafeSupplier, targetPoseSupplier, 1.0);
-  }
+  // public static Command alignToTargetLine(
+  //     Drive drive,
+  //     DoubleSupplier forwardSupplier,
+  //     DoubleSupplier strafeSupplier,
+  //     Supplier<Pose2d> targetPoseSupplier) {
+  //   return alignToTargetLine(drive, forwardSupplier, strafeSupplier, targetPoseSupplier, 1.0);
+  // }
 
   public static Command preciseAlignment(
       Drive driveSubsystem, Supplier<Pose2d> preciseTarget, Rotation2d approachDirection) {
@@ -562,11 +567,9 @@ public class DriveCommands {
         Set.of(driveSubsystem));
   }
 
-  public static Command preciseAlignment(
-      Drive driveSubsystem,
-      Supplier<Pose2d> preciseTarget,
-      Supplier<Rotation2d> approachDirection) {
-    PathConstraints constraints = Constants.DriveToPoseConstraints.slowpathConstraints;
+  public static Command preciseAlignmentNEMESIS(
+      Drive driveSubsystem, Supplier<Pose2d> preciseTarget, Rotation2d approachDirection) {
+    PathConstraints constraints = driveSubsystem.slowpathConstraints;
 
     return Commands.defer(
         () -> {
@@ -585,7 +588,7 @@ public class DriveCommands {
                         driveSubsystem.getChassisSpeeds(),
                         driveSubsystem.getPose(),
                         preciseTarget.get(),
-                        approachDirection.get()),
+                        approachDirection),
                 driveSubsystem);
           } catch (Exception e) {
             return Commands.print("Follow Path");

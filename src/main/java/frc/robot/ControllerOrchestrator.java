@@ -90,7 +90,7 @@ public class ControllerOrchestrator {
 
   /** Command that needs to be bound to a button to driveToTarget. */
   public Command bindDriveToTargetCommand(Drive drive) {
-    return DriveCommands.preciseAlignment(
+    return DriveCommands.preciseAlignmentNEMESIS(
         drive,
         () -> drive.flipScoringSide(getTarget().pose()),
         drive.flipScoringSide(getTarget().pose()).getRotation());

@@ -21,12 +21,14 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -88,31 +90,49 @@ public class Drive extends SubsystemBase {
       };
   private SwerveDrivePoseEstimator poseEstimator;
 
+  public PathConstraints slowpathConstraints =
+      new PathConstraints(
+          Constants.DriveToPoseConstraints.maxVelocityMPS * .35,
+          Constants.DriveToPoseConstraints.maxAccelerationMPSSq * .35,
+          Constants.DriveToPoseConstraints.maxAngularVelocityRadPerSec * .35,
+          Constants.DriveToPoseConstraints.maxAngularAccelerationRadPerSecSq * .35);
+
   public ProfiledPIDController thetaController =
-      new ProfiledPIDController(1.5, 0, 0.1, new TrapezoidProfile.Constraints(2.0, 4.0));
-  LoggedTunableNumber thetaControllerP = new LoggedTunableNumber("thetaController/kP", .30);
-  LoggedTunableNumber thetaControllerD = new LoggedTunableNumber("thetaController/kD", .0000);
+      new ProfiledPIDController(6, 0, 0.2, new TrapezoidProfile.Constraints(2.0, 4.0));
+  LoggedTunableNumber thetaControllerP = new LoggedTunableNumber("thetaController/kP", 6);
+  LoggedTunableNumber thetaControllerD = new LoggedTunableNumber("thetaController/kD", .2);
   LoggedTunableNumber thetaControllerTolerance =
       new LoggedTunableNumber("thetaController/tolerance", .01);
   LoggedTunableNumber thetaControllerMaxVel = new LoggedTunableNumber("thetaController/MaxVel", 1);
   LoggedTunableNumber thetaControllerMaxAccel =
       new LoggedTunableNumber("thetaController/MaxAccel", 1);
 
-  public ProfiledPIDController xController =
-      new ProfiledPIDController(1.5, 0, 0.1, new TrapezoidProfile.Constraints(2.0, 4.0));
-  LoggedTunableNumber xControllerP = new LoggedTunableNumber("xController/kP", .7);
+  public PIDController xController =
+      new PIDController(8, 0, 0.0); // , new TrapezoidProfile.Constraints(2.0, 4.0));
+  LoggedTunableNumber xControllerP = new LoggedTunableNumber("xController/kP", 8);
   LoggedTunableNumber xControllerD = new LoggedTunableNumber("xController/kD", .0000);
-  LoggedTunableNumber xControllerMaxVel = new LoggedTunableNumber("xController/MaxVel", 1);
-  LoggedTunableNumber xControllerMaxAccel = new LoggedTunableNumber("xController/MaxAccel", 1);
-  LoggedTunableNumber xControllerTolerance = new LoggedTunableNumber("xController/tolerance", .01);
 
-  public ProfiledPIDController yController =
-      new ProfiledPIDController(1.5, 0, 0.1, new TrapezoidProfile.Constraints(2.0, 4.0));
+  LoggedTunableNumber adsasfd = new LoggedTunableNumber("xController/tolerance", .01);
 
-  LoggedTunableNumber yControllerP = new LoggedTunableNumber("yController/kP", .7);
+  public PIDController yController =
+      new PIDController(8, 0, 0.0); // , new TrapezoidProfile.Constraints(2.0, 4.0));
+
+  LoggedTunableNumber yControllerP = new LoggedTunableNumber("yController/kP", 8);
   LoggedTunableNumber yControllerD = new LoggedTunableNumber("yController/kD", .0000);
-  LoggedTunableNumber yControllerMaxVel = new LoggedTunableNumber("yController/MaxVel", 1);
-  LoggedTunableNumber yControllerMaxAccel = new LoggedTunableNumber("yController/MaxAccel", 1);
+
+  LoggedTunableNumber ConstraintsMaxVel =
+      new LoggedTunableNumber("PathConstraints/MaxVel", slowpathConstraints.maxVelocityMPS());
+  LoggedTunableNumber ConstraintsMaxAccel =
+      new LoggedTunableNumber(
+          "PathConstraints/MaxAccel", slowpathConstraints.maxAccelerationMPSSq());
+
+  LoggedTunableNumber ConstraintsThetaVel =
+      new LoggedTunableNumber(
+          "PathConstraints/MaxAngularVel", slowpathConstraints.maxAngularVelocityRadPerSec());
+  LoggedTunableNumber ConstraintsThetaAccel =
+      new LoggedTunableNumber(
+          "PathConstraints/MaxAngularAccel", slowpathConstraints.maxAccelerationMPSSq());
+
   LoggedTunableNumber yControllerTolerance = new LoggedTunableNumber("yController/tolerance", .01);
 
   public Drive(
@@ -194,6 +214,7 @@ public class Drive extends SubsystemBase {
 
   @Override
   public void periodic() {
+
     Logger.recordOutput("BlueR_Tagpose", aprilTagLayout.getTagPose(12).get().toPose2d());
     Logger.recordOutput("BlueSourceL", FieldConstants.BlueReefPoses.CoralSourceLeft);
     Logger.recordOutput("BlueSourceR", FieldConstants.BlueReefPoses.CoralSourceRight);
@@ -264,6 +285,7 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
     updateTunableNumbers();
+    updatePathConstraints();
   }
 
   /**
@@ -429,40 +451,55 @@ public class Drive extends SubsystemBase {
     }
     if (yControllerP.hasChanged(hashCode())
         || yControllerD.hasChanged(hashCode())
-        || yControllerTolerance.hasChanged(hashCode())
-        || yControllerMaxVel.hasChanged(hashCode())
-        || yControllerMaxAccel.hasChanged(hashCode())) {
+        || yControllerTolerance.hasChanged(hashCode())) {
       yController.setPID(yControllerP.get(), 0.0, yControllerD.get());
       yController.setTolerance(yControllerTolerance.get());
-      yController.setConstraints(
-          new TrapezoidProfile.Constraints(yControllerMaxVel.get(), yControllerMaxAccel.get()));
+      // yController.setConstraints(
+      //     new TrapezoidProfile.Constraints(yControllerMaxVel.get(), yControllerMaxAccel.get()));
     }
 
-    if (xControllerP.hasChanged(hashCode())
-        || xControllerD.hasChanged(hashCode())
-        || xControllerTolerance.hasChanged(hashCode())
-        || xControllerMaxVel.hasChanged(hashCode())
-        || xControllerMaxAccel.hasChanged(hashCode())) {
+    if (xControllerP.hasChanged(hashCode()) || xControllerD.hasChanged(hashCode())) {
       xController.setPID(xControllerP.get(), 0.0, xControllerD.get());
-      xController.setTolerance(xControllerTolerance.get());
-      xController.setConstraints(
-          new TrapezoidProfile.Constraints(xControllerMaxVel.get(), xControllerMaxAccel.get()));
+      // xController.setTolerance(xControllerTolerance.get());
+      // xController.setConstraints(
+      //     new TrapezoidProfile.Constraints(xControllerMaxVel.get(), xControllerMaxAccel.get()));
+    }
+  }
+
+  public void updatePathConstraints() {
+
+    if (ConstraintsMaxVel.hasChanged(hashCode())
+        || ConstraintsMaxAccel.hasChanged(hashCode())
+        || ConstraintsThetaVel.hasChanged(hashCode())
+        || ConstraintsThetaAccel.hasChanged(hashCode())) {
+
+      slowpathConstraints =
+          new PathConstraints(
+              (ConstraintsMaxVel.get()),
+              ConstraintsMaxAccel.get(),
+              ConstraintsThetaVel.get(),
+              ConstraintsThetaAccel.get());
     }
   }
 
   public Pose2d flipScoringSide(Pose2d targetPose) {
-    double differencefromFront =
-        Math.abs(this.getPose().getRotation().minus(targetPose.getRotation()).getRadians());
-    double differencefromBack =
-        Math.abs(
-            this.getPose()
-                .getRotation()
-                .minus(targetPose.getRotation())
-                .plus(new Rotation2d(Math.PI))
-                .getRadians());
-    if (differencefromFront >= differencefromBack) {
-      return targetPose.plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI)));
+    if (targetPose != null) {
+      double differencefromFront =
+          Math.abs(this.getPose().getRotation().minus(targetPose.getRotation()).getRadians());
+      double differencefromBack =
+          Math.abs(
+              this.getPose()
+                  .getRotation()
+                  .minus(targetPose.getRotation())
+                  .plus(new Rotation2d(Math.PI))
+                  .getRadians());
+      if (differencefromFront >= differencefromBack) {
+        return targetPose.plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI)));
+      }
+      return targetPose;
+    } else {
+      System.err.println("--->> FLIP SCORING SIDE POSE IS NULL");
+      return new Pose2d(0, 0, Rotation2d.fromDegrees(0));
     }
-    return targetPose;
   }
 }
