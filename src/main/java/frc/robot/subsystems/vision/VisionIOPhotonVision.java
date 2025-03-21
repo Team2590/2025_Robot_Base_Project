@@ -103,8 +103,8 @@ public class VisionIOPhotonVision implements VisionIO {
     private void setEstimatedGlobalPose(
         Pose3d prevEstimatedRobotPose, PhotonPipelineResult result) {
       boolean isAligning =
-          Vision.aligningState == Vision.aligningState.ALIGNING_FRONT
-              || Vision.aligningState == Vision.aligningState.ALIGNING_BACK;
+          Vision.aligningState == Vision.AligningState.ALIGNING_FRONT
+              || Vision.aligningState == Vision.AligningState.ALIGNING_BACK;
       if (isAligning) {
         photonPoseEstimator.setPrimaryStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
       } else {

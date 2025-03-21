@@ -343,12 +343,10 @@ public class DriveCommands {
   }
 
   public static Command driveToPose(Pose2d targetPose) {
-    System.out.println("DRIVING TO POSE " + targetPose);
     return AutoBuilder.pathfindToPose(targetPose, DriveToPoseConstraints.fastpathConstraints, 0.0);
   }
 
   public static Command driveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
-    System.out.println("DRIVING TO POSE " + targetPoseSupplier.get());
     HashSet<Subsystem> requirements = new HashSet<>();
     requirements.add(drive);
     return Commands.defer(
@@ -546,8 +544,6 @@ public class DriveCommands {
             return Commands.none();
           }
           Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
-          AtomicReference<Rotation2d> preciseTargetRotation2d =
-              new AtomicReference<>(preciseTarget.get().getRotation());
           Command pathCommand;
           try {
             pathCommand =
@@ -567,12 +563,12 @@ public class DriveCommands {
                     if (driveSubsystem.frontScore(preciseTarget.get())) {
                       Vision.aligningState = Vision.AligningState.ALIGNING_FRONT;
                     } else {
-                      Vision.aligningState = Vision.aligningState.ALIGNING_BACK;
+                      Vision.aligningState = Vision.AligningState.ALIGNING_BACK;
                     }
                   })
               .finallyDo(
                   () -> {
-                    Vision.aligningState = Vision.aligningState.NOT_ALIGNING;
+                    Vision.aligningState = Vision.AligningState.NOT_ALIGNING;
                   });
         },
         Set.of(driveSubsystem));
