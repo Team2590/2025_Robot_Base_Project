@@ -55,6 +55,15 @@ public final class Constants {
     public static double maxAngularVelocityRadPerSec = 3;
     public static double maxAngularAccelerationRadPerSecSq = 3;
 
+    public static LoggedTunableNumber maxVelocityMPSScaler =
+        new LoggedTunableNumber("DriveToPoseConstaints/maxVelocityMPSScaler", 1);
+    public static LoggedTunableNumber maxAccelerationMPSSqScaler =
+        new LoggedTunableNumber("DriveToPoseConstaints/maxAccelerationMPSSqScaler", 1);
+    public static LoggedTunableNumber maxAngularVelocityRadPerSecScaler =
+        new LoggedTunableNumber("DriveToPoseConstaints/maxAngularVelocityRadPerSecScaler", 1);
+    public static LoggedTunableNumber maxAngularAccelerationRadPerSecSqScaler =
+        new LoggedTunableNumber("DriveToPoseConstaints/maxAngularAccelerationRadPerSecSqScaler", 1);
+
     public static PathConstraints fastpathConstraints =
         new PathConstraints(
             maxVelocityMPS,
@@ -64,10 +73,19 @@ public final class Constants {
 
     public static PathConstraints slowpathConstraints =
         new PathConstraints(
-            maxVelocityMPS * .35,
-            maxAccelerationMPSSq * .35,
-            maxAngularVelocityRadPerSec * .35,
-            maxAngularAccelerationRadPerSecSq * .35);
+            maxVelocityMPS * maxVelocityMPSScaler.get(),
+            maxAccelerationMPSSq * maxAccelerationMPSSqScaler.get(),
+            maxAngularVelocityRadPerSec * maxAngularVelocityRadPerSecScaler.get(),
+            maxAngularAccelerationRadPerSecSq * maxAngularAccelerationRadPerSecSqScaler.get());
+
+    public static void updateTunableNumbers() {
+      slowpathConstraints =
+          new PathConstraints(
+              maxVelocityMPS * maxVelocityMPSScaler.get(),
+              maxAccelerationMPSSq * maxAccelerationMPSSqScaler.get(),
+              maxAngularVelocityRadPerSec * maxAngularVelocityRadPerSecScaler.get(),
+              maxAngularAccelerationRadPerSecSq * maxAngularAccelerationRadPerSecSqScaler.get());
+    }
   }
 
   private static List<FRCPolygon> polygons = new ArrayList<>();
