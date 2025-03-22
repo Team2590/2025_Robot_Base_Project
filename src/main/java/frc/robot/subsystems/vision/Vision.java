@@ -38,11 +38,18 @@ public class Vision extends SubsystemBase {
   private final CoralDetectionIO coralDetectionIO;
   private final CoralDetectionIOInputsAutoLogged coralDetectionInputs =
       new CoralDetectionIOInputsAutoLogged();
+  private final Thread coralDetectionThread;
 
   public Vision(VisionConsumer consumer, CoralDetectionIO coralDetectionIO, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
     this.coralDetectionIO = coralDetectionIO;
+    this.coralDetectionThread = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        coralDetectionIO.updateInputs(coralDetectionInputs);
+      }
+    });
 
     // Initialize inputs
     this.inputs = new VisionIOInputsAutoLogged[io.length];
@@ -169,7 +176,7 @@ public class Vision extends SubsystemBase {
       allRobotPosesRejected.addAll(robotPosesRejected);
     }
 
-    coralDetectionIO.updateInputs(coralDetectionInputs);
+    coralDetectionThread.start();
 
     // Log summary data
     Logger.recordOutput(
