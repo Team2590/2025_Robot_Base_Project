@@ -454,6 +454,18 @@ public class Drive extends SubsystemBase {
   }
 
   public Pose2d flipScoringSide(Pose2d targetPose) {
+    if (frontScore(targetPose)) {
+      return targetPose;
+    }
+    // Flip the targetPose for back scoring.
+    return targetPose.plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI)));
+  }
+
+  /**
+   * Returns true if the front scoring is more optimal than the back scoring based on the
+   * targetPose.
+   */
+  public boolean frontScore(Pose2d targetPose) {
     double differencefromFront =
         Math.abs(this.getPose().getRotation().minus(targetPose.getRotation()).getRadians());
     double differencefromBack =
@@ -463,9 +475,6 @@ public class Drive extends SubsystemBase {
                 .minus(targetPose.getRotation())
                 .plus(new Rotation2d(Math.PI))
                 .getRadians());
-    if (differencefromFront >= differencefromBack) {
-      return targetPose.plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI)));
-    }
-    return targetPose;
+    return differencefromFront <= differencefromBack;
   }
 }
