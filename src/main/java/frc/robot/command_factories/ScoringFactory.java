@@ -93,7 +93,7 @@ public class ScoringFactory {
       case L1:
         yield scoreL1();
       default:
-        yield primeForLevelTeleop(level).withName("Score " + level.name());
+        yield primeForLevelTeleop(level).withName("Score teleop " + level.name());
     };
   }
 
@@ -123,6 +123,19 @@ public class ScoringFactory {
     }
   }
 
+  public static Command scoreControllerApp(Level level) {
+    return switch (level) {
+      case L1: 
+        yield scoreL1();
+      default: 
+        yield primeForLevelTeleop(level)
+        .andThen(
+          EndEffectorFactory.runEndEffectorOuttake()
+          .until(() -> !RobotState.endEffectorhasCoral())
+        ).withName("Controller app score" + level.name());
+    };
+  }
+ 
   /**
    * Creates a command sequence for scoring at L1.
    *
