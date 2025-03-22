@@ -142,8 +142,7 @@ public class ScoringFactory {
 
   public static Command scoreAlgaeBarge() {
     return ElevatorFactory.setPositionRun(Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS)
-    .alongWith(ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_BARGE_POS))
-    .andThen(EndEffectorFactory.runEndEffectorOuttake());
+    .alongWith(ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_BARGE_POS));
   }
 
   /**
