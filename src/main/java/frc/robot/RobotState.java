@@ -128,6 +128,10 @@ public class RobotState extends SubsystemBase {
     return currentZone;
   }
 
+  public Pose2d getNearestCoralPose() {
+    return vision.getNearestCoralPose();
+  }
+
   public static Command setIntakeHasCoral() {
     return Commands.runOnce(() -> intakeHasCoral = true);
   }
