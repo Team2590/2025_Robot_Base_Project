@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import org.ejml.dense.row.decomposition.svd.SafeSvd_DDRM;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -29,8 +31,12 @@ public class Atlas {
     Elevator elevator = RobotContainer.getElevator();
     Arm arm = RobotContainer.getArm();
     Intake intake = RobotContainer.getIntake();
+
+
     double handoffPos = Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS;
-    if (RobotContainer.getElevator().getRotationCount() >= handoffPos
+
+    if (SafetyChecker.operationalSafety(intakeTargetPos, armTargetPos, elevatorTargetPos)){
+     if (RobotContainer.getElevator().getRotationCount() >= handoffPos
         && elevatorTargetPos >= handoffPos) {
       return new ParallelCommandGroup(
           arm.setPositionBlocking(armTargetPos),
@@ -58,5 +64,10 @@ public class Atlas {
           "Magical state where somehow none of the above is true. Bad programmer. BAD!");
       return Commands.none();
     }
+  }
+  else{
+
+    return Commands.print("\n \n NOT SAFE  \n \n");
+  }
   }
 }
