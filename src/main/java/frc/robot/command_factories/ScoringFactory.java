@@ -221,28 +221,17 @@ public class ScoringFactory {
         Commands.waitUntil(
             () -> {
               Pose2d currentPose = RobotContainer.getDrive().getPose();
-              for (Pose2d pose : FieldConstants.RedReefPosesArray) {
+              for (Pose2d pose : FieldConstants.RED_REEF_POSES.values()) {
                 if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
                   return true; // 1.5 meters max distance to start raising elevator
               }
-              for (Pose2d pose : FieldConstants.BlueReefPosesArray) {
+              for (Pose2d pose : FieldConstants.BLUE_REEF_POSES.values()) {
                 if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
                   return true; // 1.5 meters max distance to start raising elevator
               }
               return false;
             }),
         primeForLevel(Level.L4) // ,
-        // Commands.waitUntil(
-        //     () -> {
-        //       Pose2d currentPose = RobotContainer.getDrive().getPose();
-        //       for (Pose2d pose : FieldConstants.RedReefPosesArray) {
-        //         if (NemesisMathUtil.isPoseApprox(currentPose, pose, 0.01)) return true;
-        //       }
-        //       for (Pose2d pose : FieldConstants.BlueReefPosesArray) {
-        //         if (NemesisMathUtil.isPoseApprox(currentPose, pose, 0.01)) return true;
-        //       }
-        //       return false;
-        //     })
         );
   }
 }
