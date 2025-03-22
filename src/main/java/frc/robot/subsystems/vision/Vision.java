@@ -40,10 +40,10 @@ public class Vision extends SubsystemBase {
       new CoralDetectionIOInputsAutoLogged();
   private final Thread coralDetectionThread;
 
-  public Vision(VisionConsumer consumer, CoralDetectionIO coralDetectionIO, VisionIO... io) {
+  public Vision(VisionConsumer consumer, CoralDetectionIO coralDetectionIOInput, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
-    this.coralDetectionIO = coralDetectionIO;
+    this.coralDetectionIO = coralDetectionIOInput;
     this.coralDetectionThread = new Thread(new Runnable() {
       @Override
       public void run() {
