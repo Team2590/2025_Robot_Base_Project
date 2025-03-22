@@ -44,12 +44,14 @@ public class Vision extends SubsystemBase {
     this.consumer = consumer;
     this.io = io;
     this.coralDetectionIO = coralDetectionIOInput;
-    this.coralDetectionThread = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        coralDetectionIO.updateInputs(coralDetectionInputs);
-      }
-    });
+    this.coralDetectionThread =
+        new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                coralDetectionIO.updateInputs(coralDetectionInputs);
+              }
+            });
 
     // Initialize inputs
     this.inputs = new VisionIOInputsAutoLogged[io.length];

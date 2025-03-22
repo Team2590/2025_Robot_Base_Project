@@ -9,6 +9,22 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class CoralIOPhotonVision implements CoralDetectionIO {
+  private final CoralDetectionThread thread;
+
+  public CoralIOPhotonVision() {
+    thread = new CoralDetectionThread();
+    thread.start();
+  }
+
+  @Override
+  public void updateInputs(CoralDetectionIOInputs inputs) {
+    inputs.coralPose = thread.getCoralPose();
+    inputs.coralRotation = thread.getCoralRotation();
+    inputs.coralYaw = thread.getCoralYaw();
+  }
+}
+
+class CoralDetectionThread extends Thread {
   private NetworkTableInstance instance = NetworkTableInstance.getDefault();
   private PhotonCamera CoralCam;
   public PhotonTrackedTarget target;
@@ -22,55 +38,82 @@ public class CoralIOPhotonVision implements CoralDetectionIO {
       VisionConstants.CoralAlgaeCameraConstants.OBJECT_CAMERA_FOCAL_LENGTH;
   private double coralXOffset = VisionConstants.CoralAlgaeCameraConstants.CORAL_X_OFFSET;
   private double coralYOffset = VisionConstants.CoralAlgaeCameraConstants.CORAL_Y_OFFSET;
-  private double coralYaw;
-  private Transform2d robotToCoral;
+  private double coralYaw = 0;
+  private Pose2d coralPose = RobotContainer.getDrive().getPose();
+  private Transform2d robotToCoral = new Transform2d();
+  private Rotation2d coralRotation = new Rotation2d();
+  private volatile boolean connected = false;
 
-  public CoralIOPhotonVision() {
+  public CoralDetectionThread() {
     CoralCam.setPipelineIndex(VisionConstants.CoralAlgaeCameraConstants.CORAL_PIPELINE_INDEX);
-    robotToCoral = new Transform2d();
     this.CoralCam =
         new PhotonCamera(instance, VisionConstants.CoralAlgaeCameraConstants.CAMERA_NAME);
+    setDaemon(true);
+  }
+
+  public boolean isConnected() {
+    return connected;
+  }
+
+  public Pose2d getCoralPose() {
+    return coralPose;
+  }
+
+  public Rotation2d getCoralRotation() {
+    return coralRotation;
+  }
+
+  public double getCoralYaw() {
+    return coralYaw;
   }
 
   @Override
-  public void updateInputs(CoralDetectionIOInputs inputs) {
+  public void run() {
     Pose2d robotPose = RobotContainer.getDrive().getPose();
-
-    for (var result : CoralCam.getAllUnreadResults()) {
+    while (!Thread.interrupted()) {
       try {
-        if (result.hasTargets()) {
-          target = result.getBestTarget();
-          double mPitch = Math.toRadians(target.getPitch());
-          double mYaw = Math.toRadians(target.getYaw());
-          double realPitch = Math.atan2(mPitch, camFocalLength);
-          double realYaw = Math.atan2(mYaw, camFocalLength);
-          double distanceToCoral = camHeight / (Math.tan(camPitch - realPitch));
-          double xToCoral = distanceToCoral * Math.cos(realYaw);
-          double yToCoral = distanceToCoral * Math.sin(realYaw);
-          inputs.coralYaw = Math.toDegrees(Math.atan(yToCoral / (xToCoral + camXOffset)));
-          inputs.robotToCoral =
-              new Transform2d(coralXOffset, -coralYOffset - camYOffset, new Rotation2d());
-          inputs.coralPose = robotPose.plus(robotToCoral);
+        connected = CoralCam.isConnected();
+        for (var result : CoralCam.getAllUnreadResults()) {
+          try {
+            if (result.hasTargets()) {
+              target = result.getBestTarget();
+              double mPitch = Math.toRadians(target.getPitch());
+              double mYaw = Math.toRadians(target.getYaw());
+              double realPitch = Math.atan2(mPitch, camFocalLength);
+              double realYaw = Math.atan2(mYaw, camFocalLength);
+              double distanceToCoral = camHeight / (Math.tan(camPitch - realPitch));
+              double xToCoral = distanceToCoral * Math.cos(realYaw);
+              double yToCoral = distanceToCoral * Math.sin(realYaw);
+              double currentCoralYaw =
+                  Math.toDegrees(Math.atan(yToCoral / (xToCoral + camXOffset)));
+              robotToCoral =
+                  new Transform2d(coralXOffset, -coralYOffset - camYOffset, new Rotation2d());
+              coralPose = robotPose.plus(robotToCoral);
 
-          if (target != null) {
-            inputs.coralYaw = coralYaw;
-            inputs.coralRotation = new Rotation2d(-coralYaw);
-          } else {
-            inputs.coralYaw = 0;
-            inputs.coralRotation = new Rotation2d();
+              if (target != null) {
+                coralYaw = currentCoralYaw;
+                coralRotation = new Rotation2d(-currentCoralYaw);
+              } else {
+                coralYaw = 0;
+                coralRotation = new Rotation2d();
+              }
+            } else {
+              target = null;
+              coralXOffset = 0;
+              coralYOffset = 0;
+              coralPose = robotPose;
+              coralYaw = 0;
+            }
+          } catch (NullPointerException e) {
+            e.printStackTrace();
+            coralPose = robotPose;
+            coralYaw = 0;
+            coralRotation = new Rotation2d();
           }
-        } else {
-          target = null;
-          coralXOffset = 0;
-          coralYOffset = 0;
-          inputs.coralPose = robotPose;
-          inputs.coralYaw = 0;
         }
-      } catch (NullPointerException e) {
+        sleep(20);
+      } catch (Exception e) {
         e.printStackTrace();
-        inputs.coralPose = robotPose;
-        inputs.coralYaw = 0;
-        inputs.coralRotation = new Rotation2d();
       }
     }
   }
