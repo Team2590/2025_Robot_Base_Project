@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.drive.Drive;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
@@ -67,32 +68,57 @@ public class FieldConstants {
           .minus((aprilTagLayout.getTagPose(12).get().toPose2d()));
 
   public static class BlueReefPoses {
-    static Pose2d[] centerFaces =
-        new Pose2d[6]; // Starting facing the driver station in clockwise order
 
-    static {
-      centerFaces[0] = aprilTagLayout.getTagPose(18).get().toPose2d();
-      centerFaces[1] = aprilTagLayout.getTagPose(19).get().toPose2d();
-      centerFaces[2] = aprilTagLayout.getTagPose(20).get().toPose2d();
-      centerFaces[3] = aprilTagLayout.getTagPose(21).get().toPose2d();
-      centerFaces[4] = aprilTagLayout.getTagPose(22).get().toPose2d();
-      centerFaces[5] = aprilTagLayout.getTagPose(17).get().toPose2d();
+    static Pose2d[][] reef = getReefPoses(false);
+
+    public static Pose2d getS_left() {
+      return reef[0][0];
+    } // left
+
+    public static Pose2d getS_right() {
+      return reef[0][1];
+    } // right
+
+    public static Pose2d getSW_left() {
+      return reef[1][0];
     }
 
-    static Pose2d[][] reef = getReefPoses(centerFaces, false);
-    public static final Pose2d S_left = reef[0][0]; // left
-    public static final Pose2d S_right = reef[0][1]; // right
-    public static final Pose2d SW_left = reef[1][0];
-    public static final Pose2d SW_right = reef[1][1];
-    public static final Pose2d NW_right =
-        reef[2][1]; // flip all north poses to keep robot-centri left/right
-    public static final Pose2d NW_left = reef[2][0];
-    public static final Pose2d N_right = reef[3][1];
-    public static final Pose2d N_left = reef[3][0];
-    public static final Pose2d NE_right = reef[4][1];
-    public static final Pose2d NE_left = reef[4][0];
-    public static final Pose2d SE_right = reef[5][1];
-    public static final Pose2d SE_left = reef[5][0];
+    public static Pose2d getSW_right() {
+      return reef[1][1];
+    }
+
+    public static Pose2d getNW_right() {
+      return reef[2][1];
+    } // flip all north poses to keep robot-centri left/right
+
+    public static Pose2d getNW_left() {
+      return reef[2][0];
+    }
+
+    public static Pose2d getN_right() {
+      return reef[3][1];
+    }
+
+    public static Pose2d getN_left() {
+      return reef[3][0];
+    }
+
+    public static Pose2d getNE_right() {
+      return reef[4][1];
+    }
+
+    public static Pose2d getNE_left() {
+      return reef[4][0];
+    }
+
+    public static Pose2d getSE_right() {
+      return reef[5][1];
+    }
+
+    public static Pose2d getSE_left() {
+      return reef[5][0];
+    }
+
     public static final Pose2d CoralSourceRight =
         new Pose2d(
             new Translation2d(1.47, .71),
@@ -105,84 +131,63 @@ public class FieldConstants {
         new Pose2d(
             new Translation2d(1.47, 7.34),
             aprilTagLayout.getTagPose(13).get().toPose2d().getRotation());
-
-    // aprilTagLayout
-    //     .getTagPose(13)
-    //     .get()
-    //     .toPose2d()
-    //     .transformBy(
-    //         new Transform2d(
-    //             new Translation2d(-sourceTagToSetpoint.getX(), sourceTagToSetpoint.getY()),
-    //             new Rotation2d())); //  aprilTagLayout.getTagPose(13).get().toPose2d();
   }
 
-  public static final Pose2d[] RedReefPosesArray =
-      new Pose2d[] {
-        RedReefPoses.N_right,
-        RedReefPoses.N_left,
-        RedReefPoses.NE_right,
-        RedReefPoses.NE_left,
-        RedReefPoses.SE_right,
-        RedReefPoses.SE_left,
-        RedReefPoses.S_right,
-        RedReefPoses.S_left,
-        RedReefPoses.SW_right,
-        RedReefPoses.SW_left,
-        RedReefPoses.NW_right,
-        RedReefPoses.NW_left
-      };
-
-  public static final Pose2d[] BlueReefPosesArray =
-      new Pose2d[] {
-        BlueReefPoses.N_right,
-        BlueReefPoses.N_left,
-        BlueReefPoses.NE_right,
-        BlueReefPoses.NE_left,
-        BlueReefPoses.SE_right,
-        BlueReefPoses.SE_left,
-        BlueReefPoses.S_right,
-        BlueReefPoses.S_left,
-        BlueReefPoses.SW_right,
-        BlueReefPoses.SW_left,
-        BlueReefPoses.NW_right,
-        BlueReefPoses.NW_left
-      };
-
   public static class RedReefPoses {
-    static Pose2d[] centerFaces =
-        new Pose2d[6]; // Starting facing the driver station in clockwise order
+    public static Pose2d[][] reef = getReefPoses(true);
 
-    static {
-      centerFaces[0] = aprilTagLayout.getTagPose(7).get().toPose2d();
-      centerFaces[1] = aprilTagLayout.getTagPose(8).get().toPose2d();
-      centerFaces[2] = aprilTagLayout.getTagPose(9).get().toPose2d();
-      centerFaces[3] = aprilTagLayout.getTagPose(10).get().toPose2d();
-      centerFaces[4] = aprilTagLayout.getTagPose(11).get().toPose2d();
-      centerFaces[5] = aprilTagLayout.getTagPose(6).get().toPose2d();
+    public static Pose2d getS_left() {
+      return reef[3][0];
+    } // left
+
+    public static Pose2d getS_right() {
+      return reef[3][1];
+    } // right
+
+    public static Pose2d getSW_left() {
+      return reef[4][0];
     }
 
-    static Pose2d[][] reef = getReefPoses(centerFaces, true);
-    public static final Pose2d S_left = reef[3][0]; // left
-    public static final Pose2d S_right = reef[3][1]; // right
-    public static final Pose2d SW_left = reef[4][0];
-    public static final Pose2d SW_right = reef[4][1];
-    public static final Pose2d NW_right =
-        reef[5][1]; // flip all north poses to keep robot-centri left/right
-    public static final Pose2d NW_left = reef[5][0];
-    public static final Pose2d N_right = reef[0][1];
-    public static final Pose2d N_left = reef[0][0];
-    public static final Pose2d NE_right = reef[1][1];
-    public static final Pose2d NE_left = reef[1][0];
-    public static final Pose2d SE_right = reef[2][1];
-    public static final Pose2d SE_left = reef[2][0];
+    public static Pose2d getSW_right() {
+      return reef[4][1];
+    }
+
+    public static Pose2d getNW_right() {
+      return reef[5][1];
+    } // flip all north poses to keep robot-centri left/right
+
+    public static Pose2d getNW_left() {
+      return reef[5][0];
+    }
+
+    public static Pose2d getN_right() {
+      return reef[0][1];
+    }
+
+    public static Pose2d getN_left() {
+      return reef[0][0];
+    }
+
+    public static Pose2d getNE_right() {
+      return reef[1][1];
+    }
+
+    public static Pose2d getNE_left() {
+      return reef[1][0];
+    }
+
+    public static Pose2d getSE_right() {
+      return reef[2][1];
+    }
+
+    public static Pose2d getSE_left() {
+      return reef[2][0];
+    }
 
     public static final Pose2d CoralSourceRight =
         new Pose2d(
             new Translation2d(16.08, 7.34),
             aprilTagLayout.getTagPose(2).get().toPose2d().getRotation());
-    // aprilTagLayout.getTagPose(2).get().toPose2d().transformBy(sourceTagToSetpoint);
-
-    // aprilTagLayout.getTagPose(2).get().toPose2d();
     public static final Pose2d CoralSourceLeft =
         new Pose2d(
             new Translation2d(16.08, .71),
@@ -201,23 +206,23 @@ public class FieldConstants {
   public static final Pose2d CageDeepRight =
       new Pose2d(new Translation2d(8.023, 5.059), Rotation2d.fromDegrees(0));
 
-  public static final Map<String, Pose2d> BLUE_REEF_POSES = buildBlueReefPosesMap();
-  public static final Map<String, Pose2d> RED_REEF_POSES = buildRedReefPosesMap();
+  public static Map<String, Pose2d> BLUE_REEF_POSES = buildBlueReefPosesMap();
+  public static Map<String, Pose2d> RED_REEF_POSES = buildRedReefPosesMap();
 
-  private static final Map<String, Pose2d> buildBlueReefPosesMap() {
+  private static Map<String, Pose2d> buildBlueReefPosesMap() {
     Map<String, Pose2d> poseMap = new HashMap<>();
-    poseMap.put("S_Right", FieldConstants.BlueReefPoses.S_right);
-    poseMap.put("S_Left", FieldConstants.BlueReefPoses.S_left);
-    poseMap.put("SW_Right", FieldConstants.BlueReefPoses.SW_right);
-    poseMap.put("SW_Left", FieldConstants.BlueReefPoses.SW_left);
-    poseMap.put("NW_Right", FieldConstants.BlueReefPoses.NW_right);
-    poseMap.put("NW_Left", FieldConstants.BlueReefPoses.NW_left);
-    poseMap.put("N_Right", FieldConstants.BlueReefPoses.N_right);
-    poseMap.put("N_Left", FieldConstants.BlueReefPoses.N_left);
-    poseMap.put("NE_Right", FieldConstants.BlueReefPoses.NE_right);
-    poseMap.put("NE_Left", FieldConstants.BlueReefPoses.NE_left);
-    poseMap.put("SE_Right", FieldConstants.BlueReefPoses.SE_right);
-    poseMap.put("SE_Left", FieldConstants.BlueReefPoses.SE_left);
+    poseMap.put("S_Right", FieldConstants.BlueReefPoses.getS_right());
+    poseMap.put("S_Left", FieldConstants.BlueReefPoses.getS_left());
+    poseMap.put("SW_Right", FieldConstants.BlueReefPoses.getSW_right());
+    poseMap.put("SW_Left", FieldConstants.BlueReefPoses.getSW_left());
+    poseMap.put("NW_Right", FieldConstants.BlueReefPoses.getNW_right());
+    poseMap.put("NW_Left", FieldConstants.BlueReefPoses.getNW_left());
+    poseMap.put("N_Right", FieldConstants.BlueReefPoses.getN_right());
+    poseMap.put("N_Left", FieldConstants.BlueReefPoses.getN_left());
+    poseMap.put("NE_Right", FieldConstants.BlueReefPoses.getNE_right());
+    poseMap.put("NE_Left", FieldConstants.BlueReefPoses.getNE_left());
+    poseMap.put("SE_Right", FieldConstants.BlueReefPoses.getSE_right());
+    poseMap.put("SE_Left", FieldConstants.BlueReefPoses.getSE_left());
 
     poseMap.put(
         "sourceR",
@@ -234,32 +239,46 @@ public class FieldConstants {
 
       Pose2d pose = poseMap.get(s);
       Logger.recordOutput("PoseFor" + s, pose);
-      // System.out.println("Pose for " + s + " : " + pose);
     }
   }
 
-  private static final Map<String, Pose2d> buildRedReefPosesMap() {
+  private static Map<String, Pose2d> buildRedReefPosesMap() {
     Map<String, Pose2d> poseMap = new HashMap<>();
-
-    poseMap.put("S_Right", FieldConstants.RedReefPoses.S_right);
-    poseMap.put("S_Left", FieldConstants.RedReefPoses.S_left);
-    poseMap.put("SW_Right", FieldConstants.RedReefPoses.SW_right);
-    poseMap.put("SW_Left", FieldConstants.RedReefPoses.SW_left);
-    poseMap.put("NW_Right", FieldConstants.RedReefPoses.NW_right);
-    poseMap.put("NW_Left", FieldConstants.RedReefPoses.NW_left);
-    poseMap.put("N_Right", FieldConstants.RedReefPoses.N_right);
-    poseMap.put("N_Left", FieldConstants.RedReefPoses.N_left);
-    poseMap.put("NE_Right", FieldConstants.RedReefPoses.NE_right);
-    poseMap.put("NE_Left", FieldConstants.RedReefPoses.NE_left);
-    poseMap.put("SE_Right", FieldConstants.RedReefPoses.SE_right);
-    poseMap.put("SE_Left", FieldConstants.RedReefPoses.SE_left);
+    poseMap.put("S_Right", FieldConstants.RedReefPoses.getS_right());
+    poseMap.put("S_Left", FieldConstants.RedReefPoses.getS_left());
+    poseMap.put("SW_Right", FieldConstants.RedReefPoses.getSW_right());
+    poseMap.put("SW_Left", FieldConstants.RedReefPoses.getSW_left());
+    poseMap.put("NW_Right", FieldConstants.RedReefPoses.getNW_right());
+    poseMap.put("NW_Left", FieldConstants.RedReefPoses.getNW_left());
+    poseMap.put("N_Right", FieldConstants.RedReefPoses.getN_right());
+    poseMap.put("N_Left", FieldConstants.RedReefPoses.getN_left());
+    poseMap.put("NE_Right", FieldConstants.RedReefPoses.getNE_right());
+    poseMap.put("NE_Left", FieldConstants.RedReefPoses.getNE_left());
+    poseMap.put("SE_Right", FieldConstants.RedReefPoses.getSE_right());
+    poseMap.put("SE_Left", FieldConstants.RedReefPoses.getSE_left());
 
     poseMap.put("sourceL", FieldConstants.RedReefPoses.CoralSourceLeft);
     poseMap.put("sourceR", FieldConstants.RedReefPoses.CoralSourceRight);
     return poseMap;
   }
 
-  public static Pose2d[][] getReefPoses(Pose2d[] centerFaces, boolean redAlliance) {
+  public static Pose2d[][] getReefPoses(boolean redAlliance) {
+    Pose2d[] centerFaces = new Pose2d[6]; // Starting facing the driver station in clockwise order
+    if (redAlliance) {
+      centerFaces[0] = aprilTagLayout.getTagPose(7).get().toPose2d();
+      centerFaces[1] = aprilTagLayout.getTagPose(8).get().toPose2d();
+      centerFaces[2] = aprilTagLayout.getTagPose(9).get().toPose2d();
+      centerFaces[3] = aprilTagLayout.getTagPose(10).get().toPose2d();
+      centerFaces[4] = aprilTagLayout.getTagPose(11).get().toPose2d();
+      centerFaces[5] = aprilTagLayout.getTagPose(6).get().toPose2d();
+    } else {
+      centerFaces[0] = aprilTagLayout.getTagPose(18).get().toPose2d();
+      centerFaces[1] = aprilTagLayout.getTagPose(19).get().toPose2d();
+      centerFaces[2] = aprilTagLayout.getTagPose(20).get().toPose2d();
+      centerFaces[3] = aprilTagLayout.getTagPose(21).get().toPose2d();
+      centerFaces[4] = aprilTagLayout.getTagPose(22).get().toPose2d();
+      centerFaces[5] = aprilTagLayout.getTagPose(17).get().toPose2d();
+    }
     Translation2d center;
     if (redAlliance) {
       double midX = (centerFaces[0].getX() + centerFaces[3].getX()) / 2.0;
@@ -275,27 +294,30 @@ public class FieldConstants {
 
     for (int face = 0; face < 6; face++) {
       Pose2d poseDirection = new Pose2d(center, Rotation2d.fromDegrees(180 - (60 * face)));
-      double adjustX = Units.inchesToMeters(52.738);
-      double adjustY = Units.inchesToMeters(6.469);
+      double adjustY = Units.inchesToMeters(52.738 + Drive.reefYOffset.get());
+      double adjustXLeft = Units.inchesToMeters(6.469 + Drive.reefXOffsetLeft.get());
+      double adjustXRight = Units.inchesToMeters(6.469 + Drive.reefXOffsetRight.get());
+
+      System.out.println("updating offsets to " + adjustY);
 
       var rightBranchPose =
           new Pose2d(
               new Translation2d(
                   poseDirection
-                      .transformBy(new Transform2d(adjustX, adjustY, Rotation2d.kZero))
+                      .transformBy(new Transform2d(adjustY, adjustXRight, Rotation2d.kZero))
                       .getX(),
                   poseDirection
-                      .transformBy(new Transform2d(adjustX, adjustY, Rotation2d.kZero))
+                      .transformBy(new Transform2d(adjustY, adjustXRight, Rotation2d.kZero))
                       .getY()),
               poseDirection.getRotation().plus(new Rotation2d(Math.PI)));
       var leftBranchPose =
           new Pose2d(
               new Translation2d(
                   poseDirection
-                      .transformBy(new Transform2d(adjustX, -adjustY, Rotation2d.kZero))
+                      .transformBy(new Transform2d(adjustY, -adjustXLeft, Rotation2d.kZero))
                       .getX(),
                   poseDirection
-                      .transformBy(new Transform2d(adjustX, -adjustY, Rotation2d.kZero))
+                      .transformBy(new Transform2d(adjustY, -adjustXLeft, Rotation2d.kZero))
                       .getY()),
               poseDirection.getRotation().plus(new Rotation2d(Math.PI)));
       returnPoses[face][0] = leftBranchPose; // Assign left pose
@@ -308,6 +330,19 @@ public class FieldConstants {
     return new Pose2d(
         originalPose.getTranslation().rotateAround(point, rot),
         originalPose.getRotation().rotateBy(rot));
+  }
+
+  public static void updateTunableNumbers() {
+
+    if (Drive.reefXOffsetLeft.hasChanged(0)
+        || Drive.reefXOffsetRight.hasChanged(1)
+        || Drive.reefYOffset.hasChanged(2)) {
+      RedReefPoses.reef = getReefPoses(true);
+      BlueReefPoses.reef = getReefPoses(false);
+      RED_REEF_POSES = buildRedReefPosesMap();
+      BLUE_REEF_POSES = buildBlueReefPosesMap();
+      logBlueReefPoses();
+    }
   }
 }
 
