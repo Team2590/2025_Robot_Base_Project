@@ -6,12 +6,14 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstantsLeonidas;
+import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.util.NemesisMathUtil;
 import frc.robot.util.NemesisTimedCommand;
+import frc.robot.subsystems.drive.Drive;
 
 /**
  * Factory class for creating complex scoring-related commands.
@@ -38,7 +40,6 @@ public class ScoringFactory {
       return elevatorPosition;
     }
   }
-
   /**
    * Creates a command sequence for scoring at L4.
    *
@@ -240,4 +241,26 @@ public class ScoringFactory {
         primeForLevel(Level.L4) // ,
         );
   }
+  //   public enum ScoringPosition {
+  //   L1(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS, 
+  //      Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_BACK),
+  //   L2(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS,
+  //      Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_BACK),
+  //   L3(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3,
+  //      Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_BACK),
+  //   L4(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4,
+  //      Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4_BACK);
+
+  //   private final double frontSetpoint;
+  //   private final double backSetpoint;
+
+  //   private ScoringPosition(double frontSetpoint, double backSetpoint) {
+  //     this.frontSetpoint = frontSetpoint;
+  //     this.backSetpoint = backSetpoint;
+  //   }
+
+  //   public double getSetpoint(Drive drive, Pose2d targetPose) {
+  //     return drive.frontScore(targetPose) ? frontSetpoint : backSetpoint;
+  //   }
+  // }
 }
