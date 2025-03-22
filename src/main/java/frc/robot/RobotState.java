@@ -10,6 +10,8 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.vision.Vision;
+
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import lombok.Getter;
@@ -120,6 +122,12 @@ public class RobotState extends SubsystemBase {
   @AutoLogOutput(key = "Intake/hasCoral")
   public static boolean intakeHasCoral() {
     return intake.hasCoral();
+  }
+
+  public HashMap<String, Double> getSetpoints(){
+    HashMap<String, Double> setpointMap= new HashMap<>();
+    setpointMap.put("intake", intake.get)
+
   }
 
   /**
