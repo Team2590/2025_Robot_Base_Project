@@ -83,7 +83,7 @@ public class ControllerOrchestrator {
     return Commands.defer(
         () -> {
           Target target = getTarget();
-          return ScoringFactory.score(target.scoringLevel());
+          return ScoringFactory.scoreControllerApp(target.scoringLevel());
         },
         requirements);
   }
