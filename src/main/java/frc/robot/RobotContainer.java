@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -65,6 +64,7 @@ import frc.robot.subsystems.intake.IntakeArmIOSim;
 import frc.robot.subsystems.intake.IntakeArmIOTalonFX;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.vision.CoralIOPhotonVision;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
@@ -119,6 +119,7 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
+                null,
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
@@ -158,6 +159,7 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
+                null,
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
@@ -228,6 +230,7 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
+                new CoralIOPhotonVision(),
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),
@@ -286,6 +289,7 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
+                null,
                 new VisionIOPhotonVision(
                     List.of(new CameraConfig(reefCameraName, robotToReefCam))));
         intake =
@@ -320,6 +324,7 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
+                null,
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(upperSourceCameraName, robotToUpperSourceCam),

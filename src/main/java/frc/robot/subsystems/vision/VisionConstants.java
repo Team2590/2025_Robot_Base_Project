@@ -92,6 +92,7 @@ public class VisionConstants {
       Set.of(17, 18, 19, 20, 21, 22, 6, 7, 8, 9, 10, 11);
 
   public static double DISTANCE_THRESHOLD = Units.inchesToMeters(120); // TODO: TUNE VALUE FOR COMP
+
   public class CoralAlgaeCameraConstants {
     public static double OBJECT_CAMERA_HEIGHT_METERS = 0;
     public static double OBJECT_CAMERA_PITCH = 0;
@@ -99,5 +100,8 @@ public class VisionConstants {
     public static double OBJECT_CAMERA_Y_DISTANCE_FROM_CENTER_METERS = 0;
     public static int CORAL_PIPELINE_INDEX = 0;
     public static double OBJECT_CAMERA_FOCAL_LENGTH = 0.39;
+    public static String CAMERA_NAME = "fisheye";
+    public static double CORAL_X_OFFSET = 0;
+    public static double CORAL_Y_OFFSET = 0;
   }
 }

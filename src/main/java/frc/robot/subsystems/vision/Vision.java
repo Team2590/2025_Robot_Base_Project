@@ -35,10 +35,14 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+  private final CoralDetectionIO coralDetectionIO;
+  private final CoralDetectionIOInputsAutoLogged coralDetectionInputs =
+      new CoralDetectionIOInputsAutoLogged();
 
-  public Vision(VisionConsumer consumer, VisionIO... io) {
+  public Vision(VisionConsumer consumer, CoralDetectionIO coralDetectionIO, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
+    this.coralDetectionIO = coralDetectionIO;
 
     // Initialize inputs
     this.inputs = new VisionIOInputsAutoLogged[io.length];
@@ -146,6 +150,8 @@ public class Vision extends SubsystemBase {
             VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
       }
 
+      coralDetectionIO.updateInputs(coralDetectionInputs);
+
       // Log camera datadata
       Logger.recordOutput(
           "Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
@@ -184,5 +190,13 @@ public class Vision extends SubsystemBase {
         Pose2d visionRobotPoseMeters,
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs);
+  }
+
+  public Pose2d getNearestCoralPose() {
+    return coralDetectionInputs.coralPose;
+  }
+
+  public Rotation2d getNearestCoralRotation() {
+    return coralDetectionInputs.coralRotation;
   }
 }
