@@ -333,7 +333,7 @@ public final class Constants {
     public static final double reduction = 1; // TODO
     public static final int proxSensor_ID = 0; // TODO
     public static final double RUN_VOLTAGE = 3;
-    public static final double DEALGAE_VOLTAGE = 3;
+    public static final double GRAB_ALGAE_VOLTAGE = 3;
   }
 
   public final class IntakeConstantsLeonidas {
