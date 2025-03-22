@@ -66,10 +66,10 @@ public class EndEffector extends SubsystemBase {
         .until(() -> !hasCoral());
   }
 
-  public Command runEndEffectorDeAlgae() {
+  public Command runEndEffectorIntakeAlgae() {
     return runEnd(
         () -> {
-          io.setVoltage(Constants.EndEffectorConstantsLeonidas.DEALGAE_VOLTAGE);
+          io.setVoltage(Constants.EndEffectorConstantsLeonidas.INTAKE_ALGAE_VOLTAGE);
         },
         () -> {
           io.stop();

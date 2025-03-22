@@ -28,8 +28,8 @@ public class EndEffectorFactory {
     return RobotContainer.getEndEffector().runEndEffectorManual();
   }
 
-  public static Command runEndEffectorDeAlgae() {
-    return RobotContainer.getEndEffector().runEndEffectorDeAlgae();
+  public static Command runEndEffectorIntakeAlgae() {
+    return RobotContainer.getEndEffector().runEndEffectorIntakeAlgae();
   }
   /**
    * Creates a command to run the endeffector outtake.

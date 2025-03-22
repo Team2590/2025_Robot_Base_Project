@@ -480,8 +480,8 @@ public class RobotContainer {
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
 
     // De-Algae Buttons
-    rightJoystick.povRight().whileTrue(GamePieceFactory.deAlgaeL2());
-    rightJoystick.povLeft().whileTrue(GamePieceFactory.deAlgaeL3());
+    rightJoystick.povRight().whileTrue(GamePieceFactory.intakeAlgaeL2());
+    rightJoystick.povLeft().whileTrue(GamePieceFactory.intakeAlgaeL3());
 
     // Controller App Buttons
     rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
@@ -497,7 +497,7 @@ public class RobotContainer {
     rightJoystick
         .trigger()
         .and(rightJoystick.button(4).negate())
-        .whileTrue(GamePieceFactory.intakeCoralFeeder());
+        .whileTrue(GamePieceFactory.intakeCoralGround());
 
     rightJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorManual());
 
@@ -548,8 +548,8 @@ public class RobotContainer {
     // NamedCommands.registerCommand("PrimeL1",
     // ScoringFactory.primeForLevel(ScoringFactory.Level.L1));
     // TODO: Prime for Source
-    NamedCommands.registerCommand("PrimeSource", GamePieceFactory.primeCoralSource());
-    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeCoralFeeder());
+    NamedCommands.registerCommand("PrimeSource", GamePieceFactory.primeCoralGround());
+    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeAlgaeGround());
 
     // Scoring Commands
     NamedCommands.registerCommand("ScoreL4", ScoringFactory.score(ScoringFactory.Level.L4));
