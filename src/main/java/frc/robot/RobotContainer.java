@@ -492,10 +492,6 @@ public class RobotContainer {
     leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
     leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());
-    // rightJoystick
-    //     .button(4)
-    //     .and(rightJoystick.trigger())
-    //     .whileTrue(GamePieceFactory.intakeAlgaeGround());
     rightJoystick
         .trigger()
         .and(rightJoystick.button(4).negate())
