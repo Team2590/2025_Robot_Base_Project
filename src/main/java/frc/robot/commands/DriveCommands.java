@@ -43,8 +43,8 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveToPoseConstraints;
 import frc.robot.RobotContainer;
+import frc.robot.RobotState;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.vision.Vision;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashSet;
@@ -542,10 +542,8 @@ public class DriveCommands {
               || driveSubsystem.getPose().getRotation() == null) {
             return Commands.none();
           }
-          Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
-          Command pathCommand;
           try {
-            pathCommand =
+            Command pathCommand =
                 AutoBuilder.followPath(
                     getPreciseAlignmentPath(
                         constraints,
@@ -553,22 +551,11 @@ public class DriveCommands {
                         driveSubsystem.getPose(),
                         preciseTarget.get(),
                         approachDirection));
+            return wrapForAligning(pathCommand, preciseTarget);
           } catch (Exception e) {
-            pathCommand = Commands.print("Follow Path");
+            RobotState.getInstance().resetAligningState();
+            return Commands.print("Follow Path Exception: " + e.getMessage());
           }
-          return pathCommand
-              .beforeStarting(
-                  () -> {
-                    if (driveSubsystem.frontScore(preciseTarget.get())) {
-                      Vision.aligningState = Vision.AligningState.ALIGNING_FRONT;
-                    } else {
-                      Vision.aligningState = Vision.AligningState.ALIGNING_BACK;
-                    }
-                  })
-              .finallyDo(
-                  () -> {
-                    Vision.aligningState = Vision.AligningState.NOT_ALIGNING;
-                  });
         },
         Set.of(driveSubsystem));
   }
@@ -585,12 +572,8 @@ public class DriveCommands {
               || driveSubsystem.getPose().getRotation() == null) {
             return Commands.none();
           }
-          Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
-          // AtomicReference<Rotation2d> preciseTargetRotation2d =
-          //     new AtomicReference<>(preciseTarget.get().getRotation());
-          Command pathCommand;
           try {
-            pathCommand =
+            Command pathCommand =
                 new TrajectoryFollowerCommand(
                     () ->
                         getPreciseAlignmentPath(
@@ -600,23 +583,10 @@ public class DriveCommands {
                             preciseTarget.get(),
                             approachDirection.get()),
                     driveSubsystem);
+            return wrapForAligning(pathCommand, preciseTarget);
           } catch (Exception e) {
-            pathCommand = Commands.print("Follow Path");
+            return Commands.print("Follow Path Exception: " + e.getMessage());
           }
-
-          return pathCommand
-              .beforeStarting(
-                  () -> {
-                    if (driveSubsystem.frontScore(preciseTarget.get())) {
-                      Vision.aligningState = Vision.aligningState.ALIGNING_FRONT;
-                    } else {
-                      Vision.aligningState = Vision.aligningState.ALIGNING_BACK;
-                    }
-                  })
-              .finallyDo(
-                  () -> {
-                    Vision.aligningState = Vision.aligningState.NOT_ALIGNING;
-                  });
         },
         Set.of(driveSubsystem));
   }
@@ -758,5 +728,19 @@ public class DriveCommands {
               ySpeedController.close();
               angularSpeedController.close();
             });
+  }
+
+  /**
+   * Convenient method to that sets the AligningState before running the command and resets it
+   * after.
+   */
+  private static Command wrapForAligning(Command command, Supplier<Pose2d> preciseTarget) {
+    RobotState robotState = RobotState.getInstance();
+    return command
+        .beforeStarting(
+            () -> {
+              robotState.setAligningStateBasedOnTargetPose(preciseTarget);
+            })
+        .finallyDo(robotState::resetAligningState);
   }
 }

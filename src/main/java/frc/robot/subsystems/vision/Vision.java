@@ -36,14 +36,6 @@ public class Vision extends SubsystemBase {
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
 
-  public static enum AligningState {
-    NOT_ALIGNING,
-    ALIGNING_FRONT,
-    ALIGNING_BACK
-  }
-
-  public static AligningState aligningState = AligningState.NOT_ALIGNING;
-
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
