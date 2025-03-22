@@ -31,7 +31,7 @@ public class ArmFactory {
 
   public static Command setPositionRun(double position) {
     return RobotContainer.getArm()
-        .setPosition(position)
+        .setPositionRun(position)
         .withName("Set Arm Position Run")
         .onlyIf(() -> SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position));
   }

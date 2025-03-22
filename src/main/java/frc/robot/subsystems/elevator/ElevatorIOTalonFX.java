@@ -60,10 +60,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
       int currentLimitAmps,
       boolean invert,
       boolean brake,
-      double reduction,
-      int followerCanID,
-      String followerCanBus,
-      boolean followerOpposeLeader) {
+      double reduction) {
     leader = new TalonFX(canID, canBus);
     talonFXConfig.MotorOutput.Inverted =
         invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
@@ -89,9 +86,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
     leader.getConfigurator().apply(talonFXConfig);
 
-    follower = new TalonFX(followerCanID, followerCanBus);
-    follower.setControl(new Follower(canID, followerOpposeLeader));
-
     position = leader.getPosition();
     velocity = leader.getVelocity();
     appliedVoltage = leader.getMotorVoltage();
@@ -103,6 +97,21 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
     leader.optimizeBusUtilization(0, 1);
+  }
+
+  public ElevatorIOTalonFX(
+      int canID,
+      String canBus,
+      int currentLimitAmps,
+      boolean invert,
+      boolean brake,
+      double reduction,
+      int followerCanID,
+      String followerCanBus,
+      boolean followerOpposeLeader) {
+    this(canID, canBus, currentLimitAmps, invert, brake, reduction);
+    follower = new TalonFX(followerCanID, followerCanBus);
+    follower.setControl(new Follower(canID, followerOpposeLeader));
   }
 
   @Override

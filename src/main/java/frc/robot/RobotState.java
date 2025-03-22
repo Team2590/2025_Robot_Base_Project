@@ -10,8 +10,11 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.vision.Vision;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 import lombok.Getter;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 public class RobotState extends SubsystemBase {
   Pose2d robotPose;
@@ -26,6 +29,16 @@ public class RobotState extends SubsystemBase {
   @Getter private static boolean endEffectorhasCoral;
   private static boolean intakeHasCoral;
   private static boolean intakeHasAlgae;
+
+  /** The aligning state for scoring, if we are aligning to front or back of the robot. */
+  public static enum AligningState {
+    NOT_ALIGNING,
+    ALIGNING_FRONT,
+    ALIGNING_BACK
+  }
+
+  private AtomicReference<AligningState> aligningState =
+      new AtomicReference<RobotState.AligningState>(AligningState.NOT_ALIGNING);
 
   private RobotState(
       Arm arm,
@@ -126,6 +139,29 @@ public class RobotState extends SubsystemBase {
    */
   public String getCurrentZone() {
     return currentZone;
+  }
+
+  @AutoLogOutput(key = "PreciseAlignment/AligningState")
+  public AligningState getAligningState() {
+    return aligningState.get();
+  }
+
+  public void setAligningState(AligningState state) {
+    aligningState.set(state);
+  }
+
+  /** Align to the front or back of the robot based on the given target pose. */
+  public void setAligningStateBasedOnTargetPose(Supplier<Pose2d> targetPose) {
+    Logger.recordOutput("PreciseAlignment/TargetPose", targetPose.get());
+    if (drive.frontScore(targetPose.get())) {
+      setAligningState(AligningState.ALIGNING_FRONT);
+    } else {
+      setAligningState(AligningState.ALIGNING_BACK);
+    }
+  }
+
+  public void resetAligningState() {
+    setAligningState(AligningState.NOT_ALIGNING);
   }
 
   public static Command setIntakeHasCoral() {
