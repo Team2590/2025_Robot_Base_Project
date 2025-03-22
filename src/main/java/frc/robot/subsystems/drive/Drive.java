@@ -31,6 +31,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -51,7 +52,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.FieldConstants;
-import frc.robot.RobotContainer;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.LoggedTunableNumber;
@@ -63,6 +63,10 @@ import org.littletonrobotics.junction.Logger;
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
   // PathPlanner config constants
+  public static LoggedTunableNumber reefYOffset = new LoggedTunableNumber("reefYOffset", 0);
+  public static LoggedTunableNumber reefXOffsetLeft = new LoggedTunableNumber("reefXOffsetLeft", 0);
+  public static LoggedTunableNumber reefXOffsetRight =
+      new LoggedTunableNumber("reefXOffsetRight", 0);
   private static final double ROBOT_MASS_KG = 74.088;
   private static final double ROBOT_MOI = 6.883;
   private static final double WHEEL_COF = 1.2;
@@ -200,12 +204,8 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("RedSourceR", FieldConstants.RedReefPoses.CoralSourceRight);
     Logger.recordOutput("RedSourceL", FieldConstants.RedReefPoses.CoralSourceLeft);
 
-    Logger.recordOutput(
-        "FrontScore", frontScore(RobotContainer.getControllerApp().getTarget().pose()));
-
     FieldConstants.logBlueReefPoses();
 
-    Logger.recordOutput("SW_L", FieldConstants.RedReefPoses.SW_left);
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
@@ -453,7 +453,7 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  public boolean frontScore(Pose2d targetPose) {
+  public Pose2d flipScoringSide(Pose2d targetPose) {
     double differencefromFront =
         Math.abs(this.getPose().getRotation().minus(targetPose.getRotation()).getRadians());
     double differencefromBack =
@@ -464,8 +464,8 @@ public class Drive extends SubsystemBase {
                 .plus(new Rotation2d(Math.PI))
                 .getRadians());
     if (differencefromFront >= differencefromBack) {
-      return false;
+      return targetPose.plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI)));
     }
-    return true;
+    return targetPose;
   }
 }

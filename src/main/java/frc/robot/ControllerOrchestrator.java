@@ -91,19 +91,9 @@ public class ControllerOrchestrator {
   /** Command that needs to be bound to a button to driveToTarget. */
   public Command bindDriveToTargetCommand(Drive drive) {
     return DriveCommands.preciseAlignment(
-        drive, () -> getTarget().pose(), getTarget().pose().getRotation());
-  }
-
-  public Command bindDrivetoTargetCommandsim(Drive drive) {
-
-    return DriveCommands.preciseAlignment(
-        drive, () -> getTarget().pose(), () -> getTarget().pose().getRotation());
-  }
-
-  public Command bindDrivetoSourceCommandsim(Drive drive) {
-
-    return DriveCommands.preciseAlignmentsim(
-        drive, () -> getSourceTarget().pose(), () -> getSourceTarget().pose().getRotation());
+        drive,
+        () -> drive.flipScoringSide(getTarget().pose()),
+        drive.flipScoringSide(getTarget().pose()).getRotation());
   }
 
   // This commands will drive to pose while "priming for intake" at coral source

@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
-import frc.robot.command_factories.AutoFactory;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
@@ -68,9 +67,11 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.NemesisAutoBuilder;
 import frc.robot.util.NemesisAutoBuilder.ReefTarget;
 import frc.robot.util.NemesisAutoBuilder.SourceSide;
+
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -190,10 +191,7 @@ public class RobotContainer {
                     ElevatorConstantsLarry.currentLimitAmps,
                     ElevatorConstantsLarry.invert,
                     ElevatorConstantsLarry.brake,
-                    ElevatorConstantsLarry.reduction,
-                    0,
-                    "",
-                    false));
+                    ElevatorConstantsLarry.reduction));
         endEffector =
             new EndEffector(
                 new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
@@ -295,8 +293,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    List.of(new CameraConfig(reefCameraName, robotToReefCam))));
+                new VisionIOPhotonVisionSim(
+                    List.of(new CameraConfig(reefCameraName, robotToReefCam)), drive::getPose));
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
@@ -348,9 +346,6 @@ public class RobotContainer {
 
     // setup Named Commands:
     registerNamedCommands();
-
-    NemesisAutoBuilder.addRoutine(
-        "Nemesis Auto Builder Test", AutoFactory.driveTo(FieldConstants.BlueReefPoses.NE_left));
 
     NemesisAutoBuilder.addRoutine(
         "Nemesis Auto Builder Test 3",
@@ -422,8 +417,8 @@ public class RobotContainer {
   private void configureButtonBindingsSimulation() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
-    leftJoystick.button(1).whileTrue(controllerApp.bindDrivetoSourceCommandsim(drive));
-    leftJoystick.button(2).whileTrue(controllerApp.bindDrivetoTargetCommandsim(drive));
+    leftJoystick.button(1).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+    leftJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
 
     // leftJoystick
     //     .button(3)
@@ -460,19 +455,19 @@ public class RobotContainer {
     leftJoystick.button(9).onTrue(ScoringFactory.scoreProcessor());
 
     // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
-    leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
-    leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
-    leftJoystick.button(12).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+    // leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    // leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
+    // leftJoystick.button(12).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
 
-    leftJoystick
-        .button(13)
-        .whileTrue(
-            DriveCommands.alignToTargetLine(
-                drive,
-                getLeftJoystick()::getY, // Forward/backward control
-                getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
-                () -> controllerApp.getTarget().pose(),
-                1.0));
+    // leftJoystick
+    //     .button(13)
+    //     .whileTrue(
+    //         DriveCommands.alignToTargetLine(
+    //             drive,
+    //             getLeftJoystick()::getY, // Forward/backward control
+    //             getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
+    //             () -> controllerApp.getTarget().pose(),
+    //             1.0));
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by

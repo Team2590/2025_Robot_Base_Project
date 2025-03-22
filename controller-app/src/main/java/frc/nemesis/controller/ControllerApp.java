@@ -155,8 +155,8 @@ public class ControllerApp extends Application {
       Button button = new Button(point);
       compassButtonMap.put(point, button);
       button.setOnAction(buttonHandler);
-      button.setPrefWidth(80);
-      button.setPrefHeight(40);
+      button.setPrefWidth(120);
+      button.setPrefHeight(80);
       button.setStyle(DEFAULT_BUTTON_STYLE);
       compassPane.getChildren().add(button);
     }
@@ -172,8 +172,8 @@ public class ControllerApp extends Application {
       Button button = new Button(source);
       sourceButtonMap.put(source, button);
       button.setOnAction(buttonHandler);
-      button.setPrefWidth(80);
-      button.setPrefHeight(40);
+      button.setPrefWidth(120);
+      button.setPrefHeight(80);
       button.setStyle(SOURCE_BUTTON_STYLE);
       sourcePane.getChildren().add(button);
     }
@@ -188,9 +188,9 @@ public class ControllerApp extends Application {
     // Calculate center point
     double centerX = width / 2;
     // Moved center point to 2/3 down from the top (1/3 up from bottom)
-    double centerY = height * (1.0 / 2.0);
+    double centerY = height * (1.06 / 2.0);
 
-    double radius = Math.min(width, height) * 0.125;
+    double radius = Math.min(width, height) * 0.225;
 
     double angleStep = Math.PI / 3;
     double startAngle = Math.PI / 2;
@@ -232,8 +232,8 @@ public class ControllerApp extends Application {
       Button levelButton = new Button(level);
       levelButtonMap.put(level, levelButton);
       levelButton.setStyle(LEVEL_BUTTON_STYLE);
-      levelButton.setPrefWidth(80);
-      levelButton.setPrefHeight(40);
+      levelButton.setPrefWidth(120);
+      levelButton.setPrefHeight(80);
 
       levelButton.setOnAction(
           e -> {
@@ -259,8 +259,8 @@ public class ControllerApp extends Application {
       ToggleButton sideButton = new ToggleButton(side);
       sideButtonMap.put(side, sideButton);
       sideButton.setStyle(SIDE_BUTTON_STYLE);
-      sideButton.setPrefWidth(80);
-      sideButton.setPrefHeight(40);
+      sideButton.setPrefWidth(120);
+      sideButton.setPrefHeight(80);
 
       sideButton.setOnAction(
           e -> {

@@ -18,96 +18,96 @@ public class NemesisAutoBuilderPoses {
         () ->
             DriverStation.getAlliance().isPresent()
                     && DriverStation.getAlliance().get() == Alliance.Red
-                ? FieldConstants.RedReefPoses.S_left
-                : FieldConstants.BlueReefPoses.S_left);
+                ? FieldConstants.RedReefPoses.getS_left()
+                : FieldConstants.BlueReefPoses.getS_left());
 
     map.put(
         "S_RIGHT",
         () ->
             DriverStation.getAlliance().isPresent()
                     && DriverStation.getAlliance().get() == Alliance.Red
-                ? FieldConstants.RedReefPoses.S_right
-                : FieldConstants.BlueReefPoses.S_right);
+                ? FieldConstants.RedReefPoses.getS_right()
+                : FieldConstants.BlueReefPoses.getS_right());
 
     map.put(
         "SW_LEFT",
         () ->
             DriverStation.getAlliance().isPresent()
                     && DriverStation.getAlliance().get() == Alliance.Red
-                ? FieldConstants.RedReefPoses.SW_left
-                : FieldConstants.BlueReefPoses.SW_left);
+                ? FieldConstants.RedReefPoses.getSW_left()
+                : FieldConstants.BlueReefPoses.getSW_left());
 
     map.put(
         "SW_RIGHT",
         () ->
             DriverStation.getAlliance().isPresent()
                     && DriverStation.getAlliance().get() == Alliance.Red
-                ? FieldConstants.RedReefPoses.SW_right
-                : FieldConstants.BlueReefPoses.SW_right);
+                ? FieldConstants.RedReefPoses.getSW_right()
+                : FieldConstants.BlueReefPoses.getSW_right());
 
     map.put(
         "NW_RIGHT",
         () ->
             DriverStation.getAlliance().isPresent()
                     && DriverStation.getAlliance().get() == Alliance.Red
-                ? FieldConstants.RedReefPoses.NW_right
-                : FieldConstants.BlueReefPoses.NW_right);
+                ? FieldConstants.RedReefPoses.getNW_right()
+                : FieldConstants.BlueReefPoses.getNW_right());
 
     map.put(
         "NW_LEFT",
         () ->
             DriverStation.getAlliance().isPresent()
                     && DriverStation.getAlliance().get() == Alliance.Red
-                ? FieldConstants.RedReefPoses.NW_left
-                : FieldConstants.BlueReefPoses.NW_left);
+                ? FieldConstants.RedReefPoses.getNW_left()
+                : FieldConstants.BlueReefPoses.getNW_left());
 
     map.put(
         "N_RIGHT",
         () ->
             DriverStation.getAlliance().isPresent()
                     && DriverStation.getAlliance().get() == Alliance.Red
-                ? FieldConstants.RedReefPoses.N_right
-                : FieldConstants.BlueReefPoses.N_right);
+                ? FieldConstants.RedReefPoses.getN_right()
+                : FieldConstants.BlueReefPoses.getN_right());
 
     map.put(
         "N_LEFT",
         () ->
             DriverStation.getAlliance().isPresent()
                     && DriverStation.getAlliance().get() == Alliance.Red
-                ? FieldConstants.RedReefPoses.N_left
-                : FieldConstants.BlueReefPoses.N_left);
+                ? FieldConstants.RedReefPoses.getN_left()
+                : FieldConstants.BlueReefPoses.getN_left());
 
     map.put(
         "NE_RIGHT",
         () ->
             DriverStation.getAlliance().isPresent()
                     && DriverStation.getAlliance().get() == Alliance.Red
-                ? FieldConstants.RedReefPoses.NE_right
-                : FieldConstants.BlueReefPoses.NE_right);
+                ? FieldConstants.RedReefPoses.getNE_right()
+                : FieldConstants.BlueReefPoses.getNE_right());
 
     map.put(
         "NE_LEFT",
         () ->
             DriverStation.getAlliance().isPresent()
                     && DriverStation.getAlliance().get() == Alliance.Red
-                ? FieldConstants.RedReefPoses.NE_left
-                : FieldConstants.BlueReefPoses.NE_left);
+                ? FieldConstants.RedReefPoses.getNE_left()
+                : FieldConstants.BlueReefPoses.getNE_left());
 
     map.put(
         "SE_RIGHT",
         () ->
             DriverStation.getAlliance().isPresent()
                     && DriverStation.getAlliance().get() == Alliance.Red
-                ? FieldConstants.RedReefPoses.SE_right
-                : FieldConstants.BlueReefPoses.SE_right);
+                ? FieldConstants.RedReefPoses.getSE_right()
+                : FieldConstants.BlueReefPoses.getSE_right());
 
     map.put(
         "SE_LEFT",
         () ->
             DriverStation.getAlliance().isPresent()
                     && DriverStation.getAlliance().get() == Alliance.Red
-                ? FieldConstants.RedReefPoses.SE_left
-                : FieldConstants.BlueReefPoses.SE_left);
+                ? FieldConstants.RedReefPoses.getSE_left()
+                : FieldConstants.BlueReefPoses.getSE_left());
   }
 
   public static Pose2d getReefPose(ReefTarget reefTarget) {
