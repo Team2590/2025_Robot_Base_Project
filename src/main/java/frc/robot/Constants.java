@@ -346,6 +346,8 @@ public final class Constants {
     public static final double reduction = 38.33;
     public static final double kS = 0.25918;
     public static final double kV = 0.29343;
+    public static final double INTAKE_OPERATIONAL_MIN_POS = 0; // TODO: update to actual values
+    public static final double INTAKE_OPERATIONAL_MAX_POS = 10; // TODO: update to actual values
   }
 
   public final class ClimbConstantsLeonidas {
