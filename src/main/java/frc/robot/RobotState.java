@@ -124,11 +124,6 @@ public class RobotState extends SubsystemBase {
     return intake.hasCoral();
   }
 
-  public HashMap<String, Double> getSetpoints(){
-    HashMap<String, Double> setpointMap= new HashMap<>();
-    setpointMap.put("intake", intake.get)
-
-  }
 
   /**
    * Checks if intake has algae
