@@ -23,7 +23,6 @@ public class TrajectoryFollowerCommand extends Command {
   private final Drive drive;
   private final Timer timer = new Timer();
   private boolean flippedForRed = false;
-  private Supplier<Boolean> aimAtSpeaker = () -> false;
   private boolean firstTime = false;
   private ChassisSpeeds startingSpeeds;
 

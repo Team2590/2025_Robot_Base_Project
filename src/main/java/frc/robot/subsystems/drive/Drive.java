@@ -63,6 +63,10 @@ import org.littletonrobotics.junction.Logger;
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
   // PathPlanner config constants
+  public static LoggedTunableNumber reefYOffset = new LoggedTunableNumber("reefYOffset", 0);
+  public static LoggedTunableNumber reefXOffsetLeft = new LoggedTunableNumber("reefXOffsetLeft", 0);
+  public static LoggedTunableNumber reefXOffsetRight =
+      new LoggedTunableNumber("reefXOffsetRight", 0);
   private static final double ROBOT_MASS_KG = 74.088;
   private static final double ROBOT_MOI = 6.883;
   private static final double WHEEL_COF = 1.2;
@@ -202,7 +206,6 @@ public class Drive extends SubsystemBase {
 
     FieldConstants.logBlueReefPoses();
 
-    Logger.recordOutput("SW_L", FieldConstants.RedReefPoses.SW_left);
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
