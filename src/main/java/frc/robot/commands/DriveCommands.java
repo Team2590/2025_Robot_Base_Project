@@ -43,6 +43,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveToPoseConstraints;
 import frc.robot.RobotContainer;
+import frc.robot.RobotState;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -50,7 +51,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -342,12 +342,10 @@ public class DriveCommands {
   }
 
   public static Command driveToPose(Pose2d targetPose) {
-    System.out.println("DRIVING TO POSE " + targetPose);
     return AutoBuilder.pathfindToPose(targetPose, DriveToPoseConstraints.fastpathConstraints, 0.0);
   }
 
   public static Command driveToPose(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
-    System.out.println("DRIVING TO POSE " + targetPoseSupplier.get());
     HashSet<Subsystem> requirements = new HashSet<>();
     requirements.add(drive);
     return Commands.defer(
@@ -544,19 +542,19 @@ public class DriveCommands {
               || driveSubsystem.getPose().getRotation() == null) {
             return Commands.none();
           }
-          Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
-          AtomicReference<Rotation2d> preciseTargetRotation2d =
-              new AtomicReference<>(preciseTarget.get().getRotation());
           try {
-            return AutoBuilder.followPath(
-                getPreciseAlignmentPath(
-                    constraints,
-                    driveSubsystem.getChassisSpeeds(),
-                    driveSubsystem.getPose(),
-                    preciseTarget.get(),
-                    approachDirection));
+            Command pathCommand =
+                AutoBuilder.followPath(
+                    getPreciseAlignmentPath(
+                        constraints,
+                        driveSubsystem.getChassisSpeeds(),
+                        driveSubsystem.getPose(),
+                        preciseTarget.get(),
+                        approachDirection));
+            return wrapForAligning(pathCommand, preciseTarget);
           } catch (Exception e) {
-            return Commands.print("Follow Path");
+            RobotState.getInstance().resetAligningState();
+            return Commands.print("Follow Path Exception: " + e.getMessage());
           }
         },
         Set.of(driveSubsystem));
@@ -574,21 +572,20 @@ public class DriveCommands {
               || driveSubsystem.getPose().getRotation() == null) {
             return Commands.none();
           }
-          Logger.recordOutput("PrecisetargetPose", preciseTarget.get());
-          // AtomicReference<Rotation2d> preciseTargetRotation2d =
-          //     new AtomicReference<>(preciseTarget.get().getRotation());
           try {
-            return new TrajectoryFollowerCommand(
-                () ->
-                    getPreciseAlignmentPath(
-                        constraints,
-                        driveSubsystem.getChassisSpeeds(),
-                        driveSubsystem.getPose(),
-                        preciseTarget.get(),
-                        approachDirection.get()),
-                driveSubsystem);
+            Command pathCommand =
+                new TrajectoryFollowerCommand(
+                    () ->
+                        getPreciseAlignmentPath(
+                            constraints,
+                            driveSubsystem.getChassisSpeeds(),
+                            driveSubsystem.getPose(),
+                            preciseTarget.get(),
+                            approachDirection.get()),
+                    driveSubsystem);
+            return wrapForAligning(pathCommand, preciseTarget);
           } catch (Exception e) {
-            return Commands.print("Follow Path");
+            return Commands.print("Follow Path Exception: " + e.getMessage());
           }
         },
         Set.of(driveSubsystem));
@@ -731,5 +728,19 @@ public class DriveCommands {
               ySpeedController.close();
               angularSpeedController.close();
             });
+  }
+
+  /**
+   * Convenient method that sets the AligningState before running the command and resets it
+   * after.
+   */
+  private static Command wrapForAligning(Command command, Supplier<Pose2d> preciseTarget) {
+    RobotState robotState = RobotState.getInstance();
+    return command
+        .beforeStarting(
+            () -> {
+              robotState.setAligningStateBasedOnTargetPose(preciseTarget);
+            })
+        .finallyDo(robotState::resetAligningState);
   }
 }

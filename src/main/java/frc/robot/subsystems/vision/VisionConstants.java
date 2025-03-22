@@ -34,36 +34,27 @@ public class VisionConstants {
   // }
 
   // Camera names, must match names configured on coprocessor
-  public static String upperSourceCameraName = "1mp_arducam_device_1";
-  //   public static String processorCameraName = "1mp_arducam_device_4";
-  public static String reefCameraName = "1mp_arducam_device_6";
+  public static String frontReefCameraName = "1mp_arducam_device_6";
+  public static String backReefCameraName = "1mp_arducam_device_1";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
 
-  // Upper Source Camera
-  public static Transform3d robotToUpperSourceCam =
-      new Transform3d(
-          Units.inchesToMeters(-7.8508),
-          Units.inchesToMeters(9.0),
-          Units.inchesToMeters(35.7347),
-          new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
-
-  // Processor Camera
-  //   public static Transform3d robotToProcessorCam =
-  //       new Transform3d(
-  //           Units.inchesToMeters(-6.379),
-  //           Units.inchesToMeters(7.2767),
-  //           Units.inchesToMeters(29.9459),
-  //           new Rotation3d(0.0, Math.toRadians(-27.0), Math.toRadians(-90.0)));
-
-  // Reef Camera
-  public static Transform3d robotToReefCam =
+  // Front Reef Camera
+  public static Transform3d robotToFrontReefCam =
       new Transform3d(
           Units.inchesToMeters(5.0),
           Units.inchesToMeters(12.0),
           Units.inchesToMeters(10.33832),
           new Rotation3d(0.0, 0.0, Math.toRadians(-22.25)));
+
+  // Back Reef Camera
+  public static Transform3d robotToBackReefCam =
+      new Transform3d(
+          Units.inchesToMeters(-7.8508),
+          Units.inchesToMeters(9.0),
+          Units.inchesToMeters(35.7347),
+          new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
@@ -78,9 +69,8 @@ public class VisionConstants {
   // (Adjust to trust some cameras more than others)
   public static double[] cameraStdDevFactors =
       new double[] {
-        0.25, // Upper Source Camera
-        // 0.25, // Processor Camera
-        0.25 // Reef Camera
+        0.25, // Front Reef Camera
+        0.25 // Back Reef Camera
       };
 
   // Multipliers to apply for MegaTag 2 observations
@@ -92,5 +82,5 @@ public class VisionConstants {
 
   public static final Set<Integer> FIDUCIAL_IDS_BLUE = Set.of(17, 18, 19, 20, 21, 22);
 
-  public static double DISTANCE_THRESHOLD = Units.inchesToMeters(120); // TODO: TUNE VALUE FOR COMP
+  public static double DISTANCE_THRESHOLD = Units.inchesToMeters(1200); // TODO: TUNE VALUE FOR COMP
 }
