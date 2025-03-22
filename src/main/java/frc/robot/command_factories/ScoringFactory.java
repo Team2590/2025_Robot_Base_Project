@@ -9,6 +9,7 @@ import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
+import frc.robot.util.Atlas;
 import frc.robot.util.NemesisMathUtil;
 import frc.robot.util.NemesisTimedCommand;
 
@@ -68,22 +69,28 @@ public class ScoringFactory {
     switch (level) {
       case L4:
         return Commands.parallel(
-            Commands.print("Priming " + level.name()),
-            ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4)
-                .withName("Prime " + level.name()));
+                Commands.print("Priming " + level.name()),
+                Atlas.synchronize(
+                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                    level.getElevatorPosition(),
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
+            .withName("Prime " + level.name());
       case L3:
-        Commands.parallel(
-            Commands.print("Priming " + level.name()),
-            ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3)
-                .withName("Prime " + level.name()));
+      Commands.parallel(
+        Commands.print("Priming " + level.name()),
+        Atlas.synchronize(
+            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+            level.getElevatorPosition(),
+            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3))
+    .withName("Prime " + level.name());
       default:
         return Commands.parallel(
-            Commands.print("Priming " + level.name()),
-            ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS)
-                .withName("Prime " + level.name()));
+          Commands.print("Priming " + level.name()),
+          Atlas.synchronize(
+              Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+              level.getElevatorPosition(),
+              Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS))
+      .withName("Prime " + level.name());
     }
   }
 
