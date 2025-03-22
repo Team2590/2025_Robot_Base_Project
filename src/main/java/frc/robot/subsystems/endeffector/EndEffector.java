@@ -39,6 +39,9 @@ public class EndEffector extends SubsystemBase {
     Logger.recordOutput("EndEffector/filter", filtered_data);
     Logger.recordOutput("EndEffector/prox", inputs.proxValue);
 
+
+
+
     if (taps.hasChanged(0)) {
       filter = LinearFilter.movingAverage((int) taps.get());
     }
@@ -123,8 +126,14 @@ public class EndEffector extends SubsystemBase {
    *
    * @return true if the end effector has coral, false if not
    */
-  public boolean hasCoral() {
-    return filtered_data >= PROX_THRESHOLD.get();
+  // public boolean hasCoral() {
+  //   return filtered_data >= PROX_THRESHOLD.get();
+  // }
+
+  public boolean hasCoral(){
+
+      return filtered_data >= CURRENT_THRESHOLD.get();
+
   }
 
   public boolean isRunning() {
