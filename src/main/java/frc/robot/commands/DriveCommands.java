@@ -731,8 +731,7 @@ public class DriveCommands {
   }
 
   /**
-   * Convenient method that sets the AligningState before running the command and resets it
-   * after.
+   * Convenient method that sets the AligningState before running the command and resets it after.
    */
   private static Command wrapForAligning(Command command, Supplier<Pose2d> preciseTarget) {
     RobotState robotState = RobotState.getInstance();
