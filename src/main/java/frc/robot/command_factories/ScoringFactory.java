@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstantsLeonidas;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
@@ -138,6 +139,11 @@ public class ScoringFactory {
   // public static Command deAlgaeify() {
   //   return Commands.sequence(ElevatorFactory.setPositionBlocking())
   // }
+
+  public static Command scoreAlgaeBarge() {
+    return ElevatorFactory.setPositionRun(Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS)
+    .alongWith(ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_BARGE_POS));
+  }
 
   /**
    * Creates a command sequence for scoring at processor.
