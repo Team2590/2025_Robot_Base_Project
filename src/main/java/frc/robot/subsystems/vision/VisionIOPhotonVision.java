@@ -16,6 +16,8 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.RobotState;
 import frc.robot.RobotState.AligningState;
 import java.util.ArrayList;
@@ -178,7 +180,17 @@ public class VisionIOPhotonVision implements VisionIO {
                       Math.hypot(
                           Math.hypot(camTransform3d.getX(), camTransform3d.getY()),
                           camTransform3d.getZ());
-                  if (distance >= VisionConstants.DISTANCE_THRESHOLD) {
+                  boolean isInWhiteList =
+                      (DriverStation.getAlliance().isPresent()
+                          && ((VisionConstants.FIDUCIAL_IDS_RED.contains(
+                                      result.targets.get(i).getFiducialId())
+                                  && DriverStation.getAlliance().get().equals(Alliance.Red))
+                              || (VisionConstants.FIDUCIAL_IDS_BLUE.contains(
+                                      result.targets.get(i).getFiducialId())
+                                  && DriverStation.getAlliance().get().equals(Alliance.Blue))));
+                  if ((distance >= VisionConstants.DISTANCE_THRESHOLD) || !isInWhiteList) {
+                    // System.out.println(distance);
+                    // System.out.println(targets.get(i));
                     result.targets.remove(i);
                     i--;
                   }
