@@ -93,7 +93,7 @@ public class ControllerOrchestrator {
     return DriveCommands.preciseAlignment(
         drive,
         () -> drive.flipScoringSide(getTarget().pose()),
-        drive.flipScoringSide(getTarget().pose()).getRotation());
+        () -> drive.flipScoringSide(getTarget().pose()).getRotation());
   }
 
   // This commands will drive to pose while "priming for intake" at coral source
@@ -105,7 +105,7 @@ public class ControllerOrchestrator {
           Logger.recordOutput("SourcePose", getSourceTarget().pose());
           return new ParallelCommandGroup(
               DriveCommands.preciseAlignment(
-                  drive, () -> getSourceTarget().pose(), getSourceTarget().pose().getRotation()),
+                  drive, () -> getSourceTarget().pose(), () -> getSourceTarget().pose().getRotation()),
               GamePieceFactory.intakeCoralFeeder());
         },
         requirements);

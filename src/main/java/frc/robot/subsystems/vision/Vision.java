@@ -26,6 +26,8 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
+import frc.robot.util.LoggedTunableNumber;
+
 import java.util.LinkedList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -35,6 +37,27 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+  private double[] cameraStdDevFactors;
+
+    // Standard deviation baselines, for 1 meter distance and 1 tag
+  // (Adjusted automatically based on distance and # of tags)
+  private LoggedTunableNumber linearStdDevBaseline = new LoggedTunableNumber("Vision/linearStdDevBaseline",0.1);
+  private LoggedTunableNumber angularStdDevBaseline = new LoggedTunableNumber("Vision/angularStdDevBaseline",0.06);
+
+  // Multipliers to apply for MegaTag 2 observations
+  private LoggedTunableNumber linearStdDevMegatag2Factor = new LoggedTunableNumber("Vision/linearStdDevMegatag2Factor", 0.5);
+  private LoggedTunableNumber angularStdDevMegatag2Factor = new LoggedTunableNumber("Vision/angularStdDevMegatag2Factor", Double.POSITIVE_INFINITY);
+
+    // Multipliers to apply for MegaTag 2 observations
+    private LoggedTunableNumber cameraStdDevFactors_frontRight = new LoggedTunableNumber("Vision/cameraStdDevFactors_frontRight",0.25);
+    private LoggedTunableNumber cameraStdDevFactors_frontLeft = new LoggedTunableNumber("Vision/cameraStdDevFactors_frontLeft",0.25);
+
+    private LoggedTunableNumber cameraStdDevFactors_backRight = new LoggedTunableNumber("Vision/cameraStdDevFactors_backRight",0.25);
+    private LoggedTunableNumber cameraStdDevFactors_backLeft = new LoggedTunableNumber("Vision/cameraStdDevFactors_backLeft",0.25);
+
+    private LoggedTunableNumber maxAmbiguity = new LoggedTunableNumber("Vision/maxAmbiguity",0.3);
+    private LoggedTunableNumber maxZError = new LoggedTunableNumber("Vision/maxZError",0.75);
+  
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -53,6 +76,14 @@ public class Vision extends SubsystemBase {
           new Alert(
               "Vision camera " + Integer.toString(i) + " is disconnected.", AlertType.kWarning);
     }
+
+    cameraStdDevFactors =
+    new double[] {
+      cameraStdDevFactors_frontRight.get(),
+      cameraStdDevFactors_frontLeft.get(),
+      // cameraStdDevFactors_backRight.get(),
+      // cameraStdDevFactors_backLeft.get()
+    };
   }
 
   /**
@@ -102,9 +133,9 @@ public class Vision extends SubsystemBase {
         boolean rejectPose =
             observation.tagCount() == 0 // Must have at least one tag
                 || (observation.tagCount() == 1
-                    && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
+                    && observation.ambiguity() > maxAmbiguity.get()) // Cannot be high ambiguity
                 || Math.abs(observation.pose().getZ())
-                    > maxZError // Must have realistic Z coordinate
+                    > maxZError.get() // Must have realistic Z coordinate
 
                 // Must be within the field boundaries
                 || observation.pose().getX() < 0.0
@@ -128,11 +159,11 @@ public class Vision extends SubsystemBase {
         // Calculate standard deviations
         double stdDevFactor =
             Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
-        double linearStdDev = linearStdDevBaseline * stdDevFactor;
-        double angularStdDev = angularStdDevBaseline * stdDevFactor;
+        double linearStdDev = linearStdDevBaseline.get() * stdDevFactor;
+        double angularStdDev = angularStdDevBaseline.get() * stdDevFactor;
         if (observation.type() == PoseObservationType.MEGATAG_2) {
-          linearStdDev *= linearStdDevMegatag2Factor;
-          angularStdDev *= angularStdDevMegatag2Factor;
+          linearStdDev *= linearStdDevMegatag2Factor.get();
+          angularStdDev *= angularStdDevMegatag2Factor.get();
         }
         if (cameraIndex < cameraStdDevFactors.length) {
           linearStdDev *= cameraStdDevFactors[cameraIndex];
@@ -184,5 +215,18 @@ public class Vision extends SubsystemBase {
         Pose2d visionRobotPoseMeters,
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs);
+  }
+
+
+  public void updateTunableNumbers(){
+    if (cameraStdDevFactors_frontRight.hasChanged(0) || cameraStdDevFactors_frontLeft.hasChanged(1) || cameraStdDevFactors_backRight.hasChanged(0) || cameraStdDevFactors_backLeft.hasChanged(1)){
+      cameraStdDevFactors =
+      new double[] {
+        cameraStdDevFactors_frontRight.get(),
+        cameraStdDevFactors_frontLeft.get(),
+        // cameraStdDevFactors_backRight.get(),
+        // cameraStdDevFactors_backLeft.get()
+      };
+    }
   }
 }
