@@ -257,7 +257,7 @@ public final class Constants {
     public static double ARM_SCORING_CORAL_POS_L4 = 0.57;
     public static double ARM_INTAKE_SOURCE_POSITION = .18; // .09
     public static double ARM_DEALGAE_POSITION = .65;
-    public static double ARM_HANDOFF_POS = 0; //TODO: Change to real value
+    public static double ARM_HANDOFF_POS = 0; // TODO: Change to real value
   }
 
   public static class ElevatorConstantsLeonidas {
@@ -282,7 +282,7 @@ public final class Constants {
     public static double ELEVATOR_DEALGAE_L3 = 60;
     public static double ELEVATOR_SOURCE_POS = 5.15;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
-    public static double ELEVATOR_HANDOFF_POS = 0; //TODO: Change to real value
+    public static double ELEVATOR_HANDOFF_POS = 0; // TODO: Change to real value
   }
 
   /*   public final class ElevatorConstantsLeonidas {
