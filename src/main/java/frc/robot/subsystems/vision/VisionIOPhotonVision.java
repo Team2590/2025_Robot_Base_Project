@@ -13,18 +13,23 @@
 
 package frc.robot.subsystems.vision;
 
-import static frc.robot.subsystems.vision.VisionConstants.*;
-
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.RobotState;
+import frc.robot.RobotState.AligningState;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
@@ -71,12 +76,20 @@ public class VisionIOPhotonVision implements VisionIO {
     private final PhotonCamera camera;
     private final Transform3d robotToCamera;
     private volatile boolean connected = false;
+    private PhotonPoseEstimator photonPoseEstimator;
+    private Pose3d robotReferencePose;
 
     public CameraThread(String name, Transform3d robotToCamera) {
       super("Vision-" + name);
       this.camera = new PhotonCamera(name);
       this.robotToCamera = robotToCamera;
       setDaemon(true);
+      photonPoseEstimator =
+          new PhotonPoseEstimator(
+              VisionConstants.aprilTagLayout,
+              PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+              robotToCamera);
+      robotReferencePose = new Pose3d();
     }
 
     public boolean isConnected() {
@@ -89,6 +102,65 @@ public class VisionIOPhotonVision implements VisionIO {
 
     public Transform3d getRobotToCamera() {
       return robotToCamera;
+    }
+
+    private void setEstimatedGlobalPose(
+        Pose3d prevEstimatedRobotPose, PhotonPipelineResult result) {
+      AligningState aligningState = RobotState.getInstance().getAligningState();
+      boolean isAligning =
+          aligningState == AligningState.ALIGNING_FRONT
+              || aligningState == AligningState.ALIGNING_BACK;
+      if (isAligning) {
+        photonPoseEstimator.setPrimaryStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
+      } else {
+        photonPoseEstimator.setPrimaryStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
+        photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
+      }
+      photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+      Optional<EstimatedRobotPose> estimatedRobotPose = photonPoseEstimator.update(result);
+      if (!estimatedRobotPose.isEmpty()) {
+        robotReferencePose = estimatedRobotPose.get().estimatedPose;
+        if (!isAligning && result.targets.size() > 1) {
+          var multitagResult = result.getMultiTagResult().get();
+          double totalTagDistance = 0.0;
+          for (var target : result.targets) {
+            totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
+          }
+
+          latestTagIds.addAll(multitagResult.fiducialIDsUsed);
+
+          latestPoseObservations.add(
+              new PoseObservation(
+                  result.getTimestampSeconds(),
+                  robotReferencePose,
+                  multitagResult.estimatedPose.ambiguity,
+                  multitagResult.fiducialIDsUsed.size(),
+                  totalTagDistance / result.targets.size(),
+                  PoseObservationType.PHOTONVISION));
+        } else if (result.hasTargets()) {
+          double tagDistance = result.getBestTarget().bestCameraToTarget.getTranslation().getNorm();
+
+          latestTagIds.add((short) result.getBestTarget().getFiducialId());
+
+          boolean logResults =
+              (aligningState == AligningState.ALIGNING_FRONT
+                      && this.getName().equals("Vision-" + VisionConstants.frontReefCameraName))
+                  || (aligningState == AligningState.ALIGNING_BACK
+                      && this.getName().equals("Vision-" + VisionConstants.backReefCameraName))
+                  || (aligningState == AligningState.NOT_ALIGNING);
+
+          if (logResults) {
+            latestPoseObservations.add(
+                new PoseObservation(
+                    result.getTimestampSeconds(),
+                    robotReferencePose,
+                    result.getBestTarget().getPoseAmbiguity(),
+                    1,
+                    tagDistance,
+                    PoseObservationType.PHOTONVISION));
+          }
+        }
+      }
     }
 
     @Override
@@ -122,8 +194,6 @@ public class VisionIOPhotonVision implements VisionIO {
                     result.targets.remove(i);
                     i--;
                   }
-
-                  // System.out.println(result.targets);
                 }
 
                 if (result.hasTargets()) {
@@ -133,58 +203,7 @@ public class VisionIOPhotonVision implements VisionIO {
                           Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
                 }
               }
-
-              // Process pose observations (existing multi-tag and single-tag logic)
-              if (result.targets != null && result.targets.size() > 1) {
-                var multitagResult = result.multitagResult.get();
-                Transform3d fieldToCamera = multitagResult.estimatedPose.best;
-                Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
-                Pose3d robotPose =
-                    new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
-
-                double totalTagDistance = 0.0;
-                for (var target : result.targets) {
-                  totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
-                }
-
-                latestTagIds.addAll(multitagResult.fiducialIDsUsed);
-
-                latestPoseObservations.add(
-                    new PoseObservation(
-                        result.getTimestampSeconds(),
-                        robotPose,
-                        multitagResult.estimatedPose.ambiguity,
-                        multitagResult.fiducialIDsUsed.size(),
-                        totalTagDistance / result.targets.size(),
-                        PoseObservationType.PHOTONVISION));
-              } else if (!result.targets.isEmpty()) {
-                var target = result.targets.get(0);
-
-                // Calculate robot pose
-                var tagPose = aprilTagLayout.getTagPose(target.fiducialId);
-                if (tagPose.isPresent()) {
-                  Transform3d fieldToTarget =
-                      new Transform3d(tagPose.get().getTranslation(), tagPose.get().getRotation());
-                  Transform3d cameraToTarget = target.bestCameraToTarget;
-                  Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
-                  Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
-                  Pose3d robotPose =
-                      new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
-
-                  // Add tag ID
-                  latestTagIds.add((short) target.fiducialId);
-
-                  // Add observation
-                  latestPoseObservations.add(
-                      new PoseObservation(
-                          result.getTimestampSeconds(), // Timestamp
-                          robotPose, // 3D pose estimate
-                          target.poseAmbiguity, // Ambiguity
-                          1, // Tag count
-                          cameraToTarget.getTranslation().getNorm(), // Average tag distance
-                          PoseObservationType.PHOTONVISION)); // Observation type
-                }
-              }
+              setEstimatedGlobalPose(robotReferencePose, result);
             }
           }
           sleep(20);
