@@ -63,6 +63,10 @@ public class Intake extends SubsystemBase {
       intakeArmDisconnected.set(!intakeArmInputs.connected);
     }
 
+    public double getCurrentPosition() {
+      return intakeArmInputs.rotationCount;
+    }
+
     public Command setIntakeCoralPosition() {
       return runOnce(() -> intakeArmIO.setPosition(10));
     }

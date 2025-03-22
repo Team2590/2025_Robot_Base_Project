@@ -72,4 +72,28 @@ class SafetyCheckerTest {
             SafetyChecker.MechanismType.ELEVATOR_MOVEMENT,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS + 1));
   }
+
+  @Test
+  void intakeArmMovementSafety_OutOfRangeElevatorPositionsAreUnsafe_returnsFalse() {
+    assertFalse(
+        SafetyChecker.isSafe(
+            SafetyChecker.MechanismType.INTAKE_MOVEMENT,
+            Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MIN_POS - 1));
+    assertFalse(
+        SafetyChecker.isSafe(
+            SafetyChecker.MechanismType.INTAKE_MOVEMENT,
+            Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MAX_POS + 1));
+  }
+
+  @Test
+  void intakeArmMovementSafety_SetPositionsAreSafe_returnsTrue() {
+    assertTrue(
+        SafetyChecker.isSafe(
+            SafetyChecker.MechanismType.INTAKE_MOVEMENT,
+            Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MIN_POS));
+    assertTrue(
+        SafetyChecker.isSafe(
+            SafetyChecker.MechanismType.INTAKE_MOVEMENT,
+            Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MAX_POS));
+  }
 }

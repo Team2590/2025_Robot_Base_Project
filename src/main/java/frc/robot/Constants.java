@@ -275,7 +275,9 @@ public final class Constants {
     public static double ARM_SCORING_CORAL_POS_L4 = 0.57;
     public static double ARM_INTAKE_SOURCE_POSITION = .18; // .09
     public static double ARM_DEALGAE_POSITION = .65;
+    public static double ARM_HANDOFF_POS = 0; // TODO: Change to real value
     public static double ARM_BARGE_POS = .7; // TODO: find real value
+    public static double SECOND_PASS_OFFSET = 0.5; // TODO: find real value
   }
 
   public static class ElevatorConstantsLeonidas {
@@ -293,10 +295,6 @@ public final class Constants {
     public static final boolean followerOpposeLeader = false;
     public static final double kS = 0.22812;
     public static final double kV = 0.14885;
-    // public static double ELEVATOR_L2_POS = 23;
-    // public static double ELEVATOR_L3_POS = 47;
-    // public static double ELEVATOR_L4_POS = 88;
-    // new, taken from hatboro day 2
     public static double ELEVATOR_L2_POS = 17;
     public static double ELEVATOR_L3_POS = 44;
     public static double ELEVATOR_L4_POS = 87;
@@ -304,7 +302,7 @@ public final class Constants {
     public static double ELEVATOR_DEALGAE_L3 = 60;
     public static double ELEVATOR_SOURCE_POS = 5.15;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
-    public static double ELEVATOR_HANDOFF_POS = 10; // TODO: change to real value
+    public static double ELEVATOR_HANDOFF_POS = 0; // TODO: Change to real value
     public static double ELEVATOR_BARGE_POS = 80; // TODO: find real value
   }
 
@@ -358,7 +356,8 @@ public final class Constants {
   public final class IntakeArmConstantsLeonidas {
     public static final double INTAKE_CORAL_POS = 11.4;
     public static final double INTAKE_ALGAE_POS = 6.5;
-    public static final double INTAKE_HANDOFF_POS = 10; // TODO: change to real value
+    public static final double INTAKE_HOME_POS = 0; // TODO: Change to real value
+    public static final double INTAKE_HANDOFF_POS = 0; // TODO: Change to real value
     public static final double L1_POS = 1.65;
     public static final int canID = 15;
     public static final String canBus = "Takeover";
@@ -368,6 +367,8 @@ public final class Constants {
     public static final double reduction = 38.33;
     public static final double kS = 0.25918;
     public static final double kV = 0.29343;
+    public static final double INTAKE_OPERATIONAL_MIN_POS = 0; // TODO: update to actual values
+    public static final double INTAKE_OPERATIONAL_MAX_POS = 10; // TODO: update to actual values
   }
 
   public final class ClimbConstantsLeonidas {

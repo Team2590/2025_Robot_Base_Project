@@ -15,7 +15,7 @@ public class ArmDefaultCommand extends Command {
           .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
           .withName("Arm has coral default command");
   private Command notHasCoralCommand =
-      ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_HANDOFF_POSITION)
+      ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)
           .withName("Arm not has coral default command");
 
   public ArmDefaultCommand() {

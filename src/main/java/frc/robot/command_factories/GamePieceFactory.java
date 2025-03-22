@@ -32,7 +32,7 @@ public class GamePieceFactory {
 
     Command[] group = { 
       ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS), 
-      ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_HANDOFF_POSITION) 
+      ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS) 
     };
     
     // Command moveToHandOffCommand = Commands.defer(() -> elevatorSafe && armSafe ? Commands.parallel(group) : Commands.sequence(group), Set.of(RobotContainer.getElevator(), RobotContainer.getArm()));
