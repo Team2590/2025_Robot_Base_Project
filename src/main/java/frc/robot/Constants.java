@@ -55,6 +55,15 @@ public final class Constants {
     public static double maxAngularVelocityRadPerSec = 3;
     public static double maxAngularAccelerationRadPerSecSq = 3;
 
+    public static LoggedTunableNumber maxVelocityMPSScaler =
+        new LoggedTunableNumber("DriveToPoseConstaints/maxVelocityMPSScaler", 1);
+    public static LoggedTunableNumber maxAccelerationMPSSqScaler =
+        new LoggedTunableNumber("DriveToPoseConstaints/maxAccelerationMPSSqScaler", 1);
+    public static LoggedTunableNumber maxAngularVelocityRadPerSecScaler =
+        new LoggedTunableNumber("DriveToPoseConstaints/maxAngularVelocityRadPerSecScaler", 1);
+    public static LoggedTunableNumber maxAngularAccelerationRadPerSecSqScaler =
+        new LoggedTunableNumber("DriveToPoseConstaints/maxAngularAccelerationRadPerSecSqScaler", 1);
+
     public static PathConstraints fastpathConstraints =
         new PathConstraints(
             maxVelocityMPS,
@@ -64,10 +73,19 @@ public final class Constants {
 
     public static PathConstraints slowpathConstraints =
         new PathConstraints(
-            maxVelocityMPS * .35,
-            maxAccelerationMPSSq * .35,
-            maxAngularVelocityRadPerSec * .35,
-            maxAngularAccelerationRadPerSecSq * .35);
+            maxVelocityMPS * maxVelocityMPSScaler.get(),
+            maxAccelerationMPSSq * maxAccelerationMPSSqScaler.get(),
+            maxAngularVelocityRadPerSec * maxAngularVelocityRadPerSecScaler.get(),
+            maxAngularAccelerationRadPerSecSq * maxAngularAccelerationRadPerSecSqScaler.get());
+
+    public static void updateTunableNumbers() {
+      slowpathConstraints =
+          new PathConstraints(
+              maxVelocityMPS * maxVelocityMPSScaler.get(),
+              maxAccelerationMPSSq * maxAccelerationMPSSqScaler.get(),
+              maxAngularVelocityRadPerSec * maxAngularVelocityRadPerSecScaler.get(),
+              maxAngularAccelerationRadPerSecSq * maxAngularAccelerationRadPerSecSqScaler.get());
+    }
   }
 
   private static List<FRCPolygon> polygons = new ArrayList<>();
@@ -258,6 +276,7 @@ public final class Constants {
     public static double ARM_INTAKE_SOURCE_POSITION = .18; // .09
     public static double ARM_DEALGAE_POSITION = .65;
     public static double ARM_HANDOFF_POS = 0; // TODO: Change to real value
+    public static double ARM_BARGE_POS = .7; // TODO: find real value
   }
 
   public static class ElevatorConstantsLeonidas {
@@ -283,6 +302,7 @@ public final class Constants {
     public static double ELEVATOR_SOURCE_POS = 5.15;
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
     public static double ELEVATOR_HANDOFF_POS = 0; // TODO: Change to real value
+    public static double ELEVATOR_BARGE_POS = 80; // TODO: find real value
   }
 
   /*   public final class ElevatorConstantsLeonidas {
