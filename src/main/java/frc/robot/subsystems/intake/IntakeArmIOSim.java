@@ -40,7 +40,7 @@ public class IntakeArmIOSim implements IntakeArmIO {
   @Override
   public void setPosition(double position) {
     if (SafetyChecker.isSafe(MechanismType.INTAKE_MOVEMENT, position)) {
-      this.position = position; 
+      this.position = position;
       // Set the internal position.  In a real system, this would likely involve
       // closed-loop control.
       // In a simulation, we're directly setting the position, which is less realistic.

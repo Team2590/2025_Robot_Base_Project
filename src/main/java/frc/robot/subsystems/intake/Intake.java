@@ -63,9 +63,8 @@ public class Intake extends SubsystemBase {
       intakeArmDisconnected.set(!intakeArmInputs.connected);
     }
 
-    public double getCurrentPosition(){
+    public double getCurrentPosition() {
       return intakeArmInputs.rotationCount;
-
     }
 
     public Command setIntakeCoralPosition() {
