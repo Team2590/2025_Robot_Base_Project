@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.command_factories.AutoFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
-import frc.robot.util.NemesisAutoBuilder.SourceSide;
 import java.util.HashMap;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 

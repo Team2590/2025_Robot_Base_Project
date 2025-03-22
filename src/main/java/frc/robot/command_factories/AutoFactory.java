@@ -9,14 +9,19 @@ import java.util.function.Supplier;
 
 public class AutoFactory {
   public static Command driveTo(Pose2d target) {
-    return DriveCommands.driveToPose(RobotContainer.getDrive().flipScoringSide(target))
-        .onlyIf(() -> NemesisMathUtil.distance(target, RobotContainer.getDrive().getPose()) > 1)
-        .andThen(
-            DriveCommands.driveToPoseStraight(RobotContainer.getDrive(), () -> target)
-                .until(
-                    () ->
-                        NemesisMathUtil.isPoseApprox(
-                            RobotContainer.getDrive().getPose(), target, 0.02)));
+    Pose2d actualTarget = RobotContainer.getDrive().flipScoringSide(target);
+
+    // spotless:off
+    return DriveCommands.driveToPose(actualTarget)
+    .until(() -> NemesisMathUtil.distance(RobotContainer.getDrive().getPose(), actualTarget) < 1)
+    .andThen(
+      DriveCommands.driveToPoseStraight(RobotContainer.getDrive(), () -> actualTarget)
+      .until(() -> 
+        actualTarget.getTranslation().getDistance(RobotContainer.getDrive().getPose().getTranslation()) < 0.02 && 
+        actualTarget.getRotation().minus(RobotContainer.getDrive().getPose().getRotation()).getDegrees() < 4
+      )
+    );
+    // spotless:on
   }
 
   public static Command driveTo(Supplier<Pose2d> target) {
