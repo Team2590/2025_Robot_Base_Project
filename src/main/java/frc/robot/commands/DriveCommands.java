@@ -731,7 +731,7 @@ public class DriveCommands {
   }
 
   /**
-   * Convenient method to that sets the AligningState before running the command and resets it
+   * Convenient method that sets the AligningState before running the command and resets it
    * after.
    */
   private static Command wrapForAligning(Command command, Supplier<Pose2d> preciseTarget) {
