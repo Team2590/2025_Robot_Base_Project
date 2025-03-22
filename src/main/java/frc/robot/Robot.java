@@ -130,6 +130,7 @@ public class Robot extends LoggedRobot {
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
+    FieldConstants.updateTunableNumbers();
   }
 
   /** This function is called once when the robot is disabled. */
@@ -167,7 +168,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-    // robotContainer.initDefaultCommands();
+    robotContainer.initDefaultCommands();
   }
 
   /** This function is called periodically during operator control. */

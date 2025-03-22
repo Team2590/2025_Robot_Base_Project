@@ -34,9 +34,9 @@ public class VisionConstants {
   // }
 
   // Camera names, must match names configured on coprocessor
-  public static String upperSourceCameraName = "1mp_arducam_device_6";
+  public static String upperSourceCameraName = "1mp_arducam_device_1";
   //   public static String processorCameraName = "1mp_arducam_device_4";
-  public static String reefCameraName = "1mp_arducam_device_1";
+  public static String reefCameraName = "1mp_arducam_device_6";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
@@ -88,8 +88,9 @@ public class VisionConstants {
   public static double angularStdDevMegatag2Factor =
       Double.POSITIVE_INFINITY; // No rotation data available
 
-  public static final Set<Integer> FIDUCIAL_IDS =
-      Set.of(17, 18, 19, 20, 21, 22, 6, 7, 8, 9, 10, 11);
+  public static final Set<Integer> FIDUCIAL_IDS_RED = Set.of(6, 7, 8, 9, 10, 11);
+
+  public static final Set<Integer> FIDUCIAL_IDS_BLUE = Set.of(17, 18, 19, 20, 21, 22);
 
   public static double DISTANCE_THRESHOLD = Units.inchesToMeters(120); // TODO: TUNE VALUE FOR COMP
 

@@ -31,6 +31,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -62,6 +63,10 @@ import org.littletonrobotics.junction.Logger;
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
   // PathPlanner config constants
+  public static LoggedTunableNumber reefYOffset = new LoggedTunableNumber("reefYOffset", 0);
+  public static LoggedTunableNumber reefXOffsetLeft = new LoggedTunableNumber("reefXOffsetLeft", 0);
+  public static LoggedTunableNumber reefXOffsetRight =
+      new LoggedTunableNumber("reefXOffsetRight", 0);
   private static final double ROBOT_MASS_KG = 74.088;
   private static final double ROBOT_MOI = 6.883;
   private static final double WHEEL_COF = 1.2;
@@ -201,7 +206,6 @@ public class Drive extends SubsystemBase {
 
     FieldConstants.logBlueReefPoses();
 
-    Logger.recordOutput("SW_L", FieldConstants.RedReefPoses.SW_left);
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
@@ -447,5 +451,21 @@ public class Drive extends SubsystemBase {
       xController.setConstraints(
           new TrapezoidProfile.Constraints(xControllerMaxVel.get(), xControllerMaxAccel.get()));
     }
+  }
+
+  public Pose2d flipScoringSide(Pose2d targetPose) {
+    double differencefromFront =
+        Math.abs(this.getPose().getRotation().minus(targetPose.getRotation()).getRadians());
+    double differencefromBack =
+        Math.abs(
+            this.getPose()
+                .getRotation()
+                .minus(targetPose.getRotation())
+                .plus(new Rotation2d(Math.PI))
+                .getRadians());
+    if (differencefromFront >= differencefromBack) {
+      return targetPose.plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI)));
+    }
+    return targetPose;
   }
 }

@@ -68,6 +68,7 @@ import frc.robot.subsystems.vision.CoralIOPhotonVision;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -225,7 +226,10 @@ public class RobotContainer {
                     Constants.ElevatorConstantsLeonidas.currentLimitAmps,
                     Constants.ElevatorConstantsLeonidas.invert,
                     Constants.ElevatorConstantsLeonidas.brake,
-                    Constants.ElevatorConstantsLeonidas.reduction));
+                    Constants.ElevatorConstantsLeonidas.reduction,
+                    Constants.ElevatorConstantsLeonidas.followerCanID,
+                    Constants.ElevatorConstantsLeonidas.followerCanBus,
+                    Constants.ElevatorConstantsLeonidas.followerOpposeLeader));
         elevator.resetRotationCount();
         vision =
             new Vision(
@@ -290,8 +294,8 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 null,
-                new VisionIOPhotonVision(
-                    List.of(new CameraConfig(reefCameraName, robotToReefCam))));
+                new VisionIOPhotonVisionSim(
+                    List.of(new CameraConfig(reefCameraName, robotToReefCam)), drive::getPose));
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
@@ -403,8 +407,8 @@ public class RobotContainer {
   private void configureButtonBindingsSimulation() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
-    leftJoystick.button(1).whileTrue(controllerApp.bindDrivetoSourceCommandsim(drive));
-    leftJoystick.button(2).whileTrue(controllerApp.bindDrivetoTargetCommandsim(drive));
+    leftJoystick.button(1).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+    leftJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
 
     // leftJoystick
     //     .button(3)
@@ -441,19 +445,19 @@ public class RobotContainer {
     leftJoystick.button(9).onTrue(ScoringFactory.scoreProcessor());
 
     // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
-    leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
-    leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
-    leftJoystick.button(12).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+    // leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    // leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
+    // leftJoystick.button(12).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
 
-    leftJoystick
-        .button(13)
-        .whileTrue(
-            DriveCommands.alignToTargetLine(
-                drive,
-                getLeftJoystick()::getY, // Forward/backward control
-                getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
-                () -> controllerApp.getTarget().pose(),
-                1.0));
+    // leftJoystick
+    //     .button(13)
+    //     .whileTrue(
+    //         DriveCommands.alignToTargetLine(
+    //             drive,
+    //             getLeftJoystick()::getY, // Forward/backward control
+    //             getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
+    //             () -> controllerApp.getTarget().pose(),
+    //             1.0));
   }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by

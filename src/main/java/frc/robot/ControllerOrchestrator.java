@@ -1,9 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -95,29 +92,8 @@ public class ControllerOrchestrator {
   public Command bindDriveToTargetCommand(Drive drive) {
     return DriveCommands.preciseAlignment(
         drive,
-        () ->
-            getTarget().pose().plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
-        getTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
-  }
-
-  public Command bindDrivetoTargetCommandsim(Drive drive) {
-
-    return DriveCommands.preciseAlignment(
-        drive,
-        () ->
-            getTarget().pose().plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
-        () -> getTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
-  }
-
-  public Command bindDrivetoSourceCommandsim(Drive drive) {
-
-    return DriveCommands.preciseAlignmentsim(
-        drive,
-        () ->
-            getSourceTarget()
-                .pose()
-                .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
-        () -> getSourceTarget().pose().getRotation().plus(new Rotation2d(Math.PI)));
+        () -> drive.flipScoringSide(getTarget().pose()),
+        drive.flipScoringSide(getTarget().pose()).getRotation());
   }
 
   // This commands will drive to pose while "priming for intake" at coral source
