@@ -26,17 +26,4 @@ public class DriveFactory {
             () -> -RobotContainer.getRightJoystick().getX())
         .withName("Joystick Drive");
   }
-
-  /**
-   * Creates a command to drive to a specific pose.
-   *
-   * @param container The RobotContainer instance
-   * @param targetPose The target pose to drive to
-   * @return Command to drive to pose
-   */
-  public static Command driveToPose(Pose2d targetPose) {
-
-    // RobotContainer.factoryCommands.add("Drive To Pose");
-    return DriveCommands.driveToPose(targetPose).withName("Drive To Pose");
-  }
 }

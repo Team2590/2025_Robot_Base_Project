@@ -58,7 +58,6 @@ public class VisionConstants {
 
   // Basic filtering thresholds
 
-
   public static final Set<Integer> FIDUCIAL_IDS_RED = Set.of(6, 7, 8, 9, 10, 11);
 
   public static final Set<Integer> FIDUCIAL_IDS_BLUE = Set.of(17, 18, 19, 20, 21, 22);

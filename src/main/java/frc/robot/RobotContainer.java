@@ -189,8 +189,7 @@ public class RobotContainer {
                     ElevatorConstantsLarry.brake,
                     ElevatorConstantsLarry.reduction));
         endEffector =
-            new EndEffector(
-                new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, 16));
+            new EndEffector(new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, 16));
         climb = null;
         led = null;
         break;

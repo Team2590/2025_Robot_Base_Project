@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import frc.robot.util.LoggedTunableNumber;
-
 import java.util.LinkedList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -39,25 +38,32 @@ public class Vision extends SubsystemBase {
   private final Alert[] disconnectedAlerts;
   private double[] cameraStdDevFactors;
 
-    // Standard deviation baselines, for 1 meter distance and 1 tag
+  // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)
-  private LoggedTunableNumber linearStdDevBaseline = new LoggedTunableNumber("Vision/linearStdDevBaseline",0.1);
-  private LoggedTunableNumber angularStdDevBaseline = new LoggedTunableNumber("Vision/angularStdDevBaseline",0.06);
+  private LoggedTunableNumber linearStdDevBaseline =
+      new LoggedTunableNumber("Vision/linearStdDevBaseline", 0.1);
+  private LoggedTunableNumber angularStdDevBaseline =
+      new LoggedTunableNumber("Vision/angularStdDevBaseline", 0.06);
 
   // Multipliers to apply for MegaTag 2 observations
-  private LoggedTunableNumber linearStdDevMegatag2Factor = new LoggedTunableNumber("Vision/linearStdDevMegatag2Factor", 0.5);
-  private LoggedTunableNumber angularStdDevMegatag2Factor = new LoggedTunableNumber("Vision/angularStdDevMegatag2Factor", Double.POSITIVE_INFINITY);
+  private LoggedTunableNumber linearStdDevMegatag2Factor =
+      new LoggedTunableNumber("Vision/linearStdDevMegatag2Factor", 0.5);
+  private LoggedTunableNumber angularStdDevMegatag2Factor =
+      new LoggedTunableNumber("Vision/angularStdDevMegatag2Factor", Double.POSITIVE_INFINITY);
 
-    // Multipliers to apply for MegaTag 2 observations
-    private LoggedTunableNumber cameraStdDevFactors_frontRight = new LoggedTunableNumber("Vision/cameraStdDevFactors_frontRight",0.25);
-    private LoggedTunableNumber cameraStdDevFactors_frontLeft = new LoggedTunableNumber("Vision/cameraStdDevFactors_frontLeft",0.25);
+  // Multipliers to apply for MegaTag 2 observations
+  private LoggedTunableNumber cameraStdDevFactors_frontRight =
+      new LoggedTunableNumber("Vision/cameraStdDevFactors_frontRight", 0.25);
+  private LoggedTunableNumber cameraStdDevFactors_frontLeft =
+      new LoggedTunableNumber("Vision/cameraStdDevFactors_frontLeft", 0.25);
 
-    private LoggedTunableNumber cameraStdDevFactors_backRight = new LoggedTunableNumber("Vision/cameraStdDevFactors_backRight",0.25);
-    private LoggedTunableNumber cameraStdDevFactors_backLeft = new LoggedTunableNumber("Vision/cameraStdDevFactors_backLeft",0.25);
+  private LoggedTunableNumber cameraStdDevFactors_backRight =
+      new LoggedTunableNumber("Vision/cameraStdDevFactors_backRight", 0.25);
+  private LoggedTunableNumber cameraStdDevFactors_backLeft =
+      new LoggedTunableNumber("Vision/cameraStdDevFactors_backLeft", 0.25);
 
-    private LoggedTunableNumber maxAmbiguity = new LoggedTunableNumber("Vision/maxAmbiguity",0.3);
-    private LoggedTunableNumber maxZError = new LoggedTunableNumber("Vision/maxZError",0.75);
-  
+  private LoggedTunableNumber maxAmbiguity = new LoggedTunableNumber("Vision/maxAmbiguity", 0.3);
+  private LoggedTunableNumber maxZError = new LoggedTunableNumber("Vision/maxZError", 0.75);
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -78,12 +84,11 @@ public class Vision extends SubsystemBase {
     }
 
     cameraStdDevFactors =
-    new double[] {
-      cameraStdDevFactors_frontRight.get(),
-      cameraStdDevFactors_frontLeft.get(),
-      // cameraStdDevFactors_backRight.get(),
-      // cameraStdDevFactors_backLeft.get()
-    };
+        new double[] {
+          cameraStdDevFactors_frontRight.get(), cameraStdDevFactors_frontLeft.get(),
+          // cameraStdDevFactors_backRight.get(),
+          // cameraStdDevFactors_backLeft.get()
+        };
   }
 
   /**
@@ -217,16 +222,17 @@ public class Vision extends SubsystemBase {
         Matrix<N3, N1> visionMeasurementStdDevs);
   }
 
-
-  public void updateTunableNumbers(){
-    if (cameraStdDevFactors_frontRight.hasChanged(0) || cameraStdDevFactors_frontLeft.hasChanged(1) || cameraStdDevFactors_backRight.hasChanged(0) || cameraStdDevFactors_backLeft.hasChanged(1)){
+  public void updateTunableNumbers() {
+    if (cameraStdDevFactors_frontRight.hasChanged(0)
+        || cameraStdDevFactors_frontLeft.hasChanged(1)
+        || cameraStdDevFactors_backRight.hasChanged(0)
+        || cameraStdDevFactors_backLeft.hasChanged(1)) {
       cameraStdDevFactors =
-      new double[] {
-        cameraStdDevFactors_frontRight.get(),
-        cameraStdDevFactors_frontLeft.get(),
-        // cameraStdDevFactors_backRight.get(),
-        // cameraStdDevFactors_backLeft.get()
-      };
+          new double[] {
+            cameraStdDevFactors_frontRight.get(), cameraStdDevFactors_frontLeft.get(),
+            // cameraStdDevFactors_backRight.get(),
+            // cameraStdDevFactors_backLeft.get()
+          };
     }
   }
 }
