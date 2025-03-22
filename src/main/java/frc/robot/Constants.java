@@ -276,6 +276,18 @@ public final class Constants {
     public static double ARM_INTAKE_SOURCE_POSITION = .18; // .09
     public static double ARM_DEALGAE_POSITION = .65;
     public static double ARM_BARGE_POS = .7; // TODO: find real value
+
+    public static double ARM_HANDOFF_POS=0;
+    
+    
+    
+    
+    
+    public static double SECOND_PASS_OFFSET= 0.5;
+
+
+
+
   }
 
   public static class ElevatorConstantsLeonidas {
