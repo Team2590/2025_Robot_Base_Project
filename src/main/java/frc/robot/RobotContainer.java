@@ -187,8 +187,7 @@ public class RobotContainer {
                     ElevatorConstantsLarry.currentLimitAmps,
                     ElevatorConstantsLarry.invert,
                     ElevatorConstantsLarry.brake,
-                    ElevatorConstantsLarry.reduction
-                ));
+                    ElevatorConstantsLarry.reduction));
         endEffector =
             new EndEffector(
                 new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
