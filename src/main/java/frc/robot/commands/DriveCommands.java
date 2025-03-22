@@ -536,10 +536,10 @@ public class DriveCommands {
 
   public static Command preciseAlignment(
       Drive driveSubsystem, Supplier<Pose2d> preciseTarget, Rotation2d approachDirection) {
-    PathConstraints constraints = Constants.DriveToPoseConstraints.slowpathConstraints;
 
     return Commands.defer(
         () -> {
+          PathConstraints constraints = Constants.DriveToPoseConstraints.slowpathConstraints;
           if (preciseTarget.get().getRotation() == null
               || driveSubsystem.getPose().getRotation() == null) {
             return Commands.none();
@@ -566,10 +566,10 @@ public class DriveCommands {
       Drive driveSubsystem,
       Supplier<Pose2d> preciseTarget,
       Supplier<Rotation2d> approachDirection) {
-    PathConstraints constraints = Constants.DriveToPoseConstraints.slowpathConstraints;
 
     return Commands.defer(
         () -> {
+          PathConstraints constraints = Constants.DriveToPoseConstraints.slowpathConstraints;
           if (preciseTarget.get().getRotation() == null
               || driveSubsystem.getPose().getRotation() == null) {
             return Commands.none();

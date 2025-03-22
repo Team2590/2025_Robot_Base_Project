@@ -77,6 +77,15 @@ public final class Constants {
             maxAccelerationMPSSq * maxAccelerationMPSSqScaler.get(),
             maxAngularVelocityRadPerSec * maxAngularVelocityRadPerSecScaler.get(),
             maxAngularAccelerationRadPerSecSq * maxAngularAccelerationRadPerSecSqScaler.get());
+
+    public static void updateTunableNumbers() {
+      slowpathConstraints =
+          new PathConstraints(
+              maxVelocityMPS * maxVelocityMPSScaler.get(),
+              maxAccelerationMPSSq * maxAccelerationMPSSqScaler.get(),
+              maxAngularVelocityRadPerSec * maxAngularVelocityRadPerSecScaler.get(),
+              maxAngularAccelerationRadPerSecSq * maxAngularAccelerationRadPerSecSqScaler.get());
+    }
   }
 
   private static List<FRCPolygon> polygons = new ArrayList<>();

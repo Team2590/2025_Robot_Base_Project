@@ -131,6 +131,7 @@ public class Robot extends LoggedRobot {
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
     FieldConstants.updateTunableNumbers();
+    Constants.DriveToPoseConstraints.updateTunableNumbers();
   }
 
   /** This function is called once when the robot is disabled. */
