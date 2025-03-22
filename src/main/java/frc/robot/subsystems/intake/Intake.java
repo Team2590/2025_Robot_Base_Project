@@ -114,6 +114,11 @@ public class Intake extends SubsystemBase {
         .withName("Run Intake");
   }
 
+  public Command runIntakeVoltage(double voltage) {
+    return runEnd(() -> intakeIO.setVoltage(voltage), intakeIO::stop)
+    .withName("Run Intake Voltage");
+  }
+
   public Command setPosition(double position) {
     return intakeArm.setPosition(position);
   }

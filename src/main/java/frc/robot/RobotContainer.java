@@ -39,6 +39,7 @@ import frc.robot.commands.ArmDefaultCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorDefaultCommand;
 import frc.robot.commands.EndEffectorDefaultCommand;
+import frc.robot.commands.IntakeDefaultCommand;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.LEDS.NemesisLED;
@@ -379,6 +380,7 @@ public class RobotContainer {
     elevator.setDefaultCommand(new ElevatorDefaultCommand());
     arm.setDefaultCommand(new ArmDefaultCommand());
     endEffector.setDefaultCommand(new EndEffectorDefaultCommand());
+    intake.setDefaultCommand(new IntakeDefaultCommand());
   }
 
   /**
@@ -490,10 +492,10 @@ public class RobotContainer {
     leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
     leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());
-    rightJoystick
-        .button(4)
-        .and(rightJoystick.trigger())
-        .whileTrue(GamePieceFactory.intakeAlgaeGround());
+    // rightJoystick
+    //     .button(4)
+    //     .and(rightJoystick.trigger())
+    //     .whileTrue(GamePieceFactory.intakeAlgaeGround());
     rightJoystick
         .trigger()
         .and(rightJoystick.button(4).negate())
