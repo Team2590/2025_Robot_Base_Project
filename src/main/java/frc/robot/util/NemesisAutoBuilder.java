@@ -19,18 +19,18 @@ public class NemesisAutoBuilder {
   }
 
   public enum ReefTarget {
-    S_LEFT,
-    S_RIGHT,
-    SW_LEFT,
-    SW_RIGHT,
-    NW_RIGHT,
-    NW_LEFT,
-    N_RIGHT,
-    N_LEFT,
-    NE_RIGHT,
-    NE_LEFT,
-    SE_RIGHT,
-    SE_LEFT
+    S_Right,
+    S_Left,
+    SW_Right,
+    SW_Left,
+    NW_Right,
+    NW_Left,
+    N_Right,
+    N_Left,
+    NE_Right,
+    NE_Left,
+    SE_Right,
+    SE_Left
   }
 
   public static Command generateScoringSequence(

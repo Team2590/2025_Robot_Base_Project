@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 public class AutoFactory {
   public static Command driveTo(Pose2d target) {
-    return DriveCommands.driveToPose(target)
+    return DriveCommands.driveToPose(RobotContainer.getDrive().flipScoringSide(target))
         .onlyIf(() -> NemesisMathUtil.distance(target, RobotContainer.getDrive().getPose()) > 1)
         .andThen(
             DriveCommands.driveToPoseStraight(RobotContainer.getDrive(), () -> target)

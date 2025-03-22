@@ -71,7 +71,6 @@ import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.NemesisAutoBuilder;
 import frc.robot.util.NemesisAutoBuilder.ReefTarget;
 import frc.robot.util.NemesisAutoBuilder.SourceSide;
-
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -349,14 +348,14 @@ public class RobotContainer {
 
     NemesisAutoBuilder.addRoutine(
         "Nemesis Auto Builder Test 3",
-        NemesisAutoBuilder.generateScoringSequence(ReefTarget.NE_LEFT, Level.L4, SourceSide.LEFT));
+        NemesisAutoBuilder.generateScoringSequence(ReefTarget.NE_Left, Level.L4, SourceSide.LEFT));
 
     NemesisAutoBuilder.addRoutine(
         "Nemesis Auto Builder Test 4",
-        NemesisAutoBuilder.generateScoringSequence(ReefTarget.NE_RIGHT, SourceSide.LEFT),
-        NemesisAutoBuilder.generateScoringSequence(ReefTarget.NE_LEFT, SourceSide.LEFT),
-        NemesisAutoBuilder.generateScoringSequence(ReefTarget.SE_RIGHT, SourceSide.LEFT),
-        NemesisAutoBuilder.generateScoringSequence(ReefTarget.SE_LEFT, SourceSide.LEFT));
+        NemesisAutoBuilder.generateScoringSequence(ReefTarget.NE_Right, SourceSide.LEFT),
+        NemesisAutoBuilder.generateScoringSequence(ReefTarget.NE_Left, SourceSide.LEFT),
+        NemesisAutoBuilder.generateScoringSequence(ReefTarget.SE_Right, SourceSide.LEFT),
+        NemesisAutoBuilder.generateScoringSequence(ReefTarget.SE_Left, SourceSide.LEFT));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
