@@ -45,7 +45,7 @@ public class GamePieceFactory {
     .andThen(IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS))
     .andThen(
       Commands.parallel(
-        IntakeFactory.runIntakeVoltage(() -> -6),
+        IntakeFactory.runIntakeVoltage(() -> 6),
         EndEffectorFactory.runEndEffector()
       )
     );
