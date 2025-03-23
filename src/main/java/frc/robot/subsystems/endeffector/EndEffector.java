@@ -2,6 +2,7 @@ package frc.robot.subsystems.endeffector;
 
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
@@ -13,12 +14,8 @@ public class EndEffector extends SubsystemBase {
   private boolean isRunning = false;
   private LoggedTunableNumber CURRENT_THRESHOLD =
       new LoggedTunableNumber("EndEffector/CURRENT_THRESHOLD", 200);
-  // private LoggedTunableNumber CURRENT_THRESHOLD =
-  //     new LoggedTunableNumber("EndEffector/FilteredData", 200);
   private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 10);
   private LinearFilter filter = LinearFilter.movingAverage((int) taps.get());
-  private LoggedTunableNumber PROX_THRESHOLD =
-      new LoggedTunableNumber("EndEffector/PROX_THRESHOLD", 500);
   double filtered_data;
   private LoggedTunableNumber runVoltage =
       new LoggedTunableNumber(
@@ -31,13 +28,15 @@ public class EndEffector extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    filtered_data = filter.calculate(inputs.proxValue);
+    filtered_data = filter.calculate(inputs.statorCurrentAmps);
 
     Logger.recordOutput("EndEffector/StatorCurrent", inputs.statorCurrentAmps);
     Logger.recordOutput("EndEffector/IsRunning", isRunning);
     Logger.recordOutput("EndEffector/CurrentThreshold", CURRENT_THRESHOLD);
     Logger.recordOutput("EndEffector/filter", filtered_data);
-    Logger.recordOutput("EndEffector/prox", inputs.proxValue);
+
+
+
 
     if (taps.hasChanged(0)) {
       filter = LinearFilter.movingAverage((int) taps.get());
@@ -66,14 +65,11 @@ public class EndEffector extends SubsystemBase {
         .until(() -> !hasCoral());
   }
 
-  public Command runEndEffectorDeAlgae() {
-    return runEnd(
+  public Command runEndEffectorGrabAndHoldAlgae() {
+    return run(
         () -> {
-          io.setVoltage(Constants.EndEffectorConstantsLeonidas.DEALGAE_VOLTAGE);
-        },
-        () -> {
-          io.stop();
-        });
+          io.setVoltage(Constants.EndEffectorConstantsLeonidas.GRAB_ALGAE_VOLTAGE);
+        }).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
   }
 
   public Command runEndEffectorManual() {
@@ -118,13 +114,10 @@ public class EndEffector extends SubsystemBase {
         });
   }
 
-  /**
-   * returns whether the end effector has a piece of coral or not
-   *
-   * @return true if the end effector has coral, false if not
-   */
-  public boolean hasCoral() {
-    return filtered_data >= PROX_THRESHOLD.get();
+  public boolean hasCoral(){
+
+      return filtered_data >= CURRENT_THRESHOLD.get();
+
   }
 
   public boolean isRunning() {
