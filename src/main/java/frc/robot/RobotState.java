@@ -144,7 +144,7 @@ public class RobotState extends SubsystemBase {
   public Pose2d getNearestCoralPose() {
     return vision.getNearestCoralPose();
   }
-  
+
   @AutoLogOutput(key = "PreciseAlignment/AligningState")
   public AligningState getAligningState() {
     return aligningState.get();

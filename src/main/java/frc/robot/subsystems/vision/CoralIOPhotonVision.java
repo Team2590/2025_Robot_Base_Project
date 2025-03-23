@@ -1,10 +1,13 @@
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.RobotContainer;
+import frc.robot.util.LoggedTunableNumber;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -37,18 +40,17 @@ public class CoralIOPhotonVision implements CoralDetectionIO {
         VisionConstants.CoralAlgaeCameraConstants.OBJECT_CAMERA_X_DISTANCE_FROM_CENTER_METERS;
     private double camYOffset =
         VisionConstants.CoralAlgaeCameraConstants.OBJECT_CAMERA_Y_DISTANCE_FROM_CENTER_METERS;
-    private double camFocalLength =
-        VisionConstants.CoralAlgaeCameraConstants.OBJECT_CAMERA_FOCAL_LENGTH;
+    private LoggedTunableNumber camFocalLength =
+        new LoggedTunableNumber("Vision/CoralCamFocalLength", 0.65);
     private double coralXOffset = VisionConstants.CoralAlgaeCameraConstants.CORAL_X_OFFSET;
     private double coralYOffset = VisionConstants.CoralAlgaeCameraConstants.CORAL_Y_OFFSET;
     private double coralYaw = 0;
     private Pose2d coralPose = RobotContainer.getDrive().getPose();
-    private Transform2d robotToCoral = new Transform2d();
     private Rotation2d coralRotation = new Rotation2d();
     private volatile boolean connected = false;
 
     public CoralDetectionThread() {
-      CoralCam.setPipelineIndex(VisionConstants.CoralAlgaeCameraConstants.CORAL_PIPELINE_INDEX);
+      // CoralCam.setPipelineIndex(VisionConstants.CoralAlgaeCameraConstants.CORAL_PIPELINE_INDEX);
       this.CoralCam =
           new PhotonCamera(instance, VisionConstants.CoralAlgaeCameraConstants.CAMERA_NAME);
       setDaemon(true);
@@ -83,16 +85,26 @@ public class CoralIOPhotonVision implements CoralDetectionIO {
                   target = result.getBestTarget();
                   double mPitch = Math.toRadians(target.getPitch());
                   double mYaw = Math.toRadians(target.getYaw());
-                  double realPitch = Math.atan2(mPitch, camFocalLength);
-                  double realYaw = Math.atan2(mYaw, camFocalLength);
+                  double realPitch = Math.atan2(mPitch, camFocalLength.getAsDouble());
+                  double realYaw = Math.atan2(mYaw, camFocalLength.getAsDouble());
                   double distanceToCoral = camHeight / (Math.tan(camPitch - realPitch));
                   double xToCoral = distanceToCoral * Math.cos(realYaw);
                   double yToCoral = distanceToCoral * Math.sin(realYaw);
+                  Transform3d cameraToCoral =
+                      new Transform3d(
+                          xToCoral, -yToCoral, camHeight, new Rotation3d(0, -realPitch, -realYaw));
                   double currentCoralYaw =
-                      Math.toDegrees(Math.atan(yToCoral / (xToCoral + camXOffset)));
-                  robotToCoral =
-                      new Transform2d(coralXOffset, -coralYOffset - camYOffset, new Rotation2d());
-                  coralPose = robotPose.plus(robotToCoral);
+                      Math.toDegrees(Math.atan((yToCoral + camYOffset) / (xToCoral + camXOffset)));
+                  coralPose =
+                      new Pose3d(
+                              robotPose.getX(),
+                              robotPose.getY(),
+                              0,
+                              new Rotation3d(robotPose.getRotation()))
+                          .plus(
+                              VisionConstants.CoralAlgaeCameraConstants.robotToObjectCamera.plus(
+                                  cameraToCoral))
+                          .toPose2d();
 
                   if (target != null) {
                     coralYaw = currentCoralYaw;

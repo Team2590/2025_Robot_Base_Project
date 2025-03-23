@@ -734,10 +734,9 @@ public class DriveCommands {
       Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
     return joystickDriveAtAngle(
         drive, xSupplier, ySupplier, () -> RobotContainer.getVision().getNearestCoralRotation());
-    }
+  }
   /**
-   * Convenient method that sets the AligningState before running the command and resets it
-   * after.
+   * Convenient method that sets the AligningState before running the command and resets it after.
    */
   private static Command wrapForAligning(Command command, Supplier<Pose2d> preciseTarget) {
     RobotState robotState = RobotState.getInstance();
