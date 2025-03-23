@@ -67,11 +67,11 @@ public class IntakeIOTalonFX implements IntakeIO {
     double reduction,
     int followerCanID,
     String followerCanBus,
-    boolean followerOpposeMaster
+    boolean followerOpposeLeader
   ) {
     this(followerCanID, followerCanBus, currentLimitAmps, invert, brake, reduction);
     follower = new TalonFX(followerCanID, followerCanBus);
-    follower.setControl(new Follower(canID, followerOpposeMaster));
+    follower.setControl(new Follower(canID, followerOpposeLeader));
   }
 
   public void stop() {
