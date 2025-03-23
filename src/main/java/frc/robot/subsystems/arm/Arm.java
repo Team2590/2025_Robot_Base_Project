@@ -47,6 +47,10 @@ public class Arm extends SubsystemBase {
     return runEnd(() -> arm.setPositionLoggedNumber(), () -> arm.setPositionLoggedNumber());
   }
 
+  public double getTunableNumber() {
+    return arm.getTunableNumber();
+  }
+
   public Command resetarm() {
     return runOnce(arm::resetArm);
   }

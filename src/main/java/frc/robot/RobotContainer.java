@@ -39,8 +39,8 @@ import frc.robot.commands.ArmDefaultCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorDefaultCommand;
 import frc.robot.commands.EndEffectorDefaultCommand;
-import frc.robot.commands.IntakeDefaultCommand;
 import frc.robot.commands.FeedForwardCharacterization;
+import frc.robot.commands.IntakeDefaultCommand;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.LEDS.NemesisLED;
 import frc.robot.subsystems.arm.Arm;
@@ -520,9 +520,9 @@ public class RobotContainer {
     //     .trigger()
     //     .and(leftJoystick.button(4).negate())
     //     .whileTrue(
-    //         new ParallelCommandGroup(
-    //             elevator.setPositionLoggedTunableNumber(),
-    // arm.setPositionLoggedTunableNumber()));
+    //         Atlas.synchronize(
+    //             intake.getArmTunableNumber(), elevator.getTunableNumber(),
+    // arm.getTunableNumber()));
   }
 
   /**

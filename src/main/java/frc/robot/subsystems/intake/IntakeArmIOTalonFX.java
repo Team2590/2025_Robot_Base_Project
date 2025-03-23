@@ -36,6 +36,7 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
       new LoggedTunableNumber("IntakeArm/cruiseVelocity", 100);
   private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 200);
   private LoggedTunableNumber jerk = new LoggedTunableNumber("IntakeArm/jerk", 250);
+  private LoggedTunableNumber setPos = new LoggedTunableNumber("IntakeArm/setpointPos", 0);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
@@ -165,6 +166,14 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
     } else {
       System.out.println("CAN'T MOVE INTAKE ARM, SAFETY CHECK FAILED");
     }
+  }
+
+  public void setPositionTunableNumber() {
+    setPosition(setPos.get());
+  }
+
+  public double getTunableNumber() {
+    return setPos.get();
   }
 
   @Override

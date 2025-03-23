@@ -57,6 +57,10 @@ public class Elevator extends SubsystemBase {
     return runEnd(() -> io.setPositionLoggedNumber(), () -> io.setPositionLoggedNumber());
   }
 
+  public double getTunableNumber() {
+    return io.getTunableNumber();
+  }
+
   public Command resetRotationCountCommand() {
     return runOnce(io::resetRotationCount);
   }

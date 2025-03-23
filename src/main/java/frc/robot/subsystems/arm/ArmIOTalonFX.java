@@ -171,6 +171,10 @@ public class ArmIOTalonFX implements ArmIO {
     return armCancoder.getAbsolutePosition().getValueAsDouble();
   }
 
+  public double getTunableNumber() {
+    return setPos.get();
+  }
+
   public void stop() {
     arm.stopMotor();
   }

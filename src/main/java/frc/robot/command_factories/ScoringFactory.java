@@ -76,21 +76,21 @@ public class ScoringFactory {
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
             .withName("Prime " + level.name());
       case L3:
-      Commands.parallel(
-        Commands.print("Priming " + level.name()),
-        Atlas.synchronize(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-            level.getElevatorPosition(),
-            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3))
-    .withName("Prime " + level.name());
+        Commands.parallel(
+                Commands.print("Priming " + level.name()),
+                Atlas.synchronize(
+                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                    level.getElevatorPosition(),
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3))
+            .withName("Prime " + level.name());
       default:
         return Commands.parallel(
-          Commands.print("Priming " + level.name()),
-          Atlas.synchronize(
-              Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-              level.getElevatorPosition(),
-              Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS))
-      .withName("Prime " + level.name());
+                Commands.print("Priming " + level.name()),
+                Atlas.synchronize(
+                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                    level.getElevatorPosition(),
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS))
+            .withName("Prime " + level.name());
     }
   }
 

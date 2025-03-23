@@ -104,6 +104,10 @@ public class Intake extends SubsystemBase {
     }
   }
 
+  public double getArmTunableNumber() {
+    return intakeArmIO.getTunableNumber();
+  }
+
   public Command runIntake(double voltage) {
     return runEnd(
             () -> {
@@ -120,7 +124,7 @@ public class Intake extends SubsystemBase {
 
   public Command runIntakeVoltage(double voltage) {
     return runEnd(() -> intakeIO.setVoltage(voltage), intakeIO::stop)
-    .withName("Run Intake Voltage");
+        .withName("Run Intake Voltage");
   }
 
   public Command setPosition(double position) {

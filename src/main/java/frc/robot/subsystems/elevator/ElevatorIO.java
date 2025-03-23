@@ -33,6 +33,10 @@ public interface ElevatorIO {
 
   public default void setPositionLoggedNumber() {}
 
+  public default double getTunableNumber() {
+    return 0;
+  }
+
   /** Run open loop at the specified voltage. */
   public default void setVoltage(VoltageOut volts) {}
 }
