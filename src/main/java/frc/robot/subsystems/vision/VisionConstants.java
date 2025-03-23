@@ -83,8 +83,9 @@ public class VisionConstants {
   public static final Set<Integer> FIDUCIAL_IDS_BLUE = Set.of(17, 18, 19, 20, 21, 22);
 
   public class CoralAlgaeCameraConstants {
-    public static double OBJECT_CAMERA_HEIGHT_METERS = 0.62;
+    public static double OBJECT_CAMERA_HEIGHT_METERS = 0.41 - 0.15;
     public static double OBJECT_CAMERA_PITCH = Math.toRadians(0);
+    public static double OBJECT_CAMERA_YAW = Math.toRadians(0);
     public static double OBJECT_CAMERA_X_DISTANCE_FROM_CENTER_METERS = Units.inchesToMeters(0);
     public static double OBJECT_CAMERA_Y_DISTANCE_FROM_CENTER_METERS = 0;
 
@@ -95,8 +96,8 @@ public class VisionConstants {
             OBJECT_CAMERA_HEIGHT_METERS,
             new Rotation3d(
                 0, // ROLL
-                -Math.toRadians(OBJECT_CAMERA_PITCH), // PITCH
-                -Math.toRadians(0) // YAW
+                OBJECT_CAMERA_PITCH, // PITCH
+                OBJECT_CAMERA_YAW // YAW
                 ));
 
     public static int CORAL_PIPELINE_INDEX = 0;

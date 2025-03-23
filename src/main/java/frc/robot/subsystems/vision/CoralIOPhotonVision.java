@@ -36,12 +36,13 @@ public class CoralIOPhotonVision implements CoralDetectionIO {
     private double camHeight =
         VisionConstants.CoralAlgaeCameraConstants.OBJECT_CAMERA_HEIGHT_METERS;
     private double camPitch = VisionConstants.CoralAlgaeCameraConstants.OBJECT_CAMERA_PITCH;
+    private double camYaw = VisionConstants.CoralAlgaeCameraConstants.OBJECT_CAMERA_YAW;
     private double camXOffset =
         VisionConstants.CoralAlgaeCameraConstants.OBJECT_CAMERA_X_DISTANCE_FROM_CENTER_METERS;
     private double camYOffset =
         VisionConstants.CoralAlgaeCameraConstants.OBJECT_CAMERA_Y_DISTANCE_FROM_CENTER_METERS;
     private LoggedTunableNumber camFocalLength =
-        new LoggedTunableNumber("Vision/CoralCamFocalLength", 0.65);
+        new LoggedTunableNumber("Vision/CoralCamFocalLength", 0.39);
     private double coralXOffset = VisionConstants.CoralAlgaeCameraConstants.CORAL_X_OFFSET;
     private double coralYOffset = VisionConstants.CoralAlgaeCameraConstants.CORAL_Y_OFFSET;
     private double coralYaw = 0;
@@ -69,7 +70,7 @@ public class CoralIOPhotonVision implements CoralDetectionIO {
     }
 
     public double getCoralYaw() {
-      return coralYaw;
+      return -coralYaw;
     }
 
     @Override
@@ -87,14 +88,16 @@ public class CoralIOPhotonVision implements CoralDetectionIO {
                   double mYaw = Math.toRadians(target.getYaw());
                   double realPitch = Math.atan2(mPitch, camFocalLength.getAsDouble());
                   double realYaw = Math.atan2(mYaw, camFocalLength.getAsDouble());
-                  double distanceToCoral = camHeight / (Math.tan(camPitch - realPitch));
-                  double xToCoral = distanceToCoral * Math.cos(realYaw);
-                  double yToCoral = distanceToCoral * Math.sin(realYaw);
+                  double x_z_mag = camHeight / Math.sin(-realPitch + camPitch);
+                  double y_comp = x_z_mag * Math.tan(realYaw - camYaw);
+                  double x_comp = x_z_mag * Math.sin(realPitch);
+                  double z_comp = x_z_mag * Math.cos(realPitch);
+                  System.out.println("\n \n \n \n " + camHeight / Math.tan(-mPitch));
+                  System.out.println(camHeight / Math.tan(-realPitch));
                   Transform3d cameraToCoral =
-                      new Transform3d(
-                          xToCoral, -yToCoral, camHeight, new Rotation3d(0, -realPitch, -realYaw));
+                      new Transform3d(x_comp, -y_comp, z_comp, new Rotation3d(0, 0, 0));
                   double currentCoralYaw =
-                      Math.toDegrees(Math.atan((yToCoral + camYOffset) / (xToCoral + camXOffset)));
+                      Math.toDegrees(Math.atan((y_comp - camYOffset) / (x_comp - camXOffset)));
                   coralPose =
                       new Pose3d(
                               robotPose.getX(),
