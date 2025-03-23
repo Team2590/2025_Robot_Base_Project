@@ -274,6 +274,7 @@ public final class Constants {
     public static double ARM_SCORING_CORAL_POS_L3 = 0.6;
     public static double ARM_SCORING_CORAL_POS_L4 = 0.57;
     public static double ARM_INTAKE_SOURCE_POSITION = .18; // .09
+    public static double ARM_INTAKE_ALGAE_GROUND_POSITION = .2;
     public static double ARM_DEALGAE_POSITION = .65;
     public static double ARM_HANDOFF_POS = 0; // TODO: Change to real value
     public static double ARM_BARGE_POS = .7; // TODO: find real value
@@ -304,6 +305,7 @@ public final class Constants {
     public static double ELEVATOR_MANUAL_VOLTAGE = 1;
     public static double ELEVATOR_HANDOFF_POS = 0; // TODO: Change to real value
     public static double ELEVATOR_BARGE_POS = 80; // TODO: find real value
+    public static double ELEVATOR_INTAKE_ALGAE_POS = 5; // TODO find real value
   }
 
   /*   public final class ElevatorConstantsLeonidas {

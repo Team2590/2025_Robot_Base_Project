@@ -23,7 +23,9 @@ public class IntakeFactory {
   }
 
   public static Command runIntakeVoltage(DoubleSupplier speed) {
-    return RobotContainer.getIntake().runIntakeVoltage(speed.getAsDouble()).withName("Run Intake Voltage");
+    return RobotContainer.getIntake()
+        .runIntakeVoltage(speed.getAsDouble())
+        .withName("Run Intake Voltage");
   }
 
   /**
