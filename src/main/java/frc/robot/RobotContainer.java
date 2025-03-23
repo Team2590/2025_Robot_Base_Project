@@ -583,4 +583,16 @@ public class RobotContainer {
   public static CommandXboxController getOperatorController() {
     return controller;
   }
+
+  public static void setElevator(Elevator elevator) {
+    RobotContainer.elevator = elevator;
+  }
+
+  public static void setArm(Arm arm) {
+    RobotContainer.arm = arm;
+  }
+
+  public static void setIntake(Intake intake) {
+    RobotContainer.intake = intake;
+  }
 }
