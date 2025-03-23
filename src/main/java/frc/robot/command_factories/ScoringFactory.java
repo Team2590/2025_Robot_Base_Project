@@ -189,29 +189,19 @@ public class ScoringFactory {
   }
 
   public static Command prepClimb() {
-    // return new ParallelCommandGroup(
-    // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS),
-    // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
     return new ParallelCommandGroup(
             IntakeFactory.setIntakeCoralPosition(),
             ArmFactory.setPositionBlocking(.33),
             ElevatorFactory.setPositionBlocking(0.5))
-        // .andThen(LEDFactory.blink())
         .withName("Deploy climb mechanism");
-    // , ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)
   }
 
   public static Command deployMechanism() {
-    return ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION);
+    return ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION).withName("Deply Climb");
   }
 
   public static Command climb() {
-    return Commands.parallel(
-            // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS),
-            // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
-            ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION))
-        // .andThen(LEDFactory.auraRizz())
-        .withName("Climb");
+    return Commands.sequence(prepClimb(), ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION).onlyIf(() -> RobotContainer.getClimb().getClimbLimitSwitchValue())).withName("Climb");
   }
 
   public static Command setDefaults() {
