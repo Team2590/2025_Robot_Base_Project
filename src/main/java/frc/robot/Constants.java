@@ -331,9 +331,8 @@ public final class Constants {
     public static final boolean invert = false; // TODO
     public static final boolean brake = true; // TODO
     public static final double reduction = 1; // TODO
-    public static final int proxSensor_ID = 0; // TODO
     public static final double RUN_VOLTAGE = 3;
-    public static final double INTAKE_ALGAE_VOLTAGE = 3;
+    public static final double GRAB_ALGAE_VOLTAGE = 3;
   }
 
   public final class IntakeConstantsLeonidas {
@@ -343,11 +342,14 @@ public final class Constants {
     public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 1;
-    public static final double INTAKE_FACTORY_CORAL_POSITION = 11; //TODO
-    public static final double INTAKE_FACTORY_ALGAE_POSITION = 5.4; //TODO
-    public static final double INTAKE_FACTORY_HOME_POSITION = 0; // TODO
-    public static final double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 0; // TODO
-    public static final double INTAKE_CORAL_INTAKE_SPEED = 4; //TODO
+    public static final int followerCanID = 1; // TODO: change to real ID
+    public static final String followerCanBus = "Takeover";
+    public static final boolean followerOpposeLeader = false;
+    public static final double INTAKE_FACTORY_CORAL_POSITION = 11;
+    public static final double INTAKE_FACTORY_ALGAE_POSITION = 5.4;
+    public static final double INTAKE_FACTORY_HOME_POSITION = 0;
+    public static final double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 0;
+    public static final double INTAKE_CORAL_INTAKE_SPEED = 4;
     public static final double INTAKE_CORAL_OUTTAKE_SPEED = -4; // TODO //-
     public static final double INTAKE_ALGAE_INTAKE_SPEED = -6; //TODO
     public static final double INTAKE_ALGAE_OUTTAKE_SPEED = 8; // TODO

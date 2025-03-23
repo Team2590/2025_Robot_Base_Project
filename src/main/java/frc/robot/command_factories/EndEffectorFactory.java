@@ -1,6 +1,7 @@
 package frc.robot.command_factories;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.RobotContainer;
 
 public class EndEffectorFactory {
@@ -28,8 +29,8 @@ public class EndEffectorFactory {
     return RobotContainer.getEndEffector().runEndEffectorManual();
   }
 
-  public static Command runEndEffectorIntakeAlgae() {
-    return RobotContainer.getEndEffector().runEndEffectorIntakeAlgae();
+  public static Command runEndEffectorGrabAndHoldAlgae() {
+    return RobotContainer.getEndEffector().runEndEffectorGrabAndHoldAlgae();
   }
   /**
    * Creates a command to run the endeffector outtake.
@@ -47,7 +48,6 @@ public class EndEffectorFactory {
   }
 
   public static boolean endEffectorCommandFinished() {
-
     return !RobotContainer.getEndEffector().isRunning();
   }
 }

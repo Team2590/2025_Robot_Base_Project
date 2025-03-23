@@ -242,7 +242,11 @@ public class RobotContainer {
                     Constants.IntakeConstantsLeonidas.currentLimitAmps,
                     Constants.IntakeConstantsLeonidas.invert,
                     Constants.IntakeConstantsLeonidas.brake,
-                    Constants.IntakeConstantsLeonidas.reduction),
+                    Constants.IntakeConstantsLeonidas.reduction,
+                    Constants.IntakeConstantsLeonidas.followerCanID,
+                    Constants.IntakeConstantsLeonidas.followerCanBus,
+                    Constants.IntakeConstantsLeonidas.followerOpposeLeader
+                ),
                 new IntakeArmIOTalonFX(
                     Constants.IntakeArmConstantsLeonidas.canID,
                     Constants.IntakeArmConstantsLeonidas.canBus,
@@ -482,8 +486,8 @@ public class RobotContainer {
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
 
     // De-Algae Buttons
-    rightJoystick.povRight().whileTrue(GamePieceFactory.intakeAlgaeL2());
-    rightJoystick.povLeft().whileTrue(GamePieceFactory.intakeAlgaeL3());
+    rightJoystick.povRight().onTrue(GamePieceFactory.GrabAlgaeL2());
+    rightJoystick.povLeft().onTrue(GamePieceFactory.GrabAlgaeL3());
 
     // Controller App Buttons
     rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));

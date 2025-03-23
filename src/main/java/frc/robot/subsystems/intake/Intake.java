@@ -12,12 +12,12 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
-  private final IntakeIO intakeIO;
-  private final IntakeArmIO intakeArmIO;
-  private final IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
-  // private final IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
-  private final Alert intakeDisconnected;
-  private final IntakeArm intakeArm;
+  private IntakeIO intakeIO;
+  private IntakeArmIO intakeArmIO;
+  private IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
+  // private IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
+  private Alert intakeDisconnected;
+  private IntakeArm intakeArm;
   private LoggedTunableNumber INTAKE_ALGAE_CURRENT_THRESHOLD =
       new LoggedTunableNumber("Intake/AlgaeCurrentThreshold", -50); // -15
   private LoggedTunableNumber INTAKE_CORAL_CURRENT_THRESHOLD =
@@ -25,7 +25,7 @@ public class Intake extends SubsystemBase {
   private LoggedTunableNumber LINEAR_FILTER_SAMPLES =
       new LoggedTunableNumber("Intake/LinearFilterSamples", 20);
   private LinearFilter filter;
-  double filtered_data;
+  private double filtered_data;
 
   public Intake(IntakeIO intakeIO, IntakeArmIO intakeArmIO) {
     this.intakeIO = intakeIO;
