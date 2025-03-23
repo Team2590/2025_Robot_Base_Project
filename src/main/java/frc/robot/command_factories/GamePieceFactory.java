@@ -42,14 +42,14 @@ public class GamePieceFactory {
 
   public static Command GrabAlgaeL2() {
     return new ParallelCommandGroup(
-        ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS),
+        ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3),
         ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2),
         EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
   }
 
   public static Command GrabAlgaeL3() {
     return new ParallelCommandGroup(
-        ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS),
+        ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3),
         ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3),
         EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
   }

@@ -265,18 +265,17 @@ public final class Constants {
     public static final double ARM_SET_STOW = .33; // TODO
     // public static final double magOffset = -.596436; // -.398
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
-    public static final double magOffset = -0.379; // -.3347; // -.635; // TODO
+    public static final double magOffset = -0.2; // -0.379; // -.3347; // -.635; // TODO
     public static final double sensorReduction = 58.8; // TODO
     public static double ARM_OPERATIONAL_MIN_POS = 0; // TODO
     public static double ARM_OPERATIONAL_MAX_POS = .9; // TODO
-    public static double ARM_SCORING_CORAL_POS = 0.6; // TODO
     public static double ARM_SCORING_CORAL_POS_L3 = 0.098; // TODO
     public static double ARM_RELEASE_DIFF = 0.078;
     public static double ARM_SCORING_CORAL_POS_L4 = 0.0957; // TODO
     public static double ARM_INTAKE_SOURCE_POSITION = .18; // TODO
     public static double ARM_DEALGAE_POSITION = .01; // TODO
     public static double ARM_BARGE_POS = .7; // TODO: find real value
-    public static double ARM_SCORING_POS = .7; // TODO: find real value
+    // public static double ARM_SCORING_POS = .7; // TODO: find real value
     public static double ARM_WRAP_POS = 0.794;
   }
 

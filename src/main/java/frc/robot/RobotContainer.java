@@ -535,13 +535,15 @@ public class RobotContainer {
   private void configureButtonBindingsTuning() {
     leftJoystick.button(1).onTrue(intake.setPosition(3.7));
     leftJoystick.button(2).onTrue(intake.setPosition(15.3));
-    rightJoystick.button(2).whileTrue(intake.runIntakeUntilHasCoral(-12));
+    // rightJoystick.button(2).whileTrue(intake.runIntakeUntilHasCoral(-12));
+    rightJoystick.button(2).whileTrue(ScoringFactory.primeForLevel(Level.L2));
     rightJoystick
         .trigger()
         .and(leftJoystick.button(4).negate())
         .whileTrue(
             new ParallelCommandGroup(
-                elevator.setPositionLoggedTunableNumber(), arm.setPositionLoggedTunableNumber()));
+                // elevator.setPositionLoggedTunableNumber(),
+                arm.setPositionLoggedTunableNumber()));
     // leftJoystick.button(4).onTrue(arm.setPosition(armSetpoint.get()));
     // leftJoystick.trigger().onTrue(intake.runIntakeUntilHasCoral(intakeVoltage));
   }
