@@ -248,8 +248,7 @@ public class RobotContainer {
                     Constants.IntakeConstantsLeonidas.reduction,
                     Constants.IntakeConstantsLeonidas.followerCanID,
                     Constants.IntakeConstantsLeonidas.followerCanBus,
-                    Constants.IntakeConstantsLeonidas.followerOpposeLeader
-                ),
+                    Constants.IntakeConstantsLeonidas.followerOpposeLeader),
                 new IntakeArmIOTalonFX(
                     Constants.IntakeArmConstantsLeonidas.canID,
                     Constants.IntakeArmConstantsLeonidas.canBus,

@@ -35,9 +35,6 @@ public class EndEffector extends SubsystemBase {
     Logger.recordOutput("EndEffector/CurrentThreshold", CURRENT_THRESHOLD);
     Logger.recordOutput("EndEffector/filter", filtered_data);
 
-
-
-
     if (taps.hasChanged(0)) {
       filter = LinearFilter.movingAverage((int) taps.get());
     }
@@ -66,10 +63,10 @@ public class EndEffector extends SubsystemBase {
   }
 
   public Command runEndEffectorGrabAndHoldAlgae() {
-    return run(
-        () -> {
+    return run(() -> {
           io.setVoltage(Constants.EndEffectorConstantsLeonidas.GRAB_ALGAE_VOLTAGE);
-        }).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+        })
+        .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
   }
 
   public Command runEndEffectorManual() {
@@ -114,10 +111,9 @@ public class EndEffector extends SubsystemBase {
         });
   }
 
-  public boolean hasCoral(){
+  public boolean hasCoral() {
 
-      return filtered_data >= CURRENT_THRESHOLD.get();
-
+    return filtered_data >= CURRENT_THRESHOLD.get();
   }
 
   public boolean isRunning() {
