@@ -464,8 +464,7 @@ public class RobotContainer {
     // climb buttons
     // Causing NullPointerException on startup in SIM
     rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
-    rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
-    rightJoystick.button(16).whileTrue(ScoringFactory.climb());
+    rightJoystick.button(16).onTrue(ScoringFactory.climb());
 
     // Scoring buttons
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));

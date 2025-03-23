@@ -377,6 +377,7 @@ public final class Constants {
     public static final double CLIMB_MECHANISM_POSITION = 13; // 13
     public static final double CLIMB_MAX_POSITION = 189; // 213.25 (actual), 189 (from 2/23)
     public static final double CLIMB_VOLTAGE = 8.0; // 2.0 tested
+    public static final int CLIMB_LIMIT_SWITCH = 0;
   }
 
   public final class LEDConstantsLeonidas {
