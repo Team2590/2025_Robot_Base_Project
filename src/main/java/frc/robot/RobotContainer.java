@@ -241,7 +241,11 @@ public class RobotContainer {
                     Constants.IntakeConstantsLeonidas.currentLimitAmps,
                     Constants.IntakeConstantsLeonidas.invert,
                     Constants.IntakeConstantsLeonidas.brake,
-                    Constants.IntakeConstantsLeonidas.reduction),
+                    Constants.IntakeConstantsLeonidas.reduction,
+                    Constants.IntakeConstantsLeonidas.followerCanID,
+                    Constants.IntakeConstantsLeonidas.followerCanBus,
+                    Constants.IntakeConstantsLeonidas.followerOpposeLeader
+                ),
                 new IntakeArmIOTalonFX(
                     Constants.IntakeArmConstantsLeonidas.canID,
                     Constants.IntakeArmConstantsLeonidas.canBus,

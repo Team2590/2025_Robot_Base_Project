@@ -342,6 +342,9 @@ public final class Constants {
     public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 1;
+    public static final int followerCanID = 1; // TODO: change to real ID
+    public static final String followerCanBus = "Takeover";
+    public static final boolean followerOpposeLeader = false;
     public static final double INTAKE_FACTORY_CORAL_POSITION = 11;
     public static final double INTAKE_FACTORY_ALGAE_POSITION = 5.4;
     public static final double INTAKE_FACTORY_HOME_POSITION = 0;
