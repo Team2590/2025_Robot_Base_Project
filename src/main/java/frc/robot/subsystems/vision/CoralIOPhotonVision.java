@@ -89,11 +89,9 @@ public class CoralIOPhotonVision implements CoralDetectionIO {
                   double realPitch = Math.atan2(mPitch, camFocalLength.getAsDouble());
                   double realYaw = Math.atan2(mYaw, camFocalLength.getAsDouble());
                   double x_z_mag = camHeight / Math.sin(-realPitch + camPitch);
-                  double y_comp = x_z_mag * Math.tan(realYaw - camYaw);
-                  double x_comp = x_z_mag * Math.sin(realPitch);
-                  double z_comp = x_z_mag * Math.cos(realPitch);
-                  System.out.println("\n \n \n \n " + camHeight / Math.tan(-mPitch));
-                  System.out.println(camHeight / Math.tan(-realPitch));
+                  double x_comp = x_z_mag * Math.cos(realPitch);
+                  double y_comp = x_z_mag * Math.tan(realYaw);
+                  double z_comp = x_comp * Math.sin(realPitch);
                   Transform3d cameraToCoral =
                       new Transform3d(x_comp, -y_comp, z_comp, new Rotation3d(0, 0, 0));
                   double currentCoralYaw =
@@ -112,22 +110,12 @@ public class CoralIOPhotonVision implements CoralDetectionIO {
                   if (target != null) {
                     coralYaw = currentCoralYaw;
                     coralRotation = new Rotation2d(-currentCoralYaw);
-                  } else {
-                    coralYaw = 0;
-                    coralRotation = new Rotation2d();
                   }
                 } else {
                   target = null;
-                  coralXOffset = 0;
-                  coralYOffset = 0;
-                  coralPose = robotPose;
-                  coralYaw = 0;
                 }
               } catch (NullPointerException e) {
                 e.printStackTrace();
-                coralPose = robotPose;
-                coralYaw = 0;
-                coralRotation = new Rotation2d();
               }
             }
           }
