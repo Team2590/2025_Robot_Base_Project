@@ -83,7 +83,7 @@ public class ArmFactory {
   public static double wrapArmSetpoint(double setpoint) {
 
     double current = RobotContainer.getArm().getAbsolutePosition();
-    double wrappedSetpoint = setpoint + ArmConstantsLeonidas.SECOND_PASS_OFFSET;
+    double wrappedSetpoint = setpoint + ArmConstantsLeonidas.ARM_WRAP_POS;
     if (RobotContainer.getElevator().getRotationCount()
         >= ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
       return NemesisMathUtil.selectClosest(setpoint, wrappedSetpoint, current);

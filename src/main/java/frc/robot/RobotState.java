@@ -123,16 +123,6 @@ public class RobotState extends SubsystemBase {
   }
 
   /**
-   * Checks if intake has algae
-   *
-   * @return true if the intake has algae, false if not
-   */
-  @AutoLogOutput(key = "Intake/hasAlgae")
-  public static boolean intakeHasAlgae() {
-    return intake.hasAlgae();
-  }
-
-  /**
    * Checks what zone robot is in
    *
    * @return the zone robot is in

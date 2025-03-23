@@ -8,7 +8,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
   private ArmIO arm;
-  private double setpointTolerance = 0.05;
+  private double setpointTolerance = 0.01;
   private double setpoint;
 
   private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
@@ -35,7 +35,7 @@ public class Arm extends SubsystemBase {
 
   public Command setPositionBlocking(double setpoint) {
     this.setpoint = setpoint;
-    return runEnd(() -> arm.setPosition(setpoint), () -> arm.setPosition(setpoint))
+    return runEnd(() -> arm.setPosition(setpoint), () -> {})
         .until(() -> NemesisMathUtil.isApprox(inputs.armabspos, setpointTolerance, setpoint));
   }
 

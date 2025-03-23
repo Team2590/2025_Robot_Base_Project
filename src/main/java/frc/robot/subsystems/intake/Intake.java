@@ -18,10 +18,10 @@ public class Intake extends SubsystemBase {
   // private IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
   private Alert intakeDisconnected;
   private IntakeArm intakeArm;
-  private LoggedTunableNumber INTAKE_ALGAE_CURRENT_THRESHOLD =
-      new LoggedTunableNumber("Intake/AlgaeCurrentThreshold", -50); // -15
-  private LoggedTunableNumber INTAKE_CORAL_CURRENT_THRESHOLD =
-      new LoggedTunableNumber("Intake/CoralCurrentThreshold", 60);
+  private LoggedTunableNumber INTAKE_TRANSLATION_CURRENT_THRESHOLD =
+      new LoggedTunableNumber("Intake/TranslationCurrentThreshold", 50); // -15
+  private LoggedTunableNumber INTAKE_CURRENT_THRESHOLD =
+      new LoggedTunableNumber("Intake/CurrentThreshold", 60);
   private LoggedTunableNumber LINEAR_FILTER_SAMPLES =
       new LoggedTunableNumber("Intake/LinearFilterSamples", 20);
   private LinearFilter filter;
@@ -43,6 +43,10 @@ public class Intake extends SubsystemBase {
     intakeDisconnected.set(!intakeInputs.connected);
     filtered_data = filter.calculate(intakeInputs.torqueCurrentAmps);
     Logger.recordOutput("Intake/filter", filtered_data);
+
+    if (LINEAR_FILTER_SAMPLES.hasChanged(0)) {
+      filter = LinearFilter.movingAverage((int) LINEAR_FILTER_SAMPLES.get());
+    }
   }
 
   private class IntakeArm extends SubsystemBase {
@@ -61,18 +65,6 @@ public class Intake extends SubsystemBase {
       intakeArmIO.updateInputs(intakeArmInputs);
       intakeArmIO.updateTunableNumbers();
       intakeArmDisconnected.set(!intakeArmInputs.connected);
-    }
-
-    public double getCurrentPosition() {
-      return intakeArmInputs.rotationCount;
-    }
-
-    public Command setIntakeCoralPosition() {
-      return runOnce(() -> intakeArmIO.setPosition(10));
-    }
-
-    public Command setIntakeAlgaePosition() {
-      return runOnce(() -> intakeArmIO.setPosition(4));
     }
 
     public Command resetRotationCountCommand() {
@@ -104,11 +96,7 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  public double getArmTunableNumber() {
-    return intakeArmIO.getTunableNumber();
-  }
-
-  public Command runIntake(double voltage) {
+  public Command runIntakeUntilHasCoral(double voltage) {
     return runEnd(
             () -> {
               System.out.println("Starting the intake command now!");
@@ -118,7 +106,7 @@ public class Intake extends SubsystemBase {
               System.out.println("Stopping the intake command now!");
               intakeIO.stop();
             })
-        .until(() -> hasAlgae() || hasCoral())
+        .until(() -> hasCoral())
         .withName("Run Intake");
   }
 
@@ -152,16 +140,6 @@ public class Intake extends SubsystemBase {
     return intakeArm.getVelocityRadPerSec();
   }
 
-  /**
-   * Returns boolean whether the intake has the algae (not running)
-   *
-   * @return true if the intake has secured the algae, false if not
-   */
-  @AutoLogOutput
-  public boolean hasAlgae() {
-    return filtered_data <= INTAKE_ALGAE_CURRENT_THRESHOLD.get();
-  }
-
   /*
    *
    * The way we can distinguish between Algae and Coral is by using the sign of the current
@@ -169,6 +147,6 @@ public class Intake extends SubsystemBase {
    */
   @AutoLogOutput
   public boolean hasCoral() {
-    return filtered_data >= INTAKE_CORAL_CURRENT_THRESHOLD.get();
+    return filtered_data >= INTAKE_CURRENT_THRESHOLD.get();
   }
 }

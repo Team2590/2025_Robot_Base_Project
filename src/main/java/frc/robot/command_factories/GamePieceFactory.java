@@ -14,7 +14,7 @@ public class GamePieceFactory {
     return Atlas.synchronize(
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
-            Constants.ArmConstantsLeonidas.ARM_INTAKE_ALGAE_GROUND_POSITION)
+            Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)
         .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
   }
 
@@ -52,7 +52,7 @@ public class GamePieceFactory {
         Atlas.synchronize(
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3,
-            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS),
+            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3),
         EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
   }
   public static Command intakeCoralGround() {
@@ -66,14 +66,14 @@ public class GamePieceFactory {
 
   public static Command GrabAlgaeL2() {
     return new ParallelCommandGroup(
-        ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS),
+        ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3),
         ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2),
         EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
   }
 
   public static Command GrabAlgaeL3() {
     return new ParallelCommandGroup(
-        ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS),
+        ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3),
         ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3),
         EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
   }
