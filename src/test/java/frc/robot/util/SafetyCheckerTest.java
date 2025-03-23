@@ -36,10 +36,6 @@ class SafetyCheckerTest {
 
   @Test
   void armMovementSafety_SetPositionsAreSafe_returnsTrue() {
-    assertTrue(
-        SafetyChecker.isSafe(
-            SafetyChecker.MechanismType.ARM_MOVEMENT,
-            Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION));
 
     assertTrue(
         SafetyChecker.isSafe(

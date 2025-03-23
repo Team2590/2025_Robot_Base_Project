@@ -491,11 +491,11 @@ public class RobotContainer {
 
     leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
-    leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());
+    leftJoystick.button(3).onTrue(GamePieceFactory.intakeCoralGroundandHandoff());
     rightJoystick
         .trigger()
         .and(rightJoystick.button(4).negate())
-        .whileTrue(GamePieceFactory.intakeCoralGround());
+        .whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
 
     rightJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorManual());
 
@@ -546,7 +546,6 @@ public class RobotContainer {
     // NamedCommands.registerCommand("PrimeL1",
     // ScoringFactory.primeForLevel(ScoringFactory.Level.L1));
     // TODO: Prime for Source
-    NamedCommands.registerCommand("PrimeSource", GamePieceFactory.primeCoralGround());
     NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeAlgaeGround());
 
     // Scoring Commands
