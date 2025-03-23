@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -244,8 +245,7 @@ public class RobotContainer {
                     Constants.IntakeConstantsLeonidas.reduction,
                     Constants.IntakeConstantsLeonidas.followerCanID,
                     Constants.IntakeConstantsLeonidas.followerCanBus,
-                    Constants.IntakeConstantsLeonidas.followerOpposeLeader
-                ),
+                    Constants.IntakeConstantsLeonidas.followerOpposeLeader),
                 new IntakeArmIOTalonFX(
                     Constants.IntakeArmConstantsLeonidas.canID,
                     Constants.IntakeArmConstantsLeonidas.canBus,
@@ -397,7 +397,8 @@ public class RobotContainer {
     if (Constants.currentMode == Constants.Mode.SIM) {
       configureButtonBindingsSimulation();
     } else {
-      configureButtonBindings();
+      //   configureButtonBindings();
+      configureButtonBindingsTuning();
     }
   }
 
@@ -529,6 +530,20 @@ public class RobotContainer {
     //         new ParallelCommandGroup(
     //             elevator.setPositionLoggedTunableNumber(),
     // arm.setPositionLoggedTunableNumber()));
+  }
+
+  private void configureButtonBindingsTuning() {
+    leftJoystick.button(1).onTrue(intake.setPosition(3.7));
+    leftJoystick.button(2).onTrue(intake.setPosition(15.3));
+    rightJoystick.button(2).whileTrue(intake.runIntakeUntilHasCoral(-12));
+    rightJoystick
+        .trigger()
+        .and(leftJoystick.button(4).negate())
+        .whileTrue(
+            new ParallelCommandGroup(
+                elevator.setPositionLoggedTunableNumber(), arm.setPositionLoggedTunableNumber()));
+    // leftJoystick.button(4).onTrue(arm.setPosition(armSetpoint.get()));
+    // leftJoystick.trigger().onTrue(intake.runIntakeUntilHasCoral(intakeVoltage));
   }
 
   /**

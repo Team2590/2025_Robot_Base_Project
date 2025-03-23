@@ -19,7 +19,9 @@ public class IntakeFactory {
    * @return Command to run the intake
    */
   public static Command runIntake(DoubleSupplier intakeSpeed) {
-    return RobotContainer.getIntake().runIntake(intakeSpeed.getAsDouble()).withName("Run Intake");
+    return RobotContainer.getIntake()
+        .runIntakeUntilHasCoral(intakeSpeed.getAsDouble())
+        .withName("Run Intake");
   }
 
   /**
