@@ -12,7 +12,7 @@ public class GamePieceFactory {
 
   public static Command intakeAlgaeGround() {
     return Atlas.synchronize(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+            Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_ALGAE_POS,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
             Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)
         .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
@@ -20,7 +20,7 @@ public class GamePieceFactory {
 
   public static Command intakeCoralGroundandHandoff() {
     return Atlas.synchronize(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_CORAL_POS,
+            Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_ALGAE_POS,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
             Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)
         .andThen(IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED)).until(() -> RobotContainer.getIntake().hasCoral())
@@ -34,7 +34,7 @@ public class GamePieceFactory {
 
   public static Command intakeCoralNoHandoff(){
     return Commands.parallel(IntakeFactory.setPositionBlocking(
-      Constants.IntakeArmConstantsLeonidas.INTAKE_CORAL_POS), IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED)).until(() -> RobotContainer.getIntake().hasCoral()).andThen(IntakeFactory.setPositionBlocking(
+      Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_ALGAE_POS), IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED)).until(() -> RobotContainer.getIntake().hasCoral()).andThen(IntakeFactory.setPositionBlocking(
         Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS));
   }
 
