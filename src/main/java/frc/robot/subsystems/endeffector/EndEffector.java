@@ -13,7 +13,7 @@ public class EndEffector extends SubsystemBase {
   private final EndEffectorIO.EndEffectorIOInputs inputs = new EndEffectorIO.EndEffectorIOInputs();
   private boolean isRunning = false;
   private LoggedTunableNumber CURRENT_THRESHOLD =
-      new LoggedTunableNumber("EndEffector/CURRENT_THRESHOLD", 200);
+      new LoggedTunableNumber("EndEffector/CURRENT_THRESHOLD", 30);
   private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 10);
   private LinearFilter filter = LinearFilter.movingAverage((int) taps.get());
   double filtered_data;
@@ -43,7 +43,7 @@ public class EndEffector extends SubsystemBase {
   public Command runEndEffector() {
     return runEnd(
             () -> {
-              io.setVoltage(-Constants.EndEffectorConstantsLeonidas.RUN_VOLTAGE);
+              io.setVoltage(Constants.EndEffectorConstantsLeonidas.RUN_VOLTAGE);
             },
             () -> {
               io.stop();

@@ -10,7 +10,9 @@ import frc.robot.command_factories.IntakeFactory;
 public class IntakeDefaultCommand extends Command {
   private Command hasCoralCommand =
       Commands.waitSeconds(0.1)
-          .andThen(IntakeFactory.setPosition(Constants.IntakeArmConstantsLeonidas.INTAKE_CORAL_POS))
+          .andThen(
+              IntakeFactory.setPosition(
+                  Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS))
           .withName("Intake has coral default command");
 
   public IntakeDefaultCommand() {

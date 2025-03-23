@@ -33,7 +33,6 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
   private StatusSignal<Current> supplyCurrent;
   private StatusSignal<Current> torqueCurrent;
   private StatusSignal<Temperature> tempCelsius;
-  private double statorCurrentAmps;
 
   public EndEffectorIOTalonFX(
       int canID,
@@ -60,7 +59,6 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
     supplyCurrent = leader.getSupplyCurrent();
     torqueCurrent = leader.getTorqueCurrent();
     tempCelsius = leader.getDeviceTemp();
-    statorCurrentAmps = leader.getStatorCurrent().getValueAsDouble();
     this.reduction = reduction;
 
     BaseStatusSignal.setUpdateFrequencyForAll(
@@ -84,7 +82,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
     inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
     inputs.tempCelsius = tempCelsius.getValueAsDouble();
     inputs.rotationCount = leader.getPosition().getValueAsDouble();
-    statorCurrentAmps = leader.getStatorCurrent().getValueAsDouble();
+    inputs.statorCurrentAmps = leader.getStatorCurrent().getValueAsDouble();
   }
 
   @Override
