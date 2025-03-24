@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.command_factories.ArmFactory;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
@@ -148,6 +149,13 @@ public class RobotState extends SubsystemBase {
     } else {
       setAligningState(AligningState.ALIGNING_BACK);
     }
+  }
+
+  public double determineArmSetpoint(double setpoint){
+    if (aligningState.get() == AligningState.ALIGNING_FRONT){
+      return ArmFactory.wrapArmSetpoint(setpoint);
+    }
+    return Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - setpoint;
   }
 
   public void resetAligningState() {

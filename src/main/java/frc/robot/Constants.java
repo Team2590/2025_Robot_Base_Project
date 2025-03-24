@@ -267,6 +267,7 @@ public final class Constants {
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
     public static final double magOffset = -0.2; // -0.379; // -.3347; // -.635; // TODO
     public static final double sensorReduction = 58.8; // TODO
+    public static final double BACK_HORIZONTAL = 0.4;
     public static double ARM_OPERATIONAL_MIN_POS = 0; // TODO
     public static double ARM_OPERATIONAL_MAX_POS = .9; // TODO
     public static double ARM_SCORING_CORAL_POS_L3 = 0.098; // TODO
@@ -294,6 +295,7 @@ public final class Constants {
     public static final boolean followerOpposeLeader = false;
     public static final double kS = 0.59545; // TODO
     public static final double kV = 0.1609; // TODO
+    public static final double ELEVATOR_HANDOFF_POS = 14.7;
     public static double ELEVATOR_L2_POS = 1.06; // TODO
     public static double ELEVATOR_L3_POS = 9.73; // TODO
     public static double ELEVATOR_L4_POS = 22.9; // TODO
