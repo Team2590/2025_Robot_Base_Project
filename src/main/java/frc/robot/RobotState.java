@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.Constants.ElevatorConstantsLeonidas;
+import frc.robot.RobotState.ScoringSetpoints;
 import frc.robot.command_factories.ArmFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.subsystems.arm.Arm;
@@ -18,6 +19,8 @@ import frc.robot.util.NemesisMathUtil;
 
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import lombok.Getter;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -61,6 +64,7 @@ public class RobotState extends SubsystemBase {
   private static AtomicReference<Pose2d> targetPose = new AtomicReference<Pose2d>(new Pose2d());
   private static AtomicReference<ScoringSetpoints> scoringSetpoints = new AtomicReference<ScoringSetpoints>();
   private static HashMap<Level, ScoringSetpoints> levelLookup = new HashMap<Level, ScoringSetpoints>();
+  private final Lock updateLock = new ReentrantLock();
 
   private RobotState(
       Arm arm,
@@ -131,8 +135,14 @@ public class RobotState extends SubsystemBase {
 
   public void periodic() {
     robotPose = drive.getPose();
-    setTargetPose(controllerApp.getTarget().pose());
-    setScoringSetpoints();
+    updateLock.lock();
+    try {
+      Pose2d desiredPose = controllerApp.getTarget().pose();
+        setTargetPoseInternal(desiredPose);
+        setScoringSetpointsInternal(desiredPose);
+    } finally {
+        updateLock.unlock();
+    }
     // currentZone = Constants.locator.getZoneOfField(robotPose);
     endEffectorhasCoral = endEffectorhasCoral();
   }
@@ -200,33 +210,59 @@ public class RobotState extends SubsystemBase {
     return Commands.runOnce(() -> intakeHasAlgae = false);
   }
 
-  public static Pose2d getTargetPose(){
-    return targetPose.get();
-  }
-
-  public void setTargetPose(Pose2d desiredPose){
+  public void setTargetPoseInternal(Pose2d desiredPose){
     targetPose.set(drive.flipScoringSide(desiredPose));
   }
 
-  public void setScoringSetpoints(){
+  private void setScoringSetpointsInternal(Pose2d originalTargetPose) {
     ScoringSetpoints lookup = levelLookup.get(controllerApp.getTarget().scoringLevel());
     // I think we need the original controllerApp pose here to avoid evaluating on an already flipped pose (the targetPose of this class)
     // Opted not to use Aligning enum in the event that we attempt to score without aligning
-    if (drive.frontScore(controllerApp.getTarget().pose())){
-      lookup.armSetpoint = wrapArmSetpoint(lookup.armSetpoint);
-      System.out.println("Scoring Front with a arm setpoint of " + lookup.armSetpoint);
-    }
-    else{
-      // This small computation handles "mirroring" the front scoring positions onto the back side
-      lookup.armSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL -  lookup.armSetpoint;
-      System.out.println("Scoring Back with a arm setpoint of " + lookup.armSetpoint);
+    if (drive.frontScore(originalTargetPose)) {
+        lookup.armSetpoint = wrapArmSetpoint(lookup.armSetpoint);
+        System.out.println("Scoring Front with an arm setpoint of " + lookup.armSetpoint);
+    } else {
+        lookup.armSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - lookup.armSetpoint;
+        System.out.println("Scoring Back with an arm setpoint of " + lookup.armSetpoint);
     }
     scoringSetpoints.set(lookup);
   }
 
-  public static ScoringSetpoints getScoringSetpoints(){
-    return scoringSetpoints.get();
-  }
+  public Pose2d getTargetPose() {
+    updateLock.lock();
+    try {
+        return targetPose.get();
+    } finally {
+        updateLock.unlock();
+    }
+}
+
+public ScoringSetpoints getScoringSetpoints() {
+    updateLock.lock();
+    try {
+        return scoringSetpoints.get();
+    } finally {
+        updateLock.unlock();
+    }
+}
+
+public void setTargetPose(Pose2d desiredPose){
+    updateLock.lock();
+    try {
+        setTargetPoseInternal(desiredPose);
+    } finally {
+        updateLock.unlock();
+    }
+}
+
+public void setScoringSetpoints(){
+    updateLock.lock();
+    try {
+        setScoringSetpointsInternal(controllerApp.getTarget().pose());
+    } finally {
+        updateLock.unlock();
+    }
+}
 
   /*
    * Helper Function, picks the closest value for the arm setpoint based on if the cancoder is wrapped or not
