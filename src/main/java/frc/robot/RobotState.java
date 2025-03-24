@@ -4,13 +4,19 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ArmConstantsLeonidas;
+import frc.robot.Constants.ElevatorConstantsLeonidas;
 import frc.robot.command_factories.ArmFactory;
+import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.NemesisMathUtil;
+
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import lombok.Getter;
@@ -30,6 +36,7 @@ public class RobotState extends SubsystemBase {
   @Getter private static boolean endEffectorhasCoral;
   private static boolean intakeHasCoral;
   private static boolean intakeHasAlgae;
+  private final ControllerOrchestrator controllerApp;
 
   /** The aligning state for scoring, if we are aligning to front or back of the robot. */
   public static enum AligningState {
@@ -38,8 +45,22 @@ public class RobotState extends SubsystemBase {
     ALIGNING_BACK
   }
 
+  public class ScoringSetpoints {
+    public double elevatorSetpoint;
+    public double armSetpoint;
+
+    public ScoringSetpoints(double elevatorSetpoint, double armSetpoint) {
+        this.elevatorSetpoint = elevatorSetpoint;
+        this.armSetpoint = armSetpoint;
+    }
+  }
+
   private AtomicReference<AligningState> aligningState =
       new AtomicReference<RobotState.AligningState>(AligningState.NOT_ALIGNING);
+    
+  private static AtomicReference<Pose2d> targetPose = new AtomicReference<Pose2d>(new Pose2d());
+  private static AtomicReference<ScoringSetpoints> scoringSetpoints = new AtomicReference<ScoringSetpoints>();
+  private static HashMap<Level, ScoringSetpoints> levelLookup = new HashMap<Level, ScoringSetpoints>();
 
   private RobotState(
       Arm arm,
@@ -47,13 +68,18 @@ public class RobotState extends SubsystemBase {
       Elevator elevator,
       EndEffector endEffector,
       Intake intake,
-      Vision vision) {
+      Vision vision,
+      ControllerOrchestrator controllerApp) {
     this.arm = arm;
     this.drive = drive;
     this.elevator = elevator;
     this.endEffector = endEffector;
     this.intake = intake;
     this.vision = vision;
+    this.controllerApp = controllerApp;
+    levelLookup.put(Level.L2, new ScoringSetpoints(Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS, Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3));
+    levelLookup.put(Level.L3, new ScoringSetpoints(Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS, Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3));
+    levelLookup.put(Level.L4, new ScoringSetpoints(Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS, Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4));
   }
 
   /**
@@ -73,11 +99,12 @@ public class RobotState extends SubsystemBase {
       Elevator elevator,
       EndEffector endEffector,
       Intake intake,
-      Vision vision) {
+      Vision vision,
+      ControllerOrchestrator controllerApp) {
     if (instance != null) {
       throw new IllegalStateException("RobotState has already been initialized");
     }
-    instance = new RobotState(arm, drive, elevator, endEffector, intake, vision);
+    instance = new RobotState(arm, drive, elevator, endEffector, intake, vision, controllerApp);
     return instance;
   }
 
@@ -104,6 +131,8 @@ public class RobotState extends SubsystemBase {
 
   public void periodic() {
     robotPose = drive.getPose();
+    setTargetPose(controllerApp.getTarget().pose());
+    setScoringSetpoints();
     // currentZone = Constants.locator.getZoneOfField(robotPose);
     endEffectorhasCoral = endEffectorhasCoral();
   }
@@ -151,13 +180,6 @@ public class RobotState extends SubsystemBase {
     }
   }
 
-  public double determineArmSetpoint(double setpoint){
-    if (aligningState.get() == AligningState.ALIGNING_FRONT){
-      return ArmFactory.wrapArmSetpoint(setpoint);
-    }
-    return Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - setpoint;
-  }
-
   public void resetAligningState() {
     setAligningState(AligningState.NOT_ALIGNING);
   }
@@ -176,5 +198,51 @@ public class RobotState extends SubsystemBase {
 
   public static Command setIntakeNoAlgae() {
     return Commands.runOnce(() -> intakeHasAlgae = false);
+  }
+
+  public static Pose2d getTargetPose(){
+    return targetPose.get();
+  }
+
+  public void setTargetPose(Pose2d desiredPose){
+    targetPose.set(drive.flipScoringSide(desiredPose));
+  }
+
+  public void setScoringSetpoints(){
+    ScoringSetpoints lookup = levelLookup.get(controllerApp.getTarget().scoringLevel());
+    // I think we need the original controllerApp pose here to avoid evaluating on an already flipped pose (the targetPose of this class)
+    // Opted not to use Aligning enum in the event that we attempt to score without aligning
+    if (drive.frontScore(controllerApp.getTarget().pose())){
+      lookup.armSetpoint = wrapArmSetpoint(lookup.armSetpoint);
+      System.out.println("Scoring Front with a arm setpoint of " + lookup.armSetpoint);
+    }
+    else{
+      // This small computation handles "mirroring" the front scoring positions onto the back side
+      lookup.armSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL -  lookup.armSetpoint;
+      System.out.println("Scoring Back with a arm setpoint of " + lookup.armSetpoint);
+    }
+    scoringSetpoints.set(lookup);
+  }
+
+  public static ScoringSetpoints getScoringSetpoints(){
+    return scoringSetpoints.get();
+  }
+
+  /*
+   * Helper Function, picks the closest value for the arm setpoint based on if the cancoder is wrapped or not
+   */
+  public static double wrapArmSetpoint(double setpoint){
+
+    double current = RobotContainer.getArm().getAbsolutePosition();
+    double wrappedSetpoint = setpoint + ArmConstantsLeonidas.ARM_WRAP_POS;
+    // Only wrap if we are able to freely rotate without fear of collision
+    if (RobotContainer.getElevator().getRotationCount() >= ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) 
+    {
+      return NemesisMathUtil.selectClosest(setpoint, wrappedSetpoint, current);
+    }
+    else
+    {
+      return setpoint;
+    }
   }
 }

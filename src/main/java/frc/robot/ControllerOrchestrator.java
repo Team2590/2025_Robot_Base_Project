@@ -82,8 +82,7 @@ public class ControllerOrchestrator {
 
     return Commands.defer(
         () -> {
-          Target target = getTarget();
-          return ScoringFactory.score(target.scoringLevel());
+          return ScoringFactory.score(RobotState.getScoringSetpoints());
         },
         requirements);
   }
@@ -92,8 +91,8 @@ public class ControllerOrchestrator {
   public Command bindDriveToTargetCommand(Drive drive) {
     return DriveCommands.preciseAlignment(
         drive,
-        () -> drive.flipScoringSide(getTarget().pose()),
-        drive.flipScoringSide(getTarget().pose()).getRotation());
+        () -> RobotState.getTargetPose(),
+        RobotState.getTargetPose().getRotation());
   }
 
   // This commands will drive to pose while "priming for intake" at coral source

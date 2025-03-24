@@ -9,6 +9,7 @@ import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
+import frc.robot.RobotState.ScoringSetpoints;
 import frc.robot.util.NemesisMathUtil;
 import frc.robot.util.NemesisTimedCommand;
 
@@ -91,6 +92,21 @@ public class ScoringFactory {
             ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3)
                 .withName("Prime " + level.name()));
     }
+  }
+
+  public static Command score(ScoringSetpoints setpoints) {
+    return primeForLevel(setpoints)
+            .andThen(EndEffectorFactory.runEndEffectorOuttake())
+            .until(() -> !RobotState.endEffectorhasCoral())
+            .withName("Score with Elevator setpoint " + setpoints.elevatorSetpoint + " and arm setpoint = " + setpoints.armSetpoint);
+  }
+
+  public static Command primeForLevel(ScoringSetpoints setpoints) {
+        return Commands.parallel(
+            Commands.print("Priming with Elevator setpoint " + setpoints.elevatorSetpoint + " and arm setpoint = " + setpoints.armSetpoint),
+            ElevatorFactory.setPositionBlocking(setpoints.elevatorSetpoint),
+            ArmFactory.setPositionBlocking(setpoints.armSetpoint)
+                .withName("Priming with Elevator setpoint " + setpoints.elevatorSetpoint + " and arm setpoint = " + setpoints.armSetpoint));
   }
 
   // public static Command scoreTeleop(Level level) {

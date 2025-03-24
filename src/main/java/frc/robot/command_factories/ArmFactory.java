@@ -67,21 +67,4 @@ public class ArmFactory {
   public static Command stop() {
     return RobotContainer.getArm().stop().withName("Stop Arm");
   }
-
-    /*
-   * Helper Function, picks the closest value for the arm setpoint based on if the cancoder is wrapped or not
-   */
-  public static double wrapArmSetpoint(double setpoint){
-
-    double current = RobotContainer.getArm().getAbsolutePosition();
-    double wrappedSetpoint=setpoint+ArmConstantsLeonidas.ARM_WRAP_POS;
-    if (RobotContainer.getElevator().getRotationCount() > ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) 
-    {
-      return NemesisMathUtil.selectClosest(setpoint, wrappedSetpoint, current);
-    }
-    else
-    {
-      return setpoint;
-    }
-  }
 }
