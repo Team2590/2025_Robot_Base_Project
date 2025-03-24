@@ -35,14 +35,14 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private LoggedTunableNumber kV =
       new LoggedTunableNumber("Elevator/kV", Constants.ElevatorConstantsLeonidas.kV);
   private LoggedTunableNumber kG = new LoggedTunableNumber("Elevator/kG", 0.18);
-  private LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP", 8);
+  private LoggedTunableNumber kP = new LoggedTunableNumber("Elevator/kP", 10);
   private LoggedTunableNumber kI = new LoggedTunableNumber("Elevator/kI", 0);
   private LoggedTunableNumber kD = new LoggedTunableNumber("Elevator/kD", 0);
   private LoggedTunableNumber cruiseVelocity =
       new LoggedTunableNumber("Elevator/cruiseVelocity", 3000);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Elevator/acceleration", 300);
+  private LoggedTunableNumber acceleration = new LoggedTunableNumber("Elevator/acceleration", 150);
   private LoggedTunableNumber jerk = new LoggedTunableNumber("Elevator/jerk", 750);
-  private LoggedTunableNumber setPos = new LoggedTunableNumber("Elevator/setpointPos", 5);
+  private LoggedTunableNumber setPos = new LoggedTunableNumber("Elevator/setpointPos", 2000);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
@@ -201,7 +201,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   public void setPositionLoggedNumber() {
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, setPos.get())) {
       var request = new MotionMagicVoltage(0);
-      if (leader.getPosition().getValueAsDouble() < 0 || setPos.get() < 0) {
+      if (leader.getPosition().getValueAsDouble()
+              < Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS
+          || setPos.get() < 0) {
         leader.setControl(request);
       } else {
         leader.setControl(request.withPosition(setPos.get()));

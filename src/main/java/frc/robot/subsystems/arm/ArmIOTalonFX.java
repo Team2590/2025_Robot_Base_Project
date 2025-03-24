@@ -31,17 +31,17 @@ import frc.robot.util.StickyFaultUtil;
 public class ArmIOTalonFX implements ArmIO {
   private TalonFX arm;
   private CANcoder armCancoder;
-  LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 8);
+  LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 3);
   LoggedTunableNumber kI = new LoggedTunableNumber("Arm/kI", 0);
   LoggedTunableNumber kD = new LoggedTunableNumber("Arm/kD", 0);
-  LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS", 0.30645);
-  LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0.55833);
+  LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS", 0);
+  LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0);
   LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", 0);
   LoggedTunableNumber MotionMagicCruiseVelocity1 =
-      new LoggedTunableNumber("Arm/MotionMagicCruiseVelocity", 1500); // 1500
+      new LoggedTunableNumber("Arm/MotionMagicCruiseVelocity", 1000); // 1500
   LoggedTunableNumber MotionMagicAcceleration1 =
-      new LoggedTunableNumber("Arm/MotionMagicAcceleration", 75); // 500
-  LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", 100);
+      new LoggedTunableNumber("Arm/MotionMagicAcceleration", 50); // 500
+  LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", 300);
   LoggedTunableNumber ff = new LoggedTunableNumber("Arm/Feedforward", 0);
   LoggedTunableNumber setPos = new LoggedTunableNumber("Arm/setpointPos", 0);
   Slot0Configs slot0;
@@ -108,7 +108,7 @@ public class ArmIOTalonFX implements ArmIO {
     MagnetSensorConfigs mag = new MagnetSensorConfigs();
     mag.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     mag.MagnetOffset = magOffset;
-    mag.AbsoluteSensorDiscontinuityPoint = 0.9;
+    mag.AbsoluteSensorDiscontinuityPoint = 0.9999;
     CANcoderConfiguration can = new CANcoderConfiguration();
     can.withMagnetSensor(mag);
     armCancoder.getConfigurator().apply(can);
