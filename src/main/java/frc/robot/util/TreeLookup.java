@@ -28,8 +28,8 @@ public class TreeLookup {
    * @return interpolation value
    */
   public double getValue(double input) {
-    if (input > treeMap.firstKey()) return treeMap.lastEntry().getValue();
-    if (input < treeMap.lastKey()) return treeMap.firstEntry().getValue();
+    if (input < treeMap.firstKey()) return treeMap.firstEntry().getValue();
+    if (input > treeMap.lastKey()) return treeMap.lastEntry().getValue();
     var belowEntry = treeMap.floorEntry(input); 
     var aboveEntry = treeMap.ceilingEntry(input); 
 
