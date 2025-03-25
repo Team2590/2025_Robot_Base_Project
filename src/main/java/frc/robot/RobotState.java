@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.Constants.ElevatorConstantsLeonidas;
 import frc.robot.RobotState.ScoringSetpoints;
+import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
@@ -46,7 +47,7 @@ public class RobotState extends SubsystemBase {
     ALIGNING_BACK
   }
 
-  public class ScoringSetpoints {
+  public static class ScoringSetpoints {
     public double elevatorSetpoint;
     public double armSetpoint;
 
@@ -59,9 +60,8 @@ public class RobotState extends SubsystemBase {
   private AtomicReference<AligningState> aligningState =
       new AtomicReference<RobotState.AligningState>(AligningState.NOT_ALIGNING);
 
-  private static AtomicReference<Pose2d> targetPose = new AtomicReference<Pose2d>(new Pose2d());
-  private static AtomicReference<ScoringSetpoints> scoringSetpoints =
-      new AtomicReference<ScoringSetpoints>();
+  private static Pose2d targetPose = new Pose2d();
+  private static ScoringSetpoints scoringSetpoints = new ScoringSetpoints(Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS, Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3);
   private static HashMap<Level, ScoringSetpoints> levelLookup =
       new HashMap<Level, ScoringSetpoints>();
   private final Lock updateLock = new ReentrantLock();
@@ -229,22 +229,22 @@ public class RobotState extends SubsystemBase {
     // Opted not to use Aligning enum in the event that we attempt to score without aligning
     if (aligningState.get() == AligningState.ALIGNING_BACK) {
       lookup.armSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - lookup.armSetpoint;
-      targetPose.set(drive.flipScoringSide(originalTargetPose));
+      targetPose = drive.flipScoringSide(originalTargetPose);
       System.out.println("Scoring Back with an arm setpoint of " + lookup.armSetpoint);
     } else {
       lookup.armSetpoint = lookup.armSetpoint;
       System.out.println("Scoring Front with an arm setpoint of " + lookup.armSetpoint);
     }
-    scoringSetpoints.set(lookup);
-    Logger.recordOutput("RobotState/Pose", targetPose.get());
-    Logger.recordOutput("RobotState/ArmSetpoint", scoringSetpoints.get().armSetpoint);
-    Logger.recordOutput("RobotState/ElevatorSetpoint", scoringSetpoints.get().elevatorSetpoint);
+    scoringSetpoints = lookup;
+    Logger.recordOutput("RobotState/Pose", targetPose);
+    Logger.recordOutput("RobotState/ArmSetpoint", scoringSetpoints.armSetpoint);
+    Logger.recordOutput("RobotState/ElevatorSetpoint", scoringSetpoints.elevatorSetpoint);
   }
 
   public Pose2d getTargetPose() {
     updateLock.lock();
     try {
-      return targetPose.get();
+      return targetPose;
     } finally {
       updateLock.unlock();
     }
@@ -253,7 +253,7 @@ public class RobotState extends SubsystemBase {
   public ScoringSetpoints getScoringSetpoints() {
     updateLock.lock();
     try {
-      return scoringSetpoints.get();
+      return scoringSetpoints;
     } finally {
       updateLock.unlock();
     }
