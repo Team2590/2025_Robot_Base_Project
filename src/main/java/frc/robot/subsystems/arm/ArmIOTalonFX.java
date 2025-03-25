@@ -1,6 +1,7 @@
 package frc.robot.subsystems.arm;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -18,6 +19,12 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -30,99 +37,51 @@ import frc.robot.util.StickyFaultUtil;
 
 public class ArmIOTalonFX implements ArmIO {
   private TalonFX arm;
-  private CANcoder armCancoder;
+  private AbsoluteEncoderEmulator encoderEmulator;
+  private ProfiledPIDController controller;
   LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 3);
   LoggedTunableNumber kI = new LoggedTunableNumber("Arm/kI", 0);
   LoggedTunableNumber kD = new LoggedTunableNumber("Arm/kD", 0);
-  LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS", 0);
-  LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0);
-  LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", 0);
-  LoggedTunableNumber MotionMagicCruiseVelocity1 =
-      new LoggedTunableNumber("Arm/MotionMagicCruiseVelocity", 1000); // 1500
-  LoggedTunableNumber MotionMagicAcceleration1 =
-      new LoggedTunableNumber("Arm/MotionMagicAcceleration", 50); // 500
-  LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", 300);
-  LoggedTunableNumber ff = new LoggedTunableNumber("Arm/Feedforward", 0);
+  LoggedTunableNumber maxVelocity =
+      new LoggedTunableNumber("Arm/maxVelocity", 1000); // 1500
+  LoggedTunableNumber maxAcceleration =
+      new LoggedTunableNumber("Arm/maxAcceleration", 50); // 500
   LoggedTunableNumber setPos = new LoggedTunableNumber("Arm/setpointPos", 0);
-  Slot0Configs slot0;
-  TalonFXConfiguration cfg;
-  MotionMagicConfigs mm;
-  MotionMagicDutyCycle mmv;
   private double reduction;
-  private StatusSignal<Angle> armabspos;
-  private StatusSignal<Angle> position;
-  private StatusSignal<AngularVelocity> velocity;
-  private StatusSignal<Voltage> appliedVoltage;
-  private StatusSignal<Current> supplyCurrent;
-  private StatusSignal<Current> torqueCurrent;
-  private StatusSignal<Temperature> tempCelsius;
+  private StatusSignal<Angle> armabspos; // TODO
+  private StatusSignal<Angle> position; // TODO
+  private StatusSignal<AngularVelocity> velocity; // TODO
+  private StatusSignal<Voltage> appliedVoltage; // TODO
+  private StatusSignal<Current> supplyCurrent; // TODO
+  private StatusSignal<Current> torqueCurrent; // TODO
+  private StatusSignal<Temperature> tempCelsius; // TODO
+  private boolean runningSetPosition;
+  private double setpoint;
+  private ArmFeedforward feedforward;
 
   public ArmIOTalonFX(
-      int motorCanID,
-      String canBus,
-      int currentLimitAmps,
-      boolean invert,
-      boolean brake,
-      double reduction,
-      int cancoderID,
-      double magOffset,
-      double sensor_reduction) {
-
+    int motorCanID,
+    String canBus,
+    int currentLimitAmps,
+    boolean invert,
+    boolean brake,
+    double reduction,
+    int cancoderID,
+    double magOffset,
+    double sensor_reduction
+  ) {
     this.reduction = reduction;
     arm = new TalonFX(motorCanID, canBus);
-    armCancoder = new CANcoder(cancoderID, canBus);
-    StickyFaultUtil.clearCancoderStickyFaults(armCancoder, "Arm Cancoder");
     StickyFaultUtil.clearMotorStickyFaults(arm, "Arm Motor");
-    /* configurations for the arm motor */
-    cfg = new TalonFXConfiguration();
-    // cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    cfg.MotorOutput.Inverted =
-        invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
-    cfg.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-    cfg.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
-    cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
-    cfg.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = .05;
-    cfg.ClosedLoopRamps.TorqueClosedLoopRampPeriod = .05;
-    cfg.ClosedLoopRamps.VoltageClosedLoopRampPeriod = .05;
+    encoderEmulator = new AbsoluteEncoderEmulator(arm, 0, sensor_reduction);
+    
+    controller = new ProfiledPIDController(kP.get(), kI.get(), kD.get(), new TrapezoidProfile.Constraints(maxVelocity.get(), maxAcceleration.get()));
 
-    /* Configure current limits */
-    mm = cfg.MotionMagic;
-    mm.MotionMagicCruiseVelocity = MotionMagicCruiseVelocity1.get();
-    mm.MotionMagicAcceleration = MotionMagicAcceleration1.get();
-    mm.MotionMagicJerk = MotionMagicJerk1.get();
-
-    slot0 = cfg.Slot0;
-    slot0.kP = kP.get();
-    slot0.kI = kI.get();
-    slot0.kD = kD.get();
-    slot0.kS = kS.get();
-    slot0.kG = kG.get();
-    slot0.kV = kV.get();
-    slot0.GravityType = GravityTypeValue.Arm_Cosine;
-
-    FeedbackConfigs fdb = cfg.Feedback;
-    fdb.RotorToSensorRatio = sensor_reduction;
-    // fdb.SensorToMechanismRatio = 1.6;
-    fdb.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    fdb.FeedbackRemoteSensorID = cancoderID;
-    MagnetSensorConfigs mag = new MagnetSensorConfigs();
-    mag.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    mag.MagnetOffset = magOffset;
-    mag.AbsoluteSensorDiscontinuityPoint = 0.9999;
-    CANcoderConfiguration can = new CANcoderConfiguration();
-    can.withMagnetSensor(mag);
-    armCancoder.getConfigurator().apply(can);
-
-    arm.getConfigurator().apply(cfg);
-    mmv = new MotionMagicDutyCycle(0);
-
-    position = arm.getPosition();
-    velocity = armCancoder.getVelocity();
-    appliedVoltage = arm.getMotorVoltage();
-    supplyCurrent = arm.getSupplyCurrent();
-    torqueCurrent = arm.getTorqueCurrent();
-    tempCelsius = arm.getDeviceTemp();
-    armabspos = armCancoder.getAbsolutePosition();
+    position = arm.getPosition(); // TODO
+    appliedVoltage = arm.getMotorVoltage(); // TODO
+    supplyCurrent = arm.getSupplyCurrent(); // TODO
+    torqueCurrent = arm.getTorqueCurrent(); // TODO
+    tempCelsius = arm.getDeviceTemp(); // TODO
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0,
@@ -138,93 +97,55 @@ public class ArmIOTalonFX implements ArmIO {
   public void updateInputs(ArmIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         armabspos, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
-    inputs.armabspos = armabspos.getValueAsDouble();
-    inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble()) / reduction;
-    inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble()) / reduction;
-    inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
-    inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
-    inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
-    inputs.tempCelsius = tempCelsius.getValueAsDouble();
-    inputs.rotationCount = arm.getPosition().getValueAsDouble();
+    inputs.armabspos = armabspos.getValueAsDouble(); // TODO
+    inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble()) / reduction; // TODO
+    inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble()) / reduction; // TODO
+    inputs.appliedVoltage = appliedVoltage.getValueAsDouble(); // TODO
+    inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble(); // TODO
+    inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble(); // TODO
+    inputs.tempCelsius = tempCelsius.getValueAsDouble(); // TODO
+    inputs.rotationCount = arm.getPosition().getValueAsDouble(); // TODO
     updateTunableNumbers();
+    if (runningSetPosition) arm.setVoltage(controller.calculate(encoderEmulator.getAbsolutePosition(), setpoint));
   }
 
   public void setPosition(double position) {
-
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position)) {
-      arm.setControl(mmv.withPosition(position));
+      setpoint = position;
+      runningSetPosition = true;
     } else {
       System.out.println("CAN'T MOVE ARM, safety check failed.");
     }
   }
 
   public void setPositionLoggedNumber() {
-
-    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, setPos.get())) {
-      arm.setControl(mmv.withPosition(setPos.get()));
-    } else {
-      System.out.println("CAN'T MOVE ARM, safety check failed.");
-    }
+    setPosition(setPos.get());
   }
 
   public double getAbsolutePosition() {
-    return armCancoder.getAbsolutePosition().getValueAsDouble();
+    return encoderEmulator.getAbsolutePosition();
   }
 
   public void stop() {
+    runningSetPosition = false;
     arm.stopMotor();
   }
 
   public void updateTunableNumbers() {
-    if (kP.hasChanged(0)) {
-      slot0.kP = kP.get();
-      arm.getConfigurator().apply(cfg);
-    }
-
-    if (kI.hasChanged(0)) {
-      slot0.kI = kI.get();
-      arm.getConfigurator().apply(cfg);
-    }
-    if (kD.hasChanged(0)) {
-      slot0.kD = kD.get();
-      arm.getConfigurator().apply(cfg);
-    }
-    if (kS.hasChanged(0)) {
-      slot0.kS = kS.get();
-      arm.getConfigurator().apply(cfg);
-    }
-    if (kV.hasChanged(0)) {
-      slot0.kV = kV.get();
-      arm.getConfigurator().apply(cfg);
-    }
-    if (kG.hasChanged(0)) {
-      slot0.kG = kG.get();
-      arm.getConfigurator().apply(cfg);
-    }
-    if (MotionMagicCruiseVelocity1.hasChanged(0)) {
-      mm.MotionMagicCruiseVelocity = MotionMagicCruiseVelocity1.get();
-      arm.getConfigurator().apply(cfg);
-    }
-
-    if (MotionMagicAcceleration1.hasChanged(0)) {
-      mm.MotionMagicAcceleration = MotionMagicAcceleration1.get();
-      arm.getConfigurator().apply(cfg);
-    }
-    if (MotionMagicJerk1.hasChanged(0)) {
-      mm.MotionMagicJerk = MotionMagicJerk1.get();
-      arm.getConfigurator().apply(cfg);
-    }
-    if (ff.hasChanged(0)) {
-      mmv.FeedForward = ff.get();
-    }
+    if (kP.hasChanged(0)) controller.setP(kP.get());
+    if (kI.hasChanged(0)) controller.setI(kI.get());
+    if (kD.hasChanged(0)) controller.setD(kD.get());
+    if (maxVelocity.hasChanged(0) || maxAcceleration.hasChanged(0)) controller.setConstraints(new TrapezoidProfile.Constraints(maxVelocity.get(), maxAcceleration.get()));
   }
 
   public void setPower(DutyCycleOut power) {
+    runningSetPosition = false;
     arm.setControl(power);
   }
 
   @Override
   public void setVoltage(double volts) {
+    runningSetPosition = false;
     double armPos = getAbsolutePosition();
 
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, armPos)) {
