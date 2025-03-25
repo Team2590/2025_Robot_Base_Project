@@ -2,6 +2,7 @@ package frc.robot.subsystems.arm;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import edu.wpi.first.math.MathUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +11,26 @@ class ArmPositionManagerTest {
   private static final double DELTA = 0.001; // Tolerance for floating-point comparisons
   private static final double GEAR_RATIO = 1.2; // 1.2 sensor rotations per arm rotation
   private static final int MAX_ROTATIONS = 2; // Maximum allowed full rotations in either direction
-  private static final double MAGNET_OFFSET = 0.25; // Example offset where 0.25 corresponds to 0 degrees
+  private static final double MAGNET_OFFSET =
+      0.25; // Example offset where 0.25 corresponds to 0 degrees
+
+  // Helper methods to calculate expected values
+  private double calculateExpectedDegrees(double sensorPosition) {
+    // Calculate degrees from sensor position considering gear ratio and offset
+    double offsetAdjustedRotations = sensorPosition - MAGNET_OFFSET;
+    return (offsetAdjustedRotations / GEAR_RATIO) * 360.0;
+  }
+
+  private double calculateSensorPosition(double degrees) {
+    // Calculate sensor position from degrees considering gear ratio and offset
+    double armRotations = degrees / 360.0;
+    double sensorRotations = armRotations * GEAR_RATIO;
+    return MathUtil.inputModulus(sensorRotations + MAGNET_OFFSET, 0, 1);
+  }
+
+  private double normalizeAngle(double degrees) {
+    return MathUtil.inputModulus(degrees, 0, 360);
+  }
 
   @BeforeEach
   void setUp() {
@@ -26,15 +46,18 @@ class ArmPositionManagerTest {
 
   @Test
   void testMagnetOffset() {
-    // When CANcoder reads the offset value (0.25), we should get 0 degrees
+    // When CANcoder reads the offset value, we should get 0 degrees
     armManager.updateRotationTracking(MAGNET_OFFSET);
     assertEquals(0.0, armManager.getAbsoluteAngleDegrees(), DELTA);
     assertEquals(0.0, armManager.getNormalizedAngleDegrees(), DELTA);
 
-    // When CANcoder reads 0.0, we should get -75 degrees (0.25 * 360 / 1.2)
+    // When CANcoder reads 0.0, calculate expected degrees
+    double expectedDegrees = calculateExpectedDegrees(0.0);
+    double expectedNormalized = normalizeAngle(expectedDegrees);
+
     armManager.updateRotationTracking(0.0);
-    assertEquals(-75.0, armManager.getAbsoluteAngleDegrees(), DELTA);
-    assertEquals(285.0, armManager.getNormalizedAngleDegrees(), DELTA);
+    assertEquals(expectedDegrees, armManager.getAbsoluteAngleDegrees(), DELTA);
+    assertEquals(expectedNormalized, armManager.getNormalizedAngleDegrees(), DELTA);
 
     // Reset to start fresh
     armManager = new ArmPositionManager(GEAR_RATIO, MAX_ROTATIONS, MAGNET_OFFSET);
@@ -49,20 +72,21 @@ class ArmPositionManagerTest {
       armManager.updateRotationTracking(pos);
     }
 
-    // At 0.85, we should be at 180 degrees
-    assertEquals(180.0, armManager.getAbsoluteAngleDegrees(), DELTA);
-    assertEquals(180.0, armManager.getNormalizedAngleDegrees(), DELTA);
+    // Calculate expected degrees at 0.85
+    expectedDegrees = calculateExpectedDegrees(0.85);
+    assertEquals(expectedDegrees, armManager.getAbsoluteAngleDegrees(), DELTA);
+    assertEquals(normalizeAngle(expectedDegrees), armManager.getNormalizedAngleDegrees(), DELTA);
   }
 
   @Test
   void testGearRatio() {
-    // For 90 degrees of arm rotation with 1.2:1 ratio, sensor should move 0.3 rotations (plus
-    // offset)
-    assertEquals(0.55, armManager.degreesToCancoderPosition(90.0), DELTA); // 0.3 + 0.25 = 0.55
+    // For 90 degrees of arm rotation, calculate expected sensor position
+    double expectedPos90 = calculateSensorPosition(90.0);
+    assertEquals(expectedPos90, armManager.degreesToCancoderPosition(90.0), DELTA);
 
-    // For 360 degrees (full rotation) with 1.2:1 ratio, sensor should move 1.2 rotations
-    double fullRotationPos = armManager.degreesToCancoderPosition(360.0);
-    assertEquals(0.45, fullRotationPos, DELTA); // (1.2 + 0.25) % 1 = 0.45
+    // For 360 degrees (full rotation), calculate expected sensor position
+    double expectedPos360 = calculateSensorPosition(360.0);
+    assertEquals(expectedPos360, armManager.degreesToCancoderPosition(360.0), DELTA);
   }
 
   @Test
@@ -71,15 +95,20 @@ class ArmPositionManagerTest {
     armManager.updateRotationTracking(MAGNET_OFFSET);
 
     // Move clockwise past boundary
-    // At 0.85, we're at 180 degrees
     armManager.updateRotationTracking(0.85);
-    // At 0.05, we've gone past the boundary and should be at ~270 degrees with rotation 0
     armManager.updateRotationTracking(0.05);
 
-    // The final rotation count should be 0 because we're only at 1/3 of a rotation
-    // with our gear ratio of 1.2
-    assertEquals(0, armManager.getRotationCount());
-    assertEquals(300.0, armManager.getNormalizedAngleDegrees(), DELTA);
+    // Calculate expected rotation count based on total angle traveled
+    // With GEAR_RATIO of 1.2, we need 1.2 sensor rotations to make one full arm rotation
+    // So moving from 0.25 to 0.85 and then to 0.05 (crossing boundary) is less than a full rotation
+    int expectedRotations = 0;
+
+    // Calculate expected degrees and normalize
+    double expectedDegrees = calculateExpectedDegrees(0.05 + expectedRotations);
+    double expectedNormalized = normalizeAngle(expectedDegrees);
+
+    assertEquals(expectedRotations, armManager.getRotationCount());
+    assertEquals(expectedNormalized, armManager.getNormalizedAngleDegrees(), DELTA);
   }
 
   @Test
@@ -88,14 +117,18 @@ class ArmPositionManagerTest {
     armManager.updateRotationTracking(MAGNET_OFFSET);
 
     // Move counter-clockwise past boundary
-    // At 0.05, we're at -60 degrees
     armManager.updateRotationTracking(0.05);
-    // At 0.85, we've gone past the boundary and should be at -120 degrees
     armManager.updateRotationTracking(0.85);
 
-    assertEquals(-1, armManager.getRotationCount());
-    // -120 degrees is equivalent to 240 degrees normalized
-    assertEquals(240.0, armManager.getNormalizedAngleDegrees(), DELTA);
+    // With counter-clockwise motion past boundary, we should get rotation count of -1
+    int expectedRotations = -1;
+
+    // Calculate expected degrees and normalize
+    double expectedDegrees = calculateExpectedDegrees(0.85 + expectedRotations);
+    double expectedNormalized = normalizeAngle(expectedDegrees);
+
+    assertEquals(expectedRotations, armManager.getRotationCount());
+    assertEquals(expectedNormalized, armManager.getNormalizedAngleDegrees(), DELTA);
   }
 
   @Test
@@ -103,12 +136,12 @@ class ArmPositionManagerTest {
     // Within limits
     assertTrue(armManager.isSafeToMove(360.0));
     assertTrue(armManager.isSafeToMove(-360.0));
-    assertTrue(armManager.isSafeToMove(720.0)); // 2 rotations
-    assertTrue(armManager.isSafeToMove(-720.0)); // -2 rotations
+    assertTrue(armManager.isSafeToMove(MAX_ROTATIONS * 360.0)); // Max allowed rotations
+    assertTrue(armManager.isSafeToMove(-MAX_ROTATIONS * 360.0)); // Negative max allowed rotations
 
     // Beyond limits
-    assertFalse(armManager.isSafeToMove(1080.0)); // 3 rotations
-    assertFalse(armManager.isSafeToMove(-1080.0)); // -3 rotations
+    assertFalse(armManager.isSafeToMove((MAX_ROTATIONS + 1) * 360.0)); // Beyond max
+    assertFalse(armManager.isSafeToMove(-(MAX_ROTATIONS + 1) * 360.0)); // Beyond negative max
   }
 
   @Test
@@ -116,15 +149,21 @@ class ArmPositionManagerTest {
     // Start at zero position
     armManager.updateRotationTracking(MAGNET_OFFSET);
 
-    // Test shortest path calculations
+    // Test shortest path to 90 degrees
     assertEquals(90.0, armManager.calculateShortestPath(90.0), DELTA);
-    // With our gear ratio, moving to 270 is actually shortest as 270 degrees rather than -90
-    assertEquals(270.0, armManager.calculateShortestPath(270.0), DELTA);
+
+    // Test shortest path to 270 degrees
+    // The shortest path determination should work regardless of gear ratio
+    double expectedPath270 = 270.0;
+    assertEquals(expectedPath270, armManager.calculateShortestPath(270.0), DELTA);
 
     // Test path calculation after a full rotation
-    armManager.resetToAngle(400.0); // Set to 400 degrees (40 degrees + 1 rotation)
-    assertEquals(
-        450.0, armManager.calculateShortestPath(90.0), DELTA); // Should maintain the rotation
+    double fullRotationPlusAngle = 400.0;
+    armManager.resetToAngle(fullRotationPlusAngle);
+
+    // When at 400 degrees, shortest path to 90 should be 450 (maintain rotation count)
+    double expectedPathAfterRotation = 450.0;
+    assertEquals(expectedPathAfterRotation, armManager.calculateShortestPath(90.0), DELTA);
   }
 
   @Test
@@ -132,51 +171,66 @@ class ArmPositionManagerTest {
     // Start at zero position
     armManager.updateRotationTracking(MAGNET_OFFSET);
 
-    // With our gear ratio of 1.2, we need more than one full sensor rotation to complete
-    // a full arm rotation. Let's make enough passes to ensure 2 full rotations.
-    for (int i = 0; i < 3; i++) {
+    // Calculate how many passes we need to complete 2 full rotations
+    // Each boundary crossing increments the rotation count
+    int passesNeeded = (int) Math.ceil(2.0 * GEAR_RATIO);
+
+    // With our gear ratio, we need multiple passes to ensure 2 full rotations
+    for (int i = 0; i < passesNeeded; i++) {
       // Complete a clockwise pass
-      for (double pos = 0.25; pos < 0.95; pos += 0.1) {
+      for (double pos = MAGNET_OFFSET; pos < 0.95; pos += 0.1) {
         armManager.updateRotationTracking(pos);
       }
       armManager.updateRotationTracking(0.95);
       armManager.updateRotationTracking(0.05);
     }
 
-    // After enough passes to ensure 2 full rotations
+    // After enough passes, we should have at least 2 rotations
     assertTrue(armManager.getRotationCount() >= 2);
-    double angle = armManager.getAbsoluteAngleDegrees();
-    assertTrue(angle >= 720.0);
+
+    // The absolute angle should be at least 720 degrees (2 full rotations)
+    double minExpectedDegrees = 720.0;
+    assertTrue(armManager.getAbsoluteAngleDegrees() >= minExpectedDegrees);
   }
 
   @Test
   void testResetToAngle() {
-    // Test resetting to 725 degrees (2 full rotations + 5 degrees)
-    armManager.resetToAngle(725.0);
-    assertEquals(725.0, armManager.getAbsoluteAngleDegrees(), DELTA);
-    assertEquals(5.0, armManager.getNormalizedAngleDegrees(), DELTA);
+    // Create test angle with multiple rotations plus offset
+    double testAngle = 725.0;
+    armManager.resetToAngle(testAngle);
 
-    // Verify sensor position is correct
-    // 725 degrees = 2.013889 arm rotations
-    // 2.013889 * 1.2 = 2.416667 sensor rotations
-    // 0.416667 + 0.25 = 0.666667 (normalized position)
-    assertEquals(0.666667, armManager.degreesToCancoderPosition(725.0), DELTA);
+    // Verify absolute and normalized angles
+    assertEquals(testAngle, armManager.getAbsoluteAngleDegrees(), DELTA);
+    assertEquals(normalizeAngle(testAngle), armManager.getNormalizedAngleDegrees(), DELTA);
+
+    // Calculate expected sensor position
+    double armRotations = testAngle / 360.0;
+    double expectedRotCount = (int) Math.floor(armRotations * GEAR_RATIO);
+    double fractionalRotation = (armRotations * GEAR_RATIO) - expectedRotCount;
+    double expectedPosition = MathUtil.inputModulus(fractionalRotation + MAGNET_OFFSET, 0, 1);
+
+    // Verify calculated position matches our helper method
+    assertEquals(
+        calculateSensorPosition(testAngle), armManager.degreesToCancoderPosition(testAngle), DELTA);
   }
 
   @Test
   void testNonIntegerGearRatio() {
-    // Create a new manager with a more complex gear ratio
+    // Create a new manager with a different gear ratio
+    double testGearRatio = 1.33333;
     ArmPositionManager complexManager =
-        new ArmPositionManager(1.33333, MAX_ROTATIONS, MAGNET_OFFSET);
+        new ArmPositionManager(testGearRatio, MAX_ROTATIONS, MAGNET_OFFSET);
 
-    // Test conversion from degrees to position
+    // Calculate expected sensor position for 90 degrees with this gear ratio
+    double armRotations = 90.0 / 360.0;
+    double sensorRotations = armRotations * testGearRatio;
+    double expectedPos = MathUtil.inputModulus(sensorRotations + MAGNET_OFFSET, 0, 1);
+
+    // Verify position calculation
     double pos = complexManager.degreesToCancoderPosition(90.0);
-    // 90 degrees = 0.25 arm rotations
-    // 0.25 * 1.33333 = 0.33333 sensor rotations
-    // 0.33333 + 0.25 = 0.58333
-    assertEquals(0.58333, pos, DELTA);
+    assertEquals(expectedPos, pos, DELTA);
 
-    // Test conversion from position to degrees
+    // Verify angle calculation
     complexManager.updateRotationTracking(pos);
     assertEquals(90.0, complexManager.getAbsoluteAngleDegrees(), DELTA);
   }
