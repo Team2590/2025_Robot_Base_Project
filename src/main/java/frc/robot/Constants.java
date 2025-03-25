@@ -278,6 +278,8 @@ public final class Constants {
     public static double ARM_BARGE_POS = .7; // TODO: find real value
     // public static double ARM_SCORING_POS = .7; // TODO: find real value
     public static double ARM_WRAP_POS = 0.794;
+
+    public static double ARM_PLACE_OFFSET=0;
   }
 
   public static class ElevatorConstantsLeonidas {
@@ -304,6 +306,8 @@ public final class Constants {
     public static double ELEVATOR_SOURCE_POS = 5.15; // TODO
     public static double ELEVATOR_MANUAL_VOLTAGE = 1; // TODO
     public static double ELEVATOR_BARGE_POS = 80; // TODO: find real value
+
+    public static double ELEVATOR_PLACE_OFFSET=0;
   }
 
   /*   public final class ElevatorConstantsLeonidas {

@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 
 public class GamePieceFactory {
   public static Command intakeCoralFeeder() {
@@ -41,6 +42,9 @@ public class GamePieceFactory {
   }
 
   public static Command GrabAlgaeL2() {
+
+    RobotState.deAlgaeLevel="L2";
+
     return new ParallelCommandGroup(
         ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3),
         ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2),
@@ -48,6 +52,8 @@ public class GamePieceFactory {
   }
 
   public static Command GrabAlgaeL3() {
+
+    RobotState.deAlgaeLevel="L3";
     return new ParallelCommandGroup(
         ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3),
         ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3),

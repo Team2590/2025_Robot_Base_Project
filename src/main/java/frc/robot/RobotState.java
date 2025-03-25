@@ -17,6 +17,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.NemesisMathUtil;
 
+import java.awt.ScrollPaneAdjustable;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
@@ -48,13 +49,21 @@ public class RobotState extends SubsystemBase {
     ALIGNING_BACK
   }
 
+  public static String deAlgaeLevel="L2";
+
   public class ScoringSetpoints {
     public double elevatorSetpoint;
     public double armSetpoint;
+    public double armPlaceSetpoint;
 
     public ScoringSetpoints(double elevatorSetpoint, double armSetpoint) {
         this.elevatorSetpoint = elevatorSetpoint;
         this.armSetpoint = armSetpoint;
+        
+    }
+
+    public double calculate_place(boolean front){
+      return front ? armSetpoint-ArmConstantsLeonidas.ARM_PLACE_OFFSET : armSetpoint+ArmConstantsLeonidas.ARM_PLACE_OFFSET;
     }
   }
 
@@ -64,6 +73,7 @@ public class RobotState extends SubsystemBase {
   private static AtomicReference<Pose2d> targetPose = new AtomicReference<Pose2d>(new Pose2d());
   private static AtomicReference<ScoringSetpoints> scoringSetpoints = new AtomicReference<ScoringSetpoints>();
   private static HashMap<Level, ScoringSetpoints> levelLookup = new HashMap<Level, ScoringSetpoints>();
+  private static HashMap<String, ScoringSetpoints> dealgaeLevelLookup= new HashMap<String, ScoringSetpoints>();
   private final Lock updateLock = new ReentrantLock();
 
   private RobotState(
@@ -84,6 +94,9 @@ public class RobotState extends SubsystemBase {
     levelLookup.put(Level.L2, new ScoringSetpoints(Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS, Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3));
     levelLookup.put(Level.L3, new ScoringSetpoints(Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS, Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3));
     levelLookup.put(Level.L4, new ScoringSetpoints(Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS, Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4));
+
+    dealgaeLevelLookup.put("L2", new ScoringSetpoints(Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2, Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3));
+    dealgaeLevelLookup.put("L3", new ScoringSetpoints(Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3,  Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3));
   }
 
   /**
@@ -140,6 +153,8 @@ public class RobotState extends SubsystemBase {
       Pose2d desiredPose = controllerApp.getTarget().pose();
         setTargetPoseInternal(desiredPose);
         setScoringSetpointsInternal(desiredPose);
+        setDeAlgaeSetpointsInternal(desiredPose, deAlgaeLevel);
+
     } finally {
         updateLock.unlock();
     }
@@ -214,19 +229,49 @@ public class RobotState extends SubsystemBase {
     targetPose.set(drive.flipScoringSide(desiredPose));
   }
 
+  /*
+   * 
+   * Flipping Setpoints based on scoring side 
+   */
+
   private void setScoringSetpointsInternal(Pose2d originalTargetPose) {
     ScoringSetpoints lookup = levelLookup.get(controllerApp.getTarget().scoringLevel());
     // I think we need the original controllerApp pose here to avoid evaluating on an already flipped pose (the targetPose of this class)
     // Opted not to use Aligning enum in the event that we attempt to score without aligning
     if (drive.frontScore(originalTargetPose)) {
         lookup.armSetpoint = wrapArmSetpoint(lookup.armSetpoint);
+        lookup.armPlaceSetpoint= lookup.calculate_place(true);
         System.out.println("Scoring Front with an arm setpoint of " + lookup.armSetpoint);
     } else {
         lookup.armSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - lookup.armSetpoint;
+        lookup.armPlaceSetpoint= lookup.calculate_place(false);
         System.out.println("Scoring Back with an arm setpoint of " + lookup.armSetpoint);
     }
     scoringSetpoints.set(lookup);
   }
+
+ 
+ 
+ 
+ 
+ 
+ 
+  private void setDeAlgaeSetpointsInternal(Pose2d originalTargetPose, String level){
+
+    ScoringSetpoints lookup= dealgaeLevelLookup.get(level);
+    if(drive.frontScore(originalTargetPose)){
+
+      lookup.armSetpoint=wrapArmSetpoint(lookup.armSetpoint);
+      
+    }
+    else{
+
+      lookup.armSetpoint= Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - lookup.armSetpoint;
+    }
+
+    scoringSetpoints.set(lookup);
+  }
+  
 
   public Pose2d getTargetPose() {
     updateLock.lock();
