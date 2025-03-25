@@ -40,11 +40,6 @@ class SafetyCheckerTest {
         SafetyChecker.isSafe(
             SafetyChecker.MechanismType.ARM_MOVEMENT,
             Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION));
-
-    assertTrue(
-        SafetyChecker.isSafe(
-            SafetyChecker.MechanismType.ARM_MOVEMENT,
-            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS));
   }
 
   @Test

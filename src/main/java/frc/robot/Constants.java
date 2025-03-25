@@ -257,7 +257,7 @@ public final class Constants {
     public static double ARM_FACTORY_SAFETY_MAX = 1;
     public static final int canID = 1;
     public static final String canBus = "Takeover";
-    public static final int currentLimitAmps = 40;
+    public static final int currentLimitAmps = 10;
     public static final boolean invert = false;
     public static final boolean brake = true;
     public static final double reduction = 1; // was a 94.18
@@ -265,38 +265,42 @@ public final class Constants {
     public static final double ARM_SET_STOW = .33; // TODO
     // public static final double magOffset = -.596436; // -.398
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
-    public static final double magOffset = -.635; // TODO
+    public static final double magOffset = -0.2; // -0.379; // -.3347; // -.635; // TODO
     public static final double sensorReduction = 58.8; // TODO
+    public static final double BACK_HORIZONTAL = 0.4;
     public static double ARM_OPERATIONAL_MIN_POS = 0; // TODO
     public static double ARM_OPERATIONAL_MAX_POS = .9; // TODO
-    public static double ARM_SCORING_CORAL_POS = 0.6; // TODO
-    public static double ARM_SCORING_CORAL_POS_L3 = 0.6; // TODO
-    public static double ARM_SCORING_CORAL_POS_L4 = 0.57; // TODO
+    public static double ARM_SCORING_CORAL_POS_L3 = 0.098; // TODO
+    public static double ARM_RELEASE_DIFF = 0.078;
+    public static double ARM_SCORING_CORAL_POS_L4 = 0.0957; // TODO
     public static double ARM_INTAKE_SOURCE_POSITION = .18; // TODO
-    public static double ARM_DEALGAE_POSITION = .65; // TODO
+    public static double ARM_DEALGAE_POSITION = .01; // TODO
     public static double ARM_BARGE_POS = .7; // TODO: find real value
+    // public static double ARM_SCORING_POS = .7; // TODO: find real value
+    public static double ARM_WRAP_POS = 0.794;
   }
 
   public static class ElevatorConstantsLeonidas {
     public static double OFFSET = 0;
-    public static double ELEVATOR_OPERATIONAL_MIN_POS = 0;
-    public static double ELEVATOR_OPERATIONAL_MAX_POS = 89.5;
+    public static double ELEVATOR_OPERATIONAL_MIN_POS = -0.1;
+    public static double ELEVATOR_OPERATIONAL_MAX_POS = 27;
     public static final int canID = 25;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 120;
-    public static final boolean invert = false;
+    public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 7;
-    public static final int followerCanID = 1000; // TODO: find real id
+    public static final int followerCanID = 26; // TODO: find real id
     public static final String followerCanBus = "Takeover";
     public static final boolean followerOpposeLeader = false;
-    public static final double kS = 0.22812; // TODO
-    public static final double kV = 0.14885; // TODO
-    public static double ELEVATOR_L2_POS = 17; // TODO
-    public static double ELEVATOR_L3_POS = 44; // TODO
-    public static double ELEVATOR_L4_POS = 87; // TODO
-    public static double ELEVATOR_DEALGAE_L2 = 32; // TODO
-    public static double ELEVATOR_DEALGAE_L3 = 60; // TODO
+    public static final double kS = 0.59545; // TODO
+    public static final double kV = 0.1609; // TODO
+    public static final double ELEVATOR_HANDOFF_POS = 14.7;
+    public static double ELEVATOR_L2_POS = 1.06; // TODO
+    public static double ELEVATOR_L3_POS = 9.73; // TODO
+    public static double ELEVATOR_L4_POS = 22.9; // TODO
+    public static double ELEVATOR_DEALGAE_L2 = 9.57; // TODO
+    public static double ELEVATOR_DEALGAE_L3 = 16.84; // TODO
     public static double ELEVATOR_SOURCE_POS = 5.15; // TODO
     public static double ELEVATOR_MANUAL_VOLTAGE = 1; // TODO
     public static double ELEVATOR_BARGE_POS = 80; // TODO: find real value
@@ -352,8 +356,10 @@ public final class Constants {
   }
 
   public final class IntakeArmConstantsLeonidas {
-    public static final double INTAKE_CORAL_POS = 11.4; // TODO
+    public static final double INTAKE_CORAL_POS = 15.3; // TODO
     public static final double INTAKE_ALGAE_POS = 6.5; // TODO
+    public static final double INTAKE_HANDOFF_POS = 0;
+    public static final double INTAKE_HOME_POS = 3.7;
     public static final double L1_POS = 1.65;
     public static final int canID = 52;
     public static final String canBus = "Takeover";
@@ -361,8 +367,8 @@ public final class Constants {
     public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 38.33; // TODO
-    public static final double kS = 0.25918; // TODO
-    public static final double kV = 0.29343; // TODO
+    public static final double kS = 0.40438; // TODO
+    public static final double kV = 0.33074; // TODO
   }
 
   public final class ClimbConstantsLeonidas {

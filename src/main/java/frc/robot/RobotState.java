@@ -4,13 +4,22 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ArmConstantsLeonidas;
+import frc.robot.Constants.ElevatorConstantsLeonidas;
+import frc.robot.RobotState.ScoringSetpoints;
+import frc.robot.command_factories.ScoringFactory;
+import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.NemesisMathUtil;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import lombok.Getter;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -29,6 +38,7 @@ public class RobotState extends SubsystemBase {
   @Getter private static boolean endEffectorhasCoral;
   private static boolean intakeHasCoral;
   private static boolean intakeHasAlgae;
+  private final ControllerOrchestrator controllerApp;
 
   /** The aligning state for scoring, if we are aligning to front or back of the robot. */
   public static enum AligningState {
@@ -37,8 +47,24 @@ public class RobotState extends SubsystemBase {
     ALIGNING_BACK
   }
 
+  public static class ScoringSetpoints {
+    public double elevatorSetpoint;
+    public double armSetpoint;
+
+    public ScoringSetpoints(double elevatorSetpoint, double armSetpoint) {
+      this.elevatorSetpoint = elevatorSetpoint;
+      this.armSetpoint = armSetpoint;
+    }
+  }
+
   private AtomicReference<AligningState> aligningState =
       new AtomicReference<RobotState.AligningState>(AligningState.NOT_ALIGNING);
+
+  private static Pose2d targetPose = new Pose2d();
+  private static ScoringSetpoints scoringSetpoints = new ScoringSetpoints(Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS, Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3);
+  private static HashMap<Level, ScoringSetpoints> levelLookup =
+      new HashMap<Level, ScoringSetpoints>();
+  private final Lock updateLock = new ReentrantLock();
 
   private RobotState(
       Arm arm,
@@ -46,13 +72,30 @@ public class RobotState extends SubsystemBase {
       Elevator elevator,
       EndEffector endEffector,
       Intake intake,
-      Vision vision) {
+      Vision vision,
+      ControllerOrchestrator controllerApp) {
     this.arm = arm;
     this.drive = drive;
     this.elevator = elevator;
     this.endEffector = endEffector;
     this.intake = intake;
     this.vision = vision;
+    this.controllerApp = controllerApp;
+    levelLookup.put(
+        Level.L2,
+        new ScoringSetpoints(
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS,
+            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3));
+    levelLookup.put(
+        Level.L3,
+        new ScoringSetpoints(
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS,
+            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3));
+    levelLookup.put(
+        Level.L4,
+        new ScoringSetpoints(
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS,
+            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4));
   }
 
   /**
@@ -72,11 +115,12 @@ public class RobotState extends SubsystemBase {
       Elevator elevator,
       EndEffector endEffector,
       Intake intake,
-      Vision vision) {
+      Vision vision,
+      ControllerOrchestrator controllerApp) {
     if (instance != null) {
       throw new IllegalStateException("RobotState has already been initialized");
     }
-    instance = new RobotState(arm, drive, elevator, endEffector, intake, vision);
+    instance = new RobotState(arm, drive, elevator, endEffector, intake, vision, controllerApp);
     return instance;
   }
 
@@ -103,7 +147,15 @@ public class RobotState extends SubsystemBase {
 
   public void periodic() {
     robotPose = drive.getPose();
+    updateLock.lock();
+    try {
+      setAligningStateBasedOnTargetPose(() -> controllerApp.getTarget().pose());
+      updateScoringConfiguration(controllerApp.getTarget().pose());
+    } finally {
+      updateLock.unlock();
+    }
     // currentZone = Constants.locator.getZoneOfField(robotPose);
+
     endEffectorhasCoral = endEffectorhasCoral();
   }
 
@@ -112,24 +164,14 @@ public class RobotState extends SubsystemBase {
    *
    * @return true if the endeffector has coral, false if not
    */
-  @AutoLogOutput(key = "EndEffector/hasCoral")
+  @AutoLogOutput(key = "RobotState/endEffectorHasCoral")
   public static boolean endEffectorhasCoral() {
     return endEffector.hasCoral();
   }
 
-  @AutoLogOutput(key = "Intake/hasCoral")
+  @AutoLogOutput(key = "RobotState/intakeHasCoral")
   public static boolean intakeHasCoral() {
     return intake.hasCoral();
-  }
-
-  /**
-   * Checks if intake has algae
-   *
-   * @return true if the intake has algae, false if not
-   */
-  @AutoLogOutput(key = "Intake/hasAlgae")
-  public static boolean intakeHasAlgae() {
-    return intake.hasAlgae();
   }
 
   /**
@@ -156,12 +198,12 @@ public class RobotState extends SubsystemBase {
 
   /** Align to the front or back of the robot based on the given target pose. */
   public void setAligningStateBasedOnTargetPose(Supplier<Pose2d> targetPose) {
-    Logger.recordOutput("PreciseAlignment/TargetPose", targetPose.get());
     if (drive.frontScore(targetPose.get())) {
       setAligningState(AligningState.ALIGNING_FRONT);
     } else {
       setAligningState(AligningState.ALIGNING_BACK);
     }
+    Logger.recordOutput("RobotState/AligningState", getAligningState());
   }
 
   public void resetAligningState() {
@@ -182,5 +224,58 @@ public class RobotState extends SubsystemBase {
 
   public static Command setIntakeNoAlgae() {
     return Commands.runOnce(() -> intakeHasAlgae = false);
+  }
+
+  private void updateScoringConfiguration(Pose2d originalTargetPose) {
+    ScoringSetpoints lookup = levelLookup.get(controllerApp.getTarget().scoringLevel());
+    // I think we need the original controllerApp pose here to avoid evaluating on an already
+    // flipped pose (the targetPose of this class)
+    // Opted not to use Aligning enum in the event that we attempt to score without aligning
+    if (aligningState.get() == AligningState.ALIGNING_BACK) {
+      lookup.armSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - lookup.armSetpoint;
+      targetPose = drive.flipScoringSide(originalTargetPose);
+      System.out.println("Scoring Back with an arm setpoint of " + lookup.armSetpoint);
+    } else {
+      lookup.armSetpoint = lookup.armSetpoint;
+      System.out.println("Scoring Front with an arm setpoint of " + lookup.armSetpoint);
+    }
+    scoringSetpoints = lookup;
+    Logger.recordOutput("RobotState/Pose", targetPose);
+    Logger.recordOutput("RobotState/ArmSetpoint", scoringSetpoints.armSetpoint);
+    Logger.recordOutput("RobotState/ElevatorSetpoint", scoringSetpoints.elevatorSetpoint);
+  }
+
+  public Pose2d getTargetPose() {
+    updateLock.lock();
+    try {
+      return targetPose;
+    } finally {
+      updateLock.unlock();
+    }
+  }
+
+  public ScoringSetpoints getScoringSetpoints() {
+    updateLock.lock();
+    try {
+      return scoringSetpoints;
+    } finally {
+      updateLock.unlock();
+    }
+  }
+
+  /*
+   * Helper Function, picks the closest value for the arm setpoint based on if the cancoder is wrapped or not
+   */
+  public static double wrapArmSetpoint(double setpoint) {
+
+    double current = RobotContainer.getArm().getAbsolutePosition();
+    double wrappedSetpoint = setpoint + ArmConstantsLeonidas.ARM_WRAP_POS;
+    // Only wrap if we are able to freely rotate without fear of collision
+    if (RobotContainer.getElevator().getRotationCount()
+        >= ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
+      return NemesisMathUtil.selectClosest(setpoint, wrappedSetpoint, current);
+    } else {
+      return setpoint;
+    }
   }
 }
