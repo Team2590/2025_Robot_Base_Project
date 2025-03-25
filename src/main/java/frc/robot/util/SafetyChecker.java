@@ -92,14 +92,14 @@ public class SafetyChecker {
       double intakeSetpoint, double armSetpoint, double elevatorSetpoint) {
     boolean subsystemsOperational =
         isSafe(MechanismType.ARM_MOVEMENT, armSetpoint)
-            && isSafe(MechanismType.INTAKE_MOVEMENT, intakeSetpoint)
+            // && isSafe(MechanismType.INTAKE_MOVEMENT, intakeSetpoint)
             && isSafe(MechanismType.ELEVATOR_MOVEMENT, elevatorSetpoint);
     if (!elevatorOperational(elevatorSetpoint, armSetpoint)) {
       System.out.println(" \n \n ELEVATOR AND ARM BELOW HAND OFF POS (DANGER) \n \n");
     }
-    if (!isSafe(MechanismType.INTAKE_MOVEMENT, intakeSetpoint)) {
-      System.out.println("intake very sad very DANGEROUS \n INTAKE NOT IN OPERATIONAL ZONE");
-    }
+    // if (!isSafe(MechanismType.INTAKE_MOVEMENT, intakeSetpoint)) {
+    //   System.out.println("intake very sad very DANGEROUS \n INTAKE NOT IN OPERATIONAL ZONE");
+    // }
     System.out.println("arm is safe?: " + isSafe(MechanismType.ARM_MOVEMENT, armSetpoint));
     System.out.println("intake is safe?: " + isSafe(MechanismType.INTAKE_MOVEMENT, intakeSetpoint));
     System.out.println(
