@@ -151,7 +151,6 @@ public class RobotState extends SubsystemBase {
     try {
       setAligningStateBasedOnTargetPose(() -> controllerApp.getTarget().pose());
       updateScoringConfiguration(controllerApp.getTarget().pose());
-      Logger.recordOutput("PreciseAlignment/AligningState", getAligningState());
     } finally {
       updateLock.unlock();
     }
@@ -165,12 +164,12 @@ public class RobotState extends SubsystemBase {
    *
    * @return true if the endeffector has coral, false if not
    */
-  @AutoLogOutput(key = "EndEffector/hasCoral")
+  @AutoLogOutput(key = "RobotState/endEffectorHasCoral")
   public static boolean endEffectorhasCoral() {
     return endEffector.hasCoral();
   }
 
-  @AutoLogOutput(key = "Intake/hasCoral")
+  @AutoLogOutput(key = "RobotState/intakeHasCoral")
   public static boolean intakeHasCoral() {
     return intake.hasCoral();
   }
@@ -200,6 +199,7 @@ public class RobotState extends SubsystemBase {
     } else {
       setAligningState(AligningState.ALIGNING_BACK);
     }
+    Logger.recordOutput("RobotState/AligningState", getAligningState());
   }
 
   public void resetAligningState() {
