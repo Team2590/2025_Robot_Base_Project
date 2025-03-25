@@ -234,4 +234,48 @@ class ArmPositionManagerTest {
     complexManager.updateRotationTracking(pos);
     assertEquals(90.0, complexManager.getAbsoluteAngleDegrees(), DELTA);
   }
+
+  @Test
+  void testSafePathWhenShortestIsAlsoSafest() {
+    // Set up initial position at 90 degrees
+    armManager.resetToAngle(90.0);
+
+    // Try to move to 180 degrees
+    // The shortest path is clockwise 90° which is well within rotation limits
+    // The long path would be counter-clockwise -270° which is also within limits
+    double safePath = armManager.calculateSafePath(180.0);
+
+    // Should choose the shortest (clockwise) path since both are safe
+    assertEquals(180.0, safePath, DELTA);
+  }
+
+  @Test
+  void testSafePathWhenShortestIsUnsafe() {
+    // Set up a position near max rotation limit
+    double startAngle = (MAX_ROTATIONS * 360.0) - 45.0; // 675 degrees
+    armManager.resetToAngle(startAngle);
+
+    // Try to move to a position that would exceed max rotation if taken clockwise
+    // If we go clockwise (shortest path) by +90°, we'd be at 765°
+    // If we go counter-clockwise (long way) by -270°, we'd be at 405°
+    double safePath = armManager.calculateSafePath(normalizeAngle(startAngle + 90.0));
+
+    // Should choose the counter-clockwise path as it's within safe limit
+    assertTrue(armManager.isSafeToMove(safePath));
+    assertTrue(safePath < 500.0); // Should be around 405°
+    assertTrue(safePath > 400.0); // Should be around 405°
+  }
+
+  @Test
+  void testSafePathWhenNoSafePathExists() {
+    // Create a very restrictive manager with max 0 rotations
+    // This means angles above 0° are unsafe
+    ArmPositionManager restrictedManager = new ArmPositionManager(GEAR_RATIO, 0, MAGNET_OFFSET);
+
+    // Try to move to any non-zero angle
+    double noSafePath = restrictedManager.calculateSafePath(90.0);
+
+    // Should return -1 as no path is safe (any path > 0° exceeds our 0 rotation limit)
+    assertEquals(-1, noSafePath, DELTA);
+  }
 }

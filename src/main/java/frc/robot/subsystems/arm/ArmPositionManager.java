@@ -153,8 +153,15 @@ public class ArmPositionManager {
    * @return true if the move is safe, false otherwise
    */
   public boolean isSafeToMove(double targetAngleDegrees) {
-    int targetRotations = (int) Math.floor(targetAngleDegrees / 360.0);
-    return Math.abs(targetRotations) <= maxRotations;
+    // For safety calculation, we use the absolute value of the angle
+    // This handles both positive and negative rotation directions
+    double absoluteAngle = Math.abs(targetAngleDegrees);
+
+    // Calculate how many rotations this represents (possibly fractional)
+    double rotations = absoluteAngle / 360.0;
+
+    // The move is safe if the number of rotations is less than or equal to maxRotations
+    return rotations <= maxRotations;
   }
 
   /**
@@ -195,6 +202,73 @@ public class ArmPositionManager {
     }
 
     return targetAngle;
+  }
+
+  /**
+   * Calculates both possible paths (clockwise and counter-clockwise) to reach a target angle and
+   * returns the safe path if one exists
+   *
+   * @param targetAngleDegrees Desired angle in degrees (0-360)
+   * @return The target angle modified to take a safe path, or -1 if no safe path exists
+   */
+  public double calculateSafePath(double targetAngleDegrees) {
+    // Normalize the target angle to 0-360 range
+    double normalizedTarget = MathUtil.inputModulus(targetAngleDegrees, 0, 360);
+    double currentNormalized = getNormalizedAngleDegrees();
+    double currentAngle = getAbsoluteAngleDegrees();
+
+    // Calculate both possible paths: clockwise and counter-clockwise
+
+    // For clockwise movement:
+    double clockwiseDiff = normalizedTarget - currentNormalized;
+    if (clockwiseDiff <= 0) {
+      clockwiseDiff += 360;
+    }
+    double clockwisePath = currentAngle + clockwiseDiff;
+
+    // For counter-clockwise movement:
+    double counterClockwiseDiff = normalizedTarget - currentNormalized;
+    if (counterClockwiseDiff >= 0) {
+      counterClockwiseDiff -= 360;
+    }
+    double counterClockwisePath = currentAngle + counterClockwiseDiff;
+
+    // Check if either path exceeds rotation limits
+    boolean clockwiseSafe = isSafeToMove(clockwisePath);
+    boolean counterClockwiseSafe = isSafeToMove(counterClockwisePath);
+
+    System.out.println(
+        "DEBUG: Safe Path - Current: "
+            + currentAngle
+            + ", Target: "
+            + normalizedTarget
+            + ", Clockwise: "
+            + clockwisePath
+            + " (safe: "
+            + clockwiseSafe
+            + ")"
+            + ", Counter: "
+            + counterClockwisePath
+            + " (safe: "
+            + counterClockwiseSafe
+            + ")");
+
+    // If both paths are safe, return the shorter one
+    if (clockwiseSafe && counterClockwiseSafe) {
+      return Math.abs(clockwiseDiff) <= Math.abs(counterClockwiseDiff)
+          ? clockwisePath
+          : counterClockwisePath;
+    }
+    // If only one path is safe, return that one
+    else if (clockwiseSafe) {
+      return clockwisePath;
+    } else if (counterClockwiseSafe) {
+      return counterClockwisePath;
+    }
+
+    // No safe path exists
+    System.out.println("DEBUG: No safe path exists to target " + normalizedTarget);
+    return -1;
   }
 
   /**

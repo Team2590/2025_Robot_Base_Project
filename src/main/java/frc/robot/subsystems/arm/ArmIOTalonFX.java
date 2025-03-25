@@ -174,19 +174,28 @@ public class ArmIOTalonFX implements ArmIO {
    */
   @Override
   public void setPosition(double targetDegrees) {
-    // Validate input range
-    if (targetDegrees < 0 || targetDegrees > 360) {
-      throw new IllegalArgumentException("Target degrees must be between 0 and 360");
-    }
+    // First try to find a safe path (either shortest or long way around if shortest isn't safe)
+    double safePath = armPositionManager.calculateSafePath(targetDegrees);
 
-    if (armPositionManager.isSafeToMove(targetDegrees)) {
-      // Calculate shortest path to target
-      double shortestPathDegrees = armPositionManager.calculateShortestPath(targetDegrees);
-      // Convert back to CANcoder position
-      double targetPos = armPositionManager.degreesToCancoderPosition(shortestPathDegrees);
+    if (safePath >= 0) {
+      // Convert the safe path angle to CANcoder position
+      double targetPos = armPositionManager.degreesToCancoderPosition(safePath);
+
+      // Get the current CANcoder position
+      double currentPos = armabspos.getValueAsDouble();
+
+      // Calculate the direction of movement
+      double direction = targetPos - currentPos;
+
+      // If the direction is negative, add 1 to ensure Motion Magic moves the long way around
+      if (direction < 0) {
+        targetPos += 1.0;
+      }
+
+      // Set the target position
       arm.setControl(mmv.withPosition(targetPos));
     } else {
-      System.out.println("CAN'T MOVE ARM, rotation limit exceeded.");
+      System.out.println("CAN'T MOVE ARM, no safe path exists to target position.");
     }
   }
 
