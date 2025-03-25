@@ -77,6 +77,7 @@ public class SafetyChecker {
         return true;
 
       default:
+        System.out.println("cry cry somehow you're not working --> " + checkType);
         return false;
     }
   }
@@ -96,6 +97,13 @@ public class SafetyChecker {
     if (!elevatorOperational(elevatorSetpoint, armSetpoint)) {
       System.out.println(" \n \n ELEVATOR AND ARM BELOW HAND OFF POS (DANGER) \n \n");
     }
+    if (!isSafe(MechanismType.INTAKE_MOVEMENT, intakeSetpoint)) {
+      System.out.println("intake very sad very DANGEROUS \n INTAKE NOT IN OPERATIONAL ZONE");
+    }
+    System.out.println("arm is safe?: " + isSafe(MechanismType.ARM_MOVEMENT, armSetpoint));
+    System.out.println("intake is safe?: " + isSafe(MechanismType.INTAKE_MOVEMENT, intakeSetpoint));
+    System.out.println(
+        "elevator is safe?: " + isSafe(MechanismType.ELEVATOR_MOVEMENT, elevatorSetpoint));
     return subsystemsOperational && elevatorOperational(elevatorSetpoint, armSetpoint);
   }
 

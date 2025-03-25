@@ -263,6 +263,7 @@ public final class Constants {
     public static final double reduction = 1; // was a 94.18
     public static final int cancoderID = 5;
     public static final double ARM_SET_STOW = .33; // TODO
+    public static final double ARM_VERTICAL_POS = .2;
     // public static final double magOffset = -.596436; // -.398
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
     public static final double magOffset = -0.2; // -0.379; // -.3347; // -.635; // TODO
@@ -295,7 +296,7 @@ public final class Constants {
     public static final boolean followerOpposeLeader = false;
     public static final double kS = 0.59545; // TODO
     public static final double kV = 0.1609; // TODO
-    public static final double ELEVATOR_HANDOFF_POS = 14.7;
+    public static final double ELEVATOR_HANDOFF_POS = 15.5;
     public static double ELEVATOR_L2_POS = 1.06; // TODO
     public static double ELEVATOR_L3_POS = 9.73; // TODO
     public static double ELEVATOR_L4_POS = 22.9; // TODO
@@ -305,6 +306,7 @@ public final class Constants {
     public static double ELEVATOR_MANUAL_VOLTAGE = 1; // TODO
     public static double ELEVATOR_BARGE_POS = 80; // TODO: find real value
     public static double ELEVATOR_INTAKE_ALGAE_POS = 5; // TODO find real value
+    public static double ELEVATOR_HANDOFF_TRANSITION_POS = ELEVATOR_HANDOFF_POS + 1.5;
   }
 
   /*   public final class ElevatorConstantsLeonidas {

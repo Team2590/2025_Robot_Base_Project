@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants;
-import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
@@ -78,14 +77,18 @@ public class ScoringFactory {
       case L3:
         return Commands.parallel(
             Commands.print("Priming " + level.name()),
-            ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3)
+            Atlas.synchronize(
+                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                    level.getElevatorPosition(),
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3)
                 .withName("Prime " + level.name()));
       case L2:
         return Commands.parallel(
             Commands.print("Priming " + level.name()),
-            ElevatorFactory.setPositionBlocking(level.getElevatorPosition()),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3)
+            Atlas.synchronize(
+                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                    level.getElevatorPosition(),
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3)
                 .withName("Prime " + level.name()));
       default:
         return Commands.parallel(
@@ -191,11 +194,15 @@ public class ScoringFactory {
    * @return Command sequence for stowing
    */
   public static Command stow() {
-    return Commands.parallel(
-            ArmFactory.setPositionBlocking(ArmConstantsLeonidas.ARM_SET_STOW),
-            ElevatorFactory.setPositionBlocking(5),
-            IntakeFactory.setHomePosition())
-        .withName("Stow Mechanism");
+    return Atlas.synchronize(
+        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+        Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS + 1,
+        Constants.ArmConstantsLeonidas.ARM_SET_STOW);
+    // return Commands.parallel(
+    //         ArmFactory.setPositionBlocking(ArmConstantsLeonidas.ARM_SET_STOW),
+    //         ElevatorFactory.setPositionBlocking(5),
+    //         IntakeFactory.setHomePosition())
+    //     .withName("Stow Mechanism");
   }
 
   public static Command prepClimb() {

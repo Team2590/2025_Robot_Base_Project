@@ -33,7 +33,6 @@ import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
 import frc.robot.command_factories.GamePieceFactory;
-import frc.robot.command_factories.IntakeFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.ArmDefaultCommand;
@@ -70,7 +69,6 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import frc.robot.util.Atlas;
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -532,32 +530,37 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsTuning() {
-    leftJoystick
-        .button(1)
-        .whileTrue(
-            Atlas.synchronize(
-                Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
-                Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
-                Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
-    leftJoystick
-        .button(2)
-        .whileTrue(
-            IntakeFactory.runIntake(
-                () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED));
-    leftJoystick
-        .button(3)
-        .whileTrue(
-            Atlas.synchronize(
-                Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS,
-                Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
-                Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
-    leftJoystick
-        .button(4)
-        .whileTrue(
-            Commands.race(
-                EndEffectorFactory.runEndEffector(),
-                IntakeFactory.runIntakeVoltage(
-                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)));
+    drive.setDefaultCommand(DriveFactory.joystickDrive());
+    // leftJoystick
+    //     .button(1)
+    //     .whileTrue(
+    //         Atlas.synchronize(
+    //             Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
+    //             Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
+    //             Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
+    // leftJoystick
+    //     .button(2)
+    //     .whileTrue(
+    //         IntakeFactory.runIntake(
+    //             () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED));
+    // leftJoystick
+    //     .button(3)
+    //     .whileTrue(
+    //         Atlas.synchronize(
+    //             Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS,
+    //             Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
+    //             Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
+    // leftJoystick
+    //     .button(4)
+    //     .whileTrue(
+    //         Commands.race(
+    //             EndEffectorFactory.runEndEffector(),
+    //             IntakeFactory.runIntakeVoltage(
+    //                 () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)));
+    rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
+    leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
+    leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
+    leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
     // leftJoystick.button(1).whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
     // leftJoystick.button(1).onTrue(intake.setPosition(3.7));
     // leftJoystick.button(2).onTrue(intake.setPosition(15.3));

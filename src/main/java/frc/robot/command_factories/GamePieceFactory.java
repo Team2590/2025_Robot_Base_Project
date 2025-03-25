@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.util.Atlas;
+import frc.robot.util.NemesisTimedCommand;
 
 public class GamePieceFactory {
 
@@ -23,9 +24,14 @@ public class GamePieceFactory {
             Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
             Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)
+        // .andThen(
+        //     IntakeFactory.runIntake(
+        //         () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED))
         .andThen(
-            IntakeFactory.runIntake(
-                () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED))
+            NemesisTimedCommand.generateTimedCommand(
+                IntakeFactory.runIntakeVoltage(
+                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED),
+                3))
         .andThen(
             Atlas.synchronize(
                 Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS,
@@ -35,7 +41,13 @@ public class GamePieceFactory {
             Commands.race(
                 EndEffectorFactory.runEndEffector(),
                 IntakeFactory.runIntakeVoltage(
-                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)));
+                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED),
+                Commands.waitSeconds(.75)))
+        .andThen(
+            Atlas.synchronize(
+                Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS,
+                Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_TRANSITION_POS,
+                Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
   }
 
   public static Command intakeCoralNoHandoff() {
