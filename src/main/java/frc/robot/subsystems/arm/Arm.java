@@ -24,7 +24,7 @@ public class Arm extends SubsystemBase {
     Logger.processInputs("Arm", inputs);
 
     // Log current position and target position
-    Logger.recordOutput("Arm/CurrentPosition", inputs.armabspos);
+    Logger.recordOutput("Arm/CurrentPosition", inputs.armpos);
     Logger.recordOutput("Arm/TargetPosition", setpoint);
   }
 
@@ -36,7 +36,7 @@ public class Arm extends SubsystemBase {
   public Command setPositionBlocking(double setpoint) {
     this.setpoint = setpoint;
     return runEnd(() -> arm.setPosition(setpoint), () -> {})
-        .until(() -> NemesisMathUtil.isApprox(inputs.armabspos, setpointTolerance, setpoint));
+        .until(() -> NemesisMathUtil.isApprox(inputs.armpos, setpointTolerance, setpoint));
   }
 
   public Command setPositionRun(double setpoint) {
@@ -69,7 +69,7 @@ public class Arm extends SubsystemBase {
   }
 
   public double getAbsolutePosition() {
-    return inputs.armabspos;
+    return inputs.armpos;
   }
 
   public double getSetpoint() {

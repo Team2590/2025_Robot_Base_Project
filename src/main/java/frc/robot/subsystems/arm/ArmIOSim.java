@@ -44,7 +44,7 @@ public class ArmIOSim implements ArmIO {
 
   @Override
   public void updateInputs(ArmIOInputs io) {
-    io.armabspos = this.armabspos;
+    io.armpos = this.armabspos;
   }
 
   @Override
