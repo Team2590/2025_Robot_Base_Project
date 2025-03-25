@@ -82,5 +82,29 @@ public class VisionConstants {
 
   public static final Set<Integer> FIDUCIAL_IDS_BLUE = Set.of(17, 18, 19, 20, 21, 22);
 
+  public class CoralAlgaeCameraConstants {
+    public static double OBJECT_CAMERA_HEIGHT_METERS = 0.435 - 0.115 - 0.035; // -0.115 for height of coral & -0.035 bc extra gap when detecting coral
+    public static double OBJECT_CAMERA_PITCH = Math.toRadians(38);
+    public static double OBJECT_CAMERA_YAW = Math.toRadians(45);
+    public static double OBJECT_CAMERA_X_DISTANCE_FROM_CENTER_METERS = Units.inchesToMeters(0);
+    public static double OBJECT_CAMERA_Y_DISTANCE_FROM_CENTER_METERS = 0;
+
+    public static Transform3d robotToObjectCamera =
+        new Transform3d(
+            OBJECT_CAMERA_X_DISTANCE_FROM_CENTER_METERS,
+            OBJECT_CAMERA_Y_DISTANCE_FROM_CENTER_METERS,
+            OBJECT_CAMERA_HEIGHT_METERS,
+            new Rotation3d(
+                0, // ROLL
+                OBJECT_CAMERA_PITCH, // PITCH
+                OBJECT_CAMERA_YAW // YAW
+                ));
+
+    public static int CORAL_PIPELINE_INDEX = 0;
+    public static String CAMERA_NAME = "Arducam_OV9782_USB_Camera";
+    public static double CORAL_X_OFFSET = 0;
+    public static double CORAL_Y_OFFSET = 0;
+  }
+
   public static double DISTANCE_THRESHOLD = Units.inchesToMeters(1200); // TODO: TUNE VALUE FOR COMP
 }

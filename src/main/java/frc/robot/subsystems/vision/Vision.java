@@ -35,10 +35,14 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+  private final CoralDetectionIO coralDetectionIO;
+  private final CoralDetectionIOInputsAutoLogged coralDetectionInputs =
+      new CoralDetectionIOInputsAutoLogged();
 
-  public Vision(VisionConsumer consumer, VisionIO... io) {
+  public Vision(VisionConsumer consumer, CoralDetectionIO coralDetectionIOInput, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
+    this.coralDetectionIO = coralDetectionIOInput;
 
     // Initialize inputs
     this.inputs = new VisionIOInputsAutoLogged[io.length];
@@ -159,6 +163,7 @@ public class Vision extends SubsystemBase {
       Logger.recordOutput(
           "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
           robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
+      Logger.processInputs("Vision/CoralDetection", coralDetectionInputs);
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);
       allRobotPosesAccepted.addAll(robotPosesAccepted);
@@ -176,6 +181,7 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput(
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
+    coralDetectionIO.updateInputs(coralDetectionInputs);
   }
 
   @FunctionalInterface
@@ -184,5 +190,13 @@ public class Vision extends SubsystemBase {
         Pose2d visionRobotPoseMeters,
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs);
+  }
+
+  public Pose2d getNearestCoralPose() {
+    return coralDetectionInputs.coralPose;
+  }
+
+  public Rotation2d getNearestCoralRotation() {
+    return coralDetectionInputs.coralRotation;
   }
 }
