@@ -31,15 +31,12 @@ public class NemesisMathUtil {
     return Math.hypot(pose1.getX() - pose2.getX(), pose1.getY() - pose2.getY());
   }
 
-  
-  public static double selectClosest(double t1, double t2, double curr){
+  public static double selectClosest(double t1, double t2, double curr) {
 
-    if (Math.abs(t1-curr)< Math.abs(t2-curr)){
+    if (Math.abs(t1 - curr) < Math.abs(t2 - curr)) {
       return t1;
-    }
-    else{
+    } else {
       return t2;
     }
-
   }
 }
