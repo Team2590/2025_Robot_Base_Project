@@ -49,7 +49,7 @@ public class ArmIOTalonFX implements ArmIO {
   MotionMagicConfigs mm;
   MotionMagicDutyCycle mmv;
   private double reduction;
-  private StatusSignal<Angle> armabspos;
+  private StatusSignal<Angle> armpos;
   private StatusSignal<Angle> position;
   private StatusSignal<AngularVelocity> velocity;
   private StatusSignal<Voltage> appliedVoltage;
@@ -101,14 +101,14 @@ public class ArmIOTalonFX implements ArmIO {
     slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
     FeedbackConfigs fdb = cfg.Feedback;
-    fdb.RotorToSensorRatio = sensor_reduction;
-    // fdb.SensorToMechanismRatio = 1.6;
+    // fdb.RotorToSensorRatio = sensor_reduction;
+    fdb.SensorToMechanismRatio = 2.666 / 2.5;
     fdb.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     fdb.FeedbackRemoteSensorID = cancoderID;
     MagnetSensorConfigs mag = new MagnetSensorConfigs();
     mag.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     mag.MagnetOffset = magOffset;
-    mag.AbsoluteSensorDiscontinuityPoint = 0.9999;
+    mag.AbsoluteSensorDiscontinuityPoint = 0.5;
     CANcoderConfiguration can = new CANcoderConfiguration();
     can.withMagnetSensor(mag);
     armCancoder.getConfigurator().apply(can);
@@ -122,11 +122,11 @@ public class ArmIOTalonFX implements ArmIO {
     supplyCurrent = arm.getSupplyCurrent();
     torqueCurrent = arm.getTorqueCurrent();
     tempCelsius = arm.getDeviceTemp();
-    armabspos = armCancoder.getAbsolutePosition();
+    armpos = arm.getPosition();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0,
-        armabspos,
+        armpos,
         position,
         velocity,
         appliedVoltage,
@@ -137,8 +137,8 @@ public class ArmIOTalonFX implements ArmIO {
 
   public void updateInputs(ArmIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        armabspos, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
-    inputs.armabspos = armabspos.getValueAsDouble();
+        armpos, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
+    inputs.armpos = armpos.getValueAsDouble();
     inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble()) / reduction;
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble()) / reduction;
     inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
