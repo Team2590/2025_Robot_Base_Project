@@ -98,17 +98,29 @@ public class ScoringFactory {
 
   public static Command score(ScoringSetpoints setpoints) {
     return primeForLevel(setpoints)
-            .andThen(EndEffectorFactory.runEndEffectorOuttake())
-            .until(() -> !RobotState.endEffectorhasCoral())
-            .withName("Score with Elevator setpoint " + setpoints.elevatorSetpoint + " and arm setpoint = " + setpoints.armSetpoint);
+        .andThen(EndEffectorFactory.runEndEffectorOuttake())
+        .until(() -> !RobotState.endEffectorhasCoral())
+        .withName(
+            "Score with Elevator setpoint "
+                + setpoints.elevatorSetpoint
+                + " and arm setpoint = "
+                + setpoints.armSetpoint);
   }
 
   public static Command primeForLevel(ScoringSetpoints setpoints) {
-        return Commands.parallel(
-            Commands.print("Priming with Elevator setpoint " + setpoints.elevatorSetpoint + " and arm setpoint = " + setpoints.armSetpoint),
-            ElevatorFactory.setPositionBlocking(setpoints.elevatorSetpoint),
-            ArmFactory.setPositionBlocking(setpoints.armSetpoint)
-                .withName("Priming with Elevator setpoint " + setpoints.elevatorSetpoint + " and arm setpoint = " + setpoints.armSetpoint));
+    return Commands.parallel(
+        Commands.print(
+            "Priming with Elevator setpoint "
+                + setpoints.elevatorSetpoint
+                + " and arm setpoint = "
+                + setpoints.armSetpoint),
+        ElevatorFactory.setPositionBlocking(setpoints.elevatorSetpoint),
+        ArmFactory.setPositionBlocking(setpoints.armSetpoint)
+            .withName(
+                "Priming with Elevator setpoint "
+                    + setpoints.elevatorSetpoint
+                    + " and arm setpoint = "
+                    + setpoints.armSetpoint));
   }
 
   // public static Command scoreTeleop(Level level) {

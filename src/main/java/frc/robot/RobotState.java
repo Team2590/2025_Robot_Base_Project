@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.Constants.ElevatorConstantsLeonidas;
 import frc.robot.RobotState.ScoringSetpoints;
-import frc.robot.command_factories.ArmFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
@@ -16,8 +15,6 @@ import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.NemesisMathUtil;
-
-import java.awt.ScrollPaneAdjustable;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
@@ -69,10 +66,12 @@ public class RobotState extends SubsystemBase {
 
   private AtomicReference<AligningState> aligningState =
       new AtomicReference<RobotState.AligningState>(AligningState.NOT_ALIGNING);
-    
+
   private static AtomicReference<Pose2d> targetPose = new AtomicReference<Pose2d>(new Pose2d());
-  private static AtomicReference<ScoringSetpoints> scoringSetpoints = new AtomicReference<ScoringSetpoints>();
-  private static HashMap<Level, ScoringSetpoints> levelLookup = new HashMap<Level, ScoringSetpoints>();
+  private static AtomicReference<ScoringSetpoints> scoringSetpoints =
+      new AtomicReference<ScoringSetpoints>();
+  private static HashMap<Level, ScoringSetpoints> levelLookup =
+      new HashMap<Level, ScoringSetpoints>();
   private static HashMap<String, ScoringSetpoints> dealgaeLevelLookup= new HashMap<String, ScoringSetpoints>();
   private final Lock updateLock = new ReentrantLock();
 
@@ -150,15 +149,14 @@ public class RobotState extends SubsystemBase {
     robotPose = drive.getPose();
     updateLock.lock();
     try {
-      Pose2d desiredPose = controllerApp.getTarget().pose();
-        setTargetPoseInternal(desiredPose);
-        setScoringSetpointsInternal(desiredPose);
-        setDeAlgaeSetpointsInternal(desiredPose, deAlgaeLevel);
-
+      setAligningStateBasedOnTargetPose(() -> controllerApp.getTarget().pose());
+      updateScoringConfiguration(controllerApp.getTarget().pose());
+      Logger.recordOutput("PreciseAlignment/AligningState", getAligningState());
     } finally {
-        updateLock.unlock();
+      updateLock.unlock();
     }
     // currentZone = Constants.locator.getZoneOfField(robotPose);
+
     endEffectorhasCoral = endEffectorhasCoral();
   }
 
@@ -197,7 +195,6 @@ public class RobotState extends SubsystemBase {
 
   /** Align to the front or back of the robot based on the given target pose. */
   public void setAligningStateBasedOnTargetPose(Supplier<Pose2d> targetPose) {
-    Logger.recordOutput("PreciseAlignment/TargetPose", targetPose.get());
     if (drive.frontScore(targetPose.get())) {
       setAligningState(AligningState.ALIGNING_FRONT);
     } else {
@@ -225,29 +222,26 @@ public class RobotState extends SubsystemBase {
     return Commands.runOnce(() -> intakeHasAlgae = false);
   }
 
-  public void setTargetPoseInternal(Pose2d desiredPose){
-    targetPose.set(drive.flipScoringSide(desiredPose));
-  }
-
-  /*
-   * 
-   * Flipping Setpoints based on scoring side 
-   */
-
-  private void setScoringSetpointsInternal(Pose2d originalTargetPose) {
+  private void updateScoringConfiguration(Pose2d originalTargetPose) {
     ScoringSetpoints lookup = levelLookup.get(controllerApp.getTarget().scoringLevel());
-    // I think we need the original controllerApp pose here to avoid evaluating on an already flipped pose (the targetPose of this class)
+    // I think we need the original controllerApp pose here to avoid evaluating on an already
+    // flipped pose (the targetPose of this class)
     // Opted not to use Aligning enum in the event that we attempt to score without aligning
-    if (drive.frontScore(originalTargetPose)) {
-        lookup.armSetpoint = wrapArmSetpoint(lookup.armSetpoint);
+    if (aligningState.get() == AligningState.ALIGNING_BACK) {
+      lookup.armSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - lookup.armSetpoint;
         lookup.armPlaceSetpoint= lookup.calculate_place(true);
-        System.out.println("Scoring Front with an arm setpoint of " + lookup.armSetpoint);
+      targetPose.set(drive.flipScoringSide(originalTargetPose));
+      System.out.println("Scoring Back with an arm setpoint of " + lookup.armSetpoint);
     } else {
-        lookup.armSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - lookup.armSetpoint;
+      lookup.armSetpoint = lookup.armSetpoint;
         lookup.armPlaceSetpoint= lookup.calculate_place(false);
-        System.out.println("Scoring Back with an arm setpoint of " + lookup.armSetpoint);
+      System.out.println("Scoring Front with an arm setpoint of " + lookup.armSetpoint);
     }
     scoringSetpoints.set(lookup);
+    Logger.recordOutput("RobotState/Pose", targetPose.get());
+    Logger.recordOutput("RobotState/ArmSetpoint", scoringSetpoints.get().armSetpoint);
+    Logger.recordOutput("RobotState/ElevatorSetpoint", scoringSetpoints.get().elevatorSetpoint);
+    setDeAlgaeSetpointsInternal(originalTargetPose,deAlgaeLevel);
   }
 
  
@@ -270,59 +264,47 @@ public class RobotState extends SubsystemBase {
     }
 
     scoringSetpoints.set(lookup);
+    Logger.recordOutput("RobotState/Pose", targetPose.get());
+    Logger.recordOutput("RobotState/ArmSetpoint", scoringSetpoints.get().armSetpoint);
+    Logger.recordOutput("RobotState/ElevatorSetpoint", scoringSetpoints.get().elevatorSetpoint);
   }
   
+
+ 
+ 
+ 
+
 
   public Pose2d getTargetPose() {
     updateLock.lock();
     try {
-        return targetPose.get();
+      return targetPose.get();
     } finally {
-        updateLock.unlock();
+      updateLock.unlock();
     }
-}
+  }
 
-public ScoringSetpoints getScoringSetpoints() {
+  public ScoringSetpoints getScoringSetpoints() {
     updateLock.lock();
     try {
-        return scoringSetpoints.get();
+      return scoringSetpoints.get();
     } finally {
-        updateLock.unlock();
+      updateLock.unlock();
     }
-}
-
-public void setTargetPose(Pose2d desiredPose){
-    updateLock.lock();
-    try {
-        setTargetPoseInternal(desiredPose);
-    } finally {
-        updateLock.unlock();
-    }
-}
-
-public void setScoringSetpoints(){
-    updateLock.lock();
-    try {
-        setScoringSetpointsInternal(controllerApp.getTarget().pose());
-    } finally {
-        updateLock.unlock();
-    }
-}
+  }
 
   /*
    * Helper Function, picks the closest value for the arm setpoint based on if the cancoder is wrapped or not
    */
-  public static double wrapArmSetpoint(double setpoint){
+  public static double wrapArmSetpoint(double setpoint) {
 
     double current = RobotContainer.getArm().getAbsolutePosition();
     double wrappedSetpoint = setpoint + ArmConstantsLeonidas.ARM_WRAP_POS;
     // Only wrap if we are able to freely rotate without fear of collision
-    if (RobotContainer.getElevator().getRotationCount() >= ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) 
-    {
+    if (RobotContainer.getElevator().getRotationCount()
+        >= ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
       return NemesisMathUtil.selectClosest(setpoint, wrappedSetpoint, current);
-    }
-    else
-    {
+    } else {
       return setpoint;
     }
   }

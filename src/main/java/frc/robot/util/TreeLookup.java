@@ -30,8 +30,8 @@ public class TreeLookup {
   public double getValue(double input) {
     if (input < treeMap.firstKey()) return treeMap.firstEntry().getValue();
     if (input > treeMap.lastKey()) return treeMap.lastEntry().getValue();
-    var belowEntry = treeMap.floorEntry(input); 
-    var aboveEntry = treeMap.ceilingEntry(input); 
+    var belowEntry = treeMap.floorEntry(input);
+    var aboveEntry = treeMap.ceilingEntry(input);
 
     double belowKey = belowEntry.getKey(); // x1
     double aboveKey = aboveEntry.getKey(); // x2
