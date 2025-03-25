@@ -45,4 +45,9 @@ public interface ArmIO {
   public void stop();
 
   public default void setVoltage(double volts) {}
+
+  /** Gets the absolute position of the arm in degrees (0-360) */
+  public default double getAbsolutePosition() {
+    return 0.0;
+  }
 }

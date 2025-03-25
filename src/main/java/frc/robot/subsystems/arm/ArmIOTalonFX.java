@@ -31,6 +31,7 @@ import frc.robot.util.StickyFaultUtil;
 public class ArmIOTalonFX implements ArmIO {
   private TalonFX arm;
   private CANcoder armCancoder;
+  private ArmPositionManager armPositionManager;
   LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 8);
   LoggedTunableNumber kI = new LoggedTunableNumber("Arm/kI", 0);
   LoggedTunableNumber kD = new LoggedTunableNumber("Arm/kD", 0);
@@ -71,6 +72,7 @@ public class ArmIOTalonFX implements ArmIO {
     this.reduction = reduction;
     arm = new TalonFX(motorCanID, canBus);
     armCancoder = new CANcoder(cancoderID, canBus);
+    armPositionManager = new ArmPositionManager(reduction, 2, magOffset);
     StickyFaultUtil.clearCancoderStickyFaults(armCancoder, "Arm Cancoder");
     StickyFaultUtil.clearMotorStickyFaults(arm, "Arm Motor");
     /* configurations for the arm motor */
@@ -135,26 +137,56 @@ public class ArmIOTalonFX implements ArmIO {
         tempCelsius);
   }
 
+  @Override
   public void updateInputs(ArmIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         armabspos, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
-    inputs.armabspos = armabspos.getValueAsDouble();
-    inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble()) / reduction;
+
+    // Update rotation tracking with current position
+    double currentAbsPos = armabspos.getValueAsDouble();
+    double currentAngle = armPositionManager.updateRotationTracking(currentAbsPos);
+
+    inputs.armabspos = currentAbsPos;
+    inputs.positionRads = Units.degreesToRadians(currentAngle);
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble()) / reduction;
     inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
     inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
     inputs.tempCelsius = tempCelsius.getValueAsDouble();
-    inputs.rotationCount = arm.getPosition().getValueAsDouble();
+    inputs.rotationCount = armPositionManager.getRotationCount();
+
     updateTunableNumbers();
   }
 
-  public void setPosition(double position) {
+  /**
+   * Sets the arm position to a specific angle in degrees.
+   *
+   * <p>The angle system follows a clock face convention: - 0°: Arm pointing straight up (12 o'clock
+   * position) - 90°: Arm pointing to the right (3 o'clock position) - 180°: Arm pointing straight
+   * down (6 o'clock position) - 270°: Arm pointing to the left (9 o'clock position)
+   *
+   * <p>The method automatically: 1. Checks if the move is safe within rotation limits 2. Calculates
+   * the shortest path to reach the target 3. Converts the angle to the appropriate CANcoder
+   * position 4. Moves the arm to the target position
+   *
+   * @param targetDegrees The desired arm position in degrees (0-360)
+   * @throws IllegalArgumentException if targetDegrees is outside 0-360 range
+   */
+  @Override
+  public void setPosition(double targetDegrees) {
+    // Validate input range
+    if (targetDegrees < 0 || targetDegrees > 360) {
+      throw new IllegalArgumentException("Target degrees must be between 0 and 360");
+    }
 
-    if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position)) {
-      arm.setControl(mmv.withPosition(position));
+    if (armPositionManager.isSafeToMove(targetDegrees)) {
+      // Calculate shortest path to target
+      double shortestPathDegrees = armPositionManager.calculateShortestPath(targetDegrees);
+      // Convert back to CANcoder position
+      double targetPos = armPositionManager.degreesToCancoderPosition(shortestPathDegrees);
+      arm.setControl(mmv.withPosition(targetPos));
     } else {
-      System.out.println("CAN'T MOVE ARM, safety check failed.");
+      System.out.println("CAN'T MOVE ARM, rotation limit exceeded.");
     }
   }
 
@@ -167,8 +199,9 @@ public class ArmIOTalonFX implements ArmIO {
     }
   }
 
+  @Override
   public double getAbsolutePosition() {
-    return armCancoder.getAbsolutePosition().getValueAsDouble();
+    return armPositionManager.getNormalizedAngleDegrees();
   }
 
   public void stop() {
