@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.RobotState;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
@@ -17,7 +18,6 @@ import java.util.Set;
  */
 public class Atlas {
 
- 
   /**
    * Sets intake, elevator, and arm to a particular position, synchronizing its movement to optimize
    * speed.
@@ -69,19 +69,26 @@ public class Atlas {
         Set.of(elevator, arm, intake));
   }
 
-  public static Command elevatorArmParallel(double elevatorTargetPos, double armTargetPos){
+  public static Command elevatorArmParallel(double elevatorTargetPos, double armTargetPos) {
 
-   
-
+    ArmOptLookup currentLookup = RobotState.getInstance().getArmOptTable();
     Elevator elevator = RobotContainer.getElevator();
     Arm arm = RobotContainer.getArm();
     Intake intake = RobotContainer.getIntake();
 
-
-    return elevator.setPositionBlocking(elevatorTargetPos) .deadlineFor(arm.continuousSetPosition(Constants.frontHandoffLookup::get)).andThen(arm.setPositionBlocking(armTargetPos)); //TODO incorporate front back flipping
-    // While Command is scheduled the arm will openloop set voltage to position while ElevatorIsRunning it's 
-    //.onlyIf(()->SafetyChecker.elevatorOperational(elevatorTargetPos, armTargetPos));
+    return Commands.defer(
+        () ->
+            elevator
+                .setPositionBlocking(elevatorTargetPos)
+                .deadlineFor(Commands.run(() -> arm.openLoopSetPosition(armTargetPos)))
+                // arm.setPositionRun(
+                //     Constants.frontHandoffLookup.get(
+                //         RobotContainer.getElevator().getRotationCount())))
+                .andThen(arm.setPositionBlocking(armTargetPos)),
+        Set.of(elevator, arm));
+    // TODO incorporate front back flipping good ;)
+    // While Command is scheduled the arm will openloop set voltage to position while
+    // ElevatorIsRunning it's
+    // .onlyIf(()->SafetyChecker.elevatorOperational(elevatorTargetPos, armTargetPos));
   }
-
- 
 }

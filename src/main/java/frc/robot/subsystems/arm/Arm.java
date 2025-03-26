@@ -4,9 +4,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.NemesisMathUtil;
-
 import java.util.function.Supplier;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
@@ -36,6 +34,10 @@ public class Arm extends SubsystemBase {
     return runOnce(() -> arm.setPosition(setpoint));
   }
 
+  public void openLoopSetPosition(double setpoint) {
+    arm.setPosition(setpoint);
+  }
+
   public Command setPositionBlocking(double setpoint) {
     this.setpoint = setpoint;
     return runEnd(() -> arm.setPosition(setpoint), () -> {})
@@ -46,9 +48,8 @@ public class Arm extends SubsystemBase {
     return run(() -> arm.setPosition(setpoint));
   }
 
-  public Command continuousSetPosition(Supplier<Double> setpoint){
+  public Command continuousSetPosition(Supplier<Double> setpoint) {
     return setPositionRun(setpoint.get());
-
   }
 
   public Command setPositionLoggedTunableNumber() {

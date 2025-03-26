@@ -71,6 +71,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.Atlas;
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -569,6 +570,13 @@ public class RobotContainer {
     leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
     leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
+
+    rightJoystick
+        .button(2)
+        .onTrue(
+            Atlas.elevatorArmParallel(
+                Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
+                Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
     // leftJoystick.button(1).whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
     // leftJoystick.button(1).onTrue(intake.setPosition(3.7));
     // leftJoystick.button(2).onTrue(intake.setPosition(15.3));

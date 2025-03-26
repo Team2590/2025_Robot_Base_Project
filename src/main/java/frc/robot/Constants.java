@@ -149,8 +149,12 @@ public final class Constants {
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
   public static final String CANBUS = "Takeover";
 
-   public static ArmOptLookup frontHandoffLookup = new ArmOptLookup(new ArrayList<Double>(),new ArrayList<Double>());
-   public static ArmOptLookup backHandoffLookup = new ArmOptLookup(new ArrayList<Double>(),new ArrayList<Double>());
+  public static ArmOptLookup frontHandoffLookup =
+      new ArmOptLookup(
+          new double[] {2.763, 6.08, 8.799, 11.841, 13.274, 15.33154},
+          new double[] {.497, 0.545, 0.587, 0.619, 0.644, .73});
+  public static ArmOptLookup backHandoffLookup = null;
+
   public final class ArmConstantsLarry {
     // Fill in
     public static final double HOME_SETPOINT = homeSetpoint.get();
@@ -282,9 +286,9 @@ public final class Constants {
     public static double ARM_BARGE_POS = .7; // TODO: find real value
     // public static double ARM_SCORING_POS = .7; // TODO: find real value
     public static double ARM_WRAP_POS = 0.794;
-    public static double ARM_HANDOFF_POS = 0.59;
+    public static double ARM_HANDOFF_POS = 0.75;
 
-    public static double OPT_TABLE_CLAMP=.4;
+    public static double OPT_TABLE_CLAMP = .4;
   }
 
   public static class ElevatorConstantsLeonidas {
