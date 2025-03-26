@@ -8,6 +8,8 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.util.Atlas;
 import frc.robot.util.NemesisTimedCommand;
+import frc.robot.RobotState;
+import frc.robot.command_factories.ScoringFactory.Level;
 
 public class GamePieceFactory {
 
@@ -61,24 +63,6 @@ public class GamePieceFactory {
                 Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS));
   }
 
-  public static Command intakeAlgaeL2() {
-    return Commands.parallel(
-        Atlas.synchronize(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2,
-            Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION),
-        EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
-  }
-
-  public static Command intakeAlgaeL3() {
-    return Commands.parallel(
-        Atlas.synchronize(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3,
-            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3),
-        EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
-  }
-
   public static Command intakeCoralGround() {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(
@@ -89,16 +73,16 @@ public class GamePieceFactory {
   }
 
   public static Command GrabAlgaeL2() {
-    return new ParallelCommandGroup(
-        ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3),
-        ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2),
-        EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
+    return Atlas.synchronize(
+        RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint,
+        RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
+        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS).alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
   }
 
   public static Command GrabAlgaeL3() {
-    return new ParallelCommandGroup(
-        ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3),
-        ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3),
-        EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
+    return Atlas.synchronize(
+        RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint,
+        RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint,
+        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS).alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
   }
 }

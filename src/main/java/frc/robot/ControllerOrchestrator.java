@@ -82,7 +82,7 @@ public class ControllerOrchestrator {
 
     return Commands.defer(
         () -> {
-          return ScoringFactory.score(RobotState.getInstance().getScoringSetpoints());
+          return ScoringFactory.score(RobotState.getInstance().getCoralScoringSetpoints());
         },
         requirements);
   }
