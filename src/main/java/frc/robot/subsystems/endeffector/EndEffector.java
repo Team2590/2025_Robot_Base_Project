@@ -1,7 +1,6 @@
 package frc.robot.subsystems.endeffector;
 
 import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,7 +20,6 @@ public class EndEffector extends SubsystemBase {
   private LoggedTunableNumber runVoltage =
       new LoggedTunableNumber(
           "EndEffector/runVoltage", Constants.EndEffectorConstantsLeonidas.RUN_VOLTAGE);
-  public AnalogInput prox = new AnalogInput(0);
 
   public EndEffector(EndEffectorIO io) {
     this.io = io;
@@ -30,7 +28,7 @@ public class EndEffector extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    filtered_data = filter.calculate(prox.getValue());
+    filtered_data = filter.calculate(inputs.statorCurrentAmps);
 
     Logger.recordOutput("EndEffector/StatorCurrent", inputs.statorCurrentAmps);
     Logger.recordOutput("EndEffector/IsRunning", isRunning);
