@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -87,7 +88,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
 
   @Override
   public void setVoltage(double voltage) {
-    leader.setVoltage(voltage);
+    leader.setControl((new VoltageOut(voltage)).withEnableFOC(true));
   }
 
   @Override

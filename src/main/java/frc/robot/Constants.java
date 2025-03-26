@@ -308,8 +308,8 @@ public final class Constants {
     public static double ELEVATOR_L2_POS = 3; // TODO
     public static double ELEVATOR_L3_POS = 11.35; // TODO
     public static double ELEVATOR_L4_POS = 23.5; // TODO
-    public static double ELEVATOR_DEALGAE_L2 = 9.57; // TODO
-    public static double ELEVATOR_DEALGAE_L3 = 16.84; // TODO
+    public static double ELEVATOR_DEALGAE_L2 = 12; // TODO
+    public static double ELEVATOR_DEALGAE_L3 = 19.76; // TODO
     public static double ELEVATOR_SOURCE_POS = 5.15; // TODO
     public static double ELEVATOR_MANUAL_VOLTAGE = 1; // TODO
     public static double ELEVATOR_BARGE_POS = 23; // TODO: find real value
@@ -342,7 +342,7 @@ public final class Constants {
     public static final boolean brake = true; // TODO
     public static final double reduction = 1; // TODO
     public static final double RUN_VOLTAGE = 12; // TODO
-    public static final double GRAB_ALGAE_VOLTAGE = 3; // TODO
+    public static final double GRAB_ALGAE_VOLTAGE = 12; // TODO
   }
 
   public final class IntakeConstantsLeonidas {

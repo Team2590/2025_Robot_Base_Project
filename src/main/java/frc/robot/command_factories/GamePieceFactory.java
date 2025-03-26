@@ -71,17 +71,17 @@ public class GamePieceFactory {
 
   public static Command GrabAlgaeL2() {
     return Atlas.synchronize(
-            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint,
+            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS)
+            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint)
         .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
   }
 
   public static Command GrabAlgaeL3() {
     return Atlas.synchronize(
-            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint,
+            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint,
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS)
+            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint)
         .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
   }
 }
