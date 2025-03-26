@@ -367,8 +367,8 @@ public final class Constants {
   }
 
   public final class IntakeArmConstantsLeonidas {
-    public static final double INTAKE_GROUND_CORAL_POS = 15.3;
-    public static final double INTAKE_HANDOFF_POS = 0;
+    public static final double INTAKE_GROUND_CORAL_POS = 15;
+    public static final double INTAKE_HANDOFF_POS = 0.5;
     public static final double INTAKE_HOME_POS = 3.7;
     public static final double L1_POS = 1.65;
     public static final int canID = 52;

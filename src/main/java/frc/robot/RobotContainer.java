@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -72,6 +73,7 @@ import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.Atlas;
+
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -540,6 +542,7 @@ public class RobotContainer {
   private void configureButtonBindingsTuning() {
     drive.setDefaultCommand(DriveFactory.joystickDrive());
     rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
+    // rightJoystick.trigger().whileTrue(new RunCommand(() -> intake.intakeIO.setVoltage(-8)));
     leftJoystick.button(2).onTrue(ScoringFactory.stow());
     leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));

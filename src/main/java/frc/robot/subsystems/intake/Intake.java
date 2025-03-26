@@ -12,7 +12,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
-  private IntakeIO intakeIO;
+  public IntakeIO intakeIO;
   private IntakeArmIO intakeArmIO;
   private IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
   // private IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
@@ -42,7 +42,7 @@ public class Intake extends SubsystemBase {
     intakeIO.updateInputs(intakeInputs);
     Logger.processInputs("Intake", intakeInputs);
     intakeDisconnected.set(!intakeInputs.connected);
-    filtered_data = filter.calculate(intakeInputs.torqueCurrentAmps);
+    // filtered_data = filter.calculate(intakeInputs.st);
     Logger.recordOutput("Intake/filter", filtered_data);
 
     if (LINEAR_FILTER_SAMPLES.hasChanged(0)) {
