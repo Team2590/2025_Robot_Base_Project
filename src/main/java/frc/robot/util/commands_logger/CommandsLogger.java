@@ -14,7 +14,7 @@ public class CommandsLogger {
   private ArrayList<String> finishingCommands = new ArrayList<>();
   private ArrayList<String> interruptedCommands = new ArrayList<>();
 
-  public CommandsLogger() {
+  private CommandsLogger() {
     CommandScheduler.getInstance().onCommandInitialize(command -> initializingCommands.add(command.getName()));
     CommandScheduler.getInstance().onCommandExecute(command -> executingCommands.add(command.getName()));
     CommandScheduler.getInstance().onCommandFinish(command -> finishingCommands.add(command.getName()));
