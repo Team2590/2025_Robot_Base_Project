@@ -24,6 +24,7 @@ public class Intake extends SubsystemBase {
       new LoggedTunableNumber("Intake/CurrentThreshold", 60);
   private LoggedTunableNumber LINEAR_FILTER_SAMPLES =
       new LoggedTunableNumber("Intake/LinearFilterSamples", 20);
+  private LoggedTunableNumber setPos = new LoggedTunableNumber("Intake/setpointPos", 0);
   private LinearFilter filter;
   private double filtered_data;
 
@@ -94,6 +95,10 @@ public class Intake extends SubsystemBase {
     public double getVelocityRadPerSec() {
       return intakeArmInputs.velocityRadsPerSec;
     }
+  }
+
+  public double getArmTunableNumber() {
+    return setPos.get();
   }
 
   public Command runIntakeUntilHasCoral(double voltage) {

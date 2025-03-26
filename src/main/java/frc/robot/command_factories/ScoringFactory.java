@@ -11,7 +11,6 @@ import frc.robot.RobotState;
 import frc.robot.RobotState.ScoringSetpoints;
 import frc.robot.util.Atlas;
 import frc.robot.util.NemesisMathUtil;
-import frc.robot.util.NemesisTimedCommand;
 
 /**
  * Factory class for creating complex scoring-related commands.
@@ -22,15 +21,42 @@ import frc.robot.util.NemesisTimedCommand;
 public class ScoringFactory {
 
   public enum Level {
-    L1(0 /* Not Using Elevator at L1 */, Constants.ArmConstantsLeonidas.ARM_SET_STOW, Constants.ArmConstantsLeonidas.ARM_SET_STOW),
-    L2(Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS, Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3, Constants.ArmConstantsLeonidas.ARM_CORAL_RELEASE_SETPOINT),
-    L3(Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS, Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3, Constants.ArmConstantsLeonidas.ARM_CORAL_RELEASE_SETPOINT),
-    L4(Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS, Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4, Constants.ArmConstantsLeonidas.ARM_CORAL_RELEASE_SETPOINT),
-    SOURCE(Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS, Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION, Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION),
-    DEALGAE_L2(Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2, Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION, Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION),
-    DEALGAE_L3(Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3, Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION, Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION),
-    BARGE(Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS, Constants.ArmConstantsLeonidas.ARM_BARGE_POS, Constants.ArmConstantsLeonidas.ARM_BARGE_POS),
-    PROCESSOR(Constants.ElevatorConstantsLeonidas.ELEVATOR_PROCESSOR_POS, Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS,Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS);
+    L1(
+        0 /* Not Using Elevator at L1 */,
+        Constants.ArmConstantsLeonidas.ARM_SET_STOW,
+        Constants.ArmConstantsLeonidas.ARM_SET_STOW),
+    L2(
+        Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS,
+        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE,
+        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST),
+    L3(
+        Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS,
+        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE,
+        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L3_POST),
+    L4(
+        Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS,
+        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4,
+        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4),
+    SOURCE(
+        Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS,
+        Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION,
+        Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION),
+    DEALGAE_L2(
+        Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2,
+        Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION,
+        Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION),
+    DEALGAE_L3(
+        Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3,
+        Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION,
+        Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION),
+    BARGE(
+        Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS,
+        Constants.ArmConstantsLeonidas.ARM_BARGE_POS,
+        Constants.ArmConstantsLeonidas.ARM_BARGE_POS),
+    PROCESSOR(
+        Constants.ElevatorConstantsLeonidas.ELEVATOR_PROCESSOR_POS,
+        Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS,
+        Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS);
 
     private final double elevatorSetpoint;
     private final double armPreScoreSetpoint;
@@ -46,11 +72,11 @@ public class ScoringFactory {
       return elevatorSetpoint;
     }
 
-    public double getarmPreScoreSetpoint(){
+    public double getarmPreScoreSetpoint() {
       return armPreScoreSetpoint;
     }
 
-    public double getArmScoringSetpoint(){
+    public double getArmScoringSetpoint() {
       return armScoringSetpoint;
     }
   }
@@ -73,6 +99,30 @@ public class ScoringFactory {
     return switch (level) {
       case L1:
         yield scoreL1();
+      case L2:
+        yield primeForLevel(level)
+            .andThen(
+                Atlas.synchronize(
+                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                    level.getElevatorSetpoint(),
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST))
+            .withName("Score " + level.name());
+      case L3:
+        yield primeForLevel(level)
+            .andThen(
+                Atlas.synchronize(
+                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                    level.getElevatorSetpoint(),
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L3_POST))
+            .withName("Score " + level.name());
+      case L4:
+        yield primeForLevel(level)
+            .andThen(
+                Atlas.synchronize(
+                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                    level.getElevatorSetpoint(),
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L4_POST))
+            .withName("Score " + level.name());
       default:
         yield primeForLevel(level)
             .andThen(EndEffectorFactory.runEndEffectorOuttake())
@@ -97,7 +147,7 @@ public class ScoringFactory {
             Atlas.synchronize(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     level.getElevatorSetpoint(),
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3)
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE)
                 .withName("Prime " + level.name()));
       case L2:
         return Commands.parallel(
@@ -105,13 +155,14 @@ public class ScoringFactory {
             Atlas.synchronize(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     level.getElevatorSetpoint(),
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3)
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE)
                 .withName("Prime " + level.name()));
       default:
         return Commands.parallel(
             Commands.print("Priming " + level.name()),
             ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3)
+            ArmFactory.setPositionBlocking(
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE)
                 .withName("Prime " + level.name()));
     }
   }
@@ -209,10 +260,10 @@ public class ScoringFactory {
    */
   public static Command scoreProcessor() {
     return Atlas.synchronize(
-      Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-      Level.PROCESSOR.getElevatorSetpoint(),
-      Level.PROCESSOR.getArmScoringSetpoint())
-            .withName("Score Processor");
+            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+            Level.PROCESSOR.getElevatorSetpoint(),
+            Level.PROCESSOR.getArmScoringSetpoint())
+        .withName("Score Processor");
   }
 
   /**
@@ -236,9 +287,10 @@ public class ScoringFactory {
    */
   public static Command stow() {
     return Atlas.synchronize(
-        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-        Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS,
-        Constants.ArmConstantsLeonidas.ARM_SET_STOW).withName("Stow");
+            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS,
+            Constants.ArmConstantsLeonidas.ARM_SET_STOW)
+        .withName("Stow");
   }
 
   public static Command prepClimb() {

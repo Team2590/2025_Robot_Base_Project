@@ -36,6 +36,7 @@ public class EndEffector extends SubsystemBase {
     Logger.recordOutput("EndEffector/IsRunning", isRunning);
     Logger.recordOutput("EndEffector/CurrentThreshold", CURRENT_THRESHOLD);
     Logger.recordOutput("EndEffector/filter", filtered_data);
+    Logger.recordOutput("EndEffector/RawValue", prox.getValue());
 
     if (taps.hasChanged(0)) {
       filter = LinearFilter.movingAverage((int) taps.get());
