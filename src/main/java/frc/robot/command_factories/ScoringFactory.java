@@ -59,8 +59,11 @@ public class ScoringFactory {
         yield scoreL1();
       default:
         yield primeForLevel(level)
-            .andThen(EndEffectorFactory.runEndEffectorOuttake())
-            .until(() -> !RobotState.endEffectorhasCoral())
+            .andThen(
+              EndEffectorFactory.runEndEffectorOuttake()
+              .alongWith(ElevatorFactory.setPosition(level.getElevatorPosition() - 1))
+              .alongWith(ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_RELEASE_DIFF))
+            )
             .withName("Score " + level.name());
     };
   }
