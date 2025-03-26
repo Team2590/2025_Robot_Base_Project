@@ -49,10 +49,12 @@ public class RobotState extends SubsystemBase {
   public static class ScoringSetpoints {
     public double elevatorSetpoint;
     public double armSetpoint;
+    public double armPlaceSetpoint;
 
-    public ScoringSetpoints(double elevatorSetpoint, double armSetpoint) {
+    public ScoringSetpoints(double elevatorSetpoint, double armSetpoint, double armPlaceSetpoint) {
       this.elevatorSetpoint = elevatorSetpoint;
       this.armSetpoint = armSetpoint;
+      this.armPlaceSetpoint = armPlaceSetpoint;
     }
   }
 
@@ -60,12 +62,21 @@ public class RobotState extends SubsystemBase {
       new AtomicReference<RobotState.AligningState>(AligningState.NOT_ALIGNING);
 
   private static Pose2d targetPose = new Pose2d();
-  private static ScoringSetpoints scoringSetpoints =
+  private static ScoringSetpoints coralScoringSetpoints =
       new ScoringSetpoints(
-          Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS,
-          Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3);
-  private static HashMap<Level, ScoringSetpoints> levelLookup =
-      new HashMap<Level, ScoringSetpoints>();
+          Level.L2.getElevatorSetpoint(),
+          Level.L2.getarmPreScoreSetpoint(),
+          Level.L2.getArmScoringSetpoint());
+  private static ScoringSetpoints algaeScoringSetpoints =
+          new ScoringSetpoints(
+              Level.BARGE.getElevatorSetpoint(),
+              Level.BARGE.getarmPreScoreSetpoint(),
+              Level.BARGE.getArmScoringSetpoint());
+  private static ScoringSetpoints dealgaeSetpoints =
+              new ScoringSetpoints(
+                Level.DEALGAE_L2.getElevatorSetpoint(),
+                Level.DEALGAE_L2.getarmPreScoreSetpoint(),
+                Level.DEALGAE_L2.getArmScoringSetpoint());
   private final Lock updateLock = new ReentrantLock();
 
   private RobotState(
@@ -83,21 +94,6 @@ public class RobotState extends SubsystemBase {
     this.intake = intake;
     this.vision = vision;
     this.controllerApp = controllerApp;
-    levelLookup.put(
-        Level.L2,
-        new ScoringSetpoints(
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS,
-            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3));
-    levelLookup.put(
-        Level.L3,
-        new ScoringSetpoints(
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS,
-            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3));
-    levelLookup.put(
-        Level.L4,
-        new ScoringSetpoints(
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS,
-            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4));
   }
 
   /**
@@ -229,22 +225,31 @@ public class RobotState extends SubsystemBase {
   }
 
   private void updateScoringConfiguration(Pose2d originalTargetPose) {
-    ScoringSetpoints lookup = levelLookup.get(controllerApp.getTarget().scoringLevel());
-    // I think we need the original controllerApp pose here to avoid evaluating on an already
-    // flipped pose (the targetPose of this class)
-    // Opted not to use Aligning enum in the event that we attempt to score without aligning
+    double offset = 0;
+    double magnitude = 1;
     if (aligningState.get() == AligningState.ALIGNING_BACK) {
-      lookup.armSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - lookup.armSetpoint;
-      targetPose = drive.flipScoringSide(originalTargetPose);
-      System.out.println("Scoring Back with an arm setpoint of " + lookup.armSetpoint);
-    } else {
-      lookup.armSetpoint = lookup.armSetpoint;
-      System.out.println("Scoring Front with an arm setpoint of " + lookup.armSetpoint);
+      offset = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL;
+      magnitude = -1;
     }
-    scoringSetpoints = lookup;
+    coralScoringSetpoints.armSetpoint =  magnitude * coralScoringSetpoints.armSetpoint + offset;
+    coralScoringSetpoints.armPlaceSetpoint = magnitude * coralScoringSetpoints.armPlaceSetpoint + offset;
+
+    //update algae setpoints
+    dealgaeSetpoints.armSetpoint = magnitude * dealgaeSetpoints.armSetpoint + offset;
+    dealgaeSetpoints.armPlaceSetpoint = magnitude * dealgaeSetpoints.armPlaceSetpoint + offset;
+
+    // Update algae scoring setpoints
+    algaeScoringSetpoints.armSetpoint = magnitude * algaeScoringSetpoints.armSetpoint + offset;
+    algaeScoringSetpoints.armPlaceSetpoint = magnitude * algaeScoringSetpoints.armPlaceSetpoint + offset;
+    targetPose = drive.flipScoringSide(originalTargetPose);
+
     Logger.recordOutput("RobotState/Pose", targetPose);
-    Logger.recordOutput("RobotState/ArmSetpoint", scoringSetpoints.armSetpoint);
-    Logger.recordOutput("RobotState/ElevatorSetpoint", scoringSetpoints.elevatorSetpoint);
+    Logger.recordOutput("RobotState/CoralArmSetpoint", coralScoringSetpoints.armSetpoint);
+    Logger.recordOutput("RobotState/CoralArmPlaceSetpoint", coralScoringSetpoints.armPlaceSetpoint);
+    Logger.recordOutput("RobotState/algaeArmSetpoint", dealgaeSetpoints.armSetpoint);
+    Logger.recordOutput("RobotState/algaePlaceSetpoint", dealgaeSetpoints.armPlaceSetpoint);
+    Logger.recordOutput("RobotState/algaeScoringArmSetpoint", algaeScoringSetpoints.armSetpoint);
+    Logger.recordOutput("RobotState/algaeScoringPlaceSetpoint", algaeScoringSetpoints.armPlaceSetpoint);
   }
 
   public Pose2d getTargetPose() {
@@ -256,10 +261,34 @@ public class RobotState extends SubsystemBase {
     }
   }
 
-  public ScoringSetpoints getScoringSetpoints() {
+  public ScoringSetpoints getCoralScoringSetpoints() {
     updateLock.lock();
     try {
-      return scoringSetpoints;
+      return coralScoringSetpoints;
+    } finally {
+      updateLock.unlock();
+    }
+  }
+
+  public ScoringSetpoints getDealgaeSetpoints(Level level) {
+    updateLock.lock();
+    try {
+      // Manually set the requested levels elevator setpoint because I am too stupid to figure out a better way
+      ScoringSetpoints setpoint_copy = dealgaeSetpoints;
+      setpoint_copy.elevatorSetpoint = level.getElevatorSetpoint();
+      return setpoint_copy;
+    } finally {
+      updateLock.unlock();
+    }
+  }
+
+  public ScoringSetpoints getAlgaeScoringSetpoints(Level level) {
+    updateLock.lock();
+    try {
+      // Manually set the requested levels elevator setpoint because I am too stupid to figure out a better way
+      ScoringSetpoints setpoint_copy = algaeScoringSetpoints;
+      setpoint_copy.elevatorSetpoint = level.getElevatorSetpoint();
+      return setpoint_copy;
     } finally {
       updateLock.unlock();
     }

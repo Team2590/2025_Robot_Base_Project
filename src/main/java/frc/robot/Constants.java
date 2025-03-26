@@ -268,14 +268,15 @@ public final class Constants {
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
     public static final double magOffset = -.324; // -0.379; // -.3347; // -.635; // TODO
     public static final double sensorReduction = 58.8; // TODO
-    public static final double BACK_HORIZONTAL = 0.4;
+    public static final double BACK_HORIZONTAL = 0.5;
+    public static final double ARM_PROCESSOR_POS = 0;
     public static double ARM_OPERATIONAL_MIN_POS = 0; // TODO
     public static double ARM_OPERATIONAL_MAX_POS = .9; // TODO
     public static double ARM_SCORING_CORAL_POS_L3 = 0.15; // TODO
-    public static double ARM_RELEASE_DIFF = 0.078;
+    public static double ARM_CORAL_RELEASE_SETPOINT = 0.078;
     public static double ARM_SCORING_CORAL_POS_L4 = 0.0957; // TODO
     public static double ARM_INTAKE_SOURCE_POSITION = .18; // TODO
-    public static double ARM_DEALGAE_POSITION = .01; // TODO
+    public static double ARM_DEALGAE_POSITION = 0;
     public static double ARM_BARGE_POS = .7; // TODO: find real value
     // public static double ARM_SCORING_POS = .7; // TODO: find real value
     public static double ARM_WRAP_POS = 0.794;
@@ -298,14 +299,16 @@ public final class Constants {
     public static final double kS = 0.59545; // TODO
     public static final double kV = 0.1609; // TODO
     public static final double ELEVATOR_HANDOFF_POS = 14.7;
-    public static double ELEVATOR_L2_POS = 1.06; // TODO
-    public static double ELEVATOR_L3_POS = 9.73; // TODO
-    public static double ELEVATOR_L4_POS = 22.9; // TODO
+    public static final double ELEVATOR_PROCESSOR_POS = 0;
+    public static final double ELEVATOR_STOW_POS = 1;
+    public static double ELEVATOR_L2_POS = 1.06;
+    public static double ELEVATOR_L3_POS = 9.73;
+    public static double ELEVATOR_L4_POS = 22.9;
     public static double ELEVATOR_DEALGAE_L2 = 9.57; // TODO
     public static double ELEVATOR_DEALGAE_L3 = 16.84; // TODO
     public static double ELEVATOR_SOURCE_POS = 5.15; // TODO
     public static double ELEVATOR_MANUAL_VOLTAGE = 1; // TODO
-    public static double ELEVATOR_BARGE_POS = 80; // TODO: find real value
+    public static double ELEVATOR_BARGE_POS = 23; // TODO: find real value
     public static double ELEVATOR_INTAKE_ALGAE_POS = 5; // TODO find real value
     public static double ELEVATOR_HANDOFF_TRANSITION_POS = ELEVATOR_HANDOFF_POS + 1.5;
   }
