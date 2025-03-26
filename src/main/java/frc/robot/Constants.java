@@ -26,6 +26,8 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.generated.TunerConstantsLeonidas;
@@ -118,7 +120,7 @@ public final class Constants {
           new Translation2d(2, 2),
           new Translation2d(0, 2));
 
-  public static final boolean flipside = true;
+  public static final boolean flipside = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
 
   public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
   public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTopBound");
