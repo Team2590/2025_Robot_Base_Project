@@ -21,6 +21,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -31,6 +32,7 @@ import frc.robot.generated.TunerConstantsLeonidas;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.FRCPolygon;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.PolygonLocator;
 // import frc.robot.util.PolygonLocator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -108,41 +110,42 @@ public final class Constants {
    * | |
    * (0,0)---(2,0)
    */
-  // public static final FRCPolygon playBox =
-  //     new FRCPolygon(
-  //         "playBox",
-  //         new Translation2d(0, 0),
-  //         new Translation2d(2, 0),
-  //         new Translation2d(2, 2),
-  //         new Translation2d(0, 2));
+  public static final FRCPolygon playBox =
+      new FRCPolygon(
+          "playBox",
+          new Translation2d(0, 0),
+          new Translation2d(2, 0),
+          new Translation2d(2, 2),
+          new Translation2d(0, 2));
 
-  // public static final boolean flipside =
-  //     DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() ==
-  // Alliance.Red;
+  public static final boolean flipside = true;
 
-  // public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
-  // public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTop");
-  // public static final FRCPolygon BargeBoundsBot = new FRCPolygon("BargeBot", "BargeBot");
-  // // public static final FRCPolygon PresetAlgae = new FRCPolygon("PresetAlgae",
-  // // "FloatingAlgae");
-  // public static final FRCPolygon Processor = new FRCPolygon("Processor", "Processor");
-  // public static final FRCPolygon FeederStationTop = new FRCPolygon("FeederStationTop",
-  // "Station1");
-  // public static final FRCPolygon FeederStationBot = new FRCPolygon("FeederStationBot",
-  // "Station2");
+  public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
+  public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTopBound");
+  public static final FRCPolygon BargeBoundsBot = new FRCPolygon("BargeBot", "BargeBotBound");
+  public static final FRCPolygon PresetAlgae1 = new FRCPolygon("PresetAlgae1", "PresetAlgae1Bound");
+  public static final FRCPolygon PresetAlgae2 = new FRCPolygon("PresetAlgae2", "PresetAlgae2Bound");
+  public static final FRCPolygon PresetAlgae3 = new FRCPolygon("PresetAlgae3", "PresetAlgae3Bound");
+  public static final FRCPolygon Processor = new FRCPolygon("Processor", "ProcessorBound");
+  public static final FRCPolygon FeederStationTop = new FRCPolygon("FeederStationTop", "Station1Bound");
+  public static final FRCPolygon FeederStationBot = new FRCPolygon("FeederStationBot", "Station2Bound");
 
-  // // Two ways to instantiate the polygons, this static initialization box is
-  // // necessary
-  // static {
-  //   polygons.add(playBox);
-  //   polygons.add(reefBounds);
-  //   polygons.add(BargeBoundsTop);
-  //   polygons.add(BargeBoundsBot);
-  //   // polygons.add(PresetAlgae);
-  //   polygons.add(Processor);
-  // }
+  // Two ways to instantiate the polygons, this static initialization box is
+  // necessary
+  static {
+    polygons.add(playBox);
+    polygons.add(reefBounds);
+    polygons.add(BargeBoundsTop);
+    polygons.add(BargeBoundsBot);
+    polygons.add(FeederStationTop);
+    polygons.add(FeederStationBot);
+    polygons.add(PresetAlgae1);
+    polygons.add(PresetAlgae2);
+    polygons.add(PresetAlgae3);
+    polygons.add(Processor);
+  }
 
-  // public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
+  public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
 
   public static LoggedTunableNumber homeSetpoint =
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
