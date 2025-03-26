@@ -4,6 +4,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.NemesisMathUtil;
+import lombok.Getter;
 
 import java.util.function.Supplier;
 
@@ -86,5 +87,9 @@ public class Arm extends SubsystemBase {
 
   public double getSetpoint() {
     return setpoint;
+  }
+
+  public ArmIO getIO() {
+    return arm;
   }
 }
