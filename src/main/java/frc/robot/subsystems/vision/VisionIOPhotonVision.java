@@ -144,9 +144,15 @@ public class VisionIOPhotonVision implements VisionIO {
 
           boolean logResults =
               (aligningState == AligningState.ALIGNING_FRONT
-                      && this.getName().equals("Vision-" + VisionConstants.frontReefCameraName))
+                      && (
+                        this.getName().equals("Vision-" + VisionConstants.frontTopReefCameraName)
+                        || this.getName().equals("Vision-" + VisionConstants.frontBottomReefCameraName)
+                      ))
                   || (aligningState == AligningState.ALIGNING_BACK
-                      && this.getName().equals("Vision-" + VisionConstants.backReefCameraName))
+                  && (
+                    this.getName().equals("Vision-" + VisionConstants.backTopReefCameraName)
+                    || this.getName().equals("Vision-" + VisionConstants.backBottomReefCameraName)
+                  ))
                   || (aligningState == AligningState.NOT_ALIGNING);
 
           if (logResults) {

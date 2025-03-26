@@ -34,22 +34,40 @@ public class VisionConstants {
   // }
 
   // Camera names, must match names configured on coprocessor
-  public static String frontReefCameraName = "1mp_arducam_device_6";
-  public static String backReefCameraName = "1mp_arducam_device_1";
+  public static String frontTopReefCameraName = "1mp_arducam_device_6";
+  public static String frontBottomReefCameraName = "1mp_arducam_device_6";
+  public static String backTopReefCameraName = "1mp_arducam_device_1";
+  public static String backBottomReefCameraName = "1mp_arducam_device_1";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
 
-  // Front Reef Camera
-  public static Transform3d robotToFrontReefCam =
+  // Front Top Reef Camera
+  public static Transform3d robotToFrontTopReefCam =
       new Transform3d(
           Units.inchesToMeters(5.0),
           Units.inchesToMeters(12.0),
           Units.inchesToMeters(10.33832),
           new Rotation3d(0.0, 0.0, Math.toRadians(-22.25)));
 
-  // Back Reef Camera
-  public static Transform3d robotToBackReefCam =
+  // Front Bottom Reef Camera
+  public static Transform3d robotToFrontBottomReefCam =
+      new Transform3d(
+          Units.inchesToMeters(5.0),
+          Units.inchesToMeters(12.0),
+          Units.inchesToMeters(10.33832),
+          new Rotation3d(0.0, 0.0, Math.toRadians(-22.25)));
+
+  // Back Top Reef Camera
+  public static Transform3d robotToBackTopReefCam =
+      new Transform3d(
+          Units.inchesToMeters(-7.8508),
+          Units.inchesToMeters(9.0),
+          Units.inchesToMeters(35.7347),
+          new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
+
+  // Back Bottom Reef Camera
+  public static Transform3d robotToBackBottomReefCam =
       new Transform3d(
           Units.inchesToMeters(-7.8508),
           Units.inchesToMeters(9.0),
@@ -69,8 +87,10 @@ public class VisionConstants {
   // (Adjust to trust some cameras more than others)
   public static double[] cameraStdDevFactors =
       new double[] {
-        0.25, // Front Reef Camera
-        0.25 // Back Reef Camera
+        0.25, // Front Top Reef Camera
+        0.25, // Front Bottom Reef Camera
+        0.25, // Back Top Reef Camera
+        0.25 // Front Bottom Reef Camera
       };
 
   // Multipliers to apply for MegaTag 2 observations

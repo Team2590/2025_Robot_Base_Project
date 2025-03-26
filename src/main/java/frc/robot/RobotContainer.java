@@ -125,8 +125,10 @@ public class RobotContainer {
                 null,
                 new VisionIOPhotonVision(
                     List.of(
-                        new CameraConfig(frontReefCameraName, robotToFrontReefCam),
-                        new CameraConfig(backReefCameraName, robotToBackReefCam))));
+                        new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
+                        new CameraConfig(frontBottomReefCameraName, robotToFrontBottomReefCam),
+                        new CameraConfig(backTopReefCameraName, robotToBackTopReefCam),
+                        new CameraConfig(backBottomReefCameraName, robotToBackBottomReefCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -164,8 +166,10 @@ public class RobotContainer {
                 null,
                 new VisionIOPhotonVision(
                     List.of(
-                        new CameraConfig(frontReefCameraName, robotToFrontReefCam),
-                        new CameraConfig(backReefCameraName, robotToBackReefCam))));
+                        new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
+                        new CameraConfig(frontBottomReefCameraName, robotToFrontBottomReefCam),
+                        new CameraConfig(backTopReefCameraName, robotToBackTopReefCam),
+                        new CameraConfig(backBottomReefCameraName, robotToBackBottomReefCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -234,11 +238,13 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new CoralIOPhotonVision(),
+                null,
                 new VisionIOPhotonVision(
                     List.of(
-                        new CameraConfig(frontReefCameraName, robotToFrontReefCam),
-                        new CameraConfig(backReefCameraName, robotToBackReefCam))));
+                        new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
+                        new CameraConfig(frontBottomReefCameraName, robotToFrontBottomReefCam),
+                        new CameraConfig(backTopReefCameraName, robotToBackTopReefCam),
+                        new CameraConfig(backBottomReefCameraName, robotToBackBottomReefCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(
@@ -298,8 +304,10 @@ public class RobotContainer {
                 new CoralDetectionIOSim(),
                 new VisionIOPhotonVisionSim(
                     List.of(
-                        new CameraConfig(frontReefCameraName, robotToFrontReefCam),
-                        new CameraConfig(backReefCameraName, robotToBackReefCam)),
+                        new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
+                        new CameraConfig(frontBottomReefCameraName, robotToFrontBottomReefCam),
+                        new CameraConfig(backTopReefCameraName, robotToBackTopReefCam),
+                        new CameraConfig(backBottomReefCameraName, robotToBackBottomReefCam)),
                     () -> drive.getPose()));
         intake =
             new Intake(
@@ -336,8 +344,10 @@ public class RobotContainer {
                 null,
                 new VisionIOPhotonVision(
                     List.of(
-                        new CameraConfig(frontReefCameraName, robotToFrontReefCam),
-                        new CameraConfig(backReefCameraName, robotToBackReefCam))));
+                        new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
+                        new CameraConfig(frontBottomReefCameraName, robotToFrontBottomReefCam),
+                        new CameraConfig(backTopReefCameraName, robotToBackTopReefCam),
+                        new CameraConfig(backBottomReefCameraName, robotToBackBottomReefCam))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
