@@ -3,6 +3,8 @@ package frc.robot.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.google.flatbuffers.Constants;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -28,6 +30,8 @@ public class ArmOptLookup {
     //linear interpolation
     public double get(){
         double xval=RobotContainer.getElevator().getRotationCount();
+        
+
         double dist=100;
         int lower_i=0;
         int upper_i=0;
@@ -47,7 +51,7 @@ public class ArmOptLookup {
 
         double slope= values.get(upper_i) - values.get(lower_i) / (key_values.get(upper_i)-key_values.get(lower_i));
         double deltaX= xval- key_values.get(lower_i);
-        double deltaY= slope*deltaX;
+        double deltaY= (xval < Constants.ArmConstantsLeonidas.OPT_TABLE_CLAMP) ? 0:  slope*deltaX;
         return values.get(lower_i) + deltaY;
 
         

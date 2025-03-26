@@ -283,6 +283,8 @@ public final class Constants {
     // public static double ARM_SCORING_POS = .7; // TODO: find real value
     public static double ARM_WRAP_POS = 0.794;
     public static double ARM_HANDOFF_POS = 0.59;
+
+    public static double OPT_TABLE_CLAMP=.4;
   }
 
   public static class ElevatorConstantsLeonidas {
