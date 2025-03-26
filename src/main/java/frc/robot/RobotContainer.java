@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -41,6 +40,7 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorDefaultCommand;
 import frc.robot.commands.EndEffectorDefaultCommand;
 import frc.robot.commands.FeedForwardCharacterization;
+import frc.robot.commands.IntakeDefaultCommand;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.LEDS.NemesisLED;
 import frc.robot.subsystems.arm.Arm;
@@ -65,6 +65,7 @@ import frc.robot.subsystems.intake.IntakeArmIOSim;
 import frc.robot.subsystems.intake.IntakeArmIOTalonFX;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.vision.CoralDetectionIOSim;
 import frc.robot.subsystems.vision.CoralIOPhotonVision;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -294,7 +295,7 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                null,
+                new CoralDetectionIOSim(),
                 new VisionIOPhotonVisionSim(
                     List.of(
                         new CameraConfig(frontReefCameraName, robotToFrontReefCam),
@@ -389,6 +390,7 @@ public class RobotContainer {
     elevator.setDefaultCommand(new ElevatorDefaultCommand());
     arm.setDefaultCommand(new ArmDefaultCommand());
     endEffector.setDefaultCommand(new EndEffectorDefaultCommand());
+    intake.setDefaultCommand(new IntakeDefaultCommand());
   }
 
   /**
@@ -500,15 +502,11 @@ public class RobotContainer {
 
     leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
-    leftJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralGround());
-    rightJoystick
-        .button(4)
-        .and(rightJoystick.trigger())
-        .whileTrue(GamePieceFactory.intakeAlgaeGround());
+    leftJoystick.button(3).onTrue(GamePieceFactory.intakeCoralGroundandHandoff());
     rightJoystick
         .trigger()
         .and(rightJoystick.button(4).negate())
-        .whileTrue(GamePieceFactory.intakeCoralFeeder());
+        .whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
 
     rightJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorManual());
 
@@ -533,23 +531,63 @@ public class RobotContainer {
     //     .trigger()
     //     .and(leftJoystick.button(4).negate())
     //     .whileTrue(
-    //         new ParallelCommandGroup(
-    //             elevator.setPositionLoggedTunableNumber(),
-    // arm.setPositionLoggedTunableNumber()));
+    //         Atlas.synchronize(
+    //             intake.getArmTunableNumber(), elevator.getTunableNumber(),
+    // arm.getTunableNumber()));
   }
 
   private void configureButtonBindingsTuning() {
-    leftJoystick.button(1).onTrue(intake.setPosition(3.7));
-    leftJoystick.button(2).onTrue(intake.setPosition(15.3));
+    drive.setDefaultCommand(DriveFactory.joystickDrive());
+    // leftJoystick
+    //     .button(1)
+    //     .whileTrue(
+    //         Atlas.synchronize(
+    //             Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
+    //             Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
+    //             Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
+    // leftJoystick
+    //     .button(2)
+    //     .whileTrue(
+    //         IntakeFactory.runIntake(
+    //             () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED));
+    // leftJoystick
+    //     .button(3)
+    //     .whileTrue(
+    //         Atlas.synchronize(
+    //             Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS,
+    //             Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
+    //             Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
+    // leftJoystick
+    //     .button(4)
+    //     .whileTrue(
+    //         Commands.race(
+    //             EndEffectorFactory.runEndEffector(),
+    //             IntakeFactory.runIntakeVoltage(
+    //                 () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)));
+    rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
+    leftJoystick.button(2).onTrue(ScoringFactory.stow());
+    leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
+    leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
+    leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
+    // leftJoystick.button(1).whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
+    // leftJoystick.button(1).onTrue(intake.setPosition(3.7));
+    // leftJoystick.button(2).onTrue(intake.setPosition(15.3));
     // rightJoystick.button(2).whileTrue(intake.runIntakeUntilHasCoral(-12));
-    rightJoystick.button(2).whileTrue(ScoringFactory.primeForLevel(Level.L2));
-    rightJoystick
-        .trigger()
-        .and(leftJoystick.button(4).negate())
-        .whileTrue(
-            new ParallelCommandGroup(
-                // elevator.setPositionLoggedTunableNumber(),
-                arm.setPositionLoggedTunableNumber()));
+    // rightJoystick.button(2).whileTrue(ScoringFactory.primeForLevel(Level.L2));
+    // rightJoystick
+    //     .button(3)
+    //     .whileTrue(
+    //         Atlas.synchronize(
+    //             Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS,
+    //             Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
+    //             Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
+    // rightJoystick
+    //     .trigger()
+    //     .and(leftJoystick.button(4).negate())
+    //     .whileTrue(
+    //         new ParallelCommandGroup(
+    //             // elevator.setPositionLoggedTunableNumber(),
+    //             arm.setPositionLoggedTunableNumber()));
     // leftJoystick.button(4).onTrue(arm.setPosition(armSetpoint.get()));
     // leftJoystick.trigger().onTrue(intake.runIntakeUntilHasCoral(intakeVoltage));
   }
@@ -575,8 +613,7 @@ public class RobotContainer {
     // NamedCommands.registerCommand("PrimeL1",
     // ScoringFactory.primeForLevel(ScoringFactory.Level.L1));
     // TODO: Prime for Source
-    NamedCommands.registerCommand("PrimeSource", GamePieceFactory.primeCoralSource());
-    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeCoralFeeder());
+    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeAlgaeGround());
 
     // Scoring Commands
     NamedCommands.registerCommand("ScoreL4", ScoringFactory.score(ScoringFactory.Level.L4));

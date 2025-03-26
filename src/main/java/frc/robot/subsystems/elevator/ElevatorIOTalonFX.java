@@ -213,6 +213,10 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     }
   }
 
+  public double getTunableNumber() {
+    return setPos.get();
+  }
+
   @Override
   public double getTargetPosition() {
     return leader.getPosition().getValueAsDouble();

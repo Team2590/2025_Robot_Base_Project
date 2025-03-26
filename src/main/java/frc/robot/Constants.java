@@ -265,15 +265,16 @@ public final class Constants {
     public static final boolean brake = true;
     public static final double reduction = 1; // was a 94.18
     public static final int cancoderID = 5;
-    public static final double ARM_SET_STOW = .33; // TODO
+    public static final double ARM_SET_STOW = .25; // .33; // TODO
+    public static final double ARM_VERTICAL_POS = .2;
     // public static final double magOffset = -.596436; // -.398
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
-    public static final double magOffset = -0.2; // -0.379; // -.3347; // -.635; // TODO
+    public static final double magOffset = -.324; // -0.379; // -.3347; // -.635; // TODO
     public static final double sensorReduction = 58.8; // TODO
     public static final double BACK_HORIZONTAL = 0.4;
     public static double ARM_OPERATIONAL_MIN_POS = 0; // TODO
     public static double ARM_OPERATIONAL_MAX_POS = .9; // TODO
-    public static double ARM_SCORING_CORAL_POS_L3 = 0.098; // TODO
+    public static double ARM_SCORING_CORAL_POS_L3 = 0.15; // TODO
     public static double ARM_RELEASE_DIFF = 0.078;
     public static double ARM_SCORING_CORAL_POS_L4 = 0.0957; // TODO
     public static double ARM_INTAKE_SOURCE_POSITION = .18; // TODO
@@ -281,6 +282,7 @@ public final class Constants {
     public static double ARM_BARGE_POS = .7; // TODO: find real value
     // public static double ARM_SCORING_POS = .7; // TODO: find real value
     public static double ARM_WRAP_POS = 0.794;
+    public static double ARM_HANDOFF_POS = 0.59;
   }
 
   public static class ElevatorConstantsLeonidas {
@@ -307,6 +309,8 @@ public final class Constants {
     public static double ELEVATOR_SOURCE_POS = 5.15; // TODO
     public static double ELEVATOR_MANUAL_VOLTAGE = 1; // TODO
     public static double ELEVATOR_BARGE_POS = 80; // TODO: find real value
+    public static double ELEVATOR_INTAKE_ALGAE_POS = 5; // TODO find real value
+    public static double ELEVATOR_HANDOFF_TRANSITION_POS = ELEVATOR_HANDOFF_POS + 1.5;
   }
 
   /*   public final class ElevatorConstantsLeonidas {
@@ -333,7 +337,7 @@ public final class Constants {
     public static final boolean invert = false; // TODO
     public static final boolean brake = true; // TODO
     public static final double reduction = 1; // TODO
-    public static final double RUN_VOLTAGE = 3; // TODO
+    public static final double RUN_VOLTAGE = 12; // TODO
     public static final double GRAB_ALGAE_VOLTAGE = 3; // TODO
   }
 
@@ -351,16 +355,15 @@ public final class Constants {
     public static final double INTAKE_FACTORY_ALGAE_POSITION = 5.4; // TODO
     public static final double INTAKE_FACTORY_HOME_POSITION = 0; // TODO
     public static final double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 0; // TODO
-    public static final double INTAKE_CORAL_INTAKE_SPEED = 4; // TODO
-    public static final double INTAKE_CORAL_OUTTAKE_SPEED = -4; // TODO
+    public static final double INTAKE_CORAL_INTAKE_SPEED = -12; // TODO
+    public static final double INTAKE_CORAL_OUTTAKE_SPEED = 12; // TODO
     public static final double INTAKE_ALGAE_INTAKE_SPEED = -6; // TODO
     public static final double INTAKE_ALGAE_OUTTAKE_SPEED = 8; // TODO
     public static final double HAS_ALGAE_THRESHOLD_CURRENT = 10; // TODO
   }
 
   public final class IntakeArmConstantsLeonidas {
-    public static final double INTAKE_CORAL_POS = 15.3; // TODO
-    public static final double INTAKE_ALGAE_POS = 6.5; // TODO
+    public static final double INTAKE_GROUND_CORAL_POS = 15.3;
     public static final double INTAKE_HANDOFF_POS = 0;
     public static final double INTAKE_HOME_POS = 3.7;
     public static final double L1_POS = 1.65;
@@ -372,6 +375,8 @@ public final class Constants {
     public static final double reduction = 38.33; // TODO
     public static final double kS = 0.40438; // TODO
     public static final double kV = 0.33074; // TODO
+    public static final double INTAKE_OPERATIONAL_MIN_POS = -.1;
+    public static final int INTAKE_OPERATIONAL_MAX_POS = 16;
   }
 
   public final class ClimbConstantsLeonidas {
@@ -382,7 +387,7 @@ public final class Constants {
     public static final boolean brake = false;
     public static final double reduction = 1;
     public static final double CLIMB_MECHANISM_POSITION = 13; // 13
-    public static final double CLIMB_MAX_POSITION = 189; // 213.25 (actual), 189 (from 2/23)
+    public static final double CLIMB_MAX_POSITION = 189;
     public static final double CLIMB_VOLTAGE = 8.0; // 2.0 tested
   }
 

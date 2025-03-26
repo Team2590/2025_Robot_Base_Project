@@ -24,6 +24,12 @@ public class IntakeFactory {
         .withName("Run Intake");
   }
 
+  public static Command runIntakeVoltage(DoubleSupplier speed) {
+    return RobotContainer.getIntake()
+        .runIntakeVoltage(speed.getAsDouble())
+        .withName("Run Intake Voltage");
+  }
+
   /**
    * Creates a command to set the intake to the coral position.
    *

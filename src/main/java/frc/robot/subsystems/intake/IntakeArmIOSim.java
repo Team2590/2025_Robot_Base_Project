@@ -4,6 +4,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.util.SafetyChecker;
+import frc.robot.util.SafetyChecker.MechanismType;
 
 public class IntakeArmIOSim implements IntakeArmIO {
   private final DCMotorSim sim;
@@ -37,12 +39,16 @@ public class IntakeArmIOSim implements IntakeArmIO {
 
   @Override
   public void setPosition(double position) {
-    this.position =
-        position; // Set the internal position.  In a real system, this would likely involve
-    // closed-loop control.
-    // In a simulation, we're directly setting the position, which is less realistic.
-    // A more accurate simulation would apply a voltage to reach the target position.
-    //  That would require a more sophisticated model.
+    if (SafetyChecker.isSafe(MechanismType.INTAKE_MOVEMENT, position)) {
+      this.position = position;
+      // Set the internal position.  In a real system, this would likely involve
+      // closed-loop control.
+      // In a simulation, we're directly setting the position, which is less realistic.
+      // A more accurate simulation would apply a voltage to reach the target position.
+      //  That would require a more sophisticated model.
+    } else {
+      System.out.println("CAN'T MOVE INTAKE ARM, SAFETY CHECK FAILED");
+    }
     System.out.println(
         "IntakeArmIOSim: setPosition called directly.  This is a simplified simulation behavior.");
   }

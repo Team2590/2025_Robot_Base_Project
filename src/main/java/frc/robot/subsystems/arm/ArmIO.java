@@ -40,6 +40,11 @@ public interface ArmIO {
 
   public default void setPositionLoggedNumber() {}
 
+  public default double getTunableNumber() {
+    return 0;
+  }
+  ;
+
   public void setPower(DutyCycleOut power);
 
   public void stop();

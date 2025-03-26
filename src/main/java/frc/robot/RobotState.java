@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.Constants.ElevatorConstantsLeonidas;
 import frc.robot.RobotState.ScoringSetpoints;
-import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
@@ -61,7 +60,10 @@ public class RobotState extends SubsystemBase {
       new AtomicReference<RobotState.AligningState>(AligningState.NOT_ALIGNING);
 
   private static Pose2d targetPose = new Pose2d();
-  private static ScoringSetpoints scoringSetpoints = new ScoringSetpoints(Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS, Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3);
+  private static ScoringSetpoints scoringSetpoints =
+      new ScoringSetpoints(
+          Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS,
+          Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3);
   private static HashMap<Level, ScoringSetpoints> levelLookup =
       new HashMap<Level, ScoringSetpoints>();
   private final Lock updateLock = new ReentrantLock();
