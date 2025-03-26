@@ -89,6 +89,7 @@ public class Robot extends LoggedRobot {
 
     // Start AdvantageKit logger
     Logger.start();
+    SmartDashboard.putData(CommandScheduler.getInstance());
 
     robotContainer = new RobotContainer();
 
