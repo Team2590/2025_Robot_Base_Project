@@ -11,6 +11,7 @@ import frc.robot.RobotState;
 import frc.robot.RobotState.ScoringSetpoints;
 import frc.robot.util.Atlas;
 import frc.robot.util.NemesisMathUtil;
+import frc.robot.util.NemesisTimedCommand;
 
 /**
  * Factory class for creating complex scoring-related commands.
@@ -98,7 +99,11 @@ public class ScoringFactory {
   public static Command score(Level level) {
     return switch (level) {
       case L1:
-        yield scoreL1();
+        yield primeForLevel(level)
+            .andThen(
+                IntakeFactory.runIntakeVoltage(
+                    () -> -Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED))
+            .withName("Score " + level.name());
       case L2:
         yield primeForLevel(level)
             .andThen(
@@ -157,6 +162,13 @@ public class ScoringFactory {
                     level.getElevatorSetpoint(),
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE)
                 .withName("Prime " + level.name()));
+      case L1:
+        return reverseHandoff()
+            .andThen(
+                Atlas.synchronize(
+                    Constants.IntakeArmConstantsLeonidas.L1_POS,
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
+                    Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
       default:
         return Commands.parallel(
             Commands.print("Priming " + level.name()),
@@ -165,6 +177,18 @@ public class ScoringFactory {
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE)
                 .withName("Prime " + level.name()));
     }
+  }
+
+  public static Command reverseHandoff() {
+    return Atlas.synchronize(
+            Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS,
+            Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
+            Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)
+        .andThen(
+            Commands.race(
+                NemesisTimedCommand.generateTimedCommand(EndEffectorFactory.runEndEffector(), .5),
+                IntakeFactory.runIntakeVoltage(
+                    () -> -Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)));
   }
 
   public static Command score(ScoringSetpoints setpoints) {
