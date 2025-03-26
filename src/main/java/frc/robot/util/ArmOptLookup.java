@@ -6,7 +6,7 @@ import frc.robot.RobotContainer;
 import lombok.val;
 
 public class ArmOptLookup {
-    
+    //Add optimal ArmPosition given an Elevator Position so we can synchronize movement optimally
 
     private HashMap<Double, Boolean> acceptableArmPosition;
     private double[] key_values;
@@ -20,9 +20,10 @@ public class ArmOptLookup {
 
     }
 
-    public ArmOptLookup()
+   
     //linear interpolation
-    public double get(int xval){
+    public double get(){
+        double xval=RobotContainer.getElevator().getRotationCount();
         double dist=100;
         int lower_i=0;
         int upper_i=0;

@@ -16,6 +16,8 @@ import java.util.Set;
  * optimize speed. Named after the Greek Titan, associated with mapmaking
  */
 public class Atlas {
+
+ 
   /**
    * Sets intake, elevator, and arm to a particular position, synchronizing its movement to optimize
    * speed.
@@ -66,4 +68,38 @@ public class Atlas {
         },
         Set.of(elevator, arm, intake));
   }
+
+  public static Command elevatorArmParallel(double elevatorTargetPos, double armTargetPos){
+
+   
+
+    Elevator elevator = RobotContainer.getElevator();
+    Arm arm = RobotContainer.getArm();
+    Intake intake = RobotContainer.getIntake();
+    Command c = new Command() {
+      @Override
+      public void initialize() {
+          
+      }
+      @Override
+          public void execute() {
+              
+          }
+      @Override
+          public boolean isFinished() {
+                      return false;
+              
+          }
+        @Override
+            public void end(boolean interrupted) {
+                
+            }
+    };
+
+    return elevator.setPositionBlocking(elevatorTargetPos) .deadlineFor(arm.continuousSetPosition(Constants.frontHandoffLookup::get)).andThen(arm.setPositionBlocking(armTargetPos)); //TODO incorporate front back flipping
+    // While Command is scheduled the arm will openloop set voltage to position while ElevatorIsRunning it's 
+    //.onlyIf(()->SafetyChecker.elevatorOperational(elevatorTargetPos, armTargetPos));
+  }
+
+ 
 }

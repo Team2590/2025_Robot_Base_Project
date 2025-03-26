@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.generated.TunerConstantsLeonidas;
 import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.util.ArmOptLookup;
 import frc.robot.util.FRCPolygon;
 import frc.robot.util.LoggedTunableNumber;
 // import frc.robot.util.PolygonLocator;
@@ -147,6 +148,10 @@ public final class Constants {
   public static LoggedTunableNumber homeSetpoint =
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
   public static final String CANBUS = "Takeover";
+
+   public static ArmOptLookup frontHandoffLookup = new ArmOptLookup(new double[]{},new double[]{});
+   public static ArmOptLookup backHandoffLookup = new ArmOptLookup(new double[]{},new double[]{});
+   
 
   public final class ArmConstantsLarry {
     // Fill in

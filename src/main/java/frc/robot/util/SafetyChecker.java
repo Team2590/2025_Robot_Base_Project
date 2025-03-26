@@ -107,10 +107,10 @@ public class SafetyChecker {
     return subsystemsOperational && elevatorOperational(elevatorSetpoint, armSetpoint);
   }
 
-  public static boolean elevatorOperational(double elveatorSetpoint, double armSetpoint) {
+  public static boolean elevatorOperational(double currentElevatorPos, double currentArmPos) {
 
-    if (elveatorSetpoint < ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS
-        && armSetpoint < ArmConstantsLeonidas.ARM_HANDOFF_POS) {
+    if (currentElevatorPos < ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS
+        && currentArmPos < ArmConstantsLeonidas.ARM_HANDOFF_POS) {
       return false;
     }
 
