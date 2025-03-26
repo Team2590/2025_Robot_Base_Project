@@ -149,10 +149,8 @@ public final class Constants {
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
   public static final String CANBUS = "Takeover";
 
-   public static ArmOptLookup frontHandoffLookup = new ArmOptLookup(new double[]{},new double[]{});
-   public static ArmOptLookup backHandoffLookup = new ArmOptLookup(new double[]{},new double[]{});
-   
-
+   public static ArmOptLookup frontHandoffLookup = new ArmOptLookup(new ArrayList<Double>(),new ArrayList<Double>());
+   public static ArmOptLookup backHandoffLookup = new ArmOptLookup(new ArrayList<Double>(),new ArrayList<Double>());
   public final class ArmConstantsLarry {
     // Fill in
     public static final double HOME_SETPOINT = homeSetpoint.get();
