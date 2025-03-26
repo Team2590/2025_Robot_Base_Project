@@ -564,6 +564,7 @@ public class RobotContainer {
     //             IntakeFactory.runIntakeVoltage(
     //                 () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)));
     rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
+    leftJoystick.button(2).onTrue(ScoringFactory.stow());
     leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
     leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));

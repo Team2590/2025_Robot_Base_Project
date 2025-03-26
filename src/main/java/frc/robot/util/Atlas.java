@@ -9,6 +9,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
+import java.util.Set;
 
 /**
  * Atlas is a utility class that synchronizes the movement of the intake, elevator, and arm to
@@ -30,41 +31,39 @@ public class Atlas {
     Arm arm = RobotContainer.getArm();
     Intake intake = RobotContainer.getIntake();
 
-    double handoffPos = Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS;
-
-    if (SafetyChecker.operationalSafety(intakeTargetPos, armTargetPos, elevatorTargetPos)) {
-      if (RobotContainer.getElevator().getRotationCount() >= handoffPos
-          && elevatorTargetPos >= handoffPos) {
-        return new ParallelCommandGroup(
-            arm.setPositionBlocking(armTargetPos),
-            elevator.setPositionBlocking(elevatorTargetPos),
-            intake.setPositionBlocking(intakeTargetPos));
-      } else if (elevator.getRotationCount() >= handoffPos && elevatorTargetPos < handoffPos) {
-        return new SequentialCommandGroup(
-            arm.setPositionBlocking(armTargetPos),
-            intake.setPositionBlocking(intakeTargetPos),
-            elevator.setPositionBlocking(elevatorTargetPos));
-
-      } else if (elevator.getRotationCount() < handoffPos && elevatorTargetPos >= handoffPos) {
-        return new SequentialCommandGroup(
-            elevator.setPositionBlocking(elevatorTargetPos),
-            new ParallelCommandGroup(
+    return Commands.defer(
+        () -> {
+          double handoffPos = Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS;
+          if (RobotContainer.getElevator().getRotationCount() >= handoffPos
+              && elevatorTargetPos >= handoffPos) {
+            return new ParallelCommandGroup(
                 arm.setPositionBlocking(armTargetPos),
-                intake.setPositionBlocking(intakeTargetPos)));
-      } else if (elevator.getRotationCount() < handoffPos && elevatorTargetPos < handoffPos) {
-        return new SequentialCommandGroup(
-            intake.setPositionBlocking(intakeTargetPos),
-            new ParallelCommandGroup(
+                elevator.setPositionBlocking(elevatorTargetPos),
+                intake.setPositionBlocking(intakeTargetPos));
+          } else if (elevator.getRotationCount() >= handoffPos && elevatorTargetPos < handoffPos) {
+            return new SequentialCommandGroup(
                 arm.setPositionBlocking(armTargetPos),
-                elevator.setPositionBlocking(elevatorTargetPos)));
-      } else {
-        System.out.println(
-            "Magical state where somehow none of the above is true. Bad programmer. BAD!");
-        return Commands.none();
-      }
-    } else {
+                intake.setPositionBlocking(intakeTargetPos),
+                elevator.setPositionBlocking(elevatorTargetPos));
 
-      return Commands.print("\n \n NOT SAFE  \n \n");
-    }
+          } else if (elevator.getRotationCount() < handoffPos && elevatorTargetPos >= handoffPos) {
+            return new SequentialCommandGroup(
+                elevator.setPositionBlocking(elevatorTargetPos),
+                new ParallelCommandGroup(
+                    arm.setPositionBlocking(armTargetPos),
+                    intake.setPositionBlocking(intakeTargetPos)));
+          } else if (elevator.getRotationCount() < handoffPos && elevatorTargetPos < handoffPos) {
+            return new SequentialCommandGroup(
+                intake.setPositionBlocking(intakeTargetPos),
+                new ParallelCommandGroup(
+                    arm.setPositionBlocking(armTargetPos),
+                    elevator.setPositionBlocking(elevatorTargetPos)));
+          } else {
+            System.out.println(
+                "Magical state where somehow none of the above is true. Bad programmer. BAD!");
+            return Commands.none();
+          }
+        },
+        Set.of(elevator, arm, intake));
   }
 }

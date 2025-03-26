@@ -262,16 +262,16 @@ public final class Constants {
     public static final boolean brake = true;
     public static final double reduction = 1; // was a 94.18
     public static final int cancoderID = 5;
-    public static final double ARM_SET_STOW = .33; // TODO
+    public static final double ARM_SET_STOW = .25; // .33; // TODO
     public static final double ARM_VERTICAL_POS = .2;
     // public static final double magOffset = -.596436; // -.398
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
-    public static final double magOffset = -0.2; // -0.379; // -.3347; // -.635; // TODO
+    public static final double magOffset = -.324; // -0.379; // -.3347; // -.635; // TODO
     public static final double sensorReduction = 58.8; // TODO
     public static final double BACK_HORIZONTAL = 0.4;
     public static double ARM_OPERATIONAL_MIN_POS = 0; // TODO
     public static double ARM_OPERATIONAL_MAX_POS = .9; // TODO
-    public static double ARM_SCORING_CORAL_POS_L3 = 0.098; // TODO
+    public static double ARM_SCORING_CORAL_POS_L3 = 0.15; // TODO
     public static double ARM_RELEASE_DIFF = 0.078;
     public static double ARM_SCORING_CORAL_POS_L4 = 0.0957; // TODO
     public static double ARM_INTAKE_SOURCE_POSITION = .18; // TODO

@@ -41,8 +41,7 @@ public class GamePieceFactory {
             Commands.race(
                 EndEffectorFactory.runEndEffector(),
                 IntakeFactory.runIntakeVoltage(
-                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED),
-                Commands.waitSeconds(.75)))
+                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)))
         .andThen(
             Atlas.synchronize(
                 Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS,
