@@ -1,8 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.Constants.ElevatorConstantsLeonidas;
@@ -151,10 +149,9 @@ public class RobotState extends SubsystemBase {
     } finally {
       updateLock.unlock();
     }
-    if(!endEffector.hasGamePiece()){
+    if (!endEffector.hasGamePiece()) {
       clearEndEffectorHasGamePiece();
-    }
-    else{
+    } else {
       hasGamePiece = true;
     }
   }

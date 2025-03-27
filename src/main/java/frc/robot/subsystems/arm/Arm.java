@@ -33,7 +33,7 @@ public class Arm extends SubsystemBase {
     return runOnce(() -> arm.setPosition(setpoint));
   }
 
-  public void setPosition(double setpoint){
+  public void setPosition(double setpoint) {
     arm.setPosition(setpoint);
   }
 
@@ -82,5 +82,9 @@ public class Arm extends SubsystemBase {
 
   public double getSetpoint() {
     return setpoint;
+  }
+
+  public ArmIO getIO() {
+    return arm;
   }
 }

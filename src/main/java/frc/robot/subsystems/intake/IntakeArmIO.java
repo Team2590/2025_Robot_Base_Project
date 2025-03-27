@@ -35,4 +35,6 @@ public interface IntakeArmIO {
   public void setNeutralMode(NeutralModeValue mode);
 
   public default void setVoltage(double volts) {}
+
+  public double getRotationCount();
 }

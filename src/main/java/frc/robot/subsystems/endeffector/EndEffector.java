@@ -2,9 +2,7 @@ package frc.robot.subsystems.endeffector;
 
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.AnalogInput;
-import frc.robot.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -72,7 +70,8 @@ public class EndEffector extends SubsystemBase {
   }
 
   public Command runEndEffectorGrabAndHoldAlgaeCommand() {
-    return Commands.run(() -> io.setVoltage(Constants.EndEffectorConstantsLeonidas.GRAB_ALGAE_VOLTAGE));
+    return Commands.run(
+        () -> io.setVoltage(Constants.EndEffectorConstantsLeonidas.GRAB_ALGAE_VOLTAGE));
   }
 
   public Command runEndEffectorManual() {

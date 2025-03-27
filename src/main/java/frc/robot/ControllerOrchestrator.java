@@ -105,7 +105,7 @@ public class ControllerOrchestrator {
           return new ParallelCommandGroup(
               DriveCommands.preciseAlignment(
                   drive, () -> getSourceTarget().pose(), getSourceTarget().pose().getRotation()),
-              GamePieceFactory.intakeCoralGroundandHandoff());
+              GamePieceFactory.intakeCoralGroundAndHandoff());
         },
         requirements);
   }

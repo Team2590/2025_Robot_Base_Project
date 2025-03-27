@@ -62,4 +62,9 @@ public class IntakeArmIOSim implements IntakeArmIO {
   public void stop() {
     appliedVoltage = 0;
   }
+
+  @Override
+  public double getRotationCount() {
+    return sim.getAngularPositionRotations();
+  }
 }

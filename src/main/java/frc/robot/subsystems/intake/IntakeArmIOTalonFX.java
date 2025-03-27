@@ -195,4 +195,9 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
   public void setVoltage(double volts) {
     leader.setControl(new VoltageOut(volts));
   }
+
+  @Override
+  public double getRotationCount() {
+    return leader.getPosition().getValueAsDouble();
+  }
 }
