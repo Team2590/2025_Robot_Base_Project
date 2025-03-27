@@ -79,4 +79,8 @@ public class Arm extends SubsystemBase {
   public double getSetpoint() {
     return setpoint;
   }
+
+  public ArmIO getIO() {
+    return arm;
+  }
 }

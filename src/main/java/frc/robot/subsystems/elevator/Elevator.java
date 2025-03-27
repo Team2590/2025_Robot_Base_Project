@@ -99,4 +99,8 @@ public class Elevator extends SubsystemBase {
   public double getRotationCount() {
     return inputs.rotationCount;
   }
+
+  public ElevatorIO getIO() {
+    return io;
+  }
 }
