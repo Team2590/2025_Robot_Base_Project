@@ -41,6 +41,8 @@ import frc.robot.commands.ElevatorDefaultCommand;
 import frc.robot.commands.EndEffectorDefaultCommand;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.IntakeDefaultCommand;
+import frc.robot.commands.MoveFromHandoffCommand;
+import frc.robot.commands.MoveToHandoffCommand;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.LEDS.NemesisLED;
 import frc.robot.subsystems.arm.Arm;
@@ -537,7 +539,9 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsTuning() {
-    rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
+    // rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
+    leftJoystick.button(2).whileTrue(new MoveFromHandoffCommand());
+    rightJoystick.trigger().whileTrue(new MoveToHandoffCommand());
     // rightJoystick
     //     .trigger()
     //     .and(leftJoystick.button(4).negate())
