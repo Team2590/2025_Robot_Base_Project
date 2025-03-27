@@ -54,7 +54,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private StatusSignal<Current> torqueCurrent;
   private StatusSignal<Temperature> tempCelsius;
   private double reduction;
-  private boolean prevAlgaeState = false;
 
   public ElevatorIOTalonFX(
       int canID,
@@ -192,25 +191,11 @@ public class ElevatorIOTalonFX implements ElevatorIO {
       if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {
         leader.setControl(request);
       } else {
-        boolean currentAlgaeState = RobotState.getEndEffectorHasAlgae();
-        // Want to run at slower speed when we have algae
-        if (currentAlgaeState && !prevAlgaeState) {
-          motionMagicConfigs.MotionMagicCruiseVelocity = cruiseVelocity.get() * Constants.algaeSlowSpeed;
-          motionMagicConfigs.MotionMagicAcceleration = acceleration.get() * Constants.algaeSlowSpeed;
-          motionMagicConfigs.MotionMagicJerk = jerk.get() * Constants.algaeSlowSpeed;
-          leader.getConfigurator().apply(talonFXConfig);
-        } else if (!currentAlgaeState && prevAlgaeState) {
-          motionMagicConfigs.MotionMagicCruiseVelocity = cruiseVelocity.get();
-          motionMagicConfigs.MotionMagicAcceleration = acceleration.get();
-          motionMagicConfigs.MotionMagicJerk = jerk.get();
-          leader.getConfigurator().apply(talonFXConfig);
-        }
         leader.setControl(request.withPosition(position));
       }
     } else {
       System.out.println("CAN'T MOVE ELEVATOR, safety check failed.");
     }
-    prevAlgaeState = RobotState.getEndEffectorHasAlgae();
   }
 
   public void setPositionLoggedNumber() {

@@ -34,9 +34,7 @@ public class RobotState extends SubsystemBase {
   private static Intake intake;
   private static RobotState instance;
   @Getter private static boolean endEffectorhasCoral;
-  private static boolean intakeHasCoral;
-  private static boolean endEffectorHasAlgae;
-  private static boolean intakeHasAlgae;
+  private static boolean hasGamePiece;
   private final ControllerOrchestrator controllerApp;
 
   private static Pose2d targetPose = new Pose2d();
@@ -153,24 +151,12 @@ public class RobotState extends SubsystemBase {
     } finally {
       updateLock.unlock();
     }
-    // currentZone = Constants.locator.getZoneOfField(robotPose);
-
-    endEffectorhasCoral = endEffectorhasCoral();
-  }
-
-  /**
-   * Checks if endeffector has coral
-   *
-   * @return true if the endeffector has coral, false if not
-   */
-  @AutoLogOutput(key = "RobotState/endEffectorHasCoral")
-  public static boolean endEffectorhasCoral() {
-    return endEffector.hasGamePiece();
-  }
-
-  @AutoLogOutput(key = "RobotState/intakeHasCoral")
-  public static boolean intakeHasCoral() {
-    return intake.hasCoral();
+    if(!endEffector.hasGamePiece()){
+      clearEndEffectorHasGamePiece();
+    }
+    else{
+      hasGamePiece = true;
+    }
   }
 
   /**
@@ -209,33 +195,12 @@ public class RobotState extends SubsystemBase {
     setAligningState(AligningState.NOT_ALIGNING);
   }
 
-  public static Command setIntakeHasCoral() {
-    return Commands.runOnce(() -> intakeHasCoral = true);
+  public static boolean endEffectorHasGamePiece() {
+    return hasGamePiece;
   }
 
-  public static Command setIntakeNoCoral() {
-    return Commands.runOnce(() -> intakeHasCoral = false);
-  }
-
-  // Set by GrabAlgaeCommand
-  public static void setEndEffectorHasAlgae() {
-    endEffectorHasAlgae = true;
-  }
-
-  // This should be set by a Score Algae Command
-  public static void setEndEffectorNoAlgae() {
-    endEffectorHasAlgae = false;
-  }
-
-// This should be set by a Score Algae Command
-public static Command clearEndEffectorGamepiece() {
-  return Commands.runOnce(() -> {
-    endEffectorHasAlgae = false;
-    endEffectorhasCoral = false;});
-  }
-
-  public static boolean getEndEffectorHasAlgae() {
-    return endEffectorHasAlgae;
+  public static void clearEndEffectorHasGamePiece() {
+    hasGamePiece = false;
   }
 
   private void updateScoringConfiguration(Pose2d originalTargetPose) {

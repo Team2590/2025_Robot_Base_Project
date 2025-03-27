@@ -24,8 +24,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Constants;
-import frc.robot.RobotState;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 import frc.robot.util.StickyFaultUtil;
@@ -58,7 +56,6 @@ public class ArmIOTalonFX implements ArmIO {
   private StatusSignal<Current> supplyCurrent;
   private StatusSignal<Current> torqueCurrent;
   private StatusSignal<Temperature> tempCelsius;
-  private boolean prevAlgaeState = false;
 
   public ArmIOTalonFX(
       int motorCanID,
@@ -155,24 +152,10 @@ public class ArmIOTalonFX implements ArmIO {
   public void setPosition(double position) {
 
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position)) {
-      boolean currentAlgaeState = RobotState.getEndEffectorHasAlgae();
-        // Want to run at slower speed when we have algae
-        if (currentAlgaeState && !prevAlgaeState) {
-          mm.MotionMagicCruiseVelocity = MotionMagicCruiseVelocity1.get() * Constants.algaeSlowSpeed;
-          mm.MotionMagicAcceleration = MotionMagicAcceleration1.get() * Constants.algaeSlowSpeed;
-          mm.MotionMagicJerk = MotionMagicJerk1.get() * Constants.algaeSlowSpeed;
-          arm.getConfigurator().apply(cfg);
-        } else if (!currentAlgaeState && prevAlgaeState) {
-          mm.MotionMagicCruiseVelocity = MotionMagicCruiseVelocity1.get();
-          mm.MotionMagicAcceleration = MotionMagicAcceleration1.get();
-          mm.MotionMagicJerk = MotionMagicJerk1.get();
-          arm.getConfigurator().apply(cfg);
-        }
         arm.setControl(mmv.withPosition(position));
     } else {
       System.out.println("CAN'T MOVE ARM, safety check failed.");
     }
-    prevAlgaeState = RobotState.getEndEffectorHasAlgae();
   }
 
   public void setPositionLoggedNumber() {

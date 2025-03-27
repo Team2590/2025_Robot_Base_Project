@@ -126,7 +126,7 @@ public class ScoringFactory {
       default:
         yield primeForLevel(level)
             .andThen(EndEffectorFactory.runEndEffectorOuttake())
-            .until(() -> !RobotState.endEffectorhasCoral())
+            .until(() -> !RobotState.endEffectorHasGamePiece())
             .withName("Score " + level.name());
     };
   }
@@ -170,7 +170,7 @@ public class ScoringFactory {
   public static Command score(ScoringSetpoints setpoints) {
     return primeForLevel(setpoints)
         .andThen(EndEffectorFactory.runEndEffectorOuttake())
-        .until(() -> !RobotState.endEffectorhasCoral())
+        .until(() -> !RobotState.endEffectorHasGamePiece())
         .withName(
             "Score with Elevator setpoint "
                 + setpoints.elevatorSetpoint

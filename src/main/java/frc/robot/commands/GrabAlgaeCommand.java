@@ -23,10 +23,7 @@ public class GrabAlgaeCommand extends Command {
   }
 
   @Override
-  public void initialize(){
-    // Clear out Algae State
-    RobotState.setEndEffectorNoAlgae();
-  }
+  public void initialize(){}
 
   @Override
   public void execute() {
@@ -61,8 +58,9 @@ public class GrabAlgaeCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     
-    RobotState.setEndEffectorHasAlgae();
     // MUST HAPPEN AFTER
     // Want to set this back to algae stow position, but need to wait on this until the frcpolygon stuff works
+    elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS);
+    arm.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS);
   }
 }

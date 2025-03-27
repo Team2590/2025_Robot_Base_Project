@@ -64,7 +64,7 @@ public class EndEffector extends SubsystemBase {
             () -> {
               io.stop();
             })
-        .until(() -> !hasGamePiece()).andThen(RobotState.clearEndEffectorGamepiece());
+        .until(() -> !hasGamePiece());
   }
 
   public void runEndEffectorGrabAndHoldAlgae() {

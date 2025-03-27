@@ -52,7 +52,6 @@ public final class Constants {
   public static final double loopPeriodSecs = 0.02;
 
   public static final double endEffectOffset = .2921; // Offset of the end effector to the
-  public static final double algaeSlowSpeed = .5;
 
   public static class DriveToPoseConstraints {
     public static double maxVelocityMPS = 3;

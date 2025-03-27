@@ -17,7 +17,7 @@ public class ElevatorDefaultCommand extends Command {
 
   @Override
   public void execute() {
-    if (!RobotState.endEffectorhasCoral()) notHasCoralCommand.schedule();
+    if (!RobotState.endEffectorHasGamePiece()) notHasCoralCommand.schedule();
     else notHasCoralCommand.cancel();
   }
 
