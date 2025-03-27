@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
+import frc.robot.command_factories.ArmFactory;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
@@ -541,6 +542,11 @@ public class RobotContainer {
   private void configureButtonBindingsTuning() {
     // rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
     leftJoystick.button(2).whileTrue(new MoveFromHandoffCommand());
+    leftJoystick
+        .trigger()
+        .whileTrue(
+            Commands.sequence(
+                ArmFactory.setPositionBlocking(0.5), ElevatorFactory.setPositionBlocking(10)));
     rightJoystick.trigger().whileTrue(new MoveToHandoffCommand());
     // rightJoystick
     //     .trigger()
