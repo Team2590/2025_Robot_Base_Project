@@ -52,6 +52,7 @@ public final class Constants {
   public static final double loopPeriodSecs = 0.02;
 
   public static final double endEffectOffset = .2921; // Offset of the end effector to the
+  public static final double algaeSlowSpeed = .5;
 
   public static class DriveToPoseConstraints {
     public static double maxVelocityMPS = 3;
@@ -348,6 +349,7 @@ public final class Constants {
     public static final double reduction = 1; // TODO
     public static final double RUN_VOLTAGE = 12; // TODO
     public static final double GRAB_ALGAE_VOLTAGE = 12; // TODO
+    public static final int PROX_CHANNEL = 0;
   }
 
   public final class IntakeConstantsLeonidas {

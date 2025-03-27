@@ -19,6 +19,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 import frc.robot.util.StickyFaultUtil;
@@ -53,6 +54,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private StatusSignal<Current> torqueCurrent;
   private StatusSignal<Temperature> tempCelsius;
   private double reduction;
+  private boolean prevAlgaeState = false;
 
   public ElevatorIOTalonFX(
       int canID,
@@ -185,17 +187,30 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setPosition(double position) {
-    Logger.recordOutput("targetPositionForReal", position);
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position)) {
       var request = new MotionMagicVoltage(0);
       if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {
         leader.setControl(request);
       } else {
+        boolean currentAlgaeState = RobotState.getEndEffectorHasAlgae();
+        // Want to run at slower speed when we have algae
+        if (currentAlgaeState && !prevAlgaeState) {
+          motionMagicConfigs.MotionMagicCruiseVelocity = cruiseVelocity.get() * Constants.algaeSlowSpeed;
+          motionMagicConfigs.MotionMagicAcceleration = acceleration.get() * Constants.algaeSlowSpeed;
+          motionMagicConfigs.MotionMagicJerk = jerk.get() * Constants.algaeSlowSpeed;
+          leader.getConfigurator().apply(talonFXConfig);
+        } else if (!currentAlgaeState && prevAlgaeState) {
+          motionMagicConfigs.MotionMagicCruiseVelocity = cruiseVelocity.get();
+          motionMagicConfigs.MotionMagicAcceleration = acceleration.get();
+          motionMagicConfigs.MotionMagicJerk = jerk.get();
+          leader.getConfigurator().apply(talonFXConfig);
+        }
         leader.setControl(request.withPosition(position));
       }
     } else {
       System.out.println("CAN'T MOVE ELEVATOR, safety check failed.");
     }
+    prevAlgaeState = RobotState.getEndEffectorHasAlgae();
   }
 
   public void setPositionLoggedNumber() {

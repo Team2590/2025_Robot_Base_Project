@@ -8,6 +8,7 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.command_factories.ScoringFactory.Level;
+import frc.robot.commands.GrabAlgaeCommand;
 import frc.robot.util.Atlas;
 import frc.robot.util.NemesisTimedCommand;
 
@@ -70,18 +71,10 @@ public class GamePieceFactory {
   }
 
   public static Command GrabAlgaeL2() {
-    return Atlas.synchronize(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
-            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint)
-        .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
+    return new GrabAlgaeCommand(Level.DEALGAE_L2);
   }
 
   public static Command GrabAlgaeL3() {
-    return Atlas.synchronize(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint,
-            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint)
-        .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
+    return new GrabAlgaeCommand(Level.DEALGAE_L3);
   }
 }

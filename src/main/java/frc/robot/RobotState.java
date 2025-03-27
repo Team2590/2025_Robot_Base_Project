@@ -35,6 +35,7 @@ public class RobotState extends SubsystemBase {
   private static RobotState instance;
   @Getter private static boolean endEffectorhasCoral;
   private static boolean intakeHasCoral;
+  private static boolean endEffectorHasAlgae;
   private static boolean intakeHasAlgae;
   private final ControllerOrchestrator controllerApp;
 
@@ -164,7 +165,7 @@ public class RobotState extends SubsystemBase {
    */
   @AutoLogOutput(key = "RobotState/endEffectorHasCoral")
   public static boolean endEffectorhasCoral() {
-    return endEffector.hasCoral();
+    return endEffector.hasGamePiece();
   }
 
   @AutoLogOutput(key = "RobotState/intakeHasCoral")
@@ -216,12 +217,25 @@ public class RobotState extends SubsystemBase {
     return Commands.runOnce(() -> intakeHasCoral = false);
   }
 
-  public static Command setIntakeHasAlgae() {
-    return Commands.runOnce(() -> intakeHasAlgae = true);
+  // Set by GrabAlgaeCommand
+  public static Command setEndEffectorHasAlgae() {
+    return Commands.runOnce(() -> endEffectorHasAlgae = true);
   }
 
-  public static Command setIntakeNoAlgae() {
-    return Commands.runOnce(() -> intakeHasAlgae = false);
+  // This should be set by a Score Algae Command
+  public static Command setEndEffectorNoAlgae() {
+    return Commands.runOnce(() -> endEffectorHasAlgae = false);
+  }
+
+// This should be set by a Score Algae Command
+public static Command clearEndEffectorGamepiece() {
+  return Commands.runOnce(() -> {
+    endEffectorHasAlgae = false;
+    endEffectorhasCoral = false;});
+  }
+
+  public static boolean getEndEffectorHasAlgae() {
+    return endEffectorHasAlgae;
   }
 
   private void updateScoringConfiguration(Pose2d originalTargetPose) {
