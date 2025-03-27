@@ -14,7 +14,7 @@ public class EndEffectorFactory {
    */
   public static Command runEndEffector() {
     return RobotContainer.getEndEffector()
-        .runEndEffector()
+        .runEndEffectorIntake()
         // .raceWith(LEDFactory.blink())
         // .andThen(LEDFactory.solid())
         .withName("Run Endeffector Intake");
