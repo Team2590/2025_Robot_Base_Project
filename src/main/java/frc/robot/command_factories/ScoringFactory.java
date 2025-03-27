@@ -5,10 +5,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants;
+import frc.robot.Constants.IntakeConstantsLeonidas;
 import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.RobotState.ScoringSetpoints;
+import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.util.Atlas;
 import frc.robot.util.NemesisMathUtil;
 
@@ -102,7 +104,7 @@ public class ScoringFactory {
       case L2:
         yield primeForLevel(level)
             .andThen(
-                Atlas.synchronize(
+                new MoveFromHandoffCommand(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     level.getElevatorSetpoint(),
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST))
@@ -110,7 +112,7 @@ public class ScoringFactory {
       case L3:
         yield primeForLevel(level)
             .andThen(
-                Atlas.synchronize(
+                new MoveFromHandoffCommand(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     level.getElevatorSetpoint(),
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L3_POST))
@@ -118,7 +120,7 @@ public class ScoringFactory {
       case L4:
         yield primeForLevel(level)
             .andThen(
-                Atlas.synchronize(
+                new MoveFromHandoffCommand(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     level.getElevatorSetpoint(),
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L4_POST))
@@ -136,7 +138,7 @@ public class ScoringFactory {
       case L4:
         return Commands.parallel(
                 Commands.print("Priming " + level.name()),
-                Atlas.synchronize(
+                new MoveFromHandoffCommand(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     level.getElevatorSetpoint(),
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
@@ -144,7 +146,7 @@ public class ScoringFactory {
       case L3:
         return Commands.parallel(
             Commands.print("Priming " + level.name()),
-            Atlas.synchronize(
+            new MoveFromHandoffCommand(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     level.getElevatorSetpoint(),
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE)
@@ -152,7 +154,7 @@ public class ScoringFactory {
       case L2:
         return Commands.parallel(
             Commands.print("Priming " + level.name()),
-            Atlas.synchronize(
+            new MoveFromHandoffCommand(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     level.getElevatorSetpoint(),
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE)
@@ -160,9 +162,7 @@ public class ScoringFactory {
       default:
         return Commands.parallel(
             Commands.print("Priming " + level.name()),
-            ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
-            ArmFactory.setPositionBlocking(
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE)
+            new MoveFromHandoffCommand(Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS, level.getElevatorSetpoint(), Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE)
                 .withName("Prime " + level.name()));
     }
   }
@@ -185,13 +185,12 @@ public class ScoringFactory {
                 + setpoints.elevatorSetpoint
                 + " and arm setpoint = "
                 + setpoints.armSetpoint),
-        ElevatorFactory.setPositionBlocking(setpoints.elevatorSetpoint),
-        ArmFactory.setPositionBlocking(setpoints.armSetpoint)
+        new MoveFromHandoffCommand(Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS, setpoints.elevatorSetpoint, setpoints.armSetpoint))
             .withName(
                 "Priming with Elevator setpoint "
                     + setpoints.elevatorSetpoint
                     + " and arm setpoint = "
-                    + setpoints.armSetpoint));
+                    + setpoints.armSetpoint);
   }
 
   // public static Command scoreTeleop(Level level) {
@@ -259,7 +258,7 @@ public class ScoringFactory {
    * @return Command sequence for processor scoring
    */
   public static Command scoreProcessor() {
-    return Atlas.synchronize(
+    return new MoveFromHandoffCommand(
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             Level.PROCESSOR.getElevatorSetpoint(),
             Level.PROCESSOR.getArmScoringSetpoint())
@@ -286,7 +285,7 @@ public class ScoringFactory {
    * @return Command sequence for stowing
    */
   public static Command stow() {
-    return Atlas.synchronize(
+    return new MoveFromHandoffCommand(
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS,
             Constants.ArmConstantsLeonidas.ARM_SET_STOW)
@@ -297,10 +296,10 @@ public class ScoringFactory {
     // return new ParallelCommandGroup(
     // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS),
     // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
-    return new ParallelCommandGroup(
-            IntakeFactory.setIntakeCoralPosition(),
-            ArmFactory.setPositionBlocking(.33),
-            ElevatorFactory.setPositionBlocking(0.5))
+    return new MoveFromHandoffCommand(
+            IntakeConstantsLeonidas.INTAKE_FACTORY_CORAL_POSITION,
+            .33,
+            Constants.ArmConstantsLeonidas.ARM_SET_STOW)
         // .andThen(LEDFactory.blink())
         .withName("Deploy climb mechanism");
     // , ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)

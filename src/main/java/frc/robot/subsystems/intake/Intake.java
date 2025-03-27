@@ -95,6 +95,10 @@ public class Intake extends SubsystemBase {
     public double getVelocityRadPerSec() {
       return intakeArmInputs.velocityRadsPerSec;
     }
+
+    public double getRotationCount() {
+      return this.intakeArmIO.getRotationCount();
+    }
   }
 
   public double getArmTunableNumber() {
@@ -143,6 +147,14 @@ public class Intake extends SubsystemBase {
   /** Returns the current velocity in radians per second. */
   public double getCharacterizationVelocity() {
     return intakeArm.getVelocityRadPerSec();
+  }
+
+  public double getArmRotationCount() {
+    return intakeArmIO.getRotationCount();
+  }
+
+  public IntakeArmIO getArmIO() {
+    return intakeArmIO;
   }
 
   /*
