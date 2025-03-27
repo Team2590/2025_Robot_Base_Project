@@ -6,18 +6,30 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.commands.ArmInterpolationCommand;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Atlas is a utility class that synchronizes the movement of the intake, elevator, and arm to
  * optimize speed. Named after the Greek Titan, associated with mapmaking
  */
 public class Atlas {
+  private static TreeMap<Double, Double> setpointMap;
 
- 
+  static {
+    setpointMap = new TreeMap<>();
+    setpointMap.put(2.763, 0.497);
+    setpointMap.put(6.08, 0.545);
+    setpointMap.put(8.799, 0.587);
+    setpointMap.put(11.841, 0.619);
+    setpointMap.put(13.274, 0.644);
+    setpointMap.put(15.33154, .73);
+  }
+
   /**
    * Sets intake, elevator, and arm to a particular position, synchronizing its movement to optimize
    * speed.
@@ -57,9 +69,11 @@ public class Atlas {
           } else if (elevator.getRotationCount() < handoffPos && elevatorTargetPos < handoffPos) {
             return new SequentialCommandGroup(
                 intake.setPositionBlocking(intakeTargetPos),
-                new ParallelCommandGroup(
-                    arm.setPositionBlocking(armTargetPos),
-                    elevator.setPositionBlocking(elevatorTargetPos)));
+                new ArmInterpolationCommand(setpointMap, elevatorTargetPos, armTargetPos)
+                // new ParallelCommandGroup(
+                //     arm.setPositionBlocking(armTargetPos),
+                //     elevator.setPositionBlocking(elevatorTargetPos))
+                );
           } else {
             System.out.println(
                 "Magical state where somehow none of the above is true. Bad programmer. BAD!");
@@ -69,19 +83,17 @@ public class Atlas {
         Set.of(elevator, arm, intake));
   }
 
-  public static Command elevatorArmParallel(double elevatorTargetPos, double armTargetPos){
+  // public static Command elevatorArmParallel(double elevatorTargetPos, double armTargetPos){
 
-   
+  //   Elevator elevator = RobotContainer.getElevator();
+  //   Arm arm = RobotContainer.getArm();
+  //   Intake intake = RobotContainer.getIntake();
 
-    Elevator elevator = RobotContainer.getElevator();
-    Arm arm = RobotContainer.getArm();
-    Intake intake = RobotContainer.getIntake();
+  //   return elevator.setPositionBlocking(elevatorTargetPos)
+  // .deadlineFor(arm.continuousSetPosition(Constants.frontHandoffLookup::get)).andThen(arm.setPositionBlocking(armTargetPos)); //TODO incorporate front back flipping
+  //   // While Command is scheduled the arm will openloop set voltage to position while
+  // ElevatorIsRunning it's
+  //   //.onlyIf(()->SafetyChecker.elevatorOperational(elevatorTargetPos, armTargetPos));
+  // }
 
-
-    return elevator.setPositionBlocking(elevatorTargetPos) .deadlineFor(arm.continuousSetPosition(Constants.frontHandoffLookup::get)).andThen(arm.setPositionBlocking(armTargetPos)); //TODO incorporate front back flipping
-    // While Command is scheduled the arm will openloop set voltage to position while ElevatorIsRunning it's 
-    //.onlyIf(()->SafetyChecker.elevatorOperational(elevatorTargetPos, armTargetPos));
-  }
-
- 
 }

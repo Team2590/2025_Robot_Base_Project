@@ -39,7 +39,7 @@ public class RobotState extends SubsystemBase {
   private static boolean intakeHasCoral;
   private static boolean intakeHasAlgae;
   private final ControllerOrchestrator controllerApp;
-  public static ArmOptLookup currentLookup=Constants.frontHandoffLookup;
+  public static ArmOptLookup currentLookup = Constants.frontHandoffLookup;
 
   /** The aligning state for scoring, if we are aligning to front or back of the robot. */
   public static enum AligningState {
@@ -251,18 +251,14 @@ public class RobotState extends SubsystemBase {
     updateArmOptTable();
   }
 
-  private void updateArmOptTable(){
-    if (aligningState.get() == AligningState.ALIGNING_BACK){
+  private void updateArmOptTable() {
+    if (aligningState.get() == AligningState.ALIGNING_BACK) {
       currentLookup = Constants.backHandoffLookup;
       System.out.println("\n ARM OPT IS BACK TABLE");
-    }
-    else{
-      currentLookup= Constants.frontHandoffLookup;
+    } else {
+      currentLookup = Constants.frontHandoffLookup;
       System.out.println("\n ARM OPT IS FRONT TABLE");
-
     }
-
-
   }
 
   public Pose2d getTargetPose() {

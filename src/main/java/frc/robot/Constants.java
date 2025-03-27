@@ -36,6 +36,7 @@ import frc.robot.util.LoggedTunableNumber;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -145,12 +146,26 @@ public final class Constants {
 
   // public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
 
+  public static TreeMap<Double, Double> setpointMap = new TreeMap<Double, Double>();
+
+  static {
+    setpointMap.put(2.763, 0.497);
+    setpointMap.put(6.08, 0.545);
+    setpointMap.put(8.799, 0.587);
+    setpointMap.put(11.841, 0.619);
+    setpointMap.put(13.274, 0.644);
+    setpointMap.put(15.33154, .73);
+  }
+
   public static LoggedTunableNumber homeSetpoint =
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
   public static final String CANBUS = "Takeover";
 
-   public static ArmOptLookup frontHandoffLookup = new ArmOptLookup(new ArrayList<Double>(),new ArrayList<Double>());
-   public static ArmOptLookup backHandoffLookup = new ArmOptLookup(new ArrayList<Double>(),new ArrayList<Double>());
+  public static ArmOptLookup frontHandoffLookup =
+      new ArmOptLookup(new ArrayList<Double>(), new ArrayList<Double>());
+  public static ArmOptLookup backHandoffLookup =
+      new ArmOptLookup(new ArrayList<Double>(), new ArrayList<Double>());
+
   public final class ArmConstantsLarry {
     // Fill in
     public static final double HOME_SETPOINT = homeSetpoint.get();
@@ -282,9 +297,9 @@ public final class Constants {
     public static double ARM_BARGE_POS = .7; // TODO: find real value
     // public static double ARM_SCORING_POS = .7; // TODO: find real value
     public static double ARM_WRAP_POS = 0.794;
-    public static double ARM_HANDOFF_POS = 0.59;
+    public static double ARM_HANDOFF_POS = 0.75;
 
-    public static double OPT_TABLE_CLAMP=.4;
+    public static double OPT_TABLE_CLAMP = .4;
   }
 
   public static class ElevatorConstantsLeonidas {
