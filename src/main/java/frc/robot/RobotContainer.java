@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -71,6 +72,8 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.Atlas;
+
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -538,58 +541,19 @@ public class RobotContainer {
 
   private void configureButtonBindingsTuning() {
     drive.setDefaultCommand(DriveFactory.joystickDrive());
-    // leftJoystick
-    //     .button(1)
-    //     .whileTrue(
-    //         Atlas.synchronize(
-    //             Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
-    //             Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
-    //             Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
-    // leftJoystick
-    //     .button(2)
-    //     .whileTrue(
-    //         IntakeFactory.runIntake(
-    //             () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED));
-    // leftJoystick
-    //     .button(3)
-    //     .whileTrue(
-    //         Atlas.synchronize(
-    //             Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS,
-    //             Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
-    //             Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
-    // leftJoystick
-    //     .button(4)
-    //     .whileTrue(
-    //         Commands.race(
-    //             EndEffectorFactory.runEndEffector(),
-    //             IntakeFactory.runIntakeVoltage(
-    //                 () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)));
     rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
+    // rightJoystick.trigger().whileTrue(new RunCommand(() -> intake.intakeIO.setVoltage(-8)));
     leftJoystick.button(2).onTrue(ScoringFactory.stow());
     leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
     leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
-    // leftJoystick.button(1).whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
-    // leftJoystick.button(1).onTrue(intake.setPosition(3.7));
-    // leftJoystick.button(2).onTrue(intake.setPosition(15.3));
-    // rightJoystick.button(2).whileTrue(intake.runIntakeUntilHasCoral(-12));
-    // rightJoystick.button(2).whileTrue(ScoringFactory.primeForLevel(Level.L2));
-    // rightJoystick
-    //     .button(3)
-    //     .whileTrue(
-    //         Atlas.synchronize(
-    //             Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS,
-    //             Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
-    //             Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
-    // rightJoystick
-    //     .trigger()
-    //     .and(leftJoystick.button(4).negate())
-    //     .whileTrue(
-    //         new ParallelCommandGroup(
-    //             // elevator.setPositionLoggedTunableNumber(),
-    //             arm.setPositionLoggedTunableNumber()));
-    // leftJoystick.button(4).onTrue(arm.setPosition(armSetpoint.get()));
-    // leftJoystick.trigger().onTrue(intake.runIntakeUntilHasCoral(intakeVoltage));
+    rightJoystick
+        .button(3)
+        .whileTrue(
+            Atlas.synchronize(
+                intake.getArmTunableNumber(), elevator.getTunableNumber(), arm.getTunableNumber()));
+    rightJoystick.povRight().whileTrue(GamePieceFactory.GrabAlgaeL2());
+    rightJoystick.povLeft().whileTrue(GamePieceFactory.GrabAlgaeL3());
   }
 
   /**
