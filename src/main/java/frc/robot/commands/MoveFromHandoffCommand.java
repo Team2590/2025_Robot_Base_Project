@@ -4,8 +4,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.util.NemesisMathUtil;
-
-import java.awt.Robot;
 import java.util.function.DoubleSupplier;
 
 public class MoveFromHandoffCommand extends Command {
@@ -27,7 +25,8 @@ public class MoveFromHandoffCommand extends Command {
     this.armSetpoint = armTargetPos;
     this.elevatorSetpoint = elevatorTargetPos;
     this.intakeArmSetpoint = intakeTargetPos;
-    addRequirements(RobotContainer.getElevator(), RobotContainer.getArm(), RobotContainer.getIntake());
+    addRequirements(
+        RobotContainer.getElevator(), RobotContainer.getArm(), RobotContainer.getIntake());
   }
 
   /** Defaulting to stow */
