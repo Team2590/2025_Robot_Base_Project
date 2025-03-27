@@ -120,8 +120,6 @@ public final class Constants {
           new Translation2d(2, 2),
           new Translation2d(0, 2));
 
-  public static final boolean flipside = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
-
   public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
   public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTopBound");
   public static final FRCPolygon BargeBoundsBot = new FRCPolygon("BargeBot", "BargeBotBound");
@@ -129,8 +127,10 @@ public final class Constants {
   public static final FRCPolygon PresetAlgae2 = new FRCPolygon("PresetAlgae2", "PresetAlgae2Bound");
   public static final FRCPolygon PresetAlgae3 = new FRCPolygon("PresetAlgae3", "PresetAlgae3Bound");
   public static final FRCPolygon Processor = new FRCPolygon("Processor", "ProcessorBound");
-  public static final FRCPolygon FeederStationTop = new FRCPolygon("FeederStationTop", "Station1Bound");
-  public static final FRCPolygon FeederStationBot = new FRCPolygon("FeederStationBot", "Station2Bound");
+  public static final FRCPolygon FeederStationTop =
+      new FRCPolygon("FeederStationTop", "Station1Bound");
+  public static final FRCPolygon FeederStationBot =
+      new FRCPolygon("FeederStationBot", "Station2Bound");
 
   // Two ways to instantiate the polygons, this static initialization box is
   // necessary
