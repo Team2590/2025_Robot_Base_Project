@@ -29,8 +29,12 @@ public class Arm extends SubsystemBase {
   }
 
   /** Run open loop at the specified voltage. */
-  public Command setPosition(double setpoint) {
+  public Command setPositionCommand(double setpoint) {
     return runOnce(() -> arm.setPosition(setpoint));
+  }
+
+  public void setPosition(double setpoint){
+    arm.setPosition(setpoint);
   }
 
   public Command setPositionBlocking(double setpoint) {

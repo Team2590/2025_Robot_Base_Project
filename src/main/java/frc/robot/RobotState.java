@@ -218,13 +218,13 @@ public class RobotState extends SubsystemBase {
   }
 
   // Set by GrabAlgaeCommand
-  public static Command setEndEffectorHasAlgae() {
-    return Commands.runOnce(() -> endEffectorHasAlgae = true);
+  public static void setEndEffectorHasAlgae() {
+    endEffectorHasAlgae = true;
   }
 
   // This should be set by a Score Algae Command
-  public static Command setEndEffectorNoAlgae() {
-    return Commands.runOnce(() -> endEffectorHasAlgae = false);
+  public static void setEndEffectorNoAlgae() {
+    endEffectorHasAlgae = false;
   }
 
 // This should be set by a Score Algae Command

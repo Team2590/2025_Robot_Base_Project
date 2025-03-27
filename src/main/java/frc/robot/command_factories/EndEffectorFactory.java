@@ -29,7 +29,7 @@ public class EndEffectorFactory {
   }
 
   public static Command runEndEffectorGrabAndHoldAlgae() {
-    return RobotContainer.getEndEffector().runEndEffectorGrabAndHoldAlgae();
+    return RobotContainer.getEndEffector().runEndEffectorGrabAndHoldAlgaeCommand();
   }
   /**
    * Creates a command to run the endeffector outtake.

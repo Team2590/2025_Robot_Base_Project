@@ -25,7 +25,7 @@ public class GrabAlgaeCommand extends Command {
   @Override
   public void initialize(){
     // Clear out Algae State
-    RobotState.setEndEffectorNoAlgae().execute();
+    RobotState.setEndEffectorNoAlgae();
   }
 
   @Override
@@ -33,22 +33,22 @@ public class GrabAlgaeCommand extends Command {
     switch (level) {
         case DEALGAE_L2:
         // TODO Call Dhruv's new synchronization command
-        arm.setPosition(RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armSetpoint).execute();
-        elevator.setPosition(RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint).execute();
+        arm.setPosition(RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armSetpoint);
+        elevator.setPosition(RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint);
         break;
         // TODO Call Dhruv's new synchronization command
         case DEALGAE_L3:
-        arm.setPosition(RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armSetpoint).execute();
-        elevator.setPosition(RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint).execute();
+        arm.setPosition(RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armSetpoint);
+        elevator.setPosition(RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint);
         break;
         default:
         // TODO Call Dhruv's new synchronization command
-        arm.setPosition(Constants.ArmConstantsLeonidas.ARM_SET_STOW).execute();
-        elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS).execute();
+        arm.setPosition(Constants.ArmConstantsLeonidas.ARM_SET_STOW);
+        elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS);
         break;
       };
 
-    endEffector.runEndEffectorGrabAndHoldAlgae().execute();
+    endEffector.runEndEffectorGrabAndHoldAlgae();
 
   }
 
@@ -61,7 +61,7 @@ public class GrabAlgaeCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     
-    RobotState.setEndEffectorHasAlgae().execute();
+    RobotState.setEndEffectorHasAlgae();
     // MUST HAPPEN AFTER
     // Want to set this back to algae stow position, but need to wait on this until the frcpolygon stuff works
   }
