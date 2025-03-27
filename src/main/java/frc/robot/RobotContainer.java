@@ -567,8 +567,8 @@ public class RobotContainer {
     //         Atlas.synchronize(
     //             intake.getArmTunableNumber(), elevator.getTunableNumber(),
     // arm.getTunableNumber()));
-    // rightJoystick.povRight().whileTrue(GamePieceFactory.GrabAlgaeL2());
-    // rightJoystick.povLeft().whileTrue(GamePieceFactory.GrabAlgaeL3());
+    rightJoystick.povRight().whileTrue(GamePieceFactory.GrabAlgaeL2(endEffector, arm, elevator));
+    rightJoystick.povLeft().whileTrue(GamePieceFactory.GrabAlgaeL3(endEffector, arm, elevator));
   }
 
   /**
