@@ -10,18 +10,17 @@ public class MoveFromHandoffCommand extends Command {
   private double armSetpoint;
   private double elevatorSetpoint;
   private double intakeArmSetpoint;
-  private DoubleSupplier armThreshold;
+  private double armThreshold;
 
   /**
    * @param armThreshold - max arm rotation count to achieve before being able to move in parallel
    */
   public MoveFromHandoffCommand(
-      DoubleSupplier armThreshold,
-      double armTargetPos,
+      double intakeTargetPos,
       double elevatorTargetPos,
-      double intakeTargetPos) {
+      double armTargetPos) {
     setName("Move to handoff");
-    this.armThreshold = armThreshold;
+    this.armThreshold = Constants.ArmConstantsLeonidas.ARM_THRESHOLD_POS;
     this.armSetpoint = armTargetPos;
     this.elevatorSetpoint = elevatorTargetPos;
     this.intakeArmSetpoint = intakeTargetPos;
@@ -32,15 +31,14 @@ public class MoveFromHandoffCommand extends Command {
   /** Defaulting to stow */
   public MoveFromHandoffCommand() {
     this(
-        () -> Constants.ArmConstantsLeonidas.ARM_THRESHOLD_POS,
-        Constants.ArmConstantsLeonidas.ARM_SET_STOW,
+        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
         Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS,
-        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS);
+        Constants.ArmConstantsLeonidas.ARM_SET_STOW);
   }
 
   @Override
   public void execute() {
-    if (RobotContainer.getArm().getAbsolutePosition() > armThreshold.getAsDouble()) {
+    if (RobotContainer.getArm().getAbsolutePosition() > armThreshold && elevatorSetpoint < Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
       RobotContainer.getArm().getIO().setPosition(armSetpoint);
     } else {
       RobotContainer.getIntake().getArmIO().setPosition(intakeArmSetpoint);

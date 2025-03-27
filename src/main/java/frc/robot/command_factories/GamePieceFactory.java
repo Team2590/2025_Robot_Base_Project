@@ -8,6 +8,7 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.command_factories.ScoringFactory.Level;
+import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.commands.MoveToHandoffCommand;
 import frc.robot.util.Atlas;
 import frc.robot.util.NemesisTimedCommand;
@@ -15,7 +16,7 @@ import frc.robot.util.NemesisTimedCommand;
 public class GamePieceFactory {
 
   public static Command intakeAlgaeGround() {
-    return Atlas.synchronize(
+    return new MoveFromHandoffCommand(
             Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
             Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)
@@ -64,7 +65,7 @@ public class GamePieceFactory {
   }
 
   public static Command GrabAlgaeL2() {
-    return Atlas.synchronize(
+    return new MoveFromHandoffCommand(
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint)
@@ -72,7 +73,7 @@ public class GamePieceFactory {
   }
 
   public static Command GrabAlgaeL3() {
-    return Atlas.synchronize(
+    return new MoveFromHandoffCommand(
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint)
