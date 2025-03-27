@@ -17,14 +17,8 @@ public class GrabAlgaeCommand extends MoveFromHandoffCommand {
   double armSetpoint;
   double intakeArmSetpoint;
 
-  public GrabAlgaeCommand(
-      Level level,
-      EndEffector endEffector,
-      Arm arm,
-      Elevator elevator,
-      double elevatorSetpoint,
-      double armSetpoint,
-      double intakeArmSetpoint) {
+  public GrabAlgaeCommand(Level level, EndEffector endEffector, Arm arm, Elevator elevator, double elevatorSetpoint, double armSetpoint, double intakeArmSetpoint) {
+    super(intakeArmSetpoint, elevatorSetpoint, armSetpoint);
     this.level = level;
     this.elevatorSetpoint = elevatorSetpoint;
     this.armSetpoint = armSetpoint;
