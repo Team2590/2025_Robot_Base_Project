@@ -17,9 +17,9 @@ public class GrabAlgaeCommand extends Command {
     Elevator elevator = RobotContainer.getElevator();
     Level level;
 
-  public GrabAlgaeCommand(Level level) {
+  public GrabAlgaeCommand(Level level, EndEffector endEffector, Arm arm, Elevator elevator) {
     this.level = level;
-    addRequirements(RobotContainer.getEndEffector(), RobotContainer.getArm(), RobotContainer.getElevator());
+    addRequirements(endEffector, arm, elevator);
   }
 
   @Override

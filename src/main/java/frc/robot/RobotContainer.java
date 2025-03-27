@@ -429,25 +429,25 @@ public class RobotContainer {
     leftJoystick
         .button(4)
         .onTrue(
-            elevator.setPosition(
+            elevator.setPositionCommand(
                 Constants.ElevatorConstantsLeonidas
                     .ELEVATOR_OPERATIONAL_MIN_POS)); // Move to home position
     leftJoystick
         .button(5)
         .onTrue(
-            elevator.setPosition(
+            elevator.setPositionCommand(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS)); // Just safe
 
     // Add arm control bindings
     leftJoystick
         .button(6)
         .onTrue(
-            arm.setPosition(
+            arm.setPositionCommand(
                 Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS)); // Min position
     leftJoystick
         .button(7)
         .onTrue(
-            arm.setPosition(
+            arm.setPositionCommand(
                 Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS)); // Max position
 
     leftJoystick.button(8).onTrue(ScoringFactory.score(Level.L3));
@@ -496,8 +496,8 @@ public class RobotContainer {
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
 
     // De-Algae Buttons
-    rightJoystick.povRight().onTrue(GamePieceFactory.GrabAlgaeL2());
-    rightJoystick.povLeft().onTrue(GamePieceFactory.GrabAlgaeL3());
+    rightJoystick.povRight().onTrue(GamePieceFactory.GrabAlgaeL2(endEffector, arm, elevator));
+    rightJoystick.povLeft().onTrue(GamePieceFactory.GrabAlgaeL3(endEffector, arm, elevator));
 
     // Controller App Buttons
     rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
@@ -552,8 +552,8 @@ public class RobotContainer {
         .whileTrue(
             Atlas.synchronize(
                 intake.getArmTunableNumber(), elevator.getTunableNumber(), arm.getTunableNumber()));
-    rightJoystick.povRight().whileTrue(GamePieceFactory.GrabAlgaeL2());
-    rightJoystick.povLeft().whileTrue(GamePieceFactory.GrabAlgaeL3());
+    rightJoystick.povRight().whileTrue(GamePieceFactory.GrabAlgaeL2(endEffector, arm, elevator));
+    rightJoystick.povLeft().whileTrue(GamePieceFactory.GrabAlgaeL3(endEffector, arm, elevator));
   }
 
   /**

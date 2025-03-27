@@ -9,6 +9,9 @@ import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.GrabAlgaeCommand;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.util.Atlas;
 import frc.robot.util.NemesisTimedCommand;
 
@@ -70,11 +73,11 @@ public class GamePieceFactory {
         IntakeFactory.setHoldingAlgaePosition());
   }
 
-  public static Command GrabAlgaeL2() {
-    return new GrabAlgaeCommand(Level.DEALGAE_L2);
+  public static Command GrabAlgaeL2(EndEffector endEffector, Arm arm, Elevator elevator) {
+    return new GrabAlgaeCommand(Level.DEALGAE_L2, endEffector, arm, elevator);
   }
 
-  public static Command GrabAlgaeL3() {
-    return new GrabAlgaeCommand(Level.DEALGAE_L3);
+  public static Command GrabAlgaeL3(EndEffector endEffector, Arm arm, Elevator elevator) {
+    return new GrabAlgaeCommand(Level.DEALGAE_L3, endEffector, arm, elevator);
   }
 }
