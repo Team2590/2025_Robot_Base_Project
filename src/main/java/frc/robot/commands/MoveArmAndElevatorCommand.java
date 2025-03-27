@@ -2,6 +2,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
+import frc.robot.command_factories.ArmFactory;
+import frc.robot.command_factories.ElevatorFactory;
+import frc.robot.command_factories.IntakeFactory;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.NemesisMathUtil;
 
@@ -19,13 +22,13 @@ public class MoveArmAndElevatorCommand extends Command {
     @Override
     public void execute() {
         if (RobotContainer.getIntake().getArmRotationCount() < INTAKE_SAFE_STOW_POS.get()) {
-            RobotContainer.getIntake().getArmIO().setPosition(INTAKE_SAFE_STOW_POS.get());
+            IntakeFactory.setPosition(armSetpoint).execute();
         } else {
             if (RobotContainer.getElevator().getRotationCount() < ELEVATOR_THRESHOLD_POS.get() && RobotContainer.getArm().getAbsolutePosition() > 0.5) {
-                RobotContainer.getElevator().getIO().setPosition(elevatorSetpoint);
+                ElevatorFactory.setPosition(elevatorSetpoint).execute();
             } else {
-                RobotContainer.getElevator().getIO().setPosition(elevatorSetpoint);
-                RobotContainer.getArm().getIO().setPosition(armSetpoint);
+                ElevatorFactory.setPosition(elevatorSetpoint).execute();
+                ArmFactory.setPosition(armSetpoint).execute();
             }
         }
     }
