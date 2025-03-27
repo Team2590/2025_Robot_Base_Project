@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -72,8 +71,6 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import frc.robot.util.Atlas;
-
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -505,11 +502,11 @@ public class RobotContainer {
 
     leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
-    leftJoystick.button(3).onTrue(GamePieceFactory.intakeCoralGroundandHandoff());
+    leftJoystick.button(3).onTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
     rightJoystick
         .trigger()
         .and(rightJoystick.button(4).negate())
-        .whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
+        .whileTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
 
     rightJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorManual());
 
@@ -540,20 +537,28 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsTuning() {
-    drive.setDefaultCommand(DriveFactory.joystickDrive());
-    rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
-    // rightJoystick.trigger().whileTrue(new RunCommand(() -> intake.intakeIO.setVoltage(-8)));
-    leftJoystick.button(2).onTrue(ScoringFactory.stow());
-    leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
-    leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
-    leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
-    rightJoystick
-        .button(3)
-        .whileTrue(
-            Atlas.synchronize(
-                intake.getArmTunableNumber(), elevator.getTunableNumber(), arm.getTunableNumber()));
-    rightJoystick.povRight().whileTrue(GamePieceFactory.GrabAlgaeL2());
-    rightJoystick.povLeft().whileTrue(GamePieceFactory.GrabAlgaeL3());
+    rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
+    // rightJoystick
+    //     .trigger()
+    //     .and(leftJoystick.button(4).negate())
+    //     .whileTrue(Commands.parallel(null)
+    //         Atlas.synchronize(
+    //             intake.getArmTunableNumber(), elevator.getTunableNumber(),
+    // arm.getTunableNumber()));
+    // drive.setDefaultCommand(DriveFactory.joystickDrive());
+    // rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
+    // // rightJoystick.trigger().whileTrue(new RunCommand(() -> intake.intakeIO.setVoltage(-8)));
+    // leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
+    // leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
+    // leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
+    // rightJoystick
+    //     .button(3)
+    //     .whileTrue(
+    //         Atlas.synchronize(
+    //             intake.getArmTunableNumber(), elevator.getTunableNumber(),
+    // arm.getTunableNumber()));
+    // rightJoystick.povRight().whileTrue(GamePieceFactory.GrabAlgaeL2());
+    // rightJoystick.povLeft().whileTrue(GamePieceFactory.GrabAlgaeL3());
   }
 
   /**

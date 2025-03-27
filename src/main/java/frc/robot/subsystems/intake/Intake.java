@@ -98,7 +98,7 @@ public class Intake extends SubsystemBase {
 
     public double getRotationCount() {
       return this.intakeArmIO.getRotationCount();
-    }    
+    }
   }
 
   public double getArmTunableNumber() {

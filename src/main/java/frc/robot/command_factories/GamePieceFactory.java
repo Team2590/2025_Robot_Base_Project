@@ -8,6 +8,7 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.command_factories.ScoringFactory.Level;
+import frc.robot.commands.MoveToHandoffCommand;
 import frc.robot.util.Atlas;
 import frc.robot.util.NemesisTimedCommand;
 
@@ -21,31 +22,24 @@ public class GamePieceFactory {
         .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
   }
 
-  public static Command intakeCoralGroundandHandoff() {
-    return Atlas.synchronize(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
-            Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)
+  public static Command intakeCoralGroundAndHandoff() {
+    return new MoveToHandoffCommand()
         .andThen(
             NemesisTimedCommand.generateTimedCommand(
                 IntakeFactory.runIntakeVoltage(
                     () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED),
                 3))
         .andThen(
-            Atlas.synchronize(
-                Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS,
-                Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
-                Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS))
+            Commands.parallel(
+                ElevatorFactory.setPositionBlocking(
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS),
+                IntakeFactory.setPositionBlocking(
+                    Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS)))
         .andThen(
             Commands.race(
                 EndEffectorFactory.runEndEffector(),
                 IntakeFactory.runIntakeVoltage(
-                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)))
-        .andThen(
-            Atlas.synchronize(
-                Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS,
-                Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_TRANSITION_POS,
-                Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
+                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)));
   }
 
   public static Command intakeCoralNoHandoff() {
