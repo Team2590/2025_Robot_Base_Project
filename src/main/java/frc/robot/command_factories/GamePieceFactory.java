@@ -68,14 +68,24 @@ public class GamePieceFactory {
   }
 
   public static Command GrabAlgaeL2(EndEffector endEffector, Arm arm, Elevator elevator) {
-    return new GrabAlgaeCommand(Level.DEALGAE_L2, endEffector, arm, elevator, Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-    RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
-    RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint);
+    return new GrabAlgaeCommand(
+        Level.DEALGAE_L2,
+        endEffector,
+        arm,
+        elevator,
+        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+        RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
+        RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint);
   }
 
   public static Command GrabAlgaeL3(EndEffector endEffector, Arm arm, Elevator elevator) {
-    return new GrabAlgaeCommand(Level.DEALGAE_L3, endEffector, arm, elevator, Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-    RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
-    RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint);
+    return new GrabAlgaeCommand(
+        Level.DEALGAE_L3,
+        endEffector,
+        arm,
+        elevator,
+        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+        RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
+        RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint);
   }
 }

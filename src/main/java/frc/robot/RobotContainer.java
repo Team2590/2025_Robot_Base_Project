@@ -540,14 +540,14 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsTuning() {
-    // rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
+    rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
     leftJoystick.button(2).whileTrue(new MoveFromHandoffCommand());
     leftJoystick
         .trigger()
         .whileTrue(
             Commands.sequence(
                 ArmFactory.setPositionBlocking(0.5), ElevatorFactory.setPositionBlocking(10)));
-    rightJoystick.trigger().whileTrue(new MoveToHandoffCommand());
+    // rightJoystick.trigger().whileTrue(new MoveToHandoffCommand());
     // rightJoystick
     //     .trigger()
     //     .and(leftJoystick.button(4).negate())
