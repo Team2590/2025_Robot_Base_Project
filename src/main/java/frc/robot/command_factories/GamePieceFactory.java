@@ -51,18 +51,17 @@ public class GamePieceFactory {
                 () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED))
         .until(() -> RobotContainer.getIntake().hasCoral())
         .andThen(
-            IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS))
-        .onlyIf(() -> !RobotState.endEffectorHasGamePiece());
+            IntakeFactory.setPositionBlocking(
+                Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS));
   }
 
   public static Command intakeCoralGround() {
     return new SequentialCommandGroup(
-            new ParallelCommandGroup(
-                IntakeFactory.setIntakeCoralPosition(),
-                IntakeFactory.runIntake(
-                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED)),
-            IntakeFactory.setHoldingAlgaePosition())
-        .onlyIf(() -> !RobotState.endEffectorHasGamePiece());
+        new ParallelCommandGroup(
+            IntakeFactory.setIntakeCoralPosition(),
+            IntakeFactory.runIntake(
+                () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED)),
+        IntakeFactory.setHoldingAlgaePosition());
   }
 
   public static Command GrabAlgaeL2() {
