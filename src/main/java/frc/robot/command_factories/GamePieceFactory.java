@@ -80,12 +80,38 @@ public class GamePieceFactory {
 
   public static Command GrabAlgaeL3(EndEffector endEffector, Arm arm, Elevator elevator) {
     return new GrabAlgaeCommand(
-        Level.DEALGAE_L3,
-        endEffector,
-        arm,
-        elevator,
-        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-        RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
-        RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint);
+            Level.DEALGAE_L3,
+            endEffector,
+            arm,
+            elevator,
+            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
+            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint)
+        .andThen(
+            Commands.parallel(
+                elevator.setPositionCommand(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS),
+                arm.setPositionCommand(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS)));
+  }
+
+  public static Command GrabAlgaeL2() {
+    return new MoveFromHandoffCommand(
+            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
+            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint)
+        .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()).until(() -> RobotState.endEffectorHasGamePiece()).andThen(
+            Commands.parallel(
+                ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS),
+                ArmFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS)));
+  }
+
+  public static Command GrabAlgaeL3() {
+    return new MoveFromHandoffCommand(
+            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint,
+            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint)
+            .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()).until(() -> RobotState.endEffectorHasGamePiece()).andThen(
+                Commands.parallel(
+                    ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS),
+                    ArmFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS)));
   }
 }

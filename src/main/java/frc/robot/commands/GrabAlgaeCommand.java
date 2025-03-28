@@ -9,31 +9,39 @@ import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.util.NemesisMathUtil;
 
 public class GrabAlgaeCommand extends MoveFromHandoffCommand {
-  EndEffector endEffector = RobotContainer.getEndEffector();
-  Arm arm = RobotContainer.getArm();
-  Elevator elevator = RobotContainer.getElevator();
-  Level level;
-  double elevatorSetpoint;
-  double armSetpoint;
-  double intakeArmSetpoint;
+  private final EndEffector endEffector;
+  private final Arm arm;
+  private final Elevator elevator;
+  private final Level level;
+  private final double elevatorSetpoint;
+  private final double armSetpoint;
+  private final double intakeArmSetpoint;
 
-  public GrabAlgaeCommand(Level level, EndEffector endEffector, Arm arm, Elevator elevator, double elevatorSetpoint, double armSetpoint, double intakeArmSetpoint) {
+  public GrabAlgaeCommand(
+      Level level,
+      EndEffector endEffector,
+      Arm arm,
+      Elevator elevator,
+      double elevatorSetpoint,
+      double armSetpoint,
+      double intakeArmSetpoint) {
     super(intakeArmSetpoint, elevatorSetpoint, armSetpoint);
+    setName("GrabAlgae");
     this.level = level;
     this.elevatorSetpoint = elevatorSetpoint;
     this.armSetpoint = armSetpoint;
     this.intakeArmSetpoint = intakeArmSetpoint;
-    addRequirements(endEffector, arm, elevator);
+    this.endEffector = endEffector;
+    this.arm = arm;
+    this.elevator = elevator;
+    addRequirements(this.endEffector, this.arm, this.elevator);
   }
 
   @Override
   public boolean isFinished() {
-    // TODO want this to be zone dependent
     return endEffector.hasGamePiece()
-        && NemesisMathUtil.isApprox(
-            RobotContainer.getElevator().getRotationCount(), 0.05, elevatorSetpoint)
-        && NemesisMathUtil.isApprox(
-            RobotContainer.getArm().getAbsolutePosition(), 0.01, armSetpoint)
+        && NemesisMathUtil.isApprox(elevator.getRotationCount(), 0.05, elevatorSetpoint)
+        && NemesisMathUtil.isApprox(arm.getAbsolutePosition(), 0.01, armSetpoint)
         && NemesisMathUtil.isApprox(
             RobotContainer.getIntake().getArmRotationCount(), 0.05, intakeArmSetpoint);
   }
@@ -44,6 +52,12 @@ public class GrabAlgaeCommand extends MoveFromHandoffCommand {
     // MUST HAPPEN AFTER
     // Want to set this back to algae stow position, but need to wait on this until the frcpolygon
     // stuff works
+    if (interrupted) {
+      System.out.println("GrabAlgaeCommand was interrupted!");
+      // Optionally, you could add some logic to stop the mechanisms here if interrupted.
+    } else {
+      System.out.println("GrabAlgaeCommand finished successfully!");
+    }
     elevator.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS);
     arm.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS);
   }
