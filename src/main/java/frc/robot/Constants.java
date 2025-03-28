@@ -357,9 +357,11 @@ public final class Constants {
     public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 1;
-    public static final int followerCanID = 51; // TODO: change to real ID
+    public static final int followerCanID = 51;
     public static final String followerCanBus = "Takeover";
     public static final boolean followerOpposeLeader = false;
+    public static final int PROX_ONE_CHANNEL = 0; // TODO: real value
+    public static final int PROX_TWO_CHANNEL = 0; // TODO: real value
     public static final double INTAKE_FACTORY_CORAL_POSITION = 11; // TODO
     public static final double INTAKE_FACTORY_ALGAE_POSITION = 5.4; // TODO
     public static final double INTAKE_FACTORY_HOME_POSITION = 0; // TODO
