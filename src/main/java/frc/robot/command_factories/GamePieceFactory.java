@@ -98,10 +98,14 @@ public class GamePieceFactory {
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint)
-        .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()).until(() -> RobotState.endEffectorHasGamePiece()).andThen(
+        .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
+        .until(() -> RobotState.endEffectorHasGamePiece())
+        .andThen(
             Commands.parallel(
-                ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS),
-                ArmFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS)));
+                ElevatorFactory.setPositionBlocking(
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS),
+                ArmFactory.setPositionBlocking(
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS)));
   }
 
   public static Command GrabAlgaeL3() {
@@ -109,9 +113,13 @@ public class GamePieceFactory {
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint)
-            .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()).until(() -> RobotState.endEffectorHasGamePiece()).andThen(
-                Commands.parallel(
-                    ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS),
-                    ArmFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS)));
+        .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
+        .until(() -> RobotState.endEffectorHasGamePiece())
+        .andThen(
+            Commands.parallel(
+                ElevatorFactory.setPositionBlocking(
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS),
+                ArmFactory.setPositionBlocking(
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS)));
   }
 }

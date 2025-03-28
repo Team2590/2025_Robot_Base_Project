@@ -106,7 +106,7 @@ public class ArmIOTalonFX implements ArmIO {
     fdb.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     fdb.FeedbackRemoteSensorID = cancoderID;
     MagnetSensorConfigs mag = new MagnetSensorConfigs();
-    mag.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    mag.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     mag.MagnetOffset = magOffset;
     mag.AbsoluteSensorDiscontinuityPoint = 0.5;
     CANcoderConfiguration can = new CANcoderConfiguration();

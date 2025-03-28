@@ -154,6 +154,7 @@ public class RobotState extends SubsystemBase {
     } else {
       hasGamePiece = true;
     }
+    Logger.recordOutput("RobotState/EndEffectorHasGamePiece", hasGamePiece);
   }
 
   /**
