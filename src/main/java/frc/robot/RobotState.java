@@ -145,7 +145,7 @@ public class RobotState extends SubsystemBase {
     updateLock.lock();
     try {
       setAligningStateBasedOnTargetPose(() -> controllerApp.getTarget().pose());
-      updateScoringConfiguration(controllerApp.getTarget().pose());
+      updateScoringConfiguration(() -> controllerApp.getTarget().pose());
     } finally {
       updateLock.unlock();
     }
@@ -201,7 +201,7 @@ public class RobotState extends SubsystemBase {
     hasGamePiece = false;
   }
 
-  private void updateScoringConfiguration(Pose2d originalTargetPose) {
+  private void updateScoringConfiguration(Supplier<Pose2d> originalTargetPose) {
     AligningState currentAligningState = aligningState.get();
 
     if (currentAligningState != previousAligningState) {
@@ -224,7 +224,7 @@ public class RobotState extends SubsystemBase {
       algaeScoringSetpoints.armSetpoint = magnitude * algaeScoringSetpoints.armSetpoint + offset;
       algaeScoringSetpoints.armPlaceSetpoint =
           magnitude * algaeScoringSetpoints.armPlaceSetpoint + offset;
-      targetPose = drive.flipScoringSide(originalTargetPose);
+      targetPose = drive.flipScoringSide(originalTargetPose.get());
 
       // Update the previous state
       previousAligningState = currentAligningState;
