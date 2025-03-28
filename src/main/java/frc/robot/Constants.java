@@ -276,7 +276,7 @@ public final class Constants {
     public static double ARM_OPERATIONAL_MIN_POS = 0; // TODO
     public static double ARM_OPERATIONAL_MAX_POS = .9; // TODO
     public static double ARM_SCORING_CORAL_POS_L2_PRE = 0.15; // TODO
-    public static double ARM_SCORING_CORAL_POSE_L2_POST = .02;
+    public static double ARM_SCORING_CORAL_POSE_L2_POST = 0;
     public static double ARM_SCORING_CORAL_POS_L3_PRE = 0.15; // TODO
     public static double ARM_SCORING_CORAL_POSE_L3_POST = 0;
     public static double ARM_RELEASE_DIFF = 0.078;

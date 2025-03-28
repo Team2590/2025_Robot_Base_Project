@@ -43,7 +43,7 @@ public class EndEffector extends SubsystemBase {
     }
   }
 
-  public Command runEndEffectorIntake() {
+  public Command runEndEffectorIntakeUntilGamepiece() {
     return runEnd(
             () -> {
               io.setVoltage(Constants.EndEffectorConstantsLeonidas.RUN_VOLTAGE);

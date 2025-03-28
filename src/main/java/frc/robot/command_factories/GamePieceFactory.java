@@ -40,7 +40,7 @@ public class GamePieceFactory {
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS)))
         .andThen(
             Commands.race(
-                EndEffectorFactory.runEndEffector(),
+                EndEffectorFactory.runEndEffectorUntilGamepieceCommand(),
                 IntakeFactory.runIntakeVoltage(
                     () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)));
   }

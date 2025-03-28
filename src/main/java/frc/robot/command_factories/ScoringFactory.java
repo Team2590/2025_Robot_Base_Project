@@ -10,6 +10,7 @@ import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.RobotState.ScoringSetpoints;
+import frc.robot.commands.DriveCommands;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.util.NemesisMathUtil;
 
@@ -173,6 +174,21 @@ public class ScoringFactory {
     return primeForLevel(setpoints)
         .andThen(EndEffectorFactory.runEndEffectorOuttake())
         .until(() -> !RobotState.endEffectorHasGamePiece())
+        .withName(
+            "Score with Elevator setpoint "
+                + setpoints.elevatorSetpoint
+                + " and arm setpoint = "
+                + setpoints.armSetpoint);
+  }
+
+  public static Command scoreAndMove(ScoringSetpoints setpoints) {
+    return primeForLevel(setpoints)
+    .andThen(
+      new MoveFromHandoffCommand(
+          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+          setpoints.elevatorSetpoint,
+          setpoints.armPlaceSetpoint))
+          .andThen(DriveCommands.driveAwayFromReef(.1)).andThen(stow()).onlyIf(() -> RobotState.endEffectorHasGamePiece())
         .withName(
             "Score with Elevator setpoint "
                 + setpoints.elevatorSetpoint
