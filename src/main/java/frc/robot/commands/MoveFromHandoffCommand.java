@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.util.NemesisMathUtil;
-import java.util.function.DoubleSupplier;
 
 public class MoveFromHandoffCommand extends Command {
   private double armSetpoint;
@@ -16,9 +15,7 @@ public class MoveFromHandoffCommand extends Command {
    * @param armThreshold - max arm rotation count to achieve before being able to move in parallel
    */
   public MoveFromHandoffCommand(
-      double intakeTargetPos,
-      double elevatorTargetPos,
-      double armTargetPos) {
+      double intakeTargetPos, double elevatorTargetPos, double armTargetPos) {
     setName("Move to handoff");
     this.armThreshold = Constants.ArmConstantsLeonidas.ARM_THRESHOLD_POS;
     this.armSetpoint = armTargetPos;
@@ -38,7 +35,8 @@ public class MoveFromHandoffCommand extends Command {
 
   @Override
   public void execute() {
-    if (RobotContainer.getArm().getAbsolutePosition() > armThreshold && elevatorSetpoint < Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
+    if (RobotContainer.getArm().getAbsolutePosition() > armThreshold
+        && elevatorSetpoint < Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
       RobotContainer.getArm().getIO().setPosition(armSetpoint);
     } else {
       RobotContainer.getIntake().getArmIO().setPosition(intakeArmSetpoint);

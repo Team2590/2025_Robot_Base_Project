@@ -1,8 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.Constants.ElevatorConstantsLeonidas;
@@ -34,8 +32,7 @@ public class RobotState extends SubsystemBase {
   private static Intake intake;
   private static RobotState instance;
   @Getter private static boolean endEffectorhasCoral;
-  private static boolean intakeHasCoral;
-  private static boolean intakeHasAlgae;
+  private static boolean hasGamePiece;
   private final ControllerOrchestrator controllerApp;
 
   private static Pose2d targetPose = new Pose2d();
@@ -152,24 +149,12 @@ public class RobotState extends SubsystemBase {
     } finally {
       updateLock.unlock();
     }
-    // currentZone = Constants.locator.getZoneOfField(robotPose);
-
-    endEffectorhasCoral = endEffectorhasCoral();
-  }
-
-  /**
-   * Checks if endeffector has coral
-   *
-   * @return true if the endeffector has coral, false if not
-   */
-  @AutoLogOutput(key = "RobotState/endEffectorHasCoral")
-  public static boolean endEffectorhasCoral() {
-    return endEffector.hasCoral();
-  }
-
-  @AutoLogOutput(key = "RobotState/intakeHasCoral")
-  public static boolean intakeHasCoral() {
-    return intake.hasCoral();
+    if (!endEffector.hasGamePiece()) {
+      clearEndEffectorHasGamePiece();
+    } else {
+      hasGamePiece = true;
+    }
+    Logger.recordOutput("RobotState/EndEffectorHasGamePiece", hasGamePiece);
   }
 
   /**
@@ -208,20 +193,12 @@ public class RobotState extends SubsystemBase {
     setAligningState(AligningState.NOT_ALIGNING);
   }
 
-  public static Command setIntakeHasCoral() {
-    return Commands.runOnce(() -> intakeHasCoral = true);
+  public static boolean endEffectorHasGamePiece() {
+    return hasGamePiece;
   }
 
-  public static Command setIntakeNoCoral() {
-    return Commands.runOnce(() -> intakeHasCoral = false);
-  }
-
-  public static Command setIntakeHasAlgae() {
-    return Commands.runOnce(() -> intakeHasAlgae = true);
-  }
-
-  public static Command setIntakeNoAlgae() {
-    return Commands.runOnce(() -> intakeHasAlgae = false);
+  public static void clearEndEffectorHasGamePiece() {
+    hasGamePiece = false;
   }
 
   private void updateScoringConfiguration(Pose2d originalTargetPose) {

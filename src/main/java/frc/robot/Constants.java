@@ -261,7 +261,7 @@ public final class Constants {
     public static final int canID = 1;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 10;
-    public static final boolean invert = false;
+    public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 1; // was a 94.18
     public static final int cancoderID = 5;
@@ -269,7 +269,7 @@ public final class Constants {
     public static final double ARM_VERTICAL_POS = .25;
     // public static final double magOffset = -.596436; // -.398
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
-    public static final double magOffset = -.324; // -0.379; // -.3347; // -.635; // TODO
+    public static final double magOffset = -0.141; // -0.15; // -0.379; // -.3347; // -.635; // TODO
     public static final double sensorReduction = 58.8; // TODO
     public static final double BACK_HORIZONTAL = 0.5;
     public static double ARM_PROCESSOR_POS = 0;
@@ -347,6 +347,7 @@ public final class Constants {
     public static final double reduction = 1; // TODO
     public static final double RUN_VOLTAGE = 12; // TODO
     public static final double GRAB_ALGAE_VOLTAGE = 12; // TODO
+    public static final int PROX_CHANNEL = 0;
   }
 
   public final class IntakeConstantsLeonidas {

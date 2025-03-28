@@ -7,7 +7,7 @@ import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.command_factories.IntakeFactory;
 
-public class IntakeDefaultCommand extends Command {
+public class ElevatorArmParallelCommand extends Command {
   private Command hasCoralCommand =
       Commands.waitSeconds(0.1)
           .andThen(
@@ -15,8 +15,8 @@ public class IntakeDefaultCommand extends Command {
                   Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS))
           .withName("Intake has coral default command");
 
-  public IntakeDefaultCommand() {
-    addRequirements(RobotContainer.getIntake());
+  public ElevatorArmParallelCommand() {
+    addRequirements(RobotContainer.getArm(), RobotContainer.getElevator());
   }
 
   @Override

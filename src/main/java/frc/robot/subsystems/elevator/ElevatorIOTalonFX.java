@@ -22,7 +22,6 @@ import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 import frc.robot.util.StickyFaultUtil;
-import org.littletonrobotics.junction.Logger;
 
 /**
  * @author Dhruv Shah, copied a bit from Vidur's 2024 code ngl
@@ -185,7 +184,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setPosition(double position) {
-    Logger.recordOutput("targetPositionForReal", position);
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position)) {
       var request = new MotionMagicVoltage(0);
       if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {

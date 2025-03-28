@@ -22,7 +22,7 @@ public class ElevatorFactory {
    */
   public static Command setPosition(double position) {
     return RobotContainer.getElevator()
-        .setPosition(position)
+        .setPositionCommand(position)
         .withName("Set Elevator Position")
         .onlyIf(
             () -> SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position));

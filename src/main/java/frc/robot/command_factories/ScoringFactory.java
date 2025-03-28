@@ -11,7 +11,6 @@ import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.RobotState.ScoringSetpoints;
 import frc.robot.commands.MoveFromHandoffCommand;
-import frc.robot.util.Atlas;
 import frc.robot.util.NemesisMathUtil;
 
 /**
@@ -128,7 +127,7 @@ public class ScoringFactory {
       default:
         yield primeForLevel(level)
             .andThen(EndEffectorFactory.runEndEffectorOuttake())
-            .until(() -> !RobotState.endEffectorhasCoral())
+            .until(() -> !RobotState.endEffectorHasGamePiece())
             .withName("Score " + level.name());
     };
   }
@@ -162,7 +161,10 @@ public class ScoringFactory {
       default:
         return Commands.parallel(
             Commands.print("Priming " + level.name()),
-            new MoveFromHandoffCommand(Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS, level.getElevatorSetpoint(), Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE)
+            new MoveFromHandoffCommand(
+                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                    level.getElevatorSetpoint(),
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE)
                 .withName("Prime " + level.name()));
     }
   }
@@ -170,7 +172,7 @@ public class ScoringFactory {
   public static Command score(ScoringSetpoints setpoints) {
     return primeForLevel(setpoints)
         .andThen(EndEffectorFactory.runEndEffectorOuttake())
-        .until(() -> !RobotState.endEffectorhasCoral())
+        .until(() -> !RobotState.endEffectorHasGamePiece())
         .withName(
             "Score with Elevator setpoint "
                 + setpoints.elevatorSetpoint
@@ -180,17 +182,20 @@ public class ScoringFactory {
 
   public static Command primeForLevel(ScoringSetpoints setpoints) {
     return Commands.parallel(
-        Commands.print(
-            "Priming with Elevator setpoint "
-                + setpoints.elevatorSetpoint
-                + " and arm setpoint = "
-                + setpoints.armSetpoint),
-        new MoveFromHandoffCommand(Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS, setpoints.elevatorSetpoint, setpoints.armSetpoint))
-            .withName(
+            Commands.print(
                 "Priming with Elevator setpoint "
                     + setpoints.elevatorSetpoint
                     + " and arm setpoint = "
-                    + setpoints.armSetpoint);
+                    + setpoints.armSetpoint),
+            new MoveFromHandoffCommand(
+                Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                setpoints.elevatorSetpoint,
+                setpoints.armSetpoint))
+        .withName(
+            "Priming with Elevator setpoint "
+                + setpoints.elevatorSetpoint
+                + " and arm setpoint = "
+                + setpoints.armSetpoint);
   }
 
   // public static Command scoreTeleop(Level level) {
