@@ -111,18 +111,22 @@ public class ScoringFactory {
       case L3:
         yield primeForLevel(level)
             .andThen(
-                new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    level.getElevatorSetpoint(),
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L3_POST))
+              Commands.parallel(
+                IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
+                ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
+                ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L3_POST)
+              )
+            )
             .withName("Score " + level.name());
       case L4:
         yield primeForLevel(level)
             .andThen(
-                new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    level.getElevatorSetpoint(),
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L4_POST))
+              Commands.parallel(
+                IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
+                ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
+                ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L4_POST)
+              )
+            )
             .withName("Score " + level.name());
       default:
         yield primeForLevel(level)
@@ -137,19 +141,19 @@ public class ScoringFactory {
       case L4:
         return Commands.parallel(
                 Commands.print("Priming " + level.name()),
-                new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    level.getElevatorSetpoint(),
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
-            .withName("Prime " + level.name());
+                IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
+                ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
+                ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4)
+              )
+              .withName("Prime " + level.name());
       case L3:
         return Commands.parallel(
-            Commands.print("Priming " + level.name()),
-            new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    level.getElevatorSetpoint(),
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE)
-                .withName("Prime " + level.name()));
+                  Commands.print("Priming " + level.name()),
+                  IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
+                  ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
+                  ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE)
+              )
+              .withName("Prime " + level.name());
       case L2:
         return Commands.parallel(
             Commands.print("Priming " + level.name()),
