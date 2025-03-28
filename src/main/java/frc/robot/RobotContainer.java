@@ -315,10 +315,6 @@ public class RobotContainer {
             new EndEffector(
                 new EndEffectorIOSim(
                     DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
-        endEffector =
-            new EndEffector(
-                new EndEffectorIOSim(
-                    DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
         climb = null;
         led = new NemesisLED(2, 56, 29);
         break;
@@ -416,8 +412,11 @@ public class RobotContainer {
   private void configureButtonBindingsSimulation() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
-    leftJoystick.button(1).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
-    leftJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    // leftJoystick.button(1).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
+    // leftJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+
+    leftJoystick.button(1).whileTrue(GamePieceFactory.GrabAlgaeL2(endEffector, arm, elevator));
+    leftJoystick.button(2).whileTrue(GamePieceFactory.GrabAlgaeL3(endEffector, arm, elevator));
 
     // leftJoystick
     //     .button(3)
