@@ -414,8 +414,6 @@ public class RobotContainer {
     // leftJoystick.button(1).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
     // leftJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
 
-    leftJoystick.button(1).whileTrue(GamePieceFactory.GrabAlgaeL2(endEffector, arm, elevator));
-    leftJoystick.button(2).whileTrue(GamePieceFactory.GrabAlgaeL3(endEffector, arm, elevator));
 
     // leftJoystick
     //     .button(3)
@@ -494,8 +492,8 @@ public class RobotContainer {
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
 
     // De-Algae Buttons
-    rightJoystick.povRight().onTrue(GamePieceFactory.GrabAlgaeL2(endEffector, arm, elevator));
-    rightJoystick.povLeft().onTrue(GamePieceFactory.GrabAlgaeL3(endEffector, arm, elevator));
+    rightJoystick.povRight().onTrue(GamePieceFactory.GrabAlgaeL2());
+    rightJoystick.povLeft().onTrue(GamePieceFactory.GrabAlgaeL3());
 
     // Controller App Buttons
     rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
@@ -565,7 +563,7 @@ public class RobotContainer {
     //         Atlas.synchronize(
     //             intake.getArmTunableNumber(), elevator.getTunableNumber(),
     // arm.getTunableNumber()));
-    rightJoystick.povRight().whileTrue(GamePieceFactory.GrabAlgaeL3(endEffector, arm, elevator));
+    rightJoystick.povRight().whileTrue(GamePieceFactory.GrabAlgaeL3());
     rightJoystick.povLeft().whileTrue(GamePieceFactory.GrabAlgaeL3());
   }
 
