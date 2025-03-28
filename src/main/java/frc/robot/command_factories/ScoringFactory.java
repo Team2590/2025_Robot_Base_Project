@@ -188,7 +188,7 @@ public class ScoringFactory {
           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
           setpoints.elevatorSetpoint,
           setpoints.armPlaceSetpoint))
-          .andThen(DriveCommands.driveAwayFromReef(.1)).andThen(stow()).onlyIf(() -> !RobotState.endEffectorHasGamePiece())
+          .andThen(DriveCommands.driveAwayFromReef(.1)).andThen(stow().onlyIf(() -> !RobotState.endEffectorHasGamePiece()))
         .withName(
             "Score with Elevator setpoint "
                 + setpoints.elevatorSetpoint
