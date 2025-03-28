@@ -235,6 +235,16 @@ public final class Constants {
     }
   }
 
+  public static class ScoringPoses{
+    public static final Pose2d BlueBargeScoring1 = new Pose2d(7.7,7.1, new Rotation2d(0));
+    public static final Pose2d BlueBargeScoring2 = new Pose2d(7.7,5.9, new Rotation2d(0));
+    public static final Pose2d BlueBargeScoring3 = new Pose2d(7.7,4.85, new Rotation2d(0));
+    public static final Pose2d BlueProcessor = new Pose2d(7.7,5.9, new Rotation2d(0));
+    public static final Pose2d RedBargeScoring1 = new Pose2d(7.7,2.94, new Rotation2d(0));
+    public static final Pose2d RedBargeScoring2 = new Pose2d(7.7,1.84, new Rotation2d(0));
+    public static final Pose2d RedBargeScoring3 = new Pose2d(7.7,0.67, new Rotation2d(0));
+  }
+
   public class DriveToPoseConstants {
     public static final LinearVelocity MAX_TELEOP_VELOCITY = TunerConstantsLeonidas.kSpeedAt12Volts;
     public static final AngularVelocity MAX_TELEOP_ANGULAR_VELOCITY = RotationsPerSecond.of(1.25);
