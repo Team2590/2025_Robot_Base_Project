@@ -9,7 +9,7 @@ import frc.robot.command_factories.EndEffectorFactory;
 public class EndEffectorDefaultCommand extends Command {
   private Command notHasCoralCommand =
       Commands.waitSeconds(0.2)
-          .andThen(EndEffectorFactory.runEndEffector())
+          .andThen(EndEffectorFactory.runEndEffectorUntilGamepieceCommand())
           .withName("EndEffector not has coral default command");
 
   public EndEffectorDefaultCommand() {
