@@ -10,9 +10,6 @@ import frc.robot.RobotState;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.commands.MoveToHandoffCommand;
-import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.util.NemesisTimedCommand;
 
 public class GamePieceFactory {
@@ -42,7 +39,8 @@ public class GamePieceFactory {
             Commands.race(
                 EndEffectorFactory.runEndEffector(),
                 IntakeFactory.runIntakeVoltage(
-                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)));
+                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)))
+        .onlyIf(() -> !RobotState.endEffectorHasGamePiece());
   }
 
   public static Command intakeCoralNoHandoff() {
@@ -54,7 +52,8 @@ public class GamePieceFactory {
         .until(() -> RobotContainer.getIntake().hasCoral())
         .andThen(
             IntakeFactory.setPositionBlocking(
-                Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS));
+                Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS))
+        .onlyIf(() -> !RobotState.endEffectorHasGamePiece());
   }
 
   public static Command intakeCoralGround() {
@@ -63,7 +62,8 @@ public class GamePieceFactory {
             IntakeFactory.setIntakeCoralPosition(),
             IntakeFactory.runIntake(
                 () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED)),
-        IntakeFactory.setHoldingAlgaePosition());
+        IntakeFactory.setHoldingAlgaePosition())
+        .onlyIf(() -> !RobotState.endEffectorHasGamePiece());
   }
 
   public static Command GrabAlgaeL2() {
