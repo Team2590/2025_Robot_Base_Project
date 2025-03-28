@@ -181,7 +181,7 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput(
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
-    coralDetectionIO.updateInputs(coralDetectionInputs);
+    // coralDetectionIO.updateInputs(coralDetectionInputs);
   }
 
   @FunctionalInterface

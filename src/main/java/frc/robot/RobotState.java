@@ -132,9 +132,6 @@ public class RobotState extends SubsystemBase {
    * @return robot state
    */
   public static RobotState getInstance() {
-    if (instance == null) {
-      throw new IllegalStateException("RobotState has not been initialized");
-    }
     return instance;
   }
 

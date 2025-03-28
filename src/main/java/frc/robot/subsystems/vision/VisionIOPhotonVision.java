@@ -106,64 +106,68 @@ public class VisionIOPhotonVision implements VisionIO {
 
     private void setEstimatedGlobalPose(
         Pose3d prevEstimatedRobotPose, PhotonPipelineResult result) {
-      AligningState aligningState = RobotState.getInstance().getAligningState();
-      boolean isAligning =
-          aligningState == AligningState.ALIGNING_FRONT
-              || aligningState == AligningState.ALIGNING_BACK;
-      if (isAligning) {
-        photonPoseEstimator.setPrimaryStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
-      } else {
-        photonPoseEstimator.setPrimaryStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
-        photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
-      }
-      photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-      Optional<EstimatedRobotPose> estimatedRobotPose = photonPoseEstimator.update(result);
-      if (!estimatedRobotPose.isEmpty()) {
-        robotReferencePose = estimatedRobotPose.get().estimatedPose;
-        if (!isAligning && result.targets.size() > 1) {
-          var multitagResult = result.getMultiTagResult().get();
-          double totalTagDistance = 0.0;
-          for (var target : result.targets) {
-            totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
-          }
+      if (RobotState.getInstance() != null) {
 
-          latestTagIds.addAll(multitagResult.fiducialIDsUsed);
+        AligningState aligningState = RobotState.getInstance().getAligningState();
+        boolean isAligning =
+            aligningState == AligningState.ALIGNING_FRONT
+                || aligningState == AligningState.ALIGNING_BACK;
+        if (isAligning) {
+          photonPoseEstimator.setPrimaryStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
+        } else {
+          photonPoseEstimator.setPrimaryStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
+          photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
+        }
+        photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+        Optional<EstimatedRobotPose> estimatedRobotPose = photonPoseEstimator.update(result);
+        if (!estimatedRobotPose.isEmpty()) {
+          robotReferencePose = estimatedRobotPose.get().estimatedPose;
+          if (!isAligning && result.targets.size() > 1) {
+            var multitagResult = result.getMultiTagResult().get();
+            double totalTagDistance = 0.0;
+            for (var target : result.targets) {
+              totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
+            }
 
-          latestPoseObservations.add(
-              new PoseObservation(
-                  result.getTimestampSeconds(),
-                  robotReferencePose,
-                  multitagResult.estimatedPose.ambiguity,
-                  multitagResult.fiducialIDsUsed.size(),
-                  totalTagDistance / result.targets.size(),
-                  PoseObservationType.PHOTONVISION));
-        } else if (result.hasTargets()) {
-          double tagDistance = result.getBestTarget().bestCameraToTarget.getTranslation().getNorm();
+            latestTagIds.addAll(multitagResult.fiducialIDsUsed);
 
-          latestTagIds.add((short) result.getBestTarget().getFiducialId());
-
-          boolean logResults =
-              (aligningState == AligningState.ALIGNING_FRONT
-                      && (
-                        this.getName().equals("Vision-" + VisionConstants.frontTopReefCameraName)
-                        || this.getName().equals("Vision-" + VisionConstants.frontBottomReefCameraName)
-                      ))
-                  || (aligningState == AligningState.ALIGNING_BACK
-                  && (
-                    this.getName().equals("Vision-" + VisionConstants.backTopReefCameraName)
-                    || this.getName().equals("Vision-" + VisionConstants.backBottomReefCameraName)
-                  ))
-                  || (aligningState == AligningState.NOT_ALIGNING);
-
-          if (logResults) {
             latestPoseObservations.add(
                 new PoseObservation(
                     result.getTimestampSeconds(),
                     robotReferencePose,
-                    result.getBestTarget().getPoseAmbiguity(),
-                    1,
-                    tagDistance,
+                    multitagResult.estimatedPose.ambiguity,
+                    multitagResult.fiducialIDsUsed.size(),
+                    totalTagDistance / result.targets.size(),
                     PoseObservationType.PHOTONVISION));
+          } else if (result.hasTargets()) {
+            double tagDistance =
+                result.getBestTarget().bestCameraToTarget.getTranslation().getNorm();
+
+            latestTagIds.add((short) result.getBestTarget().getFiducialId());
+
+            boolean logResults =
+                (aligningState == AligningState.ALIGNING_FRONT
+                        && (this.getName()
+                                .equals("Vision-" + VisionConstants.frontTopReefCameraName)
+                            || this.getName()
+                                .equals("Vision-" + VisionConstants.frontBottomReefCameraName)))
+                    // || (aligningState == AligningState.ALIGNING_BACK
+                    //     && (this.getName().equals("Vision-" +
+                    // VisionConstants.backTopReefCameraName)
+                    //         || this.getName()
+                    //             .equals("Vision-" + VisionConstants.backBottomReefCameraName)))
+                    || (aligningState == AligningState.NOT_ALIGNING);
+
+            if (logResults) {
+              latestPoseObservations.add(
+                  new PoseObservation(
+                      result.getTimestampSeconds(),
+                      robotReferencePose,
+                      result.getBestTarget().getPoseAmbiguity(),
+                      1,
+                      tagDistance,
+                      PoseObservationType.PHOTONVISION));
+            }
           }
         }
       }
