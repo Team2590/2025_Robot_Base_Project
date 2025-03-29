@@ -87,12 +87,21 @@ public class ControllerOrchestrator {
         requirements);
   }
 
+  // /** Command that needs to be bound to a button to driveToTarget. */
+  // public Command bindDriveToTargetCommand(Drive drive) {
+  //   return DriveCommands.preciseAlignment(
+  //       drive,
+  //       () -> getTarget().pose().plus(new Transform2d(new Translation2d(), new
+  // Rotation2d(Math.PI))),
+  //       getTarget().pose().getRotation());
+  // }
+
   /** Command that needs to be bound to a button to driveToTarget. */
   public Command bindDriveToTargetCommand(Drive drive) {
     return DriveCommands.preciseAlignment(
         drive,
         () -> RobotState.getInstance().getTargetPose(),
-        () -> RobotState.getInstance().getTargetPose().getRotation());
+        RobotState.getInstance().getTargetPose().getRotation());
   }
 
   // This commands will drive to pose while "priming for intake" at coral source
@@ -103,7 +112,7 @@ public class ControllerOrchestrator {
         () -> {
           Logger.recordOutput("SourcePose", getSourceTarget().pose());
           return new ParallelCommandGroup(
-              DriveCommands.preciseAlignment(
+              DriveCommands.preciseAlignmentAutoBuilder(
                   drive, () -> getSourceTarget().pose(), getSourceTarget().pose().getRotation()),
               GamePieceFactory.intakeCoralGroundAndHandoff());
         },
