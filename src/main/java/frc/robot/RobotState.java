@@ -263,7 +263,6 @@ public class RobotState extends SubsystemBase {
           "RobotState/algaeScoringPlaceSetpoint", algaeScoringSetpoints.armPlaceSetpoint);
     }
   }
-  }
 
   public Pose2d getTargetPose() {
     updateLock.lock();
