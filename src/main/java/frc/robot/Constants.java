@@ -383,8 +383,7 @@ public final class Constants {
     public static final int currentLimitAmps = 120;
     public static final boolean invert = true;
     public static final boolean brake = true;
-    public static final double reduction = 1;
-    public static final double sensorReduction = 19.16;
+    public static final double reduction = 19.16;
     public static final double kS = 0.40438; // TODO
     public static final double kV = 0.33074; // TODO
     public static final double INTAKE_OPERATIONAL_MIN_POS = -.1;

@@ -132,7 +132,7 @@ public class RobotContainer {
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
-                new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1, 1));
+                new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1));
         arm =
             new Arm(
                 new ArmIOTalonFX(
@@ -171,7 +171,7 @@ public class RobotContainer {
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
-                new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1, 1));
+                new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1));
         arm =
             new Arm(
                 new ArmIOTalonFX(
@@ -259,8 +259,7 @@ public class RobotContainer {
                     Constants.IntakeArmConstantsLeonidas.currentLimitAmps,
                     Constants.IntakeArmConstantsLeonidas.invert,
                     Constants.IntakeArmConstantsLeonidas.brake,
-                    Constants.IntakeArmConstantsLeonidas.reduction,
-                    Constants.IntakeArmConstantsLeonidas.sensorReduction));
+                    Constants.IntakeArmConstantsLeonidas.reduction));
         intake.resetArmRotationCount();
         endEffector =
             new EndEffector(
@@ -340,7 +339,7 @@ public class RobotContainer {
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
-                new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1, 1));
+                new IntakeArmIOTalonFX(50, "Takeover", 20, true, true, 1));
         arm = new Arm(null);
         elevator = null;
         endEffector = null;
