@@ -168,5 +168,10 @@ public class Intake extends SubsystemBase {
   public boolean hasCoral() {
     return proxOneFilteredData > PROX_ONE_THRESHOLD.get() && proxTwoFilteredData > PROX_TWO_THRESHOLD.get();
   }
+
+  @AutoLogOutput
+  public boolean detectCoral() {
+    return proxOneFilteredData > PROX_ONE_THRESHOLD.get() || proxTwoFilteredData > PROX_TWO_THRESHOLD.get();
+  }
 }
 // spotless:on
