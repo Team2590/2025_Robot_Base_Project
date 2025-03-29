@@ -68,12 +68,10 @@ public class GamePieceFactory {
   }
 
   public static Command GrabAlgaeL3() {
-    return 
-    new MoveFromHandoffCommand(
+    return new MoveFromHandoffCommand(
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint,
-            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint
-        )
+            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint)
         .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
         .until(() -> RobotState.endEffectorHasGamePiece())
         .andThen(

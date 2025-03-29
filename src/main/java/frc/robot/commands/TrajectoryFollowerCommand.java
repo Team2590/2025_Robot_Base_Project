@@ -4,8 +4,11 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -28,6 +31,10 @@ public class TrajectoryFollowerCommand extends Command {
   private boolean flippedForRed = false;
   private boolean firstTime = false;
   private ChassisSpeeds startingSpeeds;
+  private static final double ANGLE_MAX_VELOCITY = 8.0;
+  private static final double ANGLE_MAX_ACCELERATION = 20.0;
+  private Rotation2d endGoal;
+  private boolean runOnce = false;
 
   public final NemesisHolonomicDriveController autonomusController =
       new NemesisHolonomicDriveController(
@@ -35,38 +42,53 @@ public class TrajectoryFollowerCommand extends Command {
           new PIDController(8.0, 0, 0.0),
           new PIDController(6.0, 0, 0.2));
 
+  ProfiledPIDController angleController =
+      new ProfiledPIDController(
+          6,
+          0.0,
+          0.2,
+          new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+
   public TrajectoryFollowerCommand(
       Supplier<PathPlannerPath> path,
       Drive drive,
+      Rotation2d endGoalRotation,
       boolean isInitialPoint,
       ChassisSpeeds startingSpeeds) {
     this.pathSupplier = path;
     this.drive = drive;
     this.isInitialPoint = isInitialPoint;
     this.startingSpeeds = startingSpeeds;
+    this.endGoal = endGoalRotation;
     addRequirements(drive);
-  }
-
-  public TrajectoryFollowerCommand(
-      Supplier<PathPlannerPath> path, Drive drive, ChassisSpeeds startingSpeeds) {
-    this(path, drive, false, startingSpeeds);
   }
 
   public TrajectoryFollowerCommand(
       Supplier<PathPlannerPath> path,
       Drive drive,
-      boolean isInitialPoint,
-      Supplier<Boolean> aimAtSpeaker) {
-    this(path, drive, isInitialPoint, new ChassisSpeeds());
+      Rotation2d endGoalRotation,
+      ChassisSpeeds startingSpeeds) {
+    this(path, drive, endGoalRotation, false, startingSpeeds);
   }
 
-  public TrajectoryFollowerCommand(Supplier<PathPlannerPath> path, Drive swerve) {
-    this(path, swerve, false, new ChassisSpeeds());
+  public TrajectoryFollowerCommand(
+      Supplier<PathPlannerPath> path,
+      Drive drive,
+      Rotation2d endGoalRotation,
+      boolean isInitialPoint,
+      Supplier<Boolean> aimAtSpeaker) {
+    this(path, drive, endGoalRotation, isInitialPoint, new ChassisSpeeds());
+  }
+
+  public TrajectoryFollowerCommand(
+      Supplier<PathPlannerPath> path, Rotation2d endGoalRotation, Drive swerve) {
+    this(path, swerve, endGoalRotation, false, new ChassisSpeeds());
   }
 
   @Override
   public void initialize() {
-    // Logger.recordOutput("TrajectoryFollowerCommandAlliance", Robot.alliance);
+    angleController.enableContinuousInput(-Math.PI, Math.PI);
+    angleController.setTolerance(.01);
     try {
       if (!firstTime) {
         path = pathSupplier.get();
@@ -116,30 +138,41 @@ public class TrajectoryFollowerCommand extends Command {
       Poses[i] = poses.get(i);
     }
     Logger.recordOutput("TrajectoryFollower/Poses", Poses);
-
     timer.reset();
     timer.start();
-    System.out.println("\n\n\n\nTrajectory time seconds:" + trajectory.getTotalTimeSeconds());
   }
 
   @Override
   public void execute() {
-    PathPlannerTrajectoryState goal = trajectory.sample(timer.get());
-    // goal.targetHolonomicRotation =
-    //     aimAtSpeaker.get()
-    //         ? RobotContainer.visionSupplier.robotToSpeakerAngleAuto()
-    //         : goal.targetHolonomicRotation;
-    ChassisSpeeds adjustedSpeeds = autonomusController.calculate(drive.getPose(), goal);
-    drive.runVelocity(adjustedSpeeds);
 
-    // Logger.recordOutput(
-    //     "TrajectoryFollower/TrajectoryGoal",
-    //     new Pose2d(goal.positionMeters, goal.targetHolonomicRotation));
+    try {
+      PathPlannerTrajectoryState goal = trajectory.sample(timer.get());
+      ChassisSpeeds adjustedSpeeds = autonomusController.calculate(drive.getPose(), goal);
+      drive.runVelocity(adjustedSpeeds);
+
+      if (timer.get() >= trajectory.getTotalTimeSeconds()) {
+        if (!runOnce){
+          runOnce = true;
+          angleController.reset(drive.getPose().getRotation().getRadians());
+        }
+        double omega = angleController.calculate(drive.getPose().getRotation().getRadians(), endGoal.getRadians());
+        Logger.recordOutput("TrajectoryFollower/angleControllerError", angleController.getPositionError());
+        Logger.recordOutput("TrajectoryFollower/angleControllerAtSetpoint", angleController.atSetpoint());
+        ChassisSpeeds speeds = new ChassisSpeeds(0, 0, omega);
+
+        drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));
+      }
+    } catch (Exception e) {
+      return;
+    }
   }
 
   @Override
   public boolean isFinished() {
-    return timer.get() >= trajectory.getTotalTimeSeconds();
+    if (this.trajectory == null) {
+      return true;
+    }
+    return timer.get() >= trajectory.getTotalTimeSeconds() && angleController.atSetpoint();
   }
 
   @Override
