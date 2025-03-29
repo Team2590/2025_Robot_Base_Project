@@ -587,7 +587,7 @@ public class RobotContainer {
     // NamedCommands.registerCommand("PrimeL1",
     // ScoringFactory.primeForLevel(ScoringFactory.Level.L1));
     // TODO: Prime for Source
-    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeAlgaeGround());
+    NamedCommands.registerCommand("intakeHandoff", GamePieceFactory.intakeCoralGroundAndHandoff());
 
     // Scoring Commands
     NamedCommands.registerCommand("ScoreL4", ScoringFactory.score(ScoringFactory.Level.L4));

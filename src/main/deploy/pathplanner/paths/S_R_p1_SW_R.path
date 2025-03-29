@@ -3,63 +3,59 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.79275,
-        "y": 2.8744999999999994
+        "x": 3.144778262867647,
+        "y": 4.144886690027573
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.599824130205819,
-        "y": 2.7118318839276707
+        "x": 2.116079891429228,
+        "y": 4.507907284007352
       },
       "isLocked": false,
-      "linkedName": "NE_R_intake_SE_L_end"
+      "linkedName": "S_L"
     },
     {
       "anchor": {
-        "x": 1.6575,
-        "y": 1.012249999999999
+        "x": 1.1532057818244486,
+        "y": 5.766381476907169
       },
       "prevControl": {
-        "x": 1.0139999999999998,
-        "y": 1.2852499999999996
+        "x": 1.4394003475413601,
+        "y": 5.302603149414063
       },
       "nextControl": {
-        "x": 1.9413191825413514,
-        "y": 0.8918418619521526
+        "x": 0.867011216107537,
+        "y": 6.230159804400275
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.124249999999172,
-        "y": 2.6794999999984723
+        "x": 3.685983796296296,
+        "y": 5.113007812499999
       },
       "prevControl": {
-        "x": 2.3594999999999997,
-        "y": 1.1194999999999993
+        "x": 2.685983796296296,
+        "y": 5.113007812499999
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SE_L_intake_SE_R_end"
+      "linkedName": "SW_R"
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 0.5,
-      "rotationDegrees": -53.770188115189626
-    },
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": -36.253837737444755
+      "rotationDegrees": -118.26217667312521
     }
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.7,
-    "maxAcceleration": 4.7,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -67,13 +63,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 63.434948822922095
+    "rotation": -59.99999999999999
   },
   "reversed": false,
-  "folder": null,
+  "folder": "auton4",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 59.2372804657611
+    "rotation": 0.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
