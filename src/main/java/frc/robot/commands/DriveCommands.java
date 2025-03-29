@@ -42,9 +42,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveToPoseConstraints;
-import frc.robot.RobotState.AligningState;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
+import frc.robot.RobotState.AligningState;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -562,7 +562,9 @@ public class DriveCommands {
   }
 
   public static Command preciseAlignment(
-      Drive driveSubsystem, Supplier<Pose2d> preciseTarget, Supplier<Rotation2d> approachDirection) {
+      Drive driveSubsystem,
+      Supplier<Pose2d> preciseTarget,
+      Supplier<Rotation2d> approachDirection) {
     return Commands.defer(
         () -> {
           PathConstraints constraints = Constants.DriveToPoseConstraints.slowpathConstraints;
@@ -579,7 +581,10 @@ public class DriveCommands {
                             driveSubsystem.getChassisSpeeds(),
                             driveSubsystem.getPose(),
                             preciseTarget.get(),
-                            (RobotState.getInstance().getAligningState() == AligningState.ALIGNING_BACK) ? approachDirection.get().plus(new Rotation2d(Math.PI)) : approachDirection.get()),
+                            (RobotState.getInstance().getAligningState()
+                                    == AligningState.ALIGNING_BACK)
+                                ? approachDirection.get().plus(new Rotation2d(Math.PI))
+                                : approachDirection.get()),
                     driveSubsystem);
             return pathCommand;
           } catch (Exception e) {
