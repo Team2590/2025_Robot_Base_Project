@@ -445,7 +445,7 @@ public class RobotContainer {
             arm.setPositionCommand(
                 Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS)); // Max position
 
-    leftJoystick.button(8).onTrue(ScoringFactory.score(Level.L3));
+    leftJoystick.button(3).onTrue(DriveCommands.driveAwayFromReef(2));
     leftJoystick.button(9).onTrue(ScoringFactory.scoreProcessor());
 
     // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
