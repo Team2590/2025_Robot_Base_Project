@@ -54,8 +54,7 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
       int currentLimitAmps,
       boolean invert,
       boolean brake,
-      double reduction
-    ) {
+      double reduction) {
     leader = new TalonFX(canID, canBus);
 
     talonFXConfig.MotorOutput.Inverted =
