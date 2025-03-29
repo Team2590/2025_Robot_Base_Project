@@ -82,20 +82,6 @@ public class ScoringFactory {
     }
   }
 
-  /**
-   * Creates a command sequence for scoring at L4.
-   *
-   * @param container The RobotContainer instance
-   * @return Command sequence for L4 scoring
-   */
-  public static Command scoreL4() {
-    return new ParallelCommandGroup(
-            ElevatorFactory.setPositionBlocking(
-                Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
-        .withName("Score L4");
-  }
-
   public static Command score(Level level) {
     return switch (level) {
       case L1:
@@ -149,9 +135,11 @@ public class ScoringFactory {
       case L3:
         return Commands.parallel(
                   Commands.print("Priming " + level.name()),
-                  IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
-                  ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
-                  ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE)
+                  new MoveFromHandoffCommand(
+                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                    level.getElevatorSetpoint(),
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE
+                  )
               )
               .withName("Prime " + level.name());
       case L2:
