@@ -10,7 +10,6 @@ import frc.robot.RobotState;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.commands.MoveToHandoffCommand;
-import frc.robot.util.NemesisTimedCommand;
 
 public class GamePieceFactory {
 
@@ -25,21 +24,23 @@ public class GamePieceFactory {
   public static Command intakeCoralGroundAndHandoff() {
     return new MoveToHandoffCommand()
         .andThen(
-            NemesisTimedCommand.generateTimedCommand(
-                IntakeFactory.runIntakeVoltage(
-                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED),
-                3))
-        .andThen(
             Commands.parallel(
-                ElevatorFactory.setPositionBlocking(
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS),
-                IntakeFactory.setPositionBlocking(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS)))
+                IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED),
+                Commands.waitUntil(() -> RobotContainer.getIntake().detectCoral())
+                .andThen(
+                    Commands.parallel(
+                        ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS),
+                        IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS)
+                    )
+                )
+            )
+        ) 
         .andThen(
             Commands.race(
                 EndEffectorFactory.runEndEffector(),
-                IntakeFactory.runIntakeVoltage(
-                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)))
+                IntakeFactory.runIntakeVoltage(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)
+            )
+        )
         .onlyIf(() -> !RobotState.endEffectorHasGamePiece());
   }
 
