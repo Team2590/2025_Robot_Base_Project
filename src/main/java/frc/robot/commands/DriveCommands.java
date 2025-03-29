@@ -66,6 +66,7 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
+  private static final int DRIVE_AWAY_SPEED_METERS_PER_SECOND = 2;
 
   private DriveCommands() {}
 
@@ -263,6 +264,29 @@ public class DriveCommands {
                   System.out.println("\tkS: " + formatter.format(kS));
                   System.out.println("\tkV: " + formatter.format(kV));
                 }));
+  }
+
+  public static Command driveAwayFromReef(double time) {
+    Drive drive = RobotContainer.getDrive();
+    ChassisSpeeds zeroSpeed = new ChassisSpeeds(0.0, 0.0, 0.0);
+
+    return Commands.defer(
+        () -> {
+          boolean shouldDriveBackward =
+              RobotState.getInstance().getAligningState() == AligningState.ALIGNING_FRONT;
+
+          double targetVx =
+              shouldDriveBackward
+                  ? -DRIVE_AWAY_SPEED_METERS_PER_SECOND
+                  : DRIVE_AWAY_SPEED_METERS_PER_SECOND;
+
+          ChassisSpeeds driveSpeed = new ChassisSpeeds(targetVx, 0.0, 0.0);
+
+          return Commands.run(() -> drive.runVelocity(driveSpeed), drive)
+              .withTimeout(time)
+              .finallyDo((interrupted) -> drive.runVelocity(zeroSpeed));
+        },
+        Set.of(drive));
   }
 
   /** Measures the robot's wheel radius by spinning in a circle. */

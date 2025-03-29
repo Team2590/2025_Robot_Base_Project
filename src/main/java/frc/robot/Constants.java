@@ -347,7 +347,7 @@ public final class Constants {
     public static final double reduction = 1; // TODO
     public static final double RUN_VOLTAGE = 12; // TODO
     public static final double GRAB_ALGAE_VOLTAGE = 12; // TODO
-    public static final int PROX_CHANNEL = 0;
+    public static final int PROX_CHANNEL = 2;
   }
 
   public final class IntakeConstantsLeonidas {

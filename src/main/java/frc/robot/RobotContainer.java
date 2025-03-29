@@ -445,7 +445,7 @@ public class RobotContainer {
             arm.setPositionCommand(
                 Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS)); // Max position
 
-    leftJoystick.button(8).onTrue(ScoringFactory.score(Level.L3));
+    leftJoystick.button(3).onTrue(DriveCommands.driveAwayFromReef(2));
     leftJoystick.button(9).onTrue(ScoringFactory.scoreProcessor());
 
     // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
@@ -479,16 +479,16 @@ public class RobotContainer {
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
 
     // Scoring buttons
-    leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
-    leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
-    leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
-    rightJoystick.povDown().whileTrue(ScoringFactory.score(Level.L1));
+    leftJoystick.povRight().whileTrue(ScoringFactory.primeForLevel(Level.L2));
+    leftJoystick.povDown().whileTrue(ScoringFactory.primeForLevel(Level.L3));
+    leftJoystick.povLeft().whileTrue(ScoringFactory.primeForLevel(Level.L4));
+    rightJoystick.povDown().whileTrue(ScoringFactory.primeForLevel(Level.L1));
     leftJoystick.button(2).whileTrue(ScoringFactory.stow());
     rightJoystick.button(4).and(leftJoystick.trigger()).whileTrue(ScoringFactory.scoreProcessor());
     leftJoystick
         .trigger()
         .and(rightJoystick.button(4).negate())
-        .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
+        .whileTrue(ScoringFactory.moveToPostandDriveAway());
 
     // De-Algae Buttons
     rightJoystick.povRight().onTrue(GamePieceFactory.GrabAlgaeL2());

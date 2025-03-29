@@ -12,9 +12,9 @@ public class EndEffectorFactory {
    * @param intakeSpeed Supplier for the intake speed
    * @return Command to run the intake
    */
-  public static Command runEndEffector() {
+  public static Command runEndEffectorUntilGamepieceCommand() {
     return RobotContainer.getEndEffector()
-        .runEndEffectorIntake()
+        .runEndEffectorIntakeUntilGamepiece()
         // .raceWith(LEDFactory.blink())
         // .andThen(LEDFactory.solid())
         .withName("Run Endeffector Intake");

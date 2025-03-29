@@ -9,6 +9,7 @@ import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.RobotState.ScoringSetpoints;
+import frc.robot.commands.DriveCommands;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.util.NemesisMathUtil;
 
@@ -159,10 +160,37 @@ public class ScoringFactory {
     }
   }
 
+  public static Command moveToPostandDriveAway() {
+    double armHorizontal =
+        RobotState.getInstance().getAligningState() == RobotState.AligningState.ALIGNING_FRONT
+            ? Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L3_POST
+            : Constants.ArmConstantsLeonidas.BACK_HORIZONTAL;
+    return ArmFactory.setPositionBlocking(armHorizontal)
+        .andThen(DriveCommands.driveAwayFromReef(.5))
+        .andThen(stow().onlyIf(() -> !RobotState.endEffectorHasGamePiece()))
+        .withName("Move To Post + Drive Away");
+  }
+
   public static Command score(ScoringSetpoints setpoints) {
     return primeForLevel(setpoints)
         .andThen(EndEffectorFactory.runEndEffectorOuttake())
         .until(() -> !RobotState.endEffectorHasGamePiece())
+        .withName(
+            "Score with Elevator setpoint "
+                + setpoints.elevatorSetpoint
+                + " and arm setpoint = "
+                + setpoints.armSetpoint);
+  }
+
+  public static Command scoreAndMove(ScoringSetpoints setpoints) {
+    return primeForLevel(setpoints)
+        .andThen(
+            new MoveFromHandoffCommand(
+                Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                setpoints.elevatorSetpoint,
+                setpoints.armPlaceSetpoint))
+        .andThen(DriveCommands.driveAwayFromReef(.5))
+        .andThen(stow().onlyIf(() -> !RobotState.endEffectorHasGamePiece()))
         .withName(
             "Score with Elevator setpoint "
                 + setpoints.elevatorSetpoint
