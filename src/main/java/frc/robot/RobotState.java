@@ -125,9 +125,6 @@ public class RobotState extends SubsystemBase {
    * @return robot state
    */
   public static RobotState getInstance() {
-    if (instance == null) {
-      throw new IllegalStateException("RobotState has not been initialized");
-    }
     return instance;
   }
 
@@ -166,9 +163,9 @@ public class RobotState extends SubsystemBase {
     return currentZone;
   }
 
-  public Pose2d getNearestCoralPose() {
-    return vision.getNearestCoralPose();
-  }
+  // public Pose2d getNearestCoralPose() {
+  //   return vision.getNearestCoralPose();
+  // }
 
   @AutoLogOutput(key = "PreciseAlignment/AligningState")
   public AligningState getAligningState() {
@@ -212,7 +209,7 @@ public class RobotState extends SubsystemBase {
         offset = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL;
         magnitude = -1;
       }
-      coralScoringSetpoints.armSetpoint =  magnitude * coralScoringSetpoints.armSetpoint + offset;
+      coralScoringSetpoints.armSetpoint = magnitude * coralScoringSetpoints.armSetpoint + offset;
       coralScoringSetpoints.armPlaceSetpoint =
           magnitude * coralScoringSetpoints.armPlaceSetpoint + offset;
 

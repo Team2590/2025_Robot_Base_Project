@@ -106,7 +106,12 @@ public class VisionIOPhotonVision implements VisionIO {
 
     private void setEstimatedGlobalPose(
         Pose3d prevEstimatedRobotPose, PhotonPipelineResult result) {
-      AligningState aligningState = RobotState.getInstance().getAligningState();
+      AligningState aligningState;
+      if (RobotState.getInstance() == null) {
+        aligningState = AligningState.NOT_ALIGNING;
+      } else {
+        aligningState = RobotState.getInstance().getAligningState();
+      }
       boolean isAligning =
           aligningState == AligningState.ALIGNING_FRONT
               || aligningState == AligningState.ALIGNING_BACK;

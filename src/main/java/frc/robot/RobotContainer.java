@@ -67,8 +67,6 @@ import frc.robot.subsystems.intake.IntakeArmIOSim;
 import frc.robot.subsystems.intake.IntakeArmIOTalonFX;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
-import frc.robot.subsystems.vision.CoralDetectionIOSim;
-import frc.robot.subsystems.vision.CoralIOPhotonVision;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
@@ -124,7 +122,6 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                null,
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
@@ -165,7 +162,6 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                null,
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
@@ -240,7 +236,6 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                null,
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
@@ -303,7 +298,6 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new CoralDetectionIOSim(),
                 new VisionIOPhotonVisionSim(
                     List.of(
                         new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
@@ -339,7 +333,6 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                null,
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),

@@ -125,7 +125,8 @@ public class ControllerOrchestrator {
     // value can be used.
     String[] parts = targetString.split("_");
     if (parts.length != 3) {
-      System.err.println("---> Invalid target string received from ControllerApp: " + targetString);
+      // System.err.println("---> Invalid target string received from ControllerApp: " +
+      // targetString);
       return null;
     }
     String compassDir = parts[0];
@@ -135,8 +136,8 @@ public class ControllerOrchestrator {
 
     Pose2d targetPose = lookupPoseBasedOnAlliance(poseKey);
     if (targetPose == null) {
-      System.err.println(
-          "---> Caution!!! Invalid target pose key received from ControllerApp: " + poseKey);
+      // System.err.println(
+      // "---> Caution!!! Invalid target pose key received from ControllerApp: " + poseKey);
       return null;
     }
     ScoringFactory.Level level = ScoringFactory.Level.valueOf(levelString);
