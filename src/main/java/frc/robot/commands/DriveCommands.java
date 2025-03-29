@@ -532,7 +532,7 @@ public class DriveCommands {
     return alignToTargetLine(drive, forwardSupplier, strafeSupplier, targetPoseSupplier, 1.0);
   }
 
-  public static Command preciseAlignment(
+  public static Command preciseAlignmentAutoBuilder(
       Drive driveSubsystem, Supplier<Pose2d> preciseTarget, Rotation2d approachDirection) {
 
     return Commands.defer(
@@ -563,7 +563,7 @@ public class DriveCommands {
   public static Command preciseAlignment(
       Drive driveSubsystem,
       Supplier<Pose2d> preciseTarget,
-      Supplier<Rotation2d> approachDirection) {
+      Rotation2d approachDirection) {
 
     return Commands.defer(
         () -> {
@@ -581,9 +581,9 @@ public class DriveCommands {
                             driveSubsystem.getChassisSpeeds(),
                             driveSubsystem.getPose(),
                             preciseTarget.get(),
-                            approachDirection.get()),
+                            approachDirection),
                     driveSubsystem);
-            return wrapForAligning(pathCommand, preciseTarget);
+            return pathCommand;
           } catch (Exception e) {
             return Commands.print("Follow Path Exception: " + e.getMessage());
           }

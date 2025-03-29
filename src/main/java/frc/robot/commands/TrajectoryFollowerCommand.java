@@ -4,6 +4,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -11,6 +12,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.NemesisHolonomicDriveController;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -64,37 +67,56 @@ public class TrajectoryFollowerCommand extends Command {
   @Override
   public void initialize() {
     // Logger.recordOutput("TrajectoryFollowerCommandAlliance", Robot.alliance);
-    if (!firstTime) {
-      path = pathSupplier.get();
-      firstTime = true;
-    }
-    if (DriverStation.getAlliance().isPresent()
-        && DriverStation.getAlliance().get() == Alliance.Red
-        && !flippedForRed) {
-      path = path.flipPath();
-      flippedForRed = true;
+    try {
+      if (!firstTime) {
+        path = pathSupplier.get();
+        firstTime = true;
+      }
+      if (DriverStation.getAlliance().isPresent()
+          && DriverStation.getAlliance().get() == Alliance.Red
+          && !flippedForRed) {
+        // path = path.flipPath();
+        flippedForRed = true;
+      }
+
+      if (DriverStation.getAlliance().isPresent()
+          && DriverStation.getAlliance().get() == Alliance.Blue
+          && flippedForRed) {
+        path = path.flipPath();
+        flippedForRed = false;
+      }
+      if (isInitialPoint) {
+        trajectory =
+            path.generateTrajectory(
+                new ChassisSpeeds(),
+                path.getStartingHolonomicPose().get().getRotation(),
+                drive.getConfig());
+
+        Logger.recordOutput(
+            "TrajectoryFollower/InitialHolonomicPose", path.getStartingHolonomicPose().get());
+        drive.setPose(path.getStartingHolonomicPose().get());
+      } else {
+        trajectory =
+            path.generateTrajectory(
+                startingSpeeds, drive.getPose().getRotation(), drive.getConfig());
+      }
+    } catch (Exception e) {
+      return;
     }
 
-    if (DriverStation.getAlliance().isPresent()
-        && DriverStation.getAlliance().get() == Alliance.Blue
-        && flippedForRed) {
-      path = path.flipPath();
-      flippedForRed = false;
-    }
-    if (isInitialPoint) {
-      trajectory =
-          path.generateTrajectory(
-              new ChassisSpeeds(),
-              path.getStartingHolonomicPose().get().getRotation(),
-              drive.getConfig());
+    List<Pose2d> poses = new ArrayList<>();
 
-      Logger.recordOutput(
-          "TrajectoryFollower/InitialHolonomicPose", path.getStartingHolonomicPose().get());
-      drive.setPose(path.getStartingHolonomicPose().get());
-    } else {
-      trajectory =
-          path.generateTrajectory(startingSpeeds, drive.getPose().getRotation(), drive.getConfig());
+    for (PathPlannerTrajectoryState state : trajectory.getStates()) {
+      poses.add(state.pose);
     }
+
+    Pose2d[] Poses = new Pose2d[trajectory.getStates().size()];
+
+    for (int i = 0; i < poses.size(); i++) {
+      Poses[i] = poses.get(i);
+    }
+    Logger.recordOutput("TrajectoryFollower/Poses", Poses);
+
     timer.reset();
     timer.start();
     System.out.println("\n\n\n\nTrajectory time seconds:" + trajectory.getTotalTimeSeconds());
