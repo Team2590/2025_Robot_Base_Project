@@ -8,7 +8,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
   private ArmIO arm;
-  private double setpointTolerance = 0.05;
+  private double setpointTolerance = 0.01;
   private double setpoint;
 
   private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
@@ -24,19 +24,23 @@ public class Arm extends SubsystemBase {
     Logger.processInputs("Arm", inputs);
 
     // Log current position and target position
-    Logger.recordOutput("Arm/CurrentPosition", inputs.armabspos);
+    Logger.recordOutput("Arm/CurrentPosition", inputs.armpos);
     Logger.recordOutput("Arm/TargetPosition", setpoint);
   }
 
   /** Run open loop at the specified voltage. */
-  public Command setPosition(double setpoint) {
+  public Command setPositionCommand(double setpoint) {
     return runOnce(() -> arm.setPosition(setpoint));
+  }
+
+  public void setPosition(double setpoint) {
+    arm.setPosition(setpoint);
   }
 
   public Command setPositionBlocking(double setpoint) {
     this.setpoint = setpoint;
-    return runEnd(() -> arm.setPosition(setpoint), () -> arm.setPosition(setpoint))
-        .until(() -> NemesisMathUtil.isApprox(inputs.armabspos, setpointTolerance, setpoint));
+    return runEnd(() -> arm.setPosition(setpoint), () -> {})
+        .until(() -> NemesisMathUtil.isApprox(inputs.armpos, setpointTolerance, setpoint));
   }
 
   public Command setPositionRun(double setpoint) {
@@ -45,6 +49,10 @@ public class Arm extends SubsystemBase {
 
   public Command setPositionLoggedTunableNumber() {
     return runEnd(() -> arm.setPositionLoggedNumber(), () -> arm.setPositionLoggedNumber());
+  }
+
+  public double getTunableNumber() {
+    return arm.getTunableNumber();
   }
 
   public Command resetarm() {
@@ -69,10 +77,14 @@ public class Arm extends SubsystemBase {
   }
 
   public double getAbsolutePosition() {
-    return inputs.armabspos;
+    return inputs.armpos;
   }
 
   public double getSetpoint() {
     return setpoint;
+  }
+
+  public ArmIO getIO() {
+    return arm;
   }
 }

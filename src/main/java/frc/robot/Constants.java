@@ -21,6 +21,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -31,6 +32,7 @@ import frc.robot.generated.TunerConstantsLeonidas;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.FRCPolygon;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.PolygonLocator;
 // import frc.robot.util.PolygonLocator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -108,41 +110,42 @@ public final class Constants {
    * | |
    * (0,0)---(2,0)
    */
-  // public static final FRCPolygon playBox =
-  //     new FRCPolygon(
-  //         "playBox",
-  //         new Translation2d(0, 0),
-  //         new Translation2d(2, 0),
-  //         new Translation2d(2, 2),
-  //         new Translation2d(0, 2));
+  public static final FRCPolygon playBox =
+      new FRCPolygon(
+          "playBox",
+          new Translation2d(0, 0),
+          new Translation2d(2, 0),
+          new Translation2d(2, 2),
+          new Translation2d(0, 2));
 
-  // public static final boolean flipside =
-  //     DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() ==
-  // Alliance.Red;
+  public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
+  public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTopBound");
+  public static final FRCPolygon BargeBoundsBot = new FRCPolygon("BargeBot", "BargeBotBound");
+  public static final FRCPolygon PresetAlgae1 = new FRCPolygon("PresetAlgae1", "PresetAlgae1Bound");
+  public static final FRCPolygon PresetAlgae2 = new FRCPolygon("PresetAlgae2", "PresetAlgae2Bound");
+  public static final FRCPolygon PresetAlgae3 = new FRCPolygon("PresetAlgae3", "PresetAlgae3Bound");
+  public static final FRCPolygon Processor = new FRCPolygon("Processor", "ProcessorBound");
+  public static final FRCPolygon FeederStationTop =
+      new FRCPolygon("FeederStationTop", "Station1Bound");
+  public static final FRCPolygon FeederStationBot =
+      new FRCPolygon("FeederStationBot", "Station2Bound");
 
-  // public static final FRCPolygon reefBounds = new FRCPolygon("reef", "Reefbounds");
-  // public static final FRCPolygon BargeBoundsTop = new FRCPolygon("BargeTop", "BargeTop");
-  // public static final FRCPolygon BargeBoundsBot = new FRCPolygon("BargeBot", "BargeBot");
-  // // public static final FRCPolygon PresetAlgae = new FRCPolygon("PresetAlgae",
-  // // "FloatingAlgae");
-  // public static final FRCPolygon Processor = new FRCPolygon("Processor", "Processor");
-  // public static final FRCPolygon FeederStationTop = new FRCPolygon("FeederStationTop",
-  // "Station1");
-  // public static final FRCPolygon FeederStationBot = new FRCPolygon("FeederStationBot",
-  // "Station2");
+  // Two ways to instantiate the polygons, this static initialization box is
+  // necessary
+  static {
+    polygons.add(playBox);
+    polygons.add(reefBounds);
+    polygons.add(BargeBoundsTop);
+    polygons.add(BargeBoundsBot);
+    polygons.add(FeederStationTop);
+    polygons.add(FeederStationBot);
+    polygons.add(PresetAlgae1);
+    polygons.add(PresetAlgae2);
+    polygons.add(PresetAlgae3);
+    polygons.add(Processor);
+  }
 
-  // // Two ways to instantiate the polygons, this static initialization box is
-  // // necessary
-  // static {
-  //   polygons.add(playBox);
-  //   polygons.add(reefBounds);
-  //   polygons.add(BargeBoundsTop);
-  //   polygons.add(BargeBoundsBot);
-  //   // polygons.add(PresetAlgae);
-  //   polygons.add(Processor);
-  // }
-
-  // public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
+  public static PolygonLocator locator = new PolygonLocator(polygons, fieldBounds);
 
   public static LoggedTunableNumber homeSetpoint =
       new LoggedTunableNumber("Arm/IntakeSetpoint", .155);
@@ -257,54 +260,65 @@ public final class Constants {
     public static double ARM_FACTORY_SAFETY_MAX = 1;
     public static final int canID = 1;
     public static final String canBus = "Takeover";
-    public static final int currentLimitAmps = 40;
-    public static final boolean invert = false;
+    public static final int currentLimitAmps = 10;
+    public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 1; // was a 94.18
     public static final int cancoderID = 5;
-    public static final double ARM_SET_STOW = .33;
+    public static final double ARM_SET_STOW = .25; // .33; // TODO
+    public static final double ARM_VERTICAL_POS = .25;
     // public static final double magOffset = -.596436; // -.398
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
-    public static final double magOffset = -.635; // -.274; // -.54;
-    //    -.674; // -0.779; // -.883// - -0.398; // 0; // -.463; // -.268; // -.398
-    public static final double sensorReduction = 58.8;
-    public static double ARM_OPERATIONAL_MIN_POS = 0;
-    public static double ARM_OPERATIONAL_MAX_POS = .9;
-    public static double ARM_SCORING_CORAL_POS = 0.6;
-    public static double ARM_SCORING_CORAL_POS_L3 = 0.6;
-    public static double ARM_SCORING_CORAL_POS_L4 = 0.57;
-    public static double ARM_INTAKE_SOURCE_POSITION = .18; // .09
-    public static double ARM_DEALGAE_POSITION = .65;
-    public static double ARM_BARGE_POS = .7; // TODO: find real value
+    public static final double magOffset = -0.141; // -0.15; // -0.379; // -.3347; // -.635; // TODO
+    public static final double sensorReduction = 58.8; // TODO
+    public static final double BACK_HORIZONTAL = 0.5;
+    public static double ARM_PROCESSOR_POS = 0;
+    public static double ARM_OPERATIONAL_MIN_POS = -.5;
+    public static double ARM_OPERATIONAL_MAX_POS = 1;
+    public static double ARM_SCORING_CORAL_POS_L2_PRE = 0.15;
+    public static double ARM_SCORING_CORAL_POSE_L2_POST = 0;
+    public static double ARM_SCORING_CORAL_POS_L3_PRE = 0.15;
+    public static double ARM_SCORING_CORAL_POSE_L3_POST = 0;
+    public static double ARM_RELEASE_DIFF = 0.078;
+    public static double ARM_SCORING_CORAL_POS_L4 = 0.12; // TODO
+    public static double ARM_SCORING_CORAL_POSE_L4_POST = 0;
+    public static double ARM_INTAKE_SOURCE_POSITION = .18; // TODO
+    public static double ARM_DEALGAE_POSITION = 0;
+    public static double ARM_BARGE_POS = .175; // TODO: find real value
+    // public static double ARM_SCORING_POS = .7; // TODO: find real value
+    public static double ARM_WRAP_POS = 0.794;
+    public static double ARM_HANDOFF_POS = 0.757;
+    public static double ARM_THRESHOLD_POS = .63;
   }
 
   public static class ElevatorConstantsLeonidas {
     public static double OFFSET = 0;
-    public static double ELEVATOR_OPERATIONAL_MIN_POS = 0;
-    public static double ELEVATOR_OPERATIONAL_MAX_POS = 89.5;
+    public static double ELEVATOR_OPERATIONAL_MIN_POS = -0.1;
+    public static double ELEVATOR_OPERATIONAL_MAX_POS = 27;
     public static final int canID = 25;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 120;
-    public static final boolean invert = false;
+    public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 7;
-    public static final int followerCanID = 1000; // TODO: find real id
+    public static final int followerCanID = 26; // TODO: find real id
     public static final String followerCanBus = "Takeover";
     public static final boolean followerOpposeLeader = false;
-    public static final double kS = 0.22812;
-    public static final double kV = 0.14885;
-    // public static double ELEVATOR_L2_POS = 23;
-    // public static double ELEVATOR_L3_POS = 47;
-    // public static double ELEVATOR_L4_POS = 88;
-    // new, taken from hatboro day 2
-    public static double ELEVATOR_L2_POS = 17;
-    public static double ELEVATOR_L3_POS = 44;
-    public static double ELEVATOR_L4_POS = 87;
-    public static double ELEVATOR_DEALGAE_L2 = 32;
-    public static double ELEVATOR_DEALGAE_L3 = 60;
-    public static double ELEVATOR_SOURCE_POS = 5.15;
-    public static double ELEVATOR_MANUAL_VOLTAGE = 1;
-    public static double ELEVATOR_BARGE_POS = 80; // TODO: find real value
+    public static final double kS = 0.59545; // TODO
+    public static final double kV = 0.1609; // TODO
+    public static final double ELEVATOR_HANDOFF_POS = 16;
+    public static final double ELEVATOR_PROCESSOR_POS = 1;
+    public static final double ELEVATOR_STOW_POS = 1;
+    public static double ELEVATOR_L2_POS = 3; // TODO
+    public static double ELEVATOR_L3_POS = 11.35; // TODO
+    public static double ELEVATOR_L4_POS = 23.5; // TODO
+    public static double ELEVATOR_DEALGAE_L2 = 12; // TODO
+    public static double ELEVATOR_DEALGAE_L3 = 19.76; // TODO
+    public static double ELEVATOR_SOURCE_POS = 5.15; // TODO
+    public static double ELEVATOR_MANUAL_VOLTAGE = 1; // TODO
+    public static double ELEVATOR_BARGE_POS = 23; // TODO: find real value
+    public static double ELEVATOR_INTAKE_ALGAE_POS = 5; // TODO find real value
+    public static double ELEVATOR_HANDOFF_TRANSITION_POS = ELEVATOR_HANDOFF_POS + 1.5;
   }
 
   /*   public final class ElevatorConstantsLeonidas {
@@ -331,41 +345,49 @@ public final class Constants {
     public static final boolean invert = false; // TODO
     public static final boolean brake = true; // TODO
     public static final double reduction = 1; // TODO
-    public static final int proxSensor_ID = 0; // TODO
-    public static final double RUN_VOLTAGE = 3;
-    public static final double DEALGAE_VOLTAGE = 3;
+    public static final double RUN_VOLTAGE = 12; // TODO
+    public static final double GRAB_ALGAE_VOLTAGE = 12; // TODO
+    public static final int PROX_CHANNEL = 0;
   }
 
   public final class IntakeConstantsLeonidas {
-    public static final int canID = 24;
+    public static final int canID = 50;
     public static final String canBus = "Takeover";
-    public static final int currentLimitAmps = 20;
+    public static final int currentLimitAmps = 40;
     public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 1;
-    public static final double INTAKE_FACTORY_CORAL_POSITION = 11;
-    public static final double INTAKE_FACTORY_ALGAE_POSITION = 5.4;
-    public static final double INTAKE_FACTORY_HOME_POSITION = 0;
-    public static final double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 0;
-    public static final double INTAKE_CORAL_INTAKE_SPEED = 4;
-    public static final double INTAKE_CORAL_OUTTAKE_SPEED = -4; // TODO //-
-    public static final double INTAKE_ALGAE_INTAKE_SPEED = -6;
-    public static final double INTAKE_ALGAE_OUTTAKE_SPEED = 8;
-    public static final double HAS_ALGAE_THRESHOLD_CURRENT = 10;
+    public static final int followerCanID = 51;
+    public static final String followerCanBus = "Takeover";
+    public static final boolean followerOpposeLeader = false;
+    public static final int PROX_ONE_CHANNEL = 2; // TODO: real value
+    public static final int PROX_TWO_CHANNEL = 1; // TODO: real value
+    public static final double INTAKE_FACTORY_CORAL_POSITION = 11; // TODO
+    public static final double INTAKE_FACTORY_ALGAE_POSITION = 5.4; // TODO
+    public static final double INTAKE_FACTORY_HOME_POSITION = 0; // TODO
+    public static final double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 0; // TODO
+    public static final double INTAKE_CORAL_INTAKE_SPEED = -8; // TODO
+    public static final double INTAKE_CORAL_OUTTAKE_SPEED = 12; // TODO
+    public static final double INTAKE_ALGAE_INTAKE_SPEED = -6; // TODO
+    public static final double INTAKE_ALGAE_OUTTAKE_SPEED = 8; // TODO
+    public static final double HAS_ALGAE_THRESHOLD_CURRENT = 10; // TODO
   }
 
   public final class IntakeArmConstantsLeonidas {
-    public static final double INTAKE_CORAL_POS = 11.4;
-    public static final double INTAKE_ALGAE_POS = 6.5;
+    public static final double INTAKE_GROUND_CORAL_POS = 15;
+    public static final double INTAKE_HANDOFF_POS = 0.5;
+    public static final double INTAKE_HOME_POS = 3.7;
     public static final double L1_POS = 1.65;
-    public static final int canID = 15;
+    public static final int canID = 52;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 120;
     public static final boolean invert = true;
     public static final boolean brake = true;
-    public static final double reduction = 38.33;
-    public static final double kS = 0.25918;
-    public static final double kV = 0.29343;
+    public static final double reduction = 19.16;
+    public static final double kS = 0.40438; // TODO
+    public static final double kV = 0.33074; // TODO
+    public static final double INTAKE_OPERATIONAL_MIN_POS = -.1;
+    public static final int INTAKE_OPERATIONAL_MAX_POS = 16;
   }
 
   public final class ClimbConstantsLeonidas {
@@ -374,9 +396,9 @@ public final class Constants {
     public static final int currentLimitAmps = 120; // TODO
     public static final boolean invert = false;
     public static final boolean brake = false;
-    public static final double reduction = 1; // TODO
+    public static final double reduction = 1;
     public static final double CLIMB_MECHANISM_POSITION = 13; // 13
-    public static final double CLIMB_MAX_POSITION = 189; // 213.25 (actual), 189 (from 2/23)
+    public static final double CLIMB_MAX_POSITION = 189;
     public static final double CLIMB_VOLTAGE = 8.0; // 2.0 tested
   }
 

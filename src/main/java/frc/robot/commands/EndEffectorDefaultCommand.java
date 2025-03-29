@@ -10,8 +10,7 @@ public class EndEffectorDefaultCommand extends Command {
   private Command notHasCoralCommand =
       Commands.waitSeconds(0.2)
           .andThen(EndEffectorFactory.runEndEffector())
-          .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
-          .withName("EndEffector has coral default command");
+          .withName("EndEffector not has coral default command");
 
   public EndEffectorDefaultCommand() {
     addRequirements(RobotContainer.getEndEffector());
@@ -19,7 +18,7 @@ public class EndEffectorDefaultCommand extends Command {
 
   @Override
   public void execute() {
-    if (!RobotState.endEffectorhasCoral()) notHasCoralCommand.schedule();
+    if (!RobotState.endEffectorHasGamePiece()) notHasCoralCommand.schedule();
     else notHasCoralCommand.cancel();
   }
 

@@ -14,7 +14,7 @@ public class EndEffectorFactory {
    */
   public static Command runEndEffector() {
     return RobotContainer.getEndEffector()
-        .runEndEffector()
+        .runEndEffectorIntake()
         // .raceWith(LEDFactory.blink())
         // .andThen(LEDFactory.solid())
         .withName("Run Endeffector Intake");
@@ -28,8 +28,8 @@ public class EndEffectorFactory {
     return RobotContainer.getEndEffector().runEndEffectorManual();
   }
 
-  public static Command runEndEffectorDeAlgae() {
-    return RobotContainer.getEndEffector().runEndEffectorDeAlgae();
+  public static Command runEndEffectorGrabAndHoldAlgae() {
+    return RobotContainer.getEndEffector().runEndEffectorGrabAndHoldAlgaeCommand();
   }
   /**
    * Creates a command to run the endeffector outtake.
@@ -47,7 +47,6 @@ public class EndEffectorFactory {
   }
 
   public static boolean endEffectorCommandFinished() {
-
     return !RobotContainer.getEndEffector().isRunning();
   }
 }

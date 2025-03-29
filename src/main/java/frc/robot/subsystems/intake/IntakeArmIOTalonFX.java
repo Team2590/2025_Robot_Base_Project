@@ -19,6 +19,8 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.SafetyChecker;
+import frc.robot.util.SafetyChecker.MechanismType;
 
 public class IntakeArmIOTalonFX implements IntakeArmIO {
   private TalonFX leader;
@@ -31,9 +33,10 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
       new LoggedTunableNumber("IntakeArm/kV", Constants.IntakeArmConstantsLeonidas.kV);
   private LoggedTunableNumber kG = new LoggedTunableNumber("IntakeArm/kG", 0.0);
   private LoggedTunableNumber cruiseVelocity =
-      new LoggedTunableNumber("IntakeArm/cruiseVelocity", 100);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 200);
+      new LoggedTunableNumber("IntakeArm/cruiseVelocity", 1500);
+  private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 50);
   private LoggedTunableNumber jerk = new LoggedTunableNumber("IntakeArm/jerk", 250);
+  private LoggedTunableNumber setPos = new LoggedTunableNumber("IntakeArm/setpointPos", 0);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
@@ -59,6 +62,7 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
     talonFXConfig.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     talonFXConfig.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
     talonFXConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    talonFXConfig.Feedback.SensorToMechanismRatio = reduction;
 
     slot0Configs.kS = kS.get();
     slot0Configs.kV = kV.get();
@@ -154,11 +158,23 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
   public void setPosition(double position) {
     var request = new MotionMagicDutyCycle(0);
     // less than 0.05 because when set to 0, it is never exactly zero
-    if (leader.getPosition().getValueAsDouble() < -0.05 || position < 0) {
-      leader.setControl(request);
+    if (SafetyChecker.isSafe(MechanismType.INTAKE_MOVEMENT, position)) {
+      if (leader.getPosition().getValueAsDouble() < -0.05 || position < 0) {
+        leader.setControl(request);
+      } else {
+        leader.setControl(request.withPosition(position));
+      }
     } else {
-      leader.setControl(request.withPosition(position));
+      System.out.println("CAN'T MOVE INTAKE ARM, SAFETY CHECK FAILED");
     }
+  }
+
+  public void setPositionTunableNumber() {
+    setPosition(setPos.get());
+  }
+
+  public double getTunableNumber() {
+    return setPos.get();
   }
 
   @Override
@@ -179,5 +195,10 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
   @Override
   public void setVoltage(double volts) {
     leader.setControl(new VoltageOut(volts));
+  }
+
+  @Override
+  public double getRotationCount() {
+    return leader.getPosition().getValueAsDouble();
   }
 }

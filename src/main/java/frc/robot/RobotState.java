@@ -1,16 +1,21 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ArmConstantsLeonidas;
+import frc.robot.Constants.ElevatorConstantsLeonidas;
+import frc.robot.RobotState.ScoringSetpoints;
+import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.NemesisMathUtil;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import lombok.Getter;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -27,8 +32,25 @@ public class RobotState extends SubsystemBase {
   private static Intake intake;
   private static RobotState instance;
   @Getter private static boolean endEffectorhasCoral;
-  private static boolean intakeHasCoral;
-  private static boolean intakeHasAlgae;
+  private static boolean hasGamePiece;
+  private final ControllerOrchestrator controllerApp;
+
+  private static Pose2d targetPose = new Pose2d();
+  private ScoringSetpoints coralScoringSetpoints =
+      new ScoringSetpoints(
+          Level.L2.getElevatorSetpoint(),
+          Level.L2.getarmPreScoreSetpoint(),
+          Level.L2.getArmScoringSetpoint());
+  private ScoringSetpoints algaeScoringSetpoints =
+      new ScoringSetpoints(
+          Level.BARGE.getElevatorSetpoint(),
+          Level.BARGE.getarmPreScoreSetpoint(),
+          Level.BARGE.getArmScoringSetpoint());
+  private ScoringSetpoints dealgaeSetpoints =
+      new ScoringSetpoints(
+          Level.DEALGAE_L2.getElevatorSetpoint(),
+          Level.DEALGAE_L2.getarmPreScoreSetpoint(),
+          Level.DEALGAE_L2.getArmScoringSetpoint());
 
   /** The aligning state for scoring, if we are aligning to front or back of the robot. */
   public static enum AligningState {
@@ -37,8 +59,22 @@ public class RobotState extends SubsystemBase {
     ALIGNING_BACK
   }
 
+  public static class ScoringSetpoints {
+    public double elevatorSetpoint;
+    public double armSetpoint;
+    public double armPlaceSetpoint;
+
+    public ScoringSetpoints(double elevatorSetpoint, double armSetpoint, double armPlaceSetpoint) {
+      this.elevatorSetpoint = elevatorSetpoint;
+      this.armSetpoint = armSetpoint;
+      this.armPlaceSetpoint = armPlaceSetpoint;
+    }
+  }
+
   private AtomicReference<AligningState> aligningState =
       new AtomicReference<RobotState.AligningState>(AligningState.NOT_ALIGNING);
+  private AligningState previousAligningState = AligningState.NOT_ALIGNING;
+  private final Lock updateLock = new ReentrantLock();
 
   private RobotState(
       Arm arm,
@@ -46,13 +82,15 @@ public class RobotState extends SubsystemBase {
       Elevator elevator,
       EndEffector endEffector,
       Intake intake,
-      Vision vision) {
+      Vision vision,
+      ControllerOrchestrator controllerApp) {
     this.arm = arm;
     this.drive = drive;
     this.elevator = elevator;
     this.endEffector = endEffector;
     this.intake = intake;
     this.vision = vision;
+    this.controllerApp = controllerApp;
   }
 
   /**
@@ -72,11 +110,12 @@ public class RobotState extends SubsystemBase {
       Elevator elevator,
       EndEffector endEffector,
       Intake intake,
-      Vision vision) {
+      Vision vision,
+      ControllerOrchestrator controllerApp) {
     if (instance != null) {
       throw new IllegalStateException("RobotState has already been initialized");
     }
-    instance = new RobotState(arm, drive, elevator, endEffector, intake, vision);
+    instance = new RobotState(arm, drive, elevator, endEffector, intake, vision, controllerApp);
     return instance;
   }
 
@@ -103,33 +142,19 @@ public class RobotState extends SubsystemBase {
 
   public void periodic() {
     robotPose = drive.getPose();
-    // currentZone = Constants.locator.getZoneOfField(robotPose);
-    endEffectorhasCoral = endEffectorhasCoral();
-  }
-
-  /**
-   * Checks if endeffector has coral
-   *
-   * @return true if the endeffector has coral, false if not
-   */
-  @AutoLogOutput(key = "EndEffector/hasCoral")
-  public static boolean endEffectorhasCoral() {
-    return endEffector.hasCoral();
-  }
-
-  @AutoLogOutput(key = "Intake/hasCoral")
-  public static boolean intakeHasCoral() {
-    return intake.hasCoral();
-  }
-
-  /**
-   * Checks if intake has algae
-   *
-   * @return true if the intake has algae, false if not
-   */
-  @AutoLogOutput(key = "Intake/hasAlgae")
-  public static boolean intakeHasAlgae() {
-    return intake.hasAlgae();
+    updateLock.lock();
+    try {
+      setAligningStateBasedOnTargetPose(() -> controllerApp.getTarget().pose());
+      updateScoringConfiguration(() -> controllerApp.getTarget().pose());
+    } finally {
+      updateLock.unlock();
+    }
+    if (!endEffector.hasGamePiece()) {
+      clearEndEffectorHasGamePiece();
+    } else {
+      hasGamePiece = true;
+    }
+    Logger.recordOutput("RobotState/EndEffectorHasGamePiece", hasGamePiece);
   }
 
   /**
@@ -139,6 +164,10 @@ public class RobotState extends SubsystemBase {
    */
   public String getCurrentZone() {
     return currentZone;
+  }
+
+  public Pose2d getNearestCoralPose() {
+    return vision.getNearestCoralPose();
   }
 
   @AutoLogOutput(key = "PreciseAlignment/AligningState")
@@ -152,31 +181,123 @@ public class RobotState extends SubsystemBase {
 
   /** Align to the front or back of the robot based on the given target pose. */
   public void setAligningStateBasedOnTargetPose(Supplier<Pose2d> targetPose) {
-    Logger.recordOutput("PreciseAlignment/TargetPose", targetPose.get());
     if (drive.frontScore(targetPose.get())) {
       setAligningState(AligningState.ALIGNING_FRONT);
     } else {
       setAligningState(AligningState.ALIGNING_BACK);
     }
+    Logger.recordOutput("RobotState/AligningState", getAligningState());
   }
 
   public void resetAligningState() {
     setAligningState(AligningState.NOT_ALIGNING);
   }
 
-  public static Command setIntakeHasCoral() {
-    return Commands.runOnce(() -> intakeHasCoral = true);
+  public static boolean endEffectorHasGamePiece() {
+    return hasGamePiece;
   }
 
-  public static Command setIntakeNoCoral() {
-    return Commands.runOnce(() -> intakeHasCoral = false);
+  public static void clearEndEffectorHasGamePiece() {
+    hasGamePiece = false;
   }
 
-  public static Command setIntakeHasAlgae() {
-    return Commands.runOnce(() -> intakeHasAlgae = true);
+  private void updateScoringConfiguration(Supplier<Pose2d> originalTargetPose) {
+    AligningState currentAligningState = aligningState.get();
+
+    if (currentAligningState != previousAligningState) {
+      double offset = 0;
+      double magnitude = 1;
+
+      if (currentAligningState == AligningState.ALIGNING_BACK) {
+        offset = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL;
+        magnitude = -1;
+      }
+      coralScoringSetpoints.armSetpoint =  magnitude * coralScoringSetpoints.armSetpoint + offset;
+      coralScoringSetpoints.armPlaceSetpoint =
+          magnitude * coralScoringSetpoints.armPlaceSetpoint + offset;
+
+      // update algae setpoints
+      dealgaeSetpoints.armSetpoint = magnitude * dealgaeSetpoints.armSetpoint + offset;
+      dealgaeSetpoints.armPlaceSetpoint = magnitude * dealgaeSetpoints.armPlaceSetpoint + offset;
+
+      // Update algae scoring setpoints
+      algaeScoringSetpoints.armSetpoint = magnitude * algaeScoringSetpoints.armSetpoint + offset;
+      algaeScoringSetpoints.armPlaceSetpoint =
+          magnitude * algaeScoringSetpoints.armPlaceSetpoint + offset;
+      targetPose = drive.flipScoringSide(originalTargetPose.get());
+
+      // Update the previous state
+      previousAligningState = currentAligningState;
+
+      Logger.recordOutput("RobotState/Pose", targetPose);
+      Logger.recordOutput("RobotState/CoralArmSetpoint", coralScoringSetpoints.armSetpoint);
+      Logger.recordOutput(
+          "RobotState/CoralArmPlaceSetpoint", coralScoringSetpoints.armPlaceSetpoint);
+      Logger.recordOutput("RobotState/algaeArmSetpoint", dealgaeSetpoints.armSetpoint);
+      Logger.recordOutput("RobotState/algaePlaceSetpoint", dealgaeSetpoints.armPlaceSetpoint);
+      Logger.recordOutput("RobotState/algaeScoringArmSetpoint", algaeScoringSetpoints.armSetpoint);
+      Logger.recordOutput(
+          "RobotState/algaeScoringPlaceSetpoint", algaeScoringSetpoints.armPlaceSetpoint);
+    }
   }
 
-  public static Command setIntakeNoAlgae() {
-    return Commands.runOnce(() -> intakeHasAlgae = false);
+  public Pose2d getTargetPose() {
+    updateLock.lock();
+    try {
+      return targetPose;
+    } finally {
+      updateLock.unlock();
+    }
+  }
+
+  public ScoringSetpoints getCoralScoringSetpoints() {
+    updateLock.lock();
+    try {
+      return coralScoringSetpoints;
+    } finally {
+      updateLock.unlock();
+    }
+  }
+
+  public ScoringSetpoints getDealgaeSetpoints(Level level) {
+    updateLock.lock();
+    try {
+      // Manually set the requested levels elevator setpoint because I am too stupid to figure out a
+      // better way
+      ScoringSetpoints setpoint_copy = dealgaeSetpoints;
+      setpoint_copy.elevatorSetpoint = level.getElevatorSetpoint();
+      return setpoint_copy;
+    } finally {
+      updateLock.unlock();
+    }
+  }
+
+  public ScoringSetpoints getAlgaeScoringSetpoints(Level level) {
+    updateLock.lock();
+    try {
+      // Manually set the requested levels elevator setpoint because I am too stupid to figure out a
+      // better way
+      ScoringSetpoints setpoint_copy = algaeScoringSetpoints;
+      setpoint_copy.elevatorSetpoint = level.getElevatorSetpoint();
+      return setpoint_copy;
+    } finally {
+      updateLock.unlock();
+    }
+  }
+
+  /*
+   * Helper Function, picks the closest value for the arm setpoint based on if the cancoder is wrapped or not
+   */
+  public static double wrapArmSetpoint(double setpoint) {
+
+    double current = RobotContainer.getArm().getAbsolutePosition();
+    double wrappedSetpoint = setpoint + ArmConstantsLeonidas.ARM_WRAP_POS;
+    // Only wrap if we are able to freely rotate without fear of collision
+    if (RobotContainer.getElevator().getRotationCount()
+        >= ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
+      return NemesisMathUtil.selectClosest(setpoint, wrappedSetpoint, current);
+    } else {
+      return setpoint;
+    }
   }
 }
