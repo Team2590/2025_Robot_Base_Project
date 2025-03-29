@@ -34,8 +34,8 @@ public class VisionConstants {
   // }
 
   // Camera names, must match names configured on coprocessor
-  public static String frontTopReefCameraName = "1mp_arducam_device_6";
-  public static String frontBottomReefCameraName = "1mp_arducam_device_3";
+  public static String frontTopReefCameraName = "1mp_arducam_device_3";
+  public static String frontBottomReefCameraName = "1mp_arducam_device_7";
   public static String backTopReefCameraName = "1mp_arducam_device_1";
   public static String backBottomReefCameraName = "1mp_arducam_device_8";
 
