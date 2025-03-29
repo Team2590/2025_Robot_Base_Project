@@ -32,7 +32,6 @@ public class EndEffector extends SubsystemBase {
     io.updateInputs(inputs);
     filtered_data = filter.calculate(prox.getValue());
 
-    Logger.recordOutput("EndEffector/StatorCurrent", inputs.statorCurrentAmps);
     Logger.recordOutput("EndEffector/IsRunning", isRunning);
     Logger.recordOutput("EndEffector/CurrentThreshold", PROX_THRESHOLD);
     Logger.recordOutput("EndEffector/filter", filtered_data);
@@ -71,7 +70,7 @@ public class EndEffector extends SubsystemBase {
 
   public Command runEndEffectorGrabAndHoldAlgaeCommand() {
     return Commands.run(
-        () -> io.setVoltage(Constants.EndEffectorConstantsLeonidas.GRAB_ALGAE_VOLTAGE));
+        () -> io.setVoltage(-Constants.EndEffectorConstantsLeonidas.GRAB_ALGAE_VOLTAGE));
   }
 
   public Command runEndEffectorManual() {

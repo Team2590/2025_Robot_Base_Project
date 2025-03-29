@@ -269,7 +269,7 @@ public final class Constants {
     public static final double ARM_VERTICAL_POS = .25;
     // public static final double magOffset = -.596436; // -.398
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
-    public static final double magOffset = -0.141; // -0.15; // -0.379; // -.3347; // -.635; // TODO
+    public static final double magOffset = .142; // -0.15; // -0.379; // -.3347; // -.635; // TODO
     public static final double sensorReduction = 58.8; // TODO
     public static final double BACK_HORIZONTAL = 0.5;
     public static double ARM_PROCESSOR_POS = 0;
@@ -284,7 +284,8 @@ public final class Constants {
     public static double ARM_SCORING_CORAL_POSE_L4_POST = 0;
     public static double ARM_INTAKE_SOURCE_POSITION = .18; // TODO
     public static double ARM_DEALGAE_POSITION = 0;
-    public static double ARM_BARGE_POS = .7; // TODO: find real value
+    public static double ARM_INTAKE_ALGAE_POS = .53;
+    public static double ARM_BARGE_POS = .15; // TODO: find real value
     // public static double ARM_SCORING_POS = .7; // TODO: find real value
     public static double ARM_WRAP_POS = 0.794;
     public static double ARM_HANDOFF_POS = 0.757;
@@ -294,7 +295,7 @@ public final class Constants {
   public static class ElevatorConstantsLeonidas {
     public static double OFFSET = 0;
     public static double ELEVATOR_OPERATIONAL_MIN_POS = -0.1;
-    public static double ELEVATOR_OPERATIONAL_MAX_POS = 27;
+    public static double ELEVATOR_OPERATIONAL_MAX_POS = 27.5;
     public static final int canID = 25;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 120;
@@ -316,8 +317,8 @@ public final class Constants {
     public static double ELEVATOR_DEALGAE_L3 = 19.76; // TODO
     public static double ELEVATOR_SOURCE_POS = 5.15; // TODO
     public static double ELEVATOR_MANUAL_VOLTAGE = 1; // TODO
-    public static double ELEVATOR_BARGE_POS = 23; // TODO: find real value
-    public static double ELEVATOR_INTAKE_ALGAE_POS = 5; // TODO find real value
+    public static double ELEVATOR_BARGE_POS = 27; // TODO: find real value
+    public static double ELEVATOR_INTAKE_ALGAE_POS = 0; // TODO find real value
     public static double ELEVATOR_HANDOFF_TRANSITION_POS = ELEVATOR_HANDOFF_POS + 1.5;
   }
 
@@ -360,27 +361,27 @@ public final class Constants {
     public static final int followerCanID = 51;
     public static final String followerCanBus = "Takeover";
     public static final boolean followerOpposeLeader = false;
-    public static final int PROX_ONE_CHANNEL = 0; // TODO: real value
-    public static final int PROX_TWO_CHANNEL = 0; // TODO: real value
+    public static final int PROX_ONE_CHANNEL = 1;
+    public static final int PROX_TWO_CHANNEL = 2;
     public static final double INTAKE_FACTORY_CORAL_POSITION = 11; // TODO
     public static final double INTAKE_FACTORY_ALGAE_POSITION = 5.4; // TODO
     public static final double INTAKE_FACTORY_HOME_POSITION = 0; // TODO
     public static final double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 0; // TODO
-    public static final double INTAKE_CORAL_INTAKE_SPEED = -8; // TODO
-    public static final double INTAKE_CORAL_OUTTAKE_SPEED = 12; // TODO
+    public static final double INTAKE_CORAL_INTAKE_SPEED = -12; // TODO
+    public static final double INTAKE_CORAL_OUTTAKE_SPEED = 11; // TODO
     public static final double INTAKE_ALGAE_INTAKE_SPEED = -6; // TODO
     public static final double INTAKE_ALGAE_OUTTAKE_SPEED = 8; // TODO
     public static final double HAS_ALGAE_THRESHOLD_CURRENT = 10; // TODO
   }
 
   public final class IntakeArmConstantsLeonidas {
-    public static final double INTAKE_GROUND_CORAL_POS = 15;
-    public static final double INTAKE_HANDOFF_POS = 0.5;
-    public static final double INTAKE_HOME_POS = 3.7;
+    public static final double INTAKE_GROUND_CORAL_POS = .41;
+    public static final double INTAKE_HANDOFF_POS = 0.018;
+    public static final double INTAKE_HOME_POS = .15;
     public static final double L1_POS = 1.65;
     public static final int canID = 52;
     public static final String canBus = "Takeover";
-    public static final int currentLimitAmps = 120;
+    public static final int currentLimitAmps = 40;
     public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 19.16;

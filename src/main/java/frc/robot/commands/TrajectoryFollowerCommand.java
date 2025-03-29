@@ -151,13 +151,17 @@ public class TrajectoryFollowerCommand extends Command {
       drive.runVelocity(adjustedSpeeds);
 
       if (timer.get() >= trajectory.getTotalTimeSeconds()) {
-        if (!runOnce){
+        if (!runOnce) {
           runOnce = true;
           angleController.reset(drive.getPose().getRotation().getRadians());
         }
-        double omega = angleController.calculate(drive.getPose().getRotation().getRadians(), endGoal.getRadians());
-        Logger.recordOutput("TrajectoryFollower/angleControllerError", angleController.getPositionError());
-        Logger.recordOutput("TrajectoryFollower/angleControllerAtSetpoint", angleController.atSetpoint());
+        double omega =
+            angleController.calculate(
+                drive.getPose().getRotation().getRadians(), endGoal.getRadians());
+        Logger.recordOutput(
+            "TrajectoryFollower/angleControllerError", angleController.getPositionError());
+        Logger.recordOutput(
+            "TrajectoryFollower/angleControllerAtSetpoint", angleController.atSetpoint());
         ChassisSpeeds speeds = new ChassisSpeeds(0, 0, omega);
 
         drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));

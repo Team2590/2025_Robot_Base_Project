@@ -21,9 +21,9 @@ public class Intake extends SubsystemBase {
   // private IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
   private Alert intakeDisconnected;
   private IntakeArm intakeArm;
-  private LoggedTunableNumber PROX_ONE_THRESHOLD = new LoggedTunableNumber("Intake/ProxOneThreshold", 50);
-  private LoggedTunableNumber PROX_TWO_THRESHOLD = new LoggedTunableNumber("Intake/ProxTwoThreshold", 50);
-  private LoggedTunableNumber LINEAR_FILTER_SAMPLES = new LoggedTunableNumber("Intake/LinearFilterSamples", 20);
+  private LoggedTunableNumber PROX_ONE_THRESHOLD = new LoggedTunableNumber("Intake/ProxOneThreshold", 500);
+  private LoggedTunableNumber PROX_TWO_THRESHOLD = new LoggedTunableNumber("Intake/ProxTwoThreshold", 500);
+  private LoggedTunableNumber LINEAR_FILTER_SAMPLES = new LoggedTunableNumber("Intake/LinearFilterSamples", 10);
   private LoggedTunableNumber setPos = new LoggedTunableNumber("Intake/setpointPos", 0);
   private LinearFilter proxOneFilter;
   private LinearFilter proxTwoFilter;

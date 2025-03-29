@@ -34,6 +34,7 @@ import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
 import frc.robot.command_factories.GamePieceFactory;
+import frc.robot.command_factories.IntakeFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.ArmDefaultCommand;
@@ -42,7 +43,6 @@ import frc.robot.commands.ElevatorDefaultCommand;
 import frc.robot.commands.EndEffectorDefaultCommand;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.IntakeDefaultCommand;
-import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.LEDS.NemesisLED;
 import frc.robot.subsystems.arm.Arm;
@@ -535,8 +535,21 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsTuning() {
-    rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
-    leftJoystick.button(2).whileTrue(new MoveFromHandoffCommand());
+    drive.setDefaultCommand(DriveFactory.joystickDrive());
+    rightJoystick
+        .trigger()
+        .whileTrue(GamePieceFactory.intakeCoralGroundAndHandoff().andThen(ScoringFactory.stow()));
+    // leftJoystick.button(2).whileTrue(new MoveFromHandoffCommand());
+    leftJoystick
+        .button(3)
+        .whileTrue(
+            IntakeFactory.setPositionBlocking(
+                Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS));
+    leftJoystick.button(2).whileTrue(ScoringFactory.stow());
+    // .whileTrue(
+    //     IntakeFactory.setPositionBlocking(
+    //         Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS));
+    rightJoystick.button(2).whileTrue(GamePieceFactory.intakeAlgaeGround());
     leftJoystick
         .trigger()
         .whileTrue(
@@ -556,14 +569,18 @@ public class RobotContainer {
     leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
     leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
+    rightJoystick.povRight().whileTrue(GamePieceFactory.GrabAlgaeL2());
+    rightJoystick.povLeft().whileTrue(GamePieceFactory.GrabAlgaeL3());
+    rightJoystick.povUp().whileTrue(ScoringFactory.scoreAlgaeBarge());
+    rightJoystick.povDown().whileTrue(ScoringFactory.scoreProcessor());
     // rightJoystick
     //     .button(3)
     //     .whileTrue(
     //         Atlas.synchronize(
     //             intake.getArmTunableNumber(), elevator.getTunableNumber(),
     // arm.getTunableNumber()));
-    rightJoystick.povRight().whileTrue(GamePieceFactory.GrabAlgaeL3());
-    rightJoystick.povLeft().whileTrue(GamePieceFactory.GrabAlgaeL3());
+    // rightJoystick.povRight().whileTrue(GamePieceFactory.GrabAlgaeL3());
+    // rightJoystick.povLeft().whileTrue(GamePieceFactory.GrabAlgaeL3());
   }
 
   /**

@@ -15,7 +15,7 @@ public class GamePieceFactory {
     return new MoveFromHandoffCommand(
             Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
-            Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)
+            Constants.ArmConstantsLeonidas.ARM_INTAKE_ALGAE_POS)
         .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
   }
 
@@ -27,17 +27,20 @@ public class GamePieceFactory {
                     () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED),
                 Commands.waitUntil(() -> RobotContainer.getIntake().detectCoral())
                     .andThen(
-                        Commands.parallel(
-                            ElevatorFactory.setPositionBlocking(
-                                Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS),
-                            IntakeFactory.setPositionBlocking(
-                                Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS)))))
+                        IntakeFactory.setPositionBlocking(
+                            Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS))
+                    .andThen(ElevatorFactory.setPositionBlocking(13.9))))
         .andThen(
-            Commands.race(
-                EndEffectorFactory.runEndEffector(),
-                IntakeFactory.runIntakeVoltage(
-                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)))
-        .onlyIf(() -> !RobotState.endEffectorHasGamePiece());
+            Commands.parallel(
+                    EndEffectorFactory.runEndEffectorVoltage(
+                        -Constants.EndEffectorConstantsLeonidas.RUN_VOLTAGE),
+                    IntakeFactory.runIntakeVoltage(
+                        () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED))
+                .until(() -> RobotState.endEffectorHasGamePiece()))
+        .andThen(
+            ElevatorFactory.setPositionBlocking(
+                Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS));
+    // .onlyIf(() -> !RobotState.endEffectorHasGamePiece());
   }
 
   public static Command intakeCoralNoHandoff() {
