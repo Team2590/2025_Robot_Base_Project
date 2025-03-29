@@ -585,6 +585,7 @@ public class DriveCommands {
                                     == AligningState.ALIGNING_BACK)
                                 ? approachDirection.get().plus(new Rotation2d(Math.PI))
                                 : approachDirection.get()),
+                    preciseTarget.get().getRotation(),
                     driveSubsystem);
             return pathCommand;
           } catch (Exception e) {
