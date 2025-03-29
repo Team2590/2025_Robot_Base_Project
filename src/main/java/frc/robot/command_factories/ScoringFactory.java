@@ -160,6 +160,17 @@ public class ScoringFactory {
     }
   }
 
+  public static Command moveToPostandDriveAway() {
+    double armHorizontal =
+        RobotState.getInstance().getAligningState() == RobotState.AligningState.ALIGNING_FRONT
+            ? Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L3_POST
+            : Constants.ArmConstantsLeonidas.BACK_HORIZONTAL;
+    return ArmFactory.setPositionBlocking(armHorizontal)
+        .andThen(DriveCommands.driveAwayFromReef(.5))
+        .andThen(stow().onlyIf(() -> !RobotState.endEffectorHasGamePiece()))
+        .withName("Move To Post + Drive Away");
+  }
+
   public static Command score(ScoringSetpoints setpoints) {
     return primeForLevel(setpoints)
         .andThen(EndEffectorFactory.runEndEffectorOuttake())
@@ -175,10 +186,11 @@ public class ScoringFactory {
     return primeForLevel(setpoints)
         .andThen(
             new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    setpoints.elevatorSetpoint,
-          setpoints.armPlaceSetpoint))
-          .andThen(DriveCommands.driveAwayFromReef(.5)).andThen(stow().onlyIf(() -> !RobotState.endEffectorHasGamePiece()))
+                Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                setpoints.elevatorSetpoint,
+                setpoints.armPlaceSetpoint))
+        .andThen(DriveCommands.driveAwayFromReef(.5))
+        .andThen(stow().onlyIf(() -> !RobotState.endEffectorHasGamePiece()))
         .withName(
             "Score with Elevator setpoint "
                 + setpoints.elevatorSetpoint
