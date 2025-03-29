@@ -3,7 +3,6 @@ package frc.robot.command_factories;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstantsLeonidas;
 import frc.robot.FieldConstants;
@@ -82,20 +81,6 @@ public class ScoringFactory {
     }
   }
 
-  /**
-   * Creates a command sequence for scoring at L4.
-   *
-   * @param container The RobotContainer instance
-   * @return Command sequence for L4 scoring
-   */
-  public static Command scoreL4() {
-    return new ParallelCommandGroup(
-            ElevatorFactory.setPositionBlocking(
-                Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
-            ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
-        .withName("Score L4");
-  }
-
   public static Command score(Level level) {
     return switch (level) {
       case L1:
@@ -111,18 +96,22 @@ public class ScoringFactory {
       case L3:
         yield primeForLevel(level)
             .andThen(
-                new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    level.getElevatorSetpoint(),
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L3_POST))
+                Commands.parallel(
+                    IntakeFactory.setPositionBlocking(
+                        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
+                    ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
+                    ArmFactory.setPositionBlocking(
+                        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L3_POST)))
             .withName("Score " + level.name());
       case L4:
         yield primeForLevel(level)
             .andThen(
-                new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    level.getElevatorSetpoint(),
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L4_POST))
+                Commands.parallel(
+                    IntakeFactory.setPositionBlocking(
+                        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
+                    ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
+                    ArmFactory.setPositionBlocking(
+                        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L4_POST)))
             .withName("Score " + level.name());
       default:
         yield primeForLevel(level)
@@ -137,19 +126,20 @@ public class ScoringFactory {
       case L4:
         return Commands.parallel(
                 Commands.print("Priming " + level.name()),
-                new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    level.getElevatorSetpoint(),
+                IntakeFactory.setPositionBlocking(
+                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
+                ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
+                ArmFactory.setPositionBlocking(
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
             .withName("Prime " + level.name());
       case L3:
         return Commands.parallel(
-            Commands.print("Priming " + level.name()),
-            new MoveFromHandoffCommand(
+                Commands.print("Priming " + level.name()),
+                new MoveFromHandoffCommand(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     level.getElevatorSetpoint(),
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE)
-                .withName("Prime " + level.name()));
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE))
+            .withName("Prime " + level.name());
       case L2:
         return Commands.parallel(
             Commands.print("Priming " + level.name()),
