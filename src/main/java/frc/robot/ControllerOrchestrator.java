@@ -101,7 +101,7 @@ public class ControllerOrchestrator {
     return DriveCommands.preciseAlignment(
         drive,
         () -> RobotState.getInstance().getTargetPose(),
-        RobotState.getInstance().getTargetPose().getRotation());
+        () -> RobotState.getInstance().getTargetPose().getRotation());
   }
 
   // This commands will drive to pose while "priming for intake" at coral source

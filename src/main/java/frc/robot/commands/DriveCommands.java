@@ -42,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveToPoseConstraints;
+import frc.robot.RobotState.AligningState;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.subsystems.drive.Drive;
@@ -561,8 +562,7 @@ public class DriveCommands {
   }
 
   public static Command preciseAlignment(
-      Drive driveSubsystem, Supplier<Pose2d> preciseTarget, Rotation2d approachDirection) {
-
+      Drive driveSubsystem, Supplier<Pose2d> preciseTarget, Supplier<Rotation2d> approachDirection) {
     return Commands.defer(
         () -> {
           PathConstraints constraints = Constants.DriveToPoseConstraints.slowpathConstraints;
@@ -579,7 +579,7 @@ public class DriveCommands {
                             driveSubsystem.getChassisSpeeds(),
                             driveSubsystem.getPose(),
                             preciseTarget.get(),
-                            approachDirection),
+                            (RobotState.getInstance().getAligningState() == AligningState.ALIGNING_BACK) ? approachDirection.get().plus(new Rotation2d(Math.PI)) : approachDirection.get()),
                     driveSubsystem);
             return pathCommand;
           } catch (Exception e) {
@@ -609,45 +609,8 @@ public class DriveCommands {
     List<Waypoint> waypoints =
         PathPlannerPath.waypointsFromPoses(
             new Pose2d(currentRobotPose.getTranslation(), startingPathDirection),
-            // new Pose2d(interiorWaypoint, preciseTargetApproachDirection),
-            new Pose2d(preciseTarget.getTranslation(), preciseTargetApproachDirection));
-    List<Waypoint> solitaryWaypoints =
-        PathPlannerPath.waypointsFromPoses(
-            currentRobotPose,
-            new Pose2d(
-                currentRobotPose.getTranslation().plus(new Translation2d(1, 1)),
-                preciseTarget.getRotation()));
-    Waypoint w1 =
-        new Waypoint(
-            currentRobotPose
-                .getTranslation()
-                .plus(
-                    new Translation2d(
-                        .25 * Math.cos(currentRobotPose.getRotation().getRadians()),
-                        .25 * Math.sin(currentRobotPose.getRotation().getRadians()))),
-            currentRobotPose.getTranslation(),
-            currentRobotPose
-                .getTranslation()
-                .minus(
-                    (new Translation2d(
-                        .25 * Math.cos(currentRobotPose.getRotation().getRadians()),
-                        .25 * Math.sin(currentRobotPose.getRotation().getRadians())))));
-    Waypoint w2 =
-        new Waypoint(
-            preciseTarget
-                .getTranslation()
-                .plus(
-                    new Translation2d(
-                        .25 * Math.cos(preciseTarget.getRotation().getRadians()),
-                        .25 * Math.sin(preciseTarget.getRotation().getRadians()))),
-            preciseTarget.getTranslation(),
-            preciseTarget
-                .getTranslation()
-                .minus(
-                    (new Translation2d(
-                        .25 * Math.cos(preciseTarget.getRotation().getRadians()),
-                        .25 * Math.sin(currentRobotPose.getRotation().getRadians())))));
-    List<Waypoint> altwaypoints = List.of(w1, w2);
+            new Pose2d(interiorWaypoint, preciseTargetApproachDirection),
+            new Pose2d(preciseTarget.getTranslation(), preciseTarget.getRotation()));
 
     List<RotationTarget> rotationTargets =
         List.of(new RotationTarget(1.0, preciseTarget.getRotation()));
@@ -669,19 +632,6 @@ public class DriveCommands {
             new IdealStartingState(
                 fieldRelativeSpeedsMPS.getNorm(), currentRobotPose.getRotation()),
             new GoalEndState(MetersPerSecond.of(0), preciseTarget.getRotation()),
-            false);
-
-    PathPlannerPath simplerpath =
-        new PathPlannerPath(
-            solitaryWaypoints,
-            rotationTargets,
-            List.of(),
-            constraintsZones,
-            List.of(),
-            constraints,
-            new IdealStartingState(
-                fieldRelativeSpeedsMPS.getNorm(), currentRobotPose.getRotation()),
-            new GoalEndState(MetersPerSecond.of(0), preciseTargetApproachDirection),
             false);
 
     path.preventFlipping = true;
