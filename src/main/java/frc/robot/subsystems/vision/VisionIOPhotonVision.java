@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -78,6 +79,7 @@ public class VisionIOPhotonVision implements VisionIO {
     private volatile boolean connected = false;
     private PhotonPoseEstimator photonPoseEstimator;
     private Pose3d robotReferencePose;
+    private boolean isDetecting = false;
 
     public CameraThread(String name, Transform3d robotToCamera) {
       super("Vision-" + name);
@@ -107,7 +109,6 @@ public class VisionIOPhotonVision implements VisionIO {
     private void setEstimatedGlobalPose(
         Pose3d prevEstimatedRobotPose, PhotonPipelineResult result) {
       if (RobotState.getInstance() != null) {
-
         AligningState aligningState = RobotState.getInstance().getAligningState();
         boolean isAligning =
             aligningState == AligningState.ALIGNING_FRONT
@@ -139,6 +140,8 @@ public class VisionIOPhotonVision implements VisionIO {
                     multitagResult.fiducialIDsUsed.size(),
                     totalTagDistance / result.targets.size(),
                     PoseObservationType.PHOTONVISION));
+
+            isDetecting = true;
           } else if (result.hasTargets()) {
             double tagDistance =
                 result.getBestTarget().bestCameraToTarget.getTranslation().getNorm();
@@ -151,11 +154,10 @@ public class VisionIOPhotonVision implements VisionIO {
                                 .equals("Vision-" + VisionConstants.frontTopReefCameraName)
                             || this.getName()
                                 .equals("Vision-" + VisionConstants.frontBottomReefCameraName)))
-                    // || (aligningState == AligningState.ALIGNING_BACK
-                    //     && (this.getName().equals("Vision-" +
-                    // VisionConstants.backTopReefCameraName)
-                    //         || this.getName()
-                    //             .equals("Vision-" + VisionConstants.backBottomReefCameraName)))
+                    || (aligningState == AligningState.ALIGNING_BACK
+                        && (this.getName().equals("Vision-" + VisionConstants.backTopReefCameraName)
+                            || this.getName()
+                                .equals("Vision-" + VisionConstants.backBottomReefCameraName)))
                     || (aligningState == AligningState.NOT_ALIGNING);
 
             if (logResults) {
@@ -167,8 +169,13 @@ public class VisionIOPhotonVision implements VisionIO {
                       1,
                       tagDistance,
                       PoseObservationType.PHOTONVISION));
+              isDetecting = true;
             }
+          } else {
+            isDetecting = false;
           }
+        } else {
+          isDetecting = false;
         }
       }
     }
@@ -214,6 +221,7 @@ public class VisionIOPhotonVision implements VisionIO {
                 }
               }
               setEstimatedGlobalPose(robotReferencePose, result);
+              Logger.recordOutput("Vision/" + this.camera.getName() + "/IS DETECTING", isDetecting);
             }
           }
           sleep(20);

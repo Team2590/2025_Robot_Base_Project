@@ -36,43 +36,59 @@ public class VisionConstants {
   // Camera names, must match names configured on coprocessor
   public static String frontTopReefCameraName = "1mp_arducam_device_6";
   public static String frontBottomReefCameraName = "Arducam_OV9782_USB_Camera";
-  //   public static String backTopReefCameraName = "1mp_arducam_device_1";
-  //   public static String backBottomReefCameraName = "1mp_arducam_device_1";
+  public static String backTopReefCameraName = "1mp_arducam_device_1";
+  public static String backBottomReefCameraName = "1mp_arducam_device_8";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
 
+  //   // Front Top Reef Camera
+  //   public static Transform3d robotToFrontTopReefCam =
+  //       new Transform3d(
+  //           Units.inchesToMeters(7.5),
+  //           Units.inchesToMeters(11.5),
+  //           Units.inchesToMeters(9.5),
+  //           new Rotation3d(Math.PI, Math.toRadians(-6.1598479), Math.toRadians(9.0569)));
+
+  //   // Front Bottom Reef Camera
+  //   public static Transform3d robotToFrontBottomReefCam =
+  //       new Transform3d(
+  //           Units.inchesToMeters(9.5),
+  //           Units.inchesToMeters(13.0),
+  //           Units.inchesToMeters(7.5),
+  //           new Rotation3d(Math.PI, Math.toRadians(-19.382516), Math.toRadians(-45.943058)));
+
   // Front Top Reef Camera
   public static Transform3d robotToFrontTopReefCam =
       new Transform3d(
-          Units.inchesToMeters(7.5),
-          Units.inchesToMeters(11.5),
-          Units.inchesToMeters(9.5),
+          Units.inchesToMeters(8.625),
+          Units.inchesToMeters(11.625),
+          Units.inchesToMeters(9.6324),
           new Rotation3d(Math.PI, Math.toRadians(-6.1598479), Math.toRadians(9.0569)));
 
   // Front Bottom Reef Camera
   public static Transform3d robotToFrontBottomReefCam =
       new Transform3d(
-          Units.inchesToMeters(9.5),
-          Units.inchesToMeters(13.0),
-          Units.inchesToMeters(7.5),
+          Units.inchesToMeters(10.5164),
+          Units.inchesToMeters(12.7448),
+          Units.inchesToMeters(7.5324),
           new Rotation3d(Math.PI, Math.toRadians(-19.382516), Math.toRadians(-45.943058)));
 
   // Back Top Reef Camera
   public static Transform3d robotToBackTopReefCam =
       new Transform3d(
-          Units.inchesToMeters(-7.8508),
-          Units.inchesToMeters(9.0),
-          Units.inchesToMeters(35.7347),
-          new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
+          Units.inchesToMeters(-8.625),
+          Units.inchesToMeters(11.625),
+          Units.inchesToMeters(9.6324),
+          new Rotation3d(Math.PI, Math.toRadians(-6.1598479), Math.toRadians(180 - 9.0569)));
 
   // Back Bottom Reef Camera
   public static Transform3d robotToBackBottomReefCam =
       new Transform3d(
-          Units.inchesToMeters(-7.8508),
-          Units.inchesToMeters(9.0),
-          Units.inchesToMeters(35.7347),
-          new Rotation3d(0.0, Math.toRadians(-51.0), Math.toRadians(180.0)));
+          Units.inchesToMeters(-8.625),
+          Units.inchesToMeters(11.625),
+          Units.inchesToMeters(9.6324),
+          new Rotation3d(Math.PI, Math.toRadians(-19.382516), Math.toRadians(180 + 45.943058)));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
