@@ -62,6 +62,7 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
     talonFXConfig.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     talonFXConfig.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
     talonFXConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    talonFXConfig.Feedback.SensorToMechanismRatio = reduction;
 
     slot0Configs.kS = kS.get();
     slot0Configs.kV = kV.get();
