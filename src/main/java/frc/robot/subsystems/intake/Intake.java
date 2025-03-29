@@ -4,13 +4,16 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.NemesisMathUtil;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+// spotless:off
 public class Intake extends SubsystemBase {
   public IntakeIO intakeIO;
   private IntakeArmIO intakeArmIO;
@@ -18,15 +21,16 @@ public class Intake extends SubsystemBase {
   // private IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
   private Alert intakeDisconnected;
   private IntakeArm intakeArm;
-  private LoggedTunableNumber INTAKE_TRANSLATION_CURRENT_THRESHOLD =
-      new LoggedTunableNumber("Intake/TranslationCurrentThreshold", 50); // -15
-  private LoggedTunableNumber INTAKE_CURRENT_THRESHOLD =
-      new LoggedTunableNumber("Intake/CurrentThreshold", 60);
-  private LoggedTunableNumber LINEAR_FILTER_SAMPLES =
-      new LoggedTunableNumber("Intake/LinearFilterSamples", 20);
+  private LoggedTunableNumber PROX_ONE_THRESHOLD = new LoggedTunableNumber("Intake/ProxOneThreshold", 50);
+  private LoggedTunableNumber PROX_TWO_THRESHOLD = new LoggedTunableNumber("Intake/ProxTwoThreshold", 50);
+  private LoggedTunableNumber LINEAR_FILTER_SAMPLES = new LoggedTunableNumber("Intake/LinearFilterSamples", 20);
   private LoggedTunableNumber setPos = new LoggedTunableNumber("Intake/setpointPos", 0);
-  private LinearFilter filter;
-  private double filtered_data;
+  private LinearFilter proxOneFilter;
+  private LinearFilter proxTwoFilter;
+  private double proxOneFilteredData;
+  private double proxTwoFilteredData;
+  private AnalogInput proxOne = new AnalogInput(Constants.IntakeConstantsLeonidas.PROX_ONE_CHANNEL);
+  private AnalogInput proxTwo = new AnalogInput(Constants.IntakeConstantsLeonidas.PROX_TWO_CHANNEL);
 
   public Intake(IntakeIO intakeIO, IntakeArmIO intakeArmIO) {
     this.intakeIO = intakeIO;
@@ -34,7 +38,8 @@ public class Intake extends SubsystemBase {
     intakeDisconnected = new Alert("Intake motor disconnected!", Alert.AlertType.kWarning);
     intakeArm = new IntakeArm(intakeArmIO);
     intakeIO.setNeutralMode(NeutralModeValue.Brake);
-    filter = LinearFilter.movingAverage((int) LINEAR_FILTER_SAMPLES.get());
+    proxOneFilter = LinearFilter.movingAverage((int) LINEAR_FILTER_SAMPLES.get());
+    proxTwoFilter = LinearFilter.movingAverage((int) LINEAR_FILTER_SAMPLES.get());
   }
 
   @Override
@@ -42,11 +47,16 @@ public class Intake extends SubsystemBase {
     intakeIO.updateInputs(intakeInputs);
     Logger.processInputs("Intake", intakeInputs);
     intakeDisconnected.set(!intakeInputs.connected);
-    // filtered_data = filter.calculate(intakeInputs.st);
-    Logger.recordOutput("Intake/filter", filtered_data);
+
+    proxOneFilteredData = proxOneFilter.calculate(proxOne.getValue());
+    proxTwoFilteredData = proxTwoFilter.calculate(proxTwo.getValue());
+
+    Logger.recordOutput("Intake/ProxOneFiltered", proxOneFilteredData);
+    Logger.recordOutput("Intake/ProxTwoFiltered", proxTwoFilteredData);
 
     if (LINEAR_FILTER_SAMPLES.hasChanged(0)) {
-      filter = LinearFilter.movingAverage((int) LINEAR_FILTER_SAMPLES.get());
+      proxOneFilter = LinearFilter.movingAverage((int) LINEAR_FILTER_SAMPLES.get());
+      proxTwoFilter = LinearFilter.movingAverage((int) LINEAR_FILTER_SAMPLES.get());
     }
   }
 
@@ -81,15 +91,12 @@ public class Intake extends SubsystemBase {
     }
 
     public Command setPositionBlocking(double position) {
-      return runEnd(
-              () -> intakeArmIO.setPosition(position), () -> intakeArmIO.setPosition(position))
-          .until(
-              () -> {
-                System.out.println("input position rads:" + intakeArmInputs.positionRads);
-                System.out.println("setpoint" + Units.rotationsToRadians(position));
-                return NemesisMathUtil.isApprox(
-                    intakeArmInputs.rotationCount, setpointTolerance, position);
-              });
+      return runEnd(() -> intakeArmIO.setPosition(position), () -> intakeArmIO.setPosition(position))
+          .until(() -> {
+              System.out.println("input position rads:" + intakeArmInputs.positionRads);
+              System.out.println("setpoint" + Units.rotationsToRadians(position));
+              return NemesisMathUtil.isApprox(intakeArmInputs.rotationCount, setpointTolerance, position);
+          });
     }
 
     public double getVelocityRadPerSec() {
@@ -97,7 +104,7 @@ public class Intake extends SubsystemBase {
     }
 
     public double getRotationCount() {
-      return this.intakeArmIO.getRotationCount();
+      return intakeArmInputs.rotationCount;
     }
   }
 
@@ -150,20 +157,21 @@ public class Intake extends SubsystemBase {
   }
 
   public double getArmRotationCount() {
-    return intakeArmIO.getRotationCount();
+    return intakeArm.getRotationCount();
   }
 
   public IntakeArmIO getArmIO() {
     return intakeArmIO;
   }
 
-  /*
-   *
-   * The way we can distinguish between Algae and Coral is by using the sign of the current
-   *  TODO figure out the direction of intake coral vs algae
-   */
   @AutoLogOutput
   public boolean hasCoral() {
-    return filtered_data >= INTAKE_CURRENT_THRESHOLD.get();
+    return proxOneFilteredData > PROX_ONE_THRESHOLD.get() && proxTwoFilteredData > PROX_TWO_THRESHOLD.get();
+  }
+
+  @AutoLogOutput
+  public boolean detectCoral() {
+    return proxOneFilteredData > PROX_ONE_THRESHOLD.get() || proxTwoFilteredData > PROX_TWO_THRESHOLD.get();
   }
 }
+// spotless:on
