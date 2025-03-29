@@ -243,9 +243,11 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
-                        new CameraConfig(frontBottomReefCameraName, robotToFrontBottomReefCam),
-                        new CameraConfig(backTopReefCameraName, robotToBackTopReefCam),
-                        new CameraConfig(backBottomReefCameraName, robotToBackBottomReefCam))));
+                        new CameraConfig(frontBottomReefCameraName, robotToFrontBottomReefCam)
+                        // ,
+                        // new CameraConfig(backTopReefCameraName, robotToBackTopReefCam),
+                        // new CameraConfig(backBottomReefCameraName, robotToBackBottomReefCam)
+                        )));
         intake =
             new Intake(
                 new IntakeIOTalonFX(

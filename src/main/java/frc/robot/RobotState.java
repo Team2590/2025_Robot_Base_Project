@@ -235,7 +235,7 @@ public class RobotState extends SubsystemBase {
         offset = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL;
         magnitude = -1;
       }
-      coralScoringSetpoints.armSetpoint =  magnitude * coralScoringSetpoints.armSetpoint + offset;
+      coralScoringSetpoints.armSetpoint = magnitude * coralScoringSetpoints.armSetpoint + offset;
       coralScoringSetpoints.armPlaceSetpoint =
           magnitude * coralScoringSetpoints.armPlaceSetpoint + offset;
 
