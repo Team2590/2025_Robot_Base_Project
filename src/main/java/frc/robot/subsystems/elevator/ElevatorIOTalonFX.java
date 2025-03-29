@@ -22,7 +22,6 @@ import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 import frc.robot.util.StickyFaultUtil;
-import org.littletonrobotics.junction.Logger;
 
 /**
  * @author Dhruv Shah, copied a bit from Vidur's 2024 code ngl
@@ -41,8 +40,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private LoggedTunableNumber cruiseVelocity =
       new LoggedTunableNumber("Elevator/cruiseVelocity", 3000);
   private LoggedTunableNumber acceleration = new LoggedTunableNumber("Elevator/acceleration", 150);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("Elevator/jerk", 750);
-  private LoggedTunableNumber setPos = new LoggedTunableNumber("Elevator/setpointPos", 2000);
+  private LoggedTunableNumber jerk = new LoggedTunableNumber("Elevator/jerk", 1500);
+  private LoggedTunableNumber setPos = new LoggedTunableNumber("Elevator/setpointPos", 20);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
@@ -185,7 +184,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setPosition(double position) {
-    Logger.recordOutput("targetPositionForReal", position);
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position)) {
       var request = new MotionMagicVoltage(0);
       if (leader.getPosition().getValueAsDouble() < 0 || position < 0) {

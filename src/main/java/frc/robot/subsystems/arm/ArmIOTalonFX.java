@@ -38,10 +38,10 @@ public class ArmIOTalonFX implements ArmIO {
   LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0);
   LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", 0);
   LoggedTunableNumber MotionMagicCruiseVelocity1 =
-      new LoggedTunableNumber("Arm/MotionMagicCruiseVelocity", 1000); // 1500
+      new LoggedTunableNumber("Arm/MotionMagicCruiseVelocity", 1000);
   LoggedTunableNumber MotionMagicAcceleration1 =
-      new LoggedTunableNumber("Arm/MotionMagicAcceleration", 50); // 500
-  LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", 300);
+      new LoggedTunableNumber("Arm/MotionMagicAcceleration", 15);
+  LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", 3000);
   LoggedTunableNumber ff = new LoggedTunableNumber("Arm/Feedforward", 0);
   LoggedTunableNumber setPos = new LoggedTunableNumber("Arm/setpointPos", 0);
   Slot0Configs slot0;
@@ -106,7 +106,7 @@ public class ArmIOTalonFX implements ArmIO {
     fdb.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     fdb.FeedbackRemoteSensorID = cancoderID;
     MagnetSensorConfigs mag = new MagnetSensorConfigs();
-    mag.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    mag.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     mag.MagnetOffset = magOffset;
     mag.AbsoluteSensorDiscontinuityPoint = 0.5;
     CANcoderConfiguration can = new CANcoderConfiguration();

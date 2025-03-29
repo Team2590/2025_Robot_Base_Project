@@ -83,10 +83,19 @@ public class ControllerOrchestrator {
 
     return Commands.defer(
         () -> {
-          return ScoringFactory.score(RobotState.getInstance().getScoringSetpoints());
+          return ScoringFactory.score(RobotState.getInstance().getCoralScoringSetpoints());
         },
         requirements);
   }
+
+  // /** Command that needs to be bound to a button to driveToTarget. */
+  // public Command bindDriveToTargetCommand(Drive drive) {
+  //   return DriveCommands.preciseAlignment(
+  //       drive,
+  //       () -> getTarget().pose().plus(new Transform2d(new Translation2d(), new
+  // Rotation2d(Math.PI))),
+  //       getTarget().pose().getRotation());
+  // }
 
   /** Command that needs to be bound to a button to driveToTarget. */
   public Command bindDriveToTargetCommand(Drive drive) {
@@ -104,9 +113,9 @@ public class ControllerOrchestrator {
         () -> {
           Logger.recordOutput("SourcePose", getSourceTarget().pose());
           return new ParallelCommandGroup(
-              DriveCommands.preciseAlignment(
+              DriveCommands.preciseAlignmentAutoBuilder(
                   drive, () -> getSourceTarget().pose(), getSourceTarget().pose().getRotation()),
-              GamePieceFactory.intakeCoralGroundandHandoff());
+              GamePieceFactory.intakeCoralGroundAndHandoff());
         },
         requirements);
   }

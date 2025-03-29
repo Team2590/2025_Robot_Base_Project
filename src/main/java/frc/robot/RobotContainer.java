@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
+import frc.robot.command_factories.ArmFactory;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
@@ -41,6 +42,7 @@ import frc.robot.commands.ElevatorDefaultCommand;
 import frc.robot.commands.EndEffectorDefaultCommand;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.IntakeDefaultCommand;
+import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.LEDS.NemesisLED;
 import frc.robot.subsystems.arm.Arm;
@@ -319,10 +321,6 @@ public class RobotContainer {
             new EndEffector(
                 new EndEffectorIOSim(
                     DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
-        endEffector =
-            new EndEffector(
-                new EndEffectorIOSim(
-                    DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
         climb = null;
         led = new NemesisLED(2, 56, 29);
         break;
@@ -435,25 +433,25 @@ public class RobotContainer {
     leftJoystick
         .button(4)
         .onTrue(
-            elevator.setPosition(
+            elevator.setPositionCommand(
                 Constants.ElevatorConstantsLeonidas
                     .ELEVATOR_OPERATIONAL_MIN_POS)); // Move to home position
     leftJoystick
         .button(5)
         .onTrue(
-            elevator.setPosition(
+            elevator.setPositionCommand(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS)); // Just safe
 
     // Add arm control bindings
     leftJoystick
         .button(6)
         .onTrue(
-            arm.setPosition(
+            arm.setPositionCommand(
                 Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS)); // Min position
     leftJoystick
         .button(7)
         .onTrue(
-            arm.setPosition(
+            arm.setPositionCommand(
                 Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS)); // Max position
 
     leftJoystick.button(8).onTrue(ScoringFactory.score(Level.L3));
@@ -511,11 +509,11 @@ public class RobotContainer {
 
     leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
-    leftJoystick.button(3).onTrue(GamePieceFactory.intakeCoralGroundandHandoff());
+    leftJoystick.button(3).onTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
     rightJoystick
         .trigger()
         .and(rightJoystick.button(4).negate())
-        .whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
+        .whileTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
 
     rightJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorManual());
 
@@ -546,59 +544,35 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsTuning() {
-    drive.setDefaultCommand(DriveFactory.joystickDrive());
-    // leftJoystick
-    //     .button(1)
-    //     .whileTrue(
-    //         Atlas.synchronize(
-    //             Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
-    //             Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
-    //             Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
-    // leftJoystick
-    //     .button(2)
-    //     .whileTrue(
-    //         IntakeFactory.runIntake(
-    //             () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED));
-    // leftJoystick
-    //     .button(3)
-    //     .whileTrue(
-    //         Atlas.synchronize(
-    //             Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS,
-    //             Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
-    //             Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
-    // leftJoystick
-    //     .button(4)
-    //     .whileTrue(
-    //         Commands.race(
-    //             EndEffectorFactory.runEndEffector(),
-    //             IntakeFactory.runIntakeVoltage(
-    //                 () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)));
-    rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
-    leftJoystick.button(2).onTrue(ScoringFactory.stow());
-    leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
-    leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
-    leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
-    // leftJoystick.button(1).whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
-    // leftJoystick.button(1).onTrue(intake.setPosition(3.7));
-    // leftJoystick.button(2).onTrue(intake.setPosition(15.3));
-    // rightJoystick.button(2).whileTrue(intake.runIntakeUntilHasCoral(-12));
-    // rightJoystick.button(2).whileTrue(ScoringFactory.primeForLevel(Level.L2));
-    // rightJoystick
-    //     .button(3)
-    //     .whileTrue(
-    //         Atlas.synchronize(
-    //             Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS,
-    //             Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS,
-    //             Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS));
+    rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
+    leftJoystick.button(2).whileTrue(new MoveFromHandoffCommand());
+    leftJoystick
+        .trigger()
+        .whileTrue(
+            Commands.sequence(
+                ArmFactory.setPositionBlocking(0.5), ElevatorFactory.setPositionBlocking(10)));
+    // rightJoystick.trigger().whileTrue(new MoveToHandoffCommand());
     // rightJoystick
     //     .trigger()
     //     .and(leftJoystick.button(4).negate())
+    //     .whileTrue(Commands.parallel(null)
+    //         Atlas.synchronize(
+    //             intake.getArmTunableNumber(), elevator.getTunableNumber(),
+    // arm.getTunableNumber()));
+    // drive.setDefaultCommand(DriveFactory.joystickDrive());
+    // rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
+    // // rightJoystick.trigger().whileTrue(new RunCommand(() -> intake.intakeIO.setVoltage(-8)));
+    leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
+    leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
+    leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
+    // rightJoystick
+    //     .button(3)
     //     .whileTrue(
-    //         new ParallelCommandGroup(
-    //             // elevator.setPositionLoggedTunableNumber(),
-    //             arm.setPositionLoggedTunableNumber()));
-    // leftJoystick.button(4).onTrue(arm.setPosition(armSetpoint.get()));
-    // leftJoystick.trigger().onTrue(intake.runIntakeUntilHasCoral(intakeVoltage));
+    //         Atlas.synchronize(
+    //             intake.getArmTunableNumber(), elevator.getTunableNumber(),
+    // arm.getTunableNumber()));
+    rightJoystick.povRight().whileTrue(GamePieceFactory.GrabAlgaeL3());
+    rightJoystick.povLeft().whileTrue(GamePieceFactory.GrabAlgaeL3());
   }
 
   /**

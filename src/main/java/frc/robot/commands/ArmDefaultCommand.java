@@ -11,7 +11,8 @@ public class ArmDefaultCommand extends Command {
   private Command hasCoralCommand =
       Commands.waitSeconds(0.2)
           .andThen(
-              ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3 - 0.2))
+              ArmFactory.setPosition(
+                  Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE - 0.2))
           .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
           .withName("Arm has coral default command");
   private Command notHasCoralCommand =
@@ -24,7 +25,7 @@ public class ArmDefaultCommand extends Command {
 
   @Override
   public void execute() {
-    if (RobotState.endEffectorhasCoral()) {
+    if (RobotState.endEffectorHasGamePiece()) {
       hasCoralCommand.schedule();
     } else {
       notHasCoralCommand.schedule();

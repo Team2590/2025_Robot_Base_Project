@@ -35,8 +35,12 @@ public class Elevator extends SubsystemBase {
     return runOnce(io::stop);
   }
 
-  public Command setPosition(double position) {
+  public Command setPositionCommand(double position) {
     return runOnce(() -> io.setPosition(position + offset.get()));
+  }
+
+  public void setPosition(double position) {
+    io.setPosition(position + offset.get());
   }
 
   public Command setPositionBlocking(double position) {
@@ -98,5 +102,9 @@ public class Elevator extends SubsystemBase {
 
   public double getRotationCount() {
     return inputs.rotationCount;
+  }
+
+  public ElevatorIO getIO() {
+    return io;
   }
 }

@@ -1,8 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.Constants.ElevatorConstantsLeonidas;
@@ -15,7 +13,6 @@ import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.NemesisMathUtil;
-import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -35,9 +32,25 @@ public class RobotState extends SubsystemBase {
   private static Intake intake;
   private static RobotState instance;
   @Getter private static boolean endEffectorhasCoral;
-  private static boolean intakeHasCoral;
-  private static boolean intakeHasAlgae;
+  private static boolean hasGamePiece;
   private final ControllerOrchestrator controllerApp;
+
+  private static Pose2d targetPose = new Pose2d();
+  private ScoringSetpoints coralScoringSetpoints =
+      new ScoringSetpoints(
+          Level.L2.getElevatorSetpoint(),
+          Level.L2.getarmPreScoreSetpoint(),
+          Level.L2.getArmScoringSetpoint());
+  private ScoringSetpoints algaeScoringSetpoints =
+      new ScoringSetpoints(
+          Level.BARGE.getElevatorSetpoint(),
+          Level.BARGE.getarmPreScoreSetpoint(),
+          Level.BARGE.getArmScoringSetpoint());
+  private ScoringSetpoints dealgaeSetpoints =
+      new ScoringSetpoints(
+          Level.DEALGAE_L2.getElevatorSetpoint(),
+          Level.DEALGAE_L2.getarmPreScoreSetpoint(),
+          Level.DEALGAE_L2.getArmScoringSetpoint());
 
   /** The aligning state for scoring, if we are aligning to front or back of the robot. */
   public static enum AligningState {
@@ -55,10 +68,12 @@ public class RobotState extends SubsystemBase {
   public static class ScoringSetpoints {
     public double elevatorSetpoint;
     public double armSetpoint;
+    public double armPlaceSetpoint;
 
-    public ScoringSetpoints(double elevatorSetpoint, double armSetpoint) {
+    public ScoringSetpoints(double elevatorSetpoint, double armSetpoint, double armPlaceSetpoint) {
       this.elevatorSetpoint = elevatorSetpoint;
       this.armSetpoint = armSetpoint;
+      this.armPlaceSetpoint = armPlaceSetpoint;
     }
   }
 
@@ -66,14 +81,7 @@ public class RobotState extends SubsystemBase {
       new AtomicReference<RobotState.AligningState>(AligningState.NOT_ALIGNING);
   private AtomicReference<AligningSide> aligningSide =
       new AtomicReference<AligningSide>(AligningSide.LEFT);
-
-  private static Pose2d targetPose = new Pose2d();
-  private static ScoringSetpoints scoringSetpoints =
-      new ScoringSetpoints(
-          Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS,
-          Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3);
-  private static HashMap<Level, ScoringSetpoints> levelLookup =
-      new HashMap<Level, ScoringSetpoints>();
+  private AligningState previousAligningState = AligningState.NOT_ALIGNING;
   private final Lock updateLock = new ReentrantLock();
 
   private RobotState(
@@ -91,21 +99,6 @@ public class RobotState extends SubsystemBase {
     this.intake = intake;
     this.vision = vision;
     this.controllerApp = controllerApp;
-    levelLookup.put(
-        Level.L2,
-        new ScoringSetpoints(
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS,
-            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3));
-    levelLookup.put(
-        Level.L3,
-        new ScoringSetpoints(
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS,
-            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3));
-    levelLookup.put(
-        Level.L4,
-        new ScoringSetpoints(
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS,
-            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4));
   }
 
   /**
@@ -157,28 +150,16 @@ public class RobotState extends SubsystemBase {
     updateLock.lock();
     try {
       setAligningStateBasedOnTargetPose(() -> controllerApp.getTarget().pose());
-      updateScoringConfiguration(controllerApp.getTarget().pose());
+      updateScoringConfiguration(() -> controllerApp.getTarget().pose());
     } finally {
       updateLock.unlock();
     }
-    // currentZone = Constants.locator.getZoneOfField(robotPose);
-
-    endEffectorhasCoral = endEffectorhasCoral();
-  }
-
-  /**
-   * Checks if endeffector has coral
-   *
-   * @return true if the endeffector has coral, false if not
-   */
-  @AutoLogOutput(key = "RobotState/endEffectorHasCoral")
-  public static boolean endEffectorhasCoral() {
-    return endEffector.hasCoral();
-  }
-
-  @AutoLogOutput(key = "RobotState/intakeHasCoral")
-  public static boolean intakeHasCoral() {
-    return intake.hasCoral();
+    if (!endEffector.hasGamePiece()) {
+      clearEndEffectorHasGamePiece();
+    } else {
+      hasGamePiece = true;
+    }
+    Logger.recordOutput("RobotState/EndEffectorHasGamePiece", hasGamePiece);
   }
 
   /**
@@ -235,39 +216,53 @@ public class RobotState extends SubsystemBase {
     }
   }
 
-  public static Command setIntakeHasCoral() {
-    return Commands.runOnce(() -> intakeHasCoral = true);
+  public static boolean endEffectorHasGamePiece() {
+    return hasGamePiece;
   }
 
-  public static Command setIntakeNoCoral() {
-    return Commands.runOnce(() -> intakeHasCoral = false);
+  public static void clearEndEffectorHasGamePiece() {
+    hasGamePiece = false;
   }
 
-  public static Command setIntakeHasAlgae() {
-    return Commands.runOnce(() -> intakeHasAlgae = true);
-  }
+  private void updateScoringConfiguration(Supplier<Pose2d> originalTargetPose) {
+    AligningState currentAligningState = aligningState.get();
 
-  public static Command setIntakeNoAlgae() {
-    return Commands.runOnce(() -> intakeHasAlgae = false);
-  }
+    if (currentAligningState != previousAligningState) {
+      double offset = 0;
+      double magnitude = 1;
 
-  private void updateScoringConfiguration(Pose2d originalTargetPose) {
-    ScoringSetpoints lookup = levelLookup.get(controllerApp.getTarget().scoringLevel());
-    // I think we need the original controllerApp pose here to avoid evaluating on an already
-    // flipped pose (the targetPose of this class)
-    // Opted not to use Aligning enum in the event that we attempt to score without aligning
-    if (aligningState.get() == AligningState.ALIGNING_BACK) {
-      lookup.armSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - lookup.armSetpoint;
-      targetPose = drive.flipScoringSide(originalTargetPose);
-      System.out.println("Scoring Back with an arm setpoint of " + lookup.armSetpoint);
-    } else {
-      lookup.armSetpoint = lookup.armSetpoint;
-      System.out.println("Scoring Front with an arm setpoint of " + lookup.armSetpoint);
+      if (currentAligningState == AligningState.ALIGNING_BACK) {
+        offset = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL;
+        magnitude = -1;
+      }
+      coralScoringSetpoints.armSetpoint =  magnitude * coralScoringSetpoints.armSetpoint + offset;
+      coralScoringSetpoints.armPlaceSetpoint =
+          magnitude * coralScoringSetpoints.armPlaceSetpoint + offset;
+
+      // update algae setpoints
+      dealgaeSetpoints.armSetpoint = magnitude * dealgaeSetpoints.armSetpoint + offset;
+      dealgaeSetpoints.armPlaceSetpoint = magnitude * dealgaeSetpoints.armPlaceSetpoint + offset;
+
+      // Update algae scoring setpoints
+      algaeScoringSetpoints.armSetpoint = magnitude * algaeScoringSetpoints.armSetpoint + offset;
+      algaeScoringSetpoints.armPlaceSetpoint =
+          magnitude * algaeScoringSetpoints.armPlaceSetpoint + offset;
+      targetPose = drive.flipScoringSide(originalTargetPose.get());
+
+      // Update the previous state
+      previousAligningState = currentAligningState;
+
+      Logger.recordOutput("RobotState/Pose", targetPose);
+      Logger.recordOutput("RobotState/CoralArmSetpoint", coralScoringSetpoints.armSetpoint);
+      Logger.recordOutput(
+          "RobotState/CoralArmPlaceSetpoint", coralScoringSetpoints.armPlaceSetpoint);
+      Logger.recordOutput("RobotState/algaeArmSetpoint", dealgaeSetpoints.armSetpoint);
+      Logger.recordOutput("RobotState/algaePlaceSetpoint", dealgaeSetpoints.armPlaceSetpoint);
+      Logger.recordOutput("RobotState/algaeScoringArmSetpoint", algaeScoringSetpoints.armSetpoint);
+      Logger.recordOutput(
+          "RobotState/algaeScoringPlaceSetpoint", algaeScoringSetpoints.armPlaceSetpoint);
     }
-    scoringSetpoints = lookup;
-    Logger.recordOutput("RobotState/Pose", targetPose);
-    Logger.recordOutput("RobotState/ArmSetpoint", scoringSetpoints.armSetpoint);
-    Logger.recordOutput("RobotState/ElevatorSetpoint", scoringSetpoints.elevatorSetpoint);
+  }
   }
 
   public Pose2d getTargetPose() {
@@ -279,10 +274,36 @@ public class RobotState extends SubsystemBase {
     }
   }
 
-  public ScoringSetpoints getScoringSetpoints() {
+  public ScoringSetpoints getCoralScoringSetpoints() {
     updateLock.lock();
     try {
-      return scoringSetpoints;
+      return coralScoringSetpoints;
+    } finally {
+      updateLock.unlock();
+    }
+  }
+
+  public ScoringSetpoints getDealgaeSetpoints(Level level) {
+    updateLock.lock();
+    try {
+      // Manually set the requested levels elevator setpoint because I am too stupid to figure out a
+      // better way
+      ScoringSetpoints setpoint_copy = dealgaeSetpoints;
+      setpoint_copy.elevatorSetpoint = level.getElevatorSetpoint();
+      return setpoint_copy;
+    } finally {
+      updateLock.unlock();
+    }
+  }
+
+  public ScoringSetpoints getAlgaeScoringSetpoints(Level level) {
+    updateLock.lock();
+    try {
+      // Manually set the requested levels elevator setpoint because I am too stupid to figure out a
+      // better way
+      ScoringSetpoints setpoint_copy = algaeScoringSetpoints;
+      setpoint_copy.elevatorSetpoint = level.getElevatorSetpoint();
+      return setpoint_copy;
     } finally {
       updateLock.unlock();
     }

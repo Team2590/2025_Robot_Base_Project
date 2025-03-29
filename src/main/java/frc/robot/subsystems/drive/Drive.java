@@ -257,6 +257,13 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
     updateTunableNumbers();
+
+    // if (Constants.locator.findContainingPolygon(getPose().getTranslation(),
+    // DriverStation.getAlliance()) != null) {
+    //   Logger.recordOutput("Drive/polygon",
+    // Constants.locator.findContainingPolygon(getPose().getTranslation(),
+    //     DriverStation.getAlliance()).getName());
+    // }
   }
 
   /**

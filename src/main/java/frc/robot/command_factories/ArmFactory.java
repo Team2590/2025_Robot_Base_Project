@@ -20,7 +20,7 @@ public class ArmFactory {
    */
   public static Command setPosition(double position) {
     return RobotContainer.getArm()
-        .setPosition(position)
+        .setPositionCommand(position)
         .withName("Set Arm Position")
         .onlyIf(
             () ->
