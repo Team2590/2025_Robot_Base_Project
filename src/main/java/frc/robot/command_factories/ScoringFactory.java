@@ -190,43 +190,6 @@ public class ScoringFactory {
                 + setpoints.armSetpoint);
   }
 
-  // public static Command scoreTeleop(Level level) {
-  //   return switch (level) {
-  //     case L1:
-  //       yield scoreL1();
-  //     default:
-  //       yield primeForLevelTeleop(level).withName("Score " + level.name());
-  //   };
-  // }
-
-  // public static Command primeForLevelTeleop(Level level) {
-  //   switch (level) {
-  //     case L4:
-  //       return Commands.sequence(
-  //               Commands.parallel(
-  //                   Commands.print("Priming " + level.name()),
-  //                   ElevatorFactory.setPositionRun(level.getElevatorPosition())),
-  //
-  // ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
-  //           .withName("Prime " + level.name());
-  //     case L3:
-  //       return Commands.sequence(
-  //               Commands.parallel(
-  //                   Commands.print("Priming " + level.name()),
-  //                   ElevatorFactory.setPositionRun(level.getElevatorPosition())),
-  //
-  // ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3))
-  //           .withName("Prime " + level.name());
-  //     default:
-  //       return Commands.sequence(
-  //               Commands.parallel(
-  //                   Commands.print("Priming " + level.name()),
-  //                   ElevatorFactory.setPositionRun(level.getElevatorPosition())),
-  //               ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS))
-  //           .withName("Prime " + level.name());
-  //   }
-  // }
-
   /**
    * Creates a command sequence for scoring at L1.
    *
@@ -239,10 +202,6 @@ public class ScoringFactory {
         IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)
             .withName("Score L1"));
   }
-
-  // public static Command deAlgaeify() {
-  //   return Commands.sequence(ElevatorFactory.setPositionBlocking())
-  // }
 
   public static Command scoreAlgaeBarge() {
     return ElevatorFactory.setPositionRun(Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS)

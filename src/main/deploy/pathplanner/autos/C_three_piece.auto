@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C_NE_R"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NE_R_intake_SE_L"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SE_L_intake_SE_R"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
