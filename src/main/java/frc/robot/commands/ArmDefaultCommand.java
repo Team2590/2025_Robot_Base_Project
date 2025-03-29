@@ -28,7 +28,7 @@ public class ArmDefaultCommand extends Command {
     if (RobotState.endEffectorHasGamePiece()) {
       hasCoralCommand.schedule();
     } else {
-      notHasCoralCommand.execute();
+      notHasCoralCommand.schedule();
     }
   }
 
