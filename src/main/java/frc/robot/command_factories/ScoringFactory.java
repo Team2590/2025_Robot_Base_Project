@@ -63,8 +63,8 @@ public class ScoringFactory {
                 .until(() -> !RobotState.endEffectorhasCoral())
                 .withName("Score " + level.name());
         };
-    command.addRequirements(
-        RobotContainer.getArm(), RobotContainer.getElevator(), RobotContainer.getEndEffector());
+    // command.addRequirements(
+    //     RobotContainer.getArm(), RobotContainer.getElevator(), RobotContainer.getEndEffector());
     return command;
   }
 

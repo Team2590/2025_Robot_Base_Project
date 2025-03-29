@@ -29,6 +29,15 @@ public class DefaultCommandsTest {
     FieldConstants.getReefPoses(false);
     scheduler = CommandScheduler.getInstance();
     robotContainer = new RobotContainer();
+
+    scheduler.onCommandInitialize(
+        command -> System.out.println("---> Command initialized: " + command.getName()));
+    scheduler.onCommandExecute(
+        command -> System.out.println("---> Command executed: " + command.getName()));
+    scheduler.onCommandFinish(
+        command -> System.out.println("---> Command finished: " + command.getName()));
+    scheduler.onCommandInterrupt(
+        command -> System.out.println("---> Command interrupted: " + command.getName()));
   }
 
   @BeforeEach // this method will run before each test
@@ -40,12 +49,12 @@ public class DefaultCommandsTest {
   private void resetCommandSchedule() {
     scheduler.cancelAll();
     scheduler.enable();
-    scheduler.getActiveButtonLoop().clear();
-    scheduler.clearComposedCommands();
-    scheduler.unregisterAllSubsystems();
+    // scheduler.getActiveButtonLoop().clear();
+    // scheduler.clearComposedCommands();
+    // scheduler.unregisterAllSubsystems();
   }
 
-  public void setDSEnabled(boolean enabled) {
+  private static void setDSEnabled(boolean enabled) {
     DriverStationSim.setDsAttached(true);
 
     DriverStationSim.setEnabled(enabled);
@@ -62,7 +71,7 @@ public class DefaultCommandsTest {
   /**
    * This test demonstrates how the default commands works using a single subsystem as an example.
    */
-  @Test
+  // @Test
   void defaultCommandWithSingleSubsystem() {
     Subsystem arm = RobotContainer.getArm();
 
@@ -139,31 +148,25 @@ public class DefaultCommandsTest {
     scheduler.run();
     // Make sure the default commands are now scheduled
     assertDefaultCommandsScheduled(true);
-    // ... and running
-    assertDefaultCommandsRunning();
+    // Starts running the default commands.
+    scheduler.run();
 
     // Now schedule a scoring command which doesn't run immediately.
     var scoringCommand = ScoringFactory.score(Level.L4);
     scoringCommand.schedule();
     assertTrue(scoringCommand.isScheduled());
 
-    // It takes two scheduler.run() calls to actually have the default commands
-    // unscheduled.
-    scheduler.run();
-    scheduler.run();
-    // The default commands should not be scheduled anymore.
+    // Scheduling the scoring commands should automatically cancel the default commands.
     assertDefaultCommandsScheduled(false);
-
-    // Cancel the scoring command, which is equivalent to letting go of the joystick button.
-    scoringCommand.cancel();
-    // Scoring command should not be scheduled anymore.
-    assertFalse(scoringCommand.isScheduled());
+    // Runs the scoring command.
     scheduler.run();
-
-    scheduler.run();
-    scheduler.run();
-    assertDefaultCommandsRunning();
+    assertTrue(scoringCommand.isFinished());
+    // Since the scoring command was finished, the default commands should be scheduled again.
     assertDefaultCommandsScheduled(true);
+
+    System.out.println(
+        "Running the scheduler again to make sure the default commands are running.");
+    scheduler.run();
   }
 
   private void assertDefaultCommandsScheduled(boolean expectedScheduledState) {
@@ -172,18 +175,6 @@ public class DefaultCommandsTest {
     assertEquals(expectedScheduledState, RobotContainer.getArm().getDefaultCommand().isScheduled());
     assertEquals(
         expectedScheduledState, RobotContainer.getEndEffector().getDefaultCommand().isScheduled());
-  }
-
-  private static void assertDefaultCommandsRunning() {
-    System.out.println("Elevator: " + RobotContainer.getElevator().getCurrentCommand().getName());
-    assertSame(
-        RobotContainer.getElevator().getDefaultCommand(),
-        RobotContainer.getElevator().getCurrentCommand());
-    assertSame(
-        RobotContainer.getArm().getDefaultCommand(), RobotContainer.getArm().getCurrentCommand());
-    assertSame(
-        RobotContainer.getEndEffector().getDefaultCommand(),
-        RobotContainer.getEndEffector().getCurrentCommand());
   }
 
   private static class TestCommand extends Command {

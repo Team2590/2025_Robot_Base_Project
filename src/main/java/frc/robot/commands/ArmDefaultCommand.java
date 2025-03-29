@@ -28,9 +28,9 @@ public class ArmDefaultCommand extends Command {
   @Override
   public void execute() {
     if (RobotState.endEffectorhasCoral()) {
-      hasCoralCommand.schedule();
+      hasCoralCommand.execute();
     } else {
-      notHasCoralCommand.schedule();
+      notHasCoralCommand.execute();
     }
   }
 
