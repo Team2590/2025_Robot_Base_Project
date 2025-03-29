@@ -192,6 +192,7 @@ public class FieldConstants {
         new Pose2d(
             new Translation2d(16.08, .71),
             aprilTagLayout.getTagPose(1).get().toPose2d().getRotation());
+    public static final Pose2d BargeMiddle =  new Pose2d(7.7,5.9, new Rotation2d(0));
   }
 
   public static final Pose2d Barge =
@@ -259,6 +260,7 @@ public class FieldConstants {
 
     poseMap.put("sourceL", FieldConstants.RedReefPoses.CoralSourceLeft);
     poseMap.put("sourceR", FieldConstants.RedReefPoses.CoralSourceRight);
+    poseMap.put("barge",FieldConstants.RedReefPoses.BargeMiddle); 
     return poseMap;
   }
 
