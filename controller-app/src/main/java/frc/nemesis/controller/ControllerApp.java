@@ -45,9 +45,9 @@ public class ControllerApp extends Application {
   private final Map<String, Button> compassButtonMap = new HashMap<>();
   private final Map<String, Button> levelButtonMap = new HashMap<>();
   private final Map<String, ToggleButton> sideButtonMap = new HashMap<>();
-  private final Map<String, Button> sourceButtonMap = new HashMap<>();
+  private final Map<String, Button> bargeButtonMap = new HashMap<>();
   private String pendingCommand = null;
-  private String selectedSource = null;
+  private String selectedBarge = null;
 
   private String selectedDirection = null;
   private String selectedSide = null;
@@ -56,7 +56,7 @@ public class ControllerApp extends Application {
   private static final String[] compassPoints = {
     "S", "SW", "NW", "N", "NE", "SE",
   };
-  private static final String[] sources = {"sourceL", "sourceR"};
+  private static final String[] bargePoints = {"barge"};
   private static final String[] levels = {"L1", "L2", "L3", "L4"};
   private static final String[] sides = {"Left", "Right"};
 
@@ -66,7 +66,7 @@ public class ControllerApp extends Application {
   private HBox bottomButtonBox;
   private VBox bottomSectionBox;
   private Pane compassButtonsPane;
-  private Pane sourceButtonsPane;
+  private Pane bargeButtonsPane;
   private VBox topSectionBox; // VBox to hold levels and sides
 
   @Override
@@ -95,19 +95,19 @@ public class ControllerApp extends Application {
         .addListener(
             (obs, oldVal, newVal) -> {
               updateCompassButtonPositions();
-              updateSourceButtonPositions();
+              updateBargeButtonPositions();
             });
     mainPane
         .heightProperty()
         .addListener(
             (obs, oldVal, newVal) -> {
               updateCompassButtonPositions();
-              updateSourceButtonPositions();
+              updateBargeButtonPositions();
             });
 
     compassButtonsPane = createCompassButtons();
-    sourceButtonsPane = createSourceButtons();
-    mainPane.getChildren().addAll(compassButtonsPane);
+    bargeButtonsPane = createBargeButtons();
+    mainPane.getChildren().addAll(compassButtonsPane,bargeButtonsPane);
 
     topButtonBox = createLevelButtons();
     sideButtonBox = createSideButtons();
@@ -121,9 +121,7 @@ public class ControllerApp extends Application {
 
     bottomSectionBox = new VBox(10);
     bottomSectionBox.setAlignment(Pos.BOTTOM_CENTER);
-    bottomSectionBox.getChildren().addAll(sourceButtonsPane, bottomButtonBox);
-    // BorderPane.setAlignment(sourceButtonsPane, Pos.TOP_CENTER);
-    // root.setTop(sourceButtonsPane); // Add source buttons above the bottom section
+    bottomSectionBox.getChildren().addAll(bottomButtonBox);
 
     BorderPane.setAlignment(topSectionBox, Pos.TOP_CENTER); // Align top section to top center
     BorderPane.setAlignment(bottomButtonBox, Pos.BOTTOM_CENTER);
@@ -164,21 +162,21 @@ public class ControllerApp extends Application {
     return compassPane;
   }
 
-  private Pane createSourceButtons() {
-    Pane sourcePane = new Pane();
-    EventHandler<ActionEvent> buttonHandler = event -> onSourceButtonPress(event);
+  private Pane createBargeButtons() {
+    Pane bargePane = new Pane();
+    EventHandler<ActionEvent> buttonHandler = event -> onBargeButtonPress(event);
 
-    for (String source : sources) {
-      Button button = new Button(source);
-      sourceButtonMap.put(source, button);
+    for (String point : bargePoints) {
+      Button button = new Button(point);
+      bargeButtonMap.put(point, button);
       button.setOnAction(buttonHandler);
       button.setPrefWidth(120);
       button.setPrefHeight(80);
       button.setStyle(SOURCE_BUTTON_STYLE);
-      sourcePane.getChildren().add(button);
+      bargePane.getChildren().add(button);
     }
 
-    return sourcePane;
+    return bargePane;
   }
 
   private void updateCompassButtonPositions() {
@@ -207,19 +205,14 @@ public class ControllerApp extends Application {
     }
   }
 
-  private void updateSourceButtonPositions() {
+  private void updateBargeButtonPositions() {
     double width = mainPane.getWidth();
     double height = mainPane.getHeight();
 
-    // S1 pos
-    Button sourceLbutton = sourceButtonMap.get("sourceL");
-    sourceLbutton.setLayoutX(width * 0.3);
-    sourceLbutton.setLayoutY(-height * 0.1);
-
-    // S2 pos
-    Button sourceRbutton = sourceButtonMap.get("sourceR");
-    sourceRbutton.setLayoutX(width * 0.7 - sourceRbutton.getPrefWidth());
-    sourceRbutton.setLayoutY(-height * 0.1);
+    // Barge button position
+    Button bargeButton = bargeButtonMap.get("barge");
+    bargeButton.setLayoutX(width * 0.5 - bargeButton.getPrefWidth() / 2);
+    bargeButton.setLayoutY(-height * 0.0001);
   }
 
   private VBox createLevelButtons() {
@@ -300,10 +293,10 @@ public class ControllerApp extends Application {
     }
   }
 
-  private void updateSourceButtons() {
-    for (Map.Entry<String, Button> entry : sourceButtonMap.entrySet()) {
+  private void updateBargeButtons() {
+    for (Map.Entry<String, Button> entry : bargeButtonMap.entrySet()) {
       Button button = entry.getValue();
-      if (entry.getKey().equals(selectedSource)) {
+      if (entry.getKey().equals(selectedBarge)) {
         button.setStyle(SELECTED_SOURCE_STYLE);
       } else {
         button.setStyle(SOURCE_BUTTON_STYLE);
@@ -361,7 +354,7 @@ public class ControllerApp extends Application {
 
   private void refresh() {
     String moveTo = client.getValue("moveTo");
-    String source = client.getValue("source");
+    String barge = client.getValue("barge");
 
     if (moveTo != null && !moveTo.equals("not found")) {
       // Split on underscore to separate direction+side from level
@@ -393,9 +386,9 @@ public class ControllerApp extends Application {
       }
     }
 
-    if (source != null && !source.equals("not found")) {
-      selectedSource = source;
-      updateSourceButtons();
+    if (barge != null && !barge.equals("not found")) {
+      selectedBarge = barge;
+      updateBargeButtons();
     }
   }
 
@@ -414,15 +407,15 @@ public class ControllerApp extends Application {
     updatePendingCommand();
   }
 
-  private void onSourceButtonPress(ActionEvent event) {
+  private void onBargeButtonPress(ActionEvent event) {
     if (!(event.getSource() instanceof Button)) {
       return;
     }
     Button button = (Button) event.getSource();
-    selectedSource = button.getText();
+    selectedBarge = button.getText();
 
-    updateSourceButtons();
-    sendToNetworkTables("source", selectedSource);
+    updateBargeButtons();
+    sendToNetworkTables("barge", selectedBarge);
   }
 
   public static void main(String[] args) {

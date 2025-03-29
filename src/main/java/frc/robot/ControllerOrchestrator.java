@@ -24,7 +24,7 @@ public class ControllerOrchestrator {
 
   private static final String CONTROLLER_TABLE_KEY = "ControllerApp/target";
   private static final String MOVE_TO_KEY = "moveTo";
-  private static final String SOURCE_KEY = "source";
+  private static final String BARGE_KEY = "barge";
   // What's a better default target location?
   private static final String DEFAULT_REEF_TARGET = "S_Left";
   private static final String DEFAULT_SOURCE_TARGET = "sourceR";
@@ -46,8 +46,8 @@ public class ControllerOrchestrator {
     return getValue(MOVE_TO_KEY);
   }
 
-  public String getSource() {
-    return getValue(SOURCE_KEY);
+  public String getBarge() {
+    return getValue(BARGE_KEY);
   }
 
   public Target getTarget() {
@@ -60,15 +60,15 @@ public class ControllerOrchestrator {
     return target;
   }
 
-  public Target getSourceTarget() {
+  public Target getBargeTarget() {
     Target target;
-    Pose2d pose = lookupPoseBasedOnAlliance(getSource());
+    Pose2d pose = lookupPoseBasedOnAlliance(getBarge());
     if (pose == null) {
       System.err.println("---> Using Default Source Target: ");
       return new Target(
-          lookupPoseBasedOnAlliance(DEFAULT_SOURCE_TARGET), ScoringFactory.Level.SOURCE);
+          lookupPoseBasedOnAlliance(DEFAULT_SOURCE_TARGET), ScoringFactory.Level.BARGE);
     }
-    return new Target(lookupPoseBasedOnAlliance(getSource()), ScoringFactory.Level.SOURCE);
+    return new Target(lookupPoseBasedOnAlliance(getBarge()), ScoringFactory.Level.BARGE);
   }
 
   /**
@@ -105,19 +105,19 @@ public class ControllerOrchestrator {
   }
 
   // This commands will drive to pose while "priming for intake" at coral source
-  public Command bindDriveToSourceIntake(Drive drive) {
-    var requirements = new HashSet<Subsystem>();
-    requirements.add(drive);
-    return Commands.defer(
-        () -> {
-          Logger.recordOutput("SourcePose", getSourceTarget().pose());
-          return new ParallelCommandGroup(
-              DriveCommands.preciseAlignmentAutoBuilder(
-                  drive, () -> getSourceTarget().pose(), getSourceTarget().pose().getRotation()),
-              GamePieceFactory.intakeCoralGroundAndHandoff());
-        },
-        requirements);
-  }
+  // public Command bindDriveToSourceIntake(Drive drive) {
+  //   var requirements = new HashSet<Subsystem>();
+  //   requirements.add(drive);
+  //   return Commands.defer(
+  //       () -> {
+  //         Logger.recordOutput("SourcePose", getSourceTarget().pose());
+  //         return new ParallelCommandGroup(
+  //             DriveCommands.preciseAlignmentAutoBuilder(
+  //                 drive, () -> getSourceTarget().pose(), getSourceTarget().pose().getRotation()),
+  //             GamePieceFactory.intakeCoralGroundAndHandoff());
+  //       },
+  //       requirements);
+  // }
 
   private static Target parseTargetString(String targetString) {
     // We expect the string to be in the form NWright_L1
