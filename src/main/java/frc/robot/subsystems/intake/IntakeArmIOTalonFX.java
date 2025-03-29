@@ -54,7 +54,8 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
       int currentLimitAmps,
       boolean invert,
       boolean brake,
-      double reduction) {
+      double reduction,
+      double sensorReduction) {
     leader = new TalonFX(canID, canBus);
 
     talonFXConfig.MotorOutput.Inverted =
@@ -62,6 +63,7 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
     talonFXConfig.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     talonFXConfig.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
     talonFXConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    talonFXConfig.Feedback.SensorToMechanismRatio = sensorReduction;
 
     slot0Configs.kS = kS.get();
     slot0Configs.kV = kV.get();
