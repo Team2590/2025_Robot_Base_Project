@@ -561,9 +561,7 @@ public class DriveCommands {
   }
 
   public static Command preciseAlignment(
-      Drive driveSubsystem,
-      Supplier<Pose2d> preciseTarget,
-      Rotation2d approachDirection) {
+      Drive driveSubsystem, Supplier<Pose2d> preciseTarget, Rotation2d approachDirection) {
 
     return Commands.defer(
         () -> {

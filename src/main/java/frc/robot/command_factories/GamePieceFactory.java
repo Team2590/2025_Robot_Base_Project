@@ -2,8 +2,6 @@ package frc.robot.command_factories;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
@@ -25,22 +23,20 @@ public class GamePieceFactory {
     return new MoveToHandoffCommand()
         .andThen(
             Commands.parallel(
-                IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED),
+                IntakeFactory.runIntake(
+                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED),
                 Commands.waitUntil(() -> RobotContainer.getIntake().detectCoral())
-                .andThen(
-                    Commands.parallel(
-                        ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS),
-                        IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS)
-                    )
-                )
-            )
-        ) 
+                    .andThen(
+                        Commands.parallel(
+                            ElevatorFactory.setPositionBlocking(
+                                Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS),
+                            IntakeFactory.setPositionBlocking(
+                                Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS)))))
         .andThen(
             Commands.race(
                 EndEffectorFactory.runEndEffector(),
-                IntakeFactory.runIntakeVoltage(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)
-            )
-        )
+                IntakeFactory.runIntakeVoltage(
+                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)))
         .onlyIf(() -> !RobotState.endEffectorHasGamePiece());
   }
 
@@ -54,15 +50,6 @@ public class GamePieceFactory {
         .andThen(
             IntakeFactory.setPositionBlocking(
                 Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS));
-  }
-
-  public static Command intakeCoralGround() {
-    return new SequentialCommandGroup(
-        new ParallelCommandGroup(
-            IntakeFactory.setIntakeCoralPosition(),
-            IntakeFactory.runIntake(
-                () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED)),
-        IntakeFactory.setHoldingAlgaePosition());
   }
 
   public static Command GrabAlgaeL2() {
