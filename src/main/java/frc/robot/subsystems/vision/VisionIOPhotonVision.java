@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.RobotState;
+import frc.robot.RobotState.AligningSide;
 import frc.robot.RobotState.AligningState;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -110,6 +111,7 @@ public class VisionIOPhotonVision implements VisionIO {
         Pose3d prevEstimatedRobotPose, PhotonPipelineResult result) {
       if (RobotState.getInstance() != null) {
         AligningState aligningState = RobotState.getInstance().getAligningState();
+        AligningSide aligningSide = RobotState.getInstance().getAligningSide();
         boolean isAligning =
             aligningState == AligningState.ALIGNING_FRONT
                 || aligningState == AligningState.ALIGNING_BACK;
@@ -149,16 +151,19 @@ public class VisionIOPhotonVision implements VisionIO {
             latestTagIds.add((short) result.getBestTarget().getFiducialId());
 
             boolean logResults =
-                (aligningState == AligningState.ALIGNING_FRONT
-                        && (this.getName()
-                                .equals("Vision-" + VisionConstants.frontTopReefCameraName)
-                            || this.getName()
-                                .equals("Vision-" + VisionConstants.frontBottomReefCameraName)))
-                    || (aligningState == AligningState.ALIGNING_BACK
-                        && (this.getName().equals("Vision-" + VisionConstants.backTopReefCameraName)
-                            || this.getName()
-                                .equals("Vision-" + VisionConstants.backBottomReefCameraName)))
-                    || (aligningState == AligningState.NOT_ALIGNING);
+                (aligningState == AligningState.NOT_ALIGNING)
+                    || (aligningSide == AligningSide.LEFT
+                        && aligningState == AligningState.ALIGNING_FRONT
+                        && this.getName().equals(VisionConstants.frontBottomReefCameraName))
+                    || (aligningSide == AligningSide.RIGHT
+                        && aligningState == AligningState.ALIGNING_FRONT
+                        && this.getName().equals(VisionConstants.frontTopReefCameraName))
+                    || (aligningSide == AligningSide.LEFT
+                        && aligningState == AligningState.ALIGNING_BACK
+                        && this.getName().equals(VisionConstants.backTopReefCameraName))
+                    || (aligningSide == AligningSide.RIGHT
+                        && aligningState == AligningState.ALIGNING_BACK
+                        && this.getName().equals(VisionConstants.backBottomReefCameraName));
 
             if (logResults) {
               latestPoseObservations.add(

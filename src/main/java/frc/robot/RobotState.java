@@ -46,6 +46,12 @@ public class RobotState extends SubsystemBase {
     ALIGNING_BACK
   }
 
+  /** The aligning state for what side we are scoring on. */
+  public static enum AligningSide {
+    LEFT,
+    RIGHT
+  }
+
   public static class ScoringSetpoints {
     public double elevatorSetpoint;
     public double armSetpoint;
@@ -58,6 +64,8 @@ public class RobotState extends SubsystemBase {
 
   private AtomicReference<AligningState> aligningState =
       new AtomicReference<RobotState.AligningState>(AligningState.NOT_ALIGNING);
+  private AtomicReference<AligningSide> aligningSide =
+      new AtomicReference<AligningSide>(AligningSide.LEFT);
 
   private static Pose2d targetPose = new Pose2d();
   private static ScoringSetpoints scoringSetpoints =
@@ -191,6 +199,11 @@ public class RobotState extends SubsystemBase {
     return aligningState.get();
   }
 
+  @AutoLogOutput(key = "PreciseAlignment/AligningSide")
+  public AligningSide getAligningSide() {
+    return aligningSide.get();
+  }
+
   public void setAligningState(AligningState state) {
     aligningState.set(state);
   }
@@ -203,10 +216,23 @@ public class RobotState extends SubsystemBase {
       setAligningState(AligningState.ALIGNING_BACK);
     }
     Logger.recordOutput("RobotState/AligningState", getAligningState());
+    if (ControllerOrchestrator.aligningLeft) {
+      aligningSide.set(AligningSide.LEFT);
+    } else {
+      aligningSide.set(AligningSide.RIGHT);
+    }
   }
 
   public void resetAligningState() {
     setAligningState(AligningState.NOT_ALIGNING);
+  }
+
+  public void setAligningSide(boolean isLeft) {
+    if (isLeft) {
+      aligningSide.set(AligningSide.LEFT);
+    } else {
+      aligningSide.set(AligningSide.RIGHT);
+    }
   }
 
   public static Command setIntakeHasCoral() {

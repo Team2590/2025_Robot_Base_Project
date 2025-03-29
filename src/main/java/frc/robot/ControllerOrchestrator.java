@@ -28,6 +28,7 @@ public class ControllerOrchestrator {
   // What's a better default target location?
   private static final String DEFAULT_REEF_TARGET = "S_Left";
   private static final String DEFAULT_SOURCE_TARGET = "sourceR";
+  public static boolean aligningLeft;
 
   private NetworkTableEntry getTableEntry(String key) {
     NetworkTable table = NetworkTableInstance.getDefault().getTable(CONTROLLER_TABLE_KEY);
@@ -122,6 +123,7 @@ public class ControllerOrchestrator {
     }
     String compassDir = parts[0];
     String leftOrRight = parts[1];
+    aligningLeft = leftOrRight.equals("Left");
     String poseKey = compassDir + "_" + leftOrRight;
     String levelString = parts[2].toUpperCase();
 
