@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.command_factories.ClimbFactory;
+import frc.robot.command_factories.LEDFactory;
 import frc.robot.util.NemesisMathUtil;
 import java.util.Set;
 
@@ -49,7 +50,9 @@ public class ClimbCommand extends Command {
     deployMech.schedule();
     if (deployMech.isFinished()) {
       limitSwitch.onTrue(
-          ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION));
+        Commands.parallel(
+          ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION),
+          LEDFactory.auraRizz()));
     }
   }
 
