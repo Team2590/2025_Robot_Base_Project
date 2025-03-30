@@ -3,6 +3,7 @@ package frc.robot.commands;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -35,6 +36,9 @@ public class TrajectoryFollowerCommand extends Command {
   private static final double ANGLE_MAX_ACCELERATION = 20.0;
   private Rotation2d endGoal;
   private boolean runOnce = false;
+  private static final double X_ALIGNMENT_TOLERANCE = 0.05; // meters
+  private static final double Y_ALIGNMENT_TOLERANCE = 0.05; // meters
+  private static final double ROTATION_ALIGNMENT_TOLERANCE = 0.05; // radians
 
   public final NemesisHolonomicDriveController autonomusController =
       new NemesisHolonomicDriveController(
@@ -144,11 +148,16 @@ public class TrajectoryFollowerCommand extends Command {
 
   @Override
   public void execute() {
-
     try {
       PathPlannerTrajectoryState goal = trajectory.sample(timer.get());
       ChassisSpeeds adjustedSpeeds = autonomusController.calculate(drive.getPose(), goal);
       drive.runVelocity(adjustedSpeeds);
+
+      // Log trajectory following data
+      logTrajectoryData(
+          drive.getPose(),
+          goal.pose,
+          timer.get() >= trajectory.getTotalTimeSeconds() ? "Final Rotation" : "Path Following");
 
       if (timer.get() >= trajectory.getTotalTimeSeconds()) {
         if (!runOnce) {
@@ -158,12 +167,14 @@ public class TrajectoryFollowerCommand extends Command {
         double omega =
             angleController.calculate(
                 drive.getPose().getRotation().getRadians(), endGoal.getRadians());
+
+        // Existing logging
         Logger.recordOutput(
             "TrajectoryFollower/angleControllerError", angleController.getPositionError());
         Logger.recordOutput(
             "TrajectoryFollower/angleControllerAtSetpoint", angleController.atSetpoint());
-        ChassisSpeeds speeds = new ChassisSpeeds(0, 0, omega);
 
+        ChassisSpeeds speeds = new ChassisSpeeds(0, 0, omega);
         drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));
       }
     } catch (Exception e) {
@@ -171,12 +182,71 @@ public class TrajectoryFollowerCommand extends Command {
     }
   }
 
+  private record AlignmentStatus(
+      boolean xAligned, boolean yAligned, boolean rotationAligned, boolean fullyAligned) {}
+
+  private AlignmentStatus checkAlignmentTolerances(Pose2d currentPose, Pose2d targetPose) {
+    double xError = targetPose.getX() - currentPose.getX();
+    double yError = targetPose.getY() - currentPose.getY();
+    double rotationError =
+        MathUtil.angleModulus(
+            targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians());
+
+    boolean xAligned = Math.abs(xError) <= X_ALIGNMENT_TOLERANCE;
+    boolean yAligned = Math.abs(yError) <= Y_ALIGNMENT_TOLERANCE;
+    boolean rotationAligned = Math.abs(rotationError) <= ROTATION_ALIGNMENT_TOLERANCE;
+    boolean fullyAligned = xAligned && yAligned && rotationAligned;
+
+    return new AlignmentStatus(xAligned, yAligned, rotationAligned, fullyAligned);
+  }
+
+  private void logTrajectoryData(Pose2d currentPose, Pose2d targetPose, String phase) {
+    // Calculate errors
+    double xError = targetPose.getX() - currentPose.getX();
+    double yError = targetPose.getY() - currentPose.getY();
+    double rotationError =
+        MathUtil.angleModulus(
+            targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians());
+
+    // Get alignment status
+    AlignmentStatus alignmentStatus = checkAlignmentTolerances(currentPose, targetPose);
+
+    // Log all data
+    Logger.recordOutput("TrajectoryFollower/Phase", phase);
+    Logger.recordOutput("TrajectoryFollower/CurrentPose", currentPose);
+    Logger.recordOutput("TrajectoryFollower/TargetPose", targetPose);
+    Logger.recordOutput("TrajectoryFollower/Errors/X", xError);
+    Logger.recordOutput("TrajectoryFollower/Errors/Y", yError);
+    Logger.recordOutput("TrajectoryFollower/Errors/Rotation", rotationError);
+    Logger.recordOutput("TrajectoryFollower/Aligned/X", alignmentStatus.xAligned());
+    Logger.recordOutput("TrajectoryFollower/Aligned/Y", alignmentStatus.yAligned());
+    Logger.recordOutput("TrajectoryFollower/Aligned/Rotation", alignmentStatus.rotationAligned());
+    Logger.recordOutput("TrajectoryFollower/Aligned/Full", alignmentStatus.fullyAligned());
+    Logger.recordOutput(
+        "TrajectoryFollower/ErrorPercent/X", Math.abs(xError) / X_ALIGNMENT_TOLERANCE);
+    Logger.recordOutput(
+        "TrajectoryFollower/ErrorPercent/Y", Math.abs(yError) / Y_ALIGNMENT_TOLERANCE);
+    Logger.recordOutput(
+        "TrajectoryFollower/ErrorPercent/Rotation",
+        Math.abs(rotationError) / ROTATION_ALIGNMENT_TOLERANCE);
+  }
+
   @Override
   public boolean isFinished() {
     if (this.trajectory == null) {
       return true;
     }
-    return timer.get() >= trajectory.getTotalTimeSeconds() && angleController.atSetpoint();
+
+    if (timer.get() >= trajectory.getTotalTimeSeconds()) {
+      // Create a target pose with the final rotation we want
+      Pose2d currentPose = drive.getPose();
+      Pose2d targetPose = new Pose2d(currentPose.getX(), currentPose.getY(), endGoal);
+
+      AlignmentStatus alignmentStatus = checkAlignmentTolerances(currentPose, targetPose);
+      return alignmentStatus.fullyAligned();
+    }
+
+    return false;
   }
 
   @Override
