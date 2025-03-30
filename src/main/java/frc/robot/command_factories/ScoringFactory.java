@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeArmConstantsLeonidas;
-import frc.robot.Constants.IntakeConstantsLeonidas;
 import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
@@ -93,6 +92,7 @@ public class ScoringFactory {
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     level.getElevatorSetpoint(),
                     Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST))
+            .alongWith(RobotContainer.getEndEffector().stopEndEffector())
             .withName("Score " + level.name());
       case L3:
         yield primeForLevel(level)
@@ -103,6 +103,7 @@ public class ScoringFactory {
                     ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
                     ArmFactory.setPositionBlocking(
                         Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L3_POST)))
+            .alongWith(RobotContainer.getEndEffector().stopEndEffector())
             .withName("Score " + level.name());
       case L4:
         yield primeForLevel(level)
@@ -113,11 +114,13 @@ public class ScoringFactory {
                     ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
                     ArmFactory.setPositionBlocking(
                         Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L4_POST)))
+            .alongWith(RobotContainer.getEndEffector().stopEndEffector())
             .withName("Score " + level.name());
       default:
         yield primeForLevel(level)
             .andThen(EndEffectorFactory.runEndEffectorOuttake())
             .until(() -> !RobotState.endEffectorHasGamePiece())
+            .alongWith(RobotContainer.getEndEffector().stopEndEffector())
             .withName("Score " + level.name());
     };
   }
@@ -245,7 +248,8 @@ public class ScoringFactory {
 
   public static Command scoreAlgaeBarge() {
     return ElevatorFactory.setPositionRun(Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS)
-        .alongWith(ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_BARGE_POS)).withName("Score Algae Barge");
+        .alongWith(ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_BARGE_POS))
+        .withName("Score Algae Barge");
   }
 
   /**
@@ -324,20 +328,21 @@ public class ScoringFactory {
 
   public static Command primeL4WhileMoving() {
     return Commands.sequence(
-        Commands.waitUntil(
-            () -> {
-              Pose2d currentPose = RobotContainer.getDrive().getPose();
-              for (Pose2d pose : FieldConstants.RED_REEF_POSES.values()) {
-                if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
-                  return true; // 1.5 meters max distance to start raising elevator
-              }
-              for (Pose2d pose : FieldConstants.BLUE_REEF_POSES.values()) {
-                if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
-                  return true; // 1.5 meters max distance to start raising elevator
-              }
-              return false;
-            }),
-        primeForLevel(Level.L4) // ,
-        ).withName("Prime L4 while moving");
+            Commands.waitUntil(
+                () -> {
+                  Pose2d currentPose = RobotContainer.getDrive().getPose();
+                  for (Pose2d pose : FieldConstants.RED_REEF_POSES.values()) {
+                    if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
+                      return true; // 1.5 meters max distance to start raising elevator
+                  }
+                  for (Pose2d pose : FieldConstants.BLUE_REEF_POSES.values()) {
+                    if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
+                      return true; // 1.5 meters max distance to start raising elevator
+                  }
+                  return false;
+                }),
+            primeForLevel(Level.L4) // ,
+            )
+        .withName("Prime L4 while moving");
   }
 }

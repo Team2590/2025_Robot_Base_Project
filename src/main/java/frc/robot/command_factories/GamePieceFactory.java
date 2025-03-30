@@ -16,7 +16,8 @@ public class GamePieceFactory {
             Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
             Constants.ArmConstantsLeonidas.ARM_INTAKE_ALGAE_POS)
-        .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()).withName("Intake Algae Ground");
+        .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
+        .withName("Intake Algae Ground");
   }
 
   public static Command intakeCoralGroundAndHandoff() {
@@ -39,7 +40,8 @@ public class GamePieceFactory {
                 .until(() -> RobotState.endEffectorHasGamePiece()))
         .andThen(
             ElevatorFactory.setPositionBlocking(
-                Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS)).withName("Handoff");
+                Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS))
+        .withName("Handoff");
     // .onlyIf(() -> !RobotState.endEffectorHasGamePiece());
   }
 
@@ -51,8 +53,8 @@ public class GamePieceFactory {
                 () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED))
         .until(() -> RobotContainer.getIntake().hasCoral())
         .andThen(
-            IntakeFactory.setPositionBlocking(
-                Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS)).withName("Intake Coral No Handoff");
+            IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS))
+        .withName("Intake Coral No Handoff");
   }
 
   public static Command GrabAlgaeL2() {
@@ -69,6 +71,7 @@ public class GamePieceFactory {
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint)
-        .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()).withName("Grab Algae L3");
+        .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
+        .withName("Grab Algae L3");
   }
 }

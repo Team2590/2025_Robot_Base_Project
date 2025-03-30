@@ -18,7 +18,6 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import java.util.HashSet;
 import java.util.Optional;
-import org.littletonrobotics.junction.Logger;
 
 public class ControllerOrchestrator {
 
@@ -54,7 +53,7 @@ public class ControllerOrchestrator {
     Target target = parseTargetString(getMoveTo());
     if (target == null) {
       target = new Target(lookupPoseBasedOnAlliance(DEFAULT_REEF_TARGET), ScoringFactory.Level.L4);
-      System.err.println("---> Using Default Target: " + target);
+      // System.err.println("---> Using Default Target: " + target);
       return target;
     }
     return target;
@@ -64,7 +63,7 @@ public class ControllerOrchestrator {
     Target target;
     Pose2d pose = lookupPoseBasedOnAlliance(getSource());
     if (pose == null) {
-      System.err.println("---> Using Default Source Target: ");
+      // System.err.println("---> Using Default Source Target: ");
       return new Target(
           lookupPoseBasedOnAlliance(DEFAULT_SOURCE_TARGET), ScoringFactory.Level.SOURCE);
     }
@@ -124,7 +123,8 @@ public class ControllerOrchestrator {
     // value can be used.
     String[] parts = targetString.split("_");
     if (parts.length != 3) {
-      System.err.println("---> Invalid target string received from ControllerApp: " + targetString);
+      // System.err.println("---> Invalid target string received from ControllerApp: " +
+      // targetString);
       return null;
     }
     String compassDir = parts[0];
@@ -134,8 +134,8 @@ public class ControllerOrchestrator {
 
     Pose2d targetPose = lookupPoseBasedOnAlliance(poseKey);
     if (targetPose == null) {
-      System.err.println(
-          "---> Caution!!! Invalid target pose key received from ControllerApp: " + poseKey);
+      // System.err.println(
+      //     "---> Caution!!! Invalid target pose key received from ControllerApp: " + poseKey);
       return null;
     }
     ScoringFactory.Level level = ScoringFactory.Level.valueOf(levelString);
@@ -149,7 +149,7 @@ public class ControllerOrchestrator {
     if (alliance.isPresent()) {
       alianceValue = alliance.get();
     } else {
-      System.err.println("---> Caution!!! Alliance not found, defaulting to Red");
+      // System.err.println("---> Caution!!! Alliance not found, defaulting to Red");
       alianceValue = Alliance.Red;
     }
     return alianceValue == Alliance.Blue

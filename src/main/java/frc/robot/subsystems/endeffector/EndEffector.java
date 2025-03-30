@@ -14,10 +14,10 @@ public class EndEffector extends SubsystemBase {
   private final EndEffectorIO.EndEffectorIOInputs inputs = new EndEffectorIO.EndEffectorIOInputs();
   private boolean isRunning = false;
   private LoggedTunableNumber PROX_THRESHOLD =
-      new LoggedTunableNumber("EndEffector/proxThreshold", 1000);
+      new LoggedTunableNumber("EndEffector/ProxThreshold", 1500);
   private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 30);
   private LinearFilter filter = LinearFilter.movingAverage((int) taps.get());
-  double filtered_data;
+  private double filtered_data;
   private LoggedTunableNumber runVoltage =
       new LoggedTunableNumber(
           "EndEffector/runVoltage", Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE);
@@ -32,7 +32,7 @@ public class EndEffector extends SubsystemBase {
     io.updateInputs(inputs);
     filtered_data = filter.calculate(prox.getValue());
 
-    Logger.recordOutput("EndEffector/filter", filtered_data);
+    Logger.recordOutput("EndEffector/filter", prox.getValue());
 
     if (taps.hasChanged(0)) {
       filter = LinearFilter.movingAverage((int) taps.get());
@@ -53,7 +53,7 @@ public class EndEffector extends SubsystemBase {
   public Command runEndEffectorOuttake() {
     return runEnd(
             () -> {
-              io.setVoltage(-Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE);
+              io.setVoltage(12);
             },
             () -> {
               io.stop();
@@ -118,5 +118,9 @@ public class EndEffector extends SubsystemBase {
 
   public boolean isRunning() {
     return isRunning;
+  }
+
+  public EndEffectorIO getIO() {
+    return io;
   }
 }

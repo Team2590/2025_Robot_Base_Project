@@ -283,7 +283,7 @@ public final class Constants {
     public static final double ARM_INTAKE_SOURCE_POSITION = .18; // TODO
     public static final double ARM_DEALGAE_POSITION = 0;
     public static final double ARM_INTAKE_ALGAE_POS = .53;
-    public static final double ARM_BARGE_POS = .15; // TODO: find real value
+    public static final double ARM_BARGE_POS = .175; // TODO: find real value
     // public static final double ARM_SCORING_POS = .7; // TODO: find real value
     public static final double ARM_WRAP_POS = 0.794;
     public static final double ARM_HANDOFF_POS = 0.757;
@@ -315,7 +315,7 @@ public final class Constants {
     public static final double ELEVATOR_DEALGAE_L3 = 19.76; // TODO
     public static final double ELEVATOR_SOURCE_POS = 5.15; // TODO
     public static final double ELEVATOR_MANUAL_VOLTAGE = 1; // TODO
-    public static final double ELEVATOR_BARGE_POS = 27; // TODO: find real value
+    public static final double ELEVATOR_BARGE_POS = 27.5; // TODO: find real value
     public static final double ELEVATOR_INTAKE_ALGAE_POS = 0; // TODO find real value
     public static final double ELEVATOR_HANDOFF_TRANSITION_POS = ELEVATOR_HANDOFF_POS + 1.5;
   }
@@ -346,6 +346,7 @@ public final class Constants {
     public static final double reduction = 1;
     public static final double INTAKE_VOLTAGE = 12;
     public static final double OUTTAKE_VOLTAGE = -12;
+    public static final double INTAKE_ALGAE_VOLTAGE = -8;
     public static final int PROX_CHANNEL = 0;
   }
 
