@@ -36,8 +36,8 @@ public class VisionConstants {
   // Camera names, must match names configured on coprocessor
   public static String frontTopReefCameraName = "1mp_arducam_device_3";
   public static String frontBottomReefCameraName = "1mp_arducam_device_7";
-  public static String backTopReefCameraName = "1mp_arducam_device_10";
-  public static String backBottomReefCameraName = "1mp_arducam_device_8";
+  public static String backTopReefCameraName = "1mp_arducam_device_8";
+  public static String backBottomReefCameraName = "1mp_arducam_device_10";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
@@ -122,5 +122,5 @@ public class VisionConstants {
     public static double CORAL_Y_OFFSET = 0;
   }
 
-  public static double DISTANCE_THRESHOLD = Units.inchesToMeters(60); // TODO: TUNE VALUE FOR COMP
+  public static double DISTANCE_THRESHOLD = Units.inchesToMeters(120); // TODO: TUNE VALUE FOR COMP
 }

@@ -18,7 +18,6 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import java.util.HashSet;
 import java.util.Optional;
-import org.littletonrobotics.junction.Logger;
 
 public class ControllerOrchestrator {
 
