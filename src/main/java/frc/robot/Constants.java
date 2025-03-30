@@ -360,8 +360,8 @@ public final class Constants {
     public static final int followerCanID = 51;
     public static final String followerCanBus = "Takeover";
     public static final boolean followerOpposeLeader = false;
-    public static final int PROX_ONE_CHANNEL = 0; // TODO: real value
-    public static final int PROX_TWO_CHANNEL = 0; // TODO: real value
+    public static final int PROX_ONE_CHANNEL = 1; // TODO: real value
+    public static final int PROX_TWO_CHANNEL = 2; // TODO: real value
     public static final double INTAKE_FACTORY_CORAL_POSITION = 11; // TODO
     public static final double INTAKE_FACTORY_ALGAE_POSITION = 5.4; // TODO
     public static final double INTAKE_FACTORY_HOME_POSITION = 0; // TODO
