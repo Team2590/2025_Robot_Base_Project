@@ -345,9 +345,9 @@ public final class Constants {
     public static final int currentLimitAmps = 120; // TODO
     public static final boolean invert = false; // TODO
     public static final boolean brake = true; // TODO
-    public static final double reduction = 1; // TODO
-    public static final double RUN_VOLTAGE = 12; // TODO
-    public static final double GRAB_ALGAE_VOLTAGE = 12; // TODO
+    public static final double reduction = 1;
+    public static final double INTAKE_VOLTAGE = 12;
+    public static final double OUTTAKE_VOLTAGE = -12;
     public static final int PROX_CHANNEL = 0;
   }
 
@@ -363,14 +363,8 @@ public final class Constants {
     public static final boolean followerOpposeLeader = false;
     public static final int PROX_ONE_CHANNEL = 1; // TODO: real value
     public static final int PROX_TWO_CHANNEL = 2; // TODO: real value
-    public static final double INTAKE_FACTORY_CORAL_POSITION = 11; // TODO
-    public static final double INTAKE_FACTORY_ALGAE_POSITION = 5.4; // TODO
-    public static final double INTAKE_FACTORY_HOME_POSITION = 0; // TODO
-    public static final double INTAKE_FACTORY_HOLDING_ALGAE_POSITION = 0; // TODO
     public static final double INTAKE_CORAL_INTAKE_SPEED = -12; // TODO
     public static final double INTAKE_CORAL_OUTTAKE_SPEED = 11; // TODO
-    public static final double INTAKE_ALGAE_INTAKE_SPEED = -6; // TODO
-    public static final double INTAKE_ALGAE_OUTTAKE_SPEED = 8; // TODO
     public static final double HAS_ALGAE_THRESHOLD_CURRENT = 10; // TODO
   }
 
@@ -378,17 +372,17 @@ public final class Constants {
     public static final double INTAKE_GROUND_CORAL_POS = .41;
     public static final double INTAKE_HANDOFF_POS = 0.018;
     public static final double INTAKE_HOME_POS = .15;
-    public static final double L1_POS = 1.65;
+    public static final double L1_POS = .15;
     public static final int canID = 52;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 40;
     public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 19.16;
-    public static final double kS = 0.40438; // TODO
-    public static final double kV = 0.33074; // TODO
+    public static final double kS = 0;
+    public static final double kV = 0;
     public static final double INTAKE_OPERATIONAL_MIN_POS = -.1;
-    public static final int INTAKE_OPERATIONAL_MAX_POS = 16;
+    public static final double INTAKE_OPERATIONAL_MAX_POS = .41;
   }
 
   public final class ClimbConstantsLeonidas {

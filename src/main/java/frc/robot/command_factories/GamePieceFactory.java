@@ -33,7 +33,7 @@ public class GamePieceFactory {
         .andThen(
             Commands.parallel(
                     EndEffectorFactory.runEndEffectorVoltage(
-                        -Constants.EndEffectorConstantsLeonidas.RUN_VOLTAGE),
+                        -Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE),
                     IntakeFactory.runIntakeVoltage(
                         () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED))
                 .until(() -> RobotState.endEffectorHasGamePiece()))
