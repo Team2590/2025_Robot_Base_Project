@@ -9,6 +9,7 @@ import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.RobotState.ScoringSetpoints;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.util.NemesisMathUtil;
 
@@ -306,18 +307,7 @@ public class ScoringFactory {
   }
 
   public static Command climb() {
-    return new MoveFromHandoffCommand(
-            IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
-            .33,
-            Constants.ArmConstantsLeonidas.ARM_SET_STOW)
-        .andThen(ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION))
-        .andThen(
-            // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS),
-            // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
-            ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION)
-                .onlyWhile(() -> RobotContainer.getClimb().getLimitSwitchValue()))
-        // .andThen(LEDFactory.auraRizz())
-        .withName("Climb");
+    return new ClimbCommand();
   }
 
   public static Command setDefaults() {
