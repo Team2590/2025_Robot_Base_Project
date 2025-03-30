@@ -23,7 +23,6 @@ public class Climb extends SubsystemBase {
   }
 
   public Command runClimb(double voltage) {
-    System.out.println("Running climb");
     return runEnd(() -> io.setVoltage(runVoltage.get()), io::stop);
   }
 

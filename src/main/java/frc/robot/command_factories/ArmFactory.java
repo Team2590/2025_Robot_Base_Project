@@ -25,7 +25,7 @@ public class ArmFactory {
         .onlyIf(
             () ->
                 SafetyChecker.isSafe(
-                    SafetyChecker.MechanismType.ARM_MOVEMENT, wrapArmSetpoint(position)));
+                    SafetyChecker.MechanismType.ARM_MOVEMENT, position));
   }
 
   public static Command setPositionBlocking(double position) {
@@ -35,7 +35,7 @@ public class ArmFactory {
         .onlyIf(
             () ->
                 SafetyChecker.isSafe(
-                    SafetyChecker.MechanismType.ARM_MOVEMENT, wrapArmSetpoint(position)));
+                    SafetyChecker.MechanismType.ARM_MOVEMENT, position));
   }
 
   public static Command setPositionRun(double position) {
@@ -45,7 +45,7 @@ public class ArmFactory {
         .onlyIf(
             () ->
                 SafetyChecker.isSafe(
-                    SafetyChecker.MechanismType.ARM_MOVEMENT, wrapArmSetpoint(position)));
+                    SafetyChecker.MechanismType.ARM_MOVEMENT, position));
   }
 
   //
@@ -77,18 +77,18 @@ public class ArmFactory {
     return RobotContainer.getArm().stop().withName("Stop Arm");
   }
 
-  /*
-   * Helper Function, picks the closest value for the arm setpoint based on if the cancoder is wrapped or not
-   */
-  public static double wrapArmSetpoint(double setpoint) {
+  // /*
+  //  * Helper Function, picks the closest value for the arm setpoint based on if the cancoder is wrapped or not
+  //  */
+  // public static double wrapArmSetpoint(double setpoint) {
 
-    double current = RobotContainer.getArm().getAbsolutePosition();
-    double wrappedSetpoint = setpoint + ArmConstantsLeonidas.ARM_WRAP_POS;
-    if (RobotContainer.getElevator().getRotationCount()
-        >= ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
-      return NemesisMathUtil.selectClosest(setpoint, wrappedSetpoint, current);
-    } else {
-      return setpoint;
-    }
-  }
+  //   double current = RobotContainer.getArm().getAbsolutePosition();
+  //   double wrappedSetpoint = setpoint + ArmConstantsLeonidas.ARM_WRAP_POS;
+  //   if (RobotContainer.getElevator().getRotationCount()
+  //       >= ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
+  //     return NemesisMathUtil.selectClosest(setpoint, wrappedSetpoint, current);
+  //   } else {
+  //     return setpoint;
+  //   }
+  // }
 }

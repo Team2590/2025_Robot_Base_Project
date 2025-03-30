@@ -15,8 +15,8 @@ public class GamePieceFactory {
     return new MoveFromHandoffCommand(
             Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
-            Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)
-        .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae());
+            Constants.ArmConstantsLeonidas.ARM_INTAKE_ALGAE_POS)
+        .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()).withName("Intake Algae Ground");
   }
 
   public static Command intakeCoralGroundAndHandoff() {
@@ -27,17 +27,20 @@ public class GamePieceFactory {
                     () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED),
                 Commands.waitUntil(() -> RobotContainer.getIntake().detectCoral())
                     .andThen(
-                        Commands.parallel(
-                            ElevatorFactory.setPositionBlocking(
-                                Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS),
-                            IntakeFactory.setPositionBlocking(
-                                Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS)))))
+                        IntakeFactory.setPositionBlocking(
+                            Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS))
+                    .andThen(ElevatorFactory.setPositionBlocking(13.9))))
         .andThen(
-            Commands.race(
-                EndEffectorFactory.runEndEffector(),
-                IntakeFactory.runIntakeVoltage(
-                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)))
-        .onlyIf(() -> !RobotState.endEffectorHasGamePiece());
+            Commands.parallel(
+                    EndEffectorFactory.runEndEffectorVoltage(
+                        -Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE),
+                    IntakeFactory.runIntakeVoltage(
+                        () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED))
+                .until(() -> RobotState.endEffectorHasGamePiece()))
+        .andThen(
+            ElevatorFactory.setPositionBlocking(
+                Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS)).withName("Handoff");
+    // .onlyIf(() -> !RobotState.endEffectorHasGamePiece());
   }
 
   public static Command intakeCoralNoHandoff() {
@@ -49,7 +52,7 @@ public class GamePieceFactory {
         .until(() -> RobotContainer.getIntake().hasCoral())
         .andThen(
             IntakeFactory.setPositionBlocking(
-                Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS));
+                Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS)).withName("Intake Coral No Handoff");
   }
 
   public static Command GrabAlgaeL2() {
@@ -58,13 +61,7 @@ public class GamePieceFactory {
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint)
         .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
-        .until(() -> RobotState.endEffectorHasGamePiece())
-        .andThen(
-            Commands.parallel(
-                ElevatorFactory.setPositionBlocking(
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS),
-                ArmFactory.setPositionBlocking(
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS)));
+        .withName("Grab Algae L2");
   }
 
   public static Command GrabAlgaeL3() {
@@ -72,13 +69,6 @@ public class GamePieceFactory {
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint,
             RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint)
-        .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
-        .until(() -> RobotState.endEffectorHasGamePiece())
-        .andThen(
-            Commands.parallel(
-                ElevatorFactory.setPositionBlocking(
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS),
-                ArmFactory.setPositionBlocking(
-                    Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS)));
+        .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()).withName("Grab Algae L3");
   }
 }

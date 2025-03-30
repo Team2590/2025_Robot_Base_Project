@@ -110,7 +110,6 @@ public class ControllerOrchestrator {
     requirements.add(drive);
     return Commands.defer(
         () -> {
-          Logger.recordOutput("SourcePose", getSourceTarget().pose());
           return new ParallelCommandGroup(
               DriveCommands.preciseAlignmentAutoBuilder(
                   drive, () -> getSourceTarget().pose(), getSourceTarget().pose().getRotation()),
