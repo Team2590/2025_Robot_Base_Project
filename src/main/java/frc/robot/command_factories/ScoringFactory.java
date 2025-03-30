@@ -245,7 +245,7 @@ public class ScoringFactory {
 
   public static Command scoreAlgaeBarge() {
     return ElevatorFactory.setPositionRun(Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS)
-        .alongWith(ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_BARGE_POS));
+        .alongWith(ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_BARGE_POS)).withName("Score Algae Barge");
   }
 
   /**
@@ -338,6 +338,6 @@ public class ScoringFactory {
               return false;
             }),
         primeForLevel(Level.L4) // ,
-        );
+        ).withName("Prime L4 while moving");
   }
 }
