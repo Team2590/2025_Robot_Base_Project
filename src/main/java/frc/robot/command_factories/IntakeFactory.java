@@ -2,7 +2,6 @@ package frc.robot.command_factories;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeArmConstantsLeonidas;
-import frc.robot.Constants.IntakeConstantsLeonidas;
 import frc.robot.RobotContainer;
 import java.util.function.DoubleSupplier;
 

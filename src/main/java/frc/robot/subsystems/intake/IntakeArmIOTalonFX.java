@@ -17,7 +17,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 import frc.robot.util.SafetyChecker.MechanismType;
@@ -27,9 +26,9 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
   private LoggedTunableNumber kP = new LoggedTunableNumber("IntakeArm/kP", 3);
   private LoggedTunableNumber kD = new LoggedTunableNumber("IntakeArm/kD", 0);
   private LoggedTunableNumber cruiseVelocity =
-      new LoggedTunableNumber("IntakeArm/cruiseVelocity", 20);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 150);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("IntakeArm/jerk", 5);
+      new LoggedTunableNumber("IntakeArm/cruiseVelocity", 400);
+  private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 200);
+  private LoggedTunableNumber jerk = new LoggedTunableNumber("IntakeArm/jerk", 200);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;

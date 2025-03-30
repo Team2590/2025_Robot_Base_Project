@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
-import frc.robot.command_factories.ArmFactory;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
@@ -37,12 +36,9 @@ import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.IntakeFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
-import frc.robot.commands.ArmDefaultCommand;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ElevatorDefaultCommand;
 import frc.robot.commands.EndEffectorDefaultCommand;
 import frc.robot.commands.FeedForwardCharacterization;
-import frc.robot.commands.IntakeDefaultCommand;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.subsystems.LEDS.NemesisLED;
 import frc.robot.subsystems.arm.Arm;
@@ -385,10 +381,10 @@ public class RobotContainer {
 
   /** Initialize default commands */
   public void initDefaultCommands() {
-    elevator.setDefaultCommand(new ElevatorDefaultCommand());
-    arm.setDefaultCommand(new ArmDefaultCommand());
+    // elevator.setDefaultCommand(new ElevatorDefaultCommand());
+    // arm.setDefaultCommand(new ArmDefaultCommand());
     endEffector.setDefaultCommand(new EndEffectorDefaultCommand());
-    intake.setDefaultCommand(new IntakeDefaultCommand());
+    // intake.setDefaultCommand(new IntakeDefaultCommand());
   }
 
   /**
@@ -538,7 +534,7 @@ public class RobotContainer {
     drive.setDefaultCommand(DriveFactory.joystickDrive());
     rightJoystick
         .trigger()
-        .whileTrue(GamePieceFactory.intakeCoralGroundAndHandoff().andThen(ScoringFactory.stow()));
+        .onTrue(GamePieceFactory.intakeCoralGroundAndHandoff().andThen(ScoringFactory.stow()));
     // leftJoystick.button(2).whileTrue(new MoveFromHandoffCommand());
     leftJoystick
         .button(3)
@@ -550,11 +546,11 @@ public class RobotContainer {
     //     IntakeFactory.setPositionBlocking(
     //         Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS));
     rightJoystick.button(2).whileTrue(GamePieceFactory.intakeAlgaeGround());
-    leftJoystick
-        .trigger()
-        .whileTrue(
-            Commands.sequence(
-                ArmFactory.setPositionBlocking(0.5), ElevatorFactory.setPositionBlocking(10)));
+    // leftJoystick
+    //     .trigger()
+    //     .whileTrue(
+    //         Commands.sequence(
+    //             ArmFactory.setPositionBlocking(0.5), ElevatorFactory.setPositionBlocking(10)));
     // rightJoystick.trigger().whileTrue(new MoveToHandoffCommand());
     // rightJoystick
     //     .trigger()
@@ -566,6 +562,7 @@ public class RobotContainer {
     // drive.setDefaultCommand(DriveFactory.joystickDrive());
     // rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
     // // rightJoystick.trigger().whileTrue(new RunCommand(() -> intake.intakeIO.setVoltage(-8)));
+    leftJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
     leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
     leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
