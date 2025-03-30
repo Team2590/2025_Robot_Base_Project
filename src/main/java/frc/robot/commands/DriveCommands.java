@@ -580,6 +580,7 @@ public class DriveCommands {
                             constraints,
                             driveSubsystem.getChassisSpeeds(),
                             driveSubsystem.getPose(),
+                            // (RobotState.getInstance().getAligningState() == AligningState.ALIGNING_BACK ? preciseTarget.get().transformBy(0,RobotContainer.getDrive().reefYOffsetBack.get(),0 ):preciseTarget.get() ,
                             preciseTarget.get(),
                             (RobotState.getInstance().getAligningState()
                                     == AligningState.ALIGNING_BACK)

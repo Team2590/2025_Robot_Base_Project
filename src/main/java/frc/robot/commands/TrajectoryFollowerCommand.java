@@ -142,6 +142,7 @@ public class TrajectoryFollowerCommand extends Command {
       Poses[i] = poses.get(i);
     }
     Logger.recordOutput("TrajectoryFollower/Poses", Poses);
+    Logger.recordOutput("TrajectoryFollower/finalPose", Poses[Poses.length - 1]);
     timer.reset();
     timer.start();
   }

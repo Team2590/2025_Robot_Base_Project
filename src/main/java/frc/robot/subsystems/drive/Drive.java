@@ -62,10 +62,11 @@ import org.littletonrobotics.junction.Logger;
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
   // PathPlanner config constants
-  public static LoggedTunableNumber reefYOffset = new LoggedTunableNumber("reefYOffset", 0);
-  public static LoggedTunableNumber reefXOffsetLeft = new LoggedTunableNumber("reefXOffsetLeft", 0);
+  public static LoggedTunableNumber reefYOffset = new LoggedTunableNumber("reefYOffset", -1);
+  public static LoggedTunableNumber reefYOffsetBack = new LoggedTunableNumber("reefYOffsetBack", -1 -29);
+  public static LoggedTunableNumber reefXOffsetLeft = new LoggedTunableNumber("reefXOffsetLeft", 1);
   public static LoggedTunableNumber reefXOffsetRight =
-      new LoggedTunableNumber("reefXOffsetRight", 0);
+      new LoggedTunableNumber("reefXOffsetRight", 2);
   private static final double ROBOT_MASS_KG = 74.088;
   private static final double ROBOT_MOI = 6.883;
   private static final double WHEEL_COF = 1.2;
@@ -93,7 +94,7 @@ public class Drive extends SubsystemBase {
 
   public static PIDController thetaController =
       new PIDController(1.5, 0, 0.1); // new TrapezoidProfile.Constraints(2.0, 4.0));
-  public LoggedTunableNumber thetaControllerP = new LoggedTunableNumber("thetaController/kP", 6);
+  public LoggedTunableNumber thetaControllerP = new LoggedTunableNumber("thetaController/kP", 1.5);
   public LoggedTunableNumber thetaControllerD = new LoggedTunableNumber("thetaController/kD", .2);
   public LoggedTunableNumber thetaControllerTolerance =
       new LoggedTunableNumber("thetaController/tolerance", .01);
@@ -104,7 +105,7 @@ public class Drive extends SubsystemBase {
 
   public static PIDController xController =
       new PIDController(1.5, 0, 0.1); // , new TrapezoidProfile.Constraints(2.0, 4.0));
-  public LoggedTunableNumber xControllerP = new LoggedTunableNumber("xController/kP", 8);
+  public LoggedTunableNumber xControllerP = new LoggedTunableNumber("xController/kP", 3);
   public LoggedTunableNumber xControllerD = new LoggedTunableNumber("xController/kD", .0000);
   public LoggedTunableNumber xControllerMaxVel = new LoggedTunableNumber("xController/MaxVel", 1);
   public LoggedTunableNumber xControllerMaxAccel =
@@ -115,7 +116,7 @@ public class Drive extends SubsystemBase {
   public static PIDController yController =
       new PIDController(1.5, 0, 0.1); // new TrapezoidProfile.Constraints(2.0, 4.0));
 
-  public LoggedTunableNumber yControllerP = new LoggedTunableNumber("yController/kP", 8);
+  public LoggedTunableNumber yControllerP = new LoggedTunableNumber("yController/kP", 1);
   public LoggedTunableNumber yControllerD = new LoggedTunableNumber("yController/kD", .0000);
   public LoggedTunableNumber yControllerMaxVel = new LoggedTunableNumber("yController/MaxVel", 1);
   public LoggedTunableNumber yControllerMaxAccel =
