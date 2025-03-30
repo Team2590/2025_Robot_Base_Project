@@ -122,5 +122,5 @@ public class VisionConstants {
     public static double CORAL_Y_OFFSET = 0;
   }
 
-  public static double DISTANCE_THRESHOLD = Units.inchesToMeters(1200); // TODO: TUNE VALUE FOR COMP
+  public static double DISTANCE_THRESHOLD = Units.inchesToMeters(60); // TODO: TUNE VALUE FOR COMP
 }
