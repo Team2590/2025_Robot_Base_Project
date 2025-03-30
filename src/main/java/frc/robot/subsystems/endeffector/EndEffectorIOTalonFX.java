@@ -21,9 +21,6 @@ import frc.robot.util.StickyFaultUtil;
 
 public class EndEffectorIOTalonFX implements EndEffectorIO {
   private final TalonFX leader;
-  private LoggedTunableNumber voltageTunableNumber =
-      new LoggedTunableNumber("EndEffector/voltage", 6);
-  LoggedTunableNumber ff = new LoggedTunableNumber("Arm/Feedforward", 0);
   Slot0Configs slot0;
   TalonFXConfiguration cfg;
   MotionMagicConfigs mm;

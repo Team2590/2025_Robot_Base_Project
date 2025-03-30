@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
+import frc.robot.Constants.IntakeArmConstantsLeonidas;
 import frc.robot.Constants.IntakeConstantsLeonidas;
 import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
@@ -244,7 +245,7 @@ public class ScoringFactory {
 
   public static Command scoreAlgaeBarge() {
     return ElevatorFactory.setPositionRun(Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS)
-        .alongWith(ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_BARGE_POS));
+        .alongWith(ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_BARGE_POS)).withName("Score Algae Barge");
   }
 
   /**
@@ -292,7 +293,7 @@ public class ScoringFactory {
     // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS),
     // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
     return new MoveFromHandoffCommand(
-            IntakeConstantsLeonidas.INTAKE_FACTORY_CORAL_POSITION,
+            IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
             .33,
             Constants.ArmConstantsLeonidas.ARM_SET_STOW)
         // .andThen(LEDFactory.blink())
@@ -337,6 +338,6 @@ public class ScoringFactory {
               return false;
             }),
         primeForLevel(Level.L4) // ,
-        );
+        ).withName("Prime L4 while moving");
   }
 }
