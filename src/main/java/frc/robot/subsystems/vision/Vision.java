@@ -23,7 +23,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
@@ -38,6 +40,7 @@ public class Vision extends SubsystemBase {
   private final CoralDetectionIO coralDetectionIO;
   private final CoralDetectionIOInputsAutoLogged coralDetectionInputs =
       new CoralDetectionIOInputsAutoLogged();
+  private static boolean seesReefTag;
 
   public Vision(VisionConsumer consumer, CoralDetectionIO coralDetectionIOInput, VisionIO... io) {
     this.consumer = consumer;
@@ -93,11 +96,24 @@ public class Vision extends SubsystemBase {
       List<Pose3d> robotPosesRejected = new LinkedList<>();
 
       // Add tag poses
+      boolean hasReefTag = false;
       for (int tagId : inputs[cameraIndex].tagIds) {
         var tagPose = aprilTagLayout.getTagPose(tagId);
         if (tagPose.isPresent()) {
           tagPoses.add(tagPose.get());
         }
+        if (DriverStation.getAlliance().isPresent()){
+          if (DriverStation.getAlliance().get().equals(Alliance.Red) && VisionConstants.FIDUCIAL_IDS_RED.contains(tagId)){
+            hasReefTag = true;
+          } else if (DriverStation.getAlliance().get().equals(Alliance.Blue) && VisionConstants.FIDUCIAL_IDS_BLUE.contains(tagId)){
+            hasReefTag = true;
+          }
+        }
+      }
+      if(hasReefTag){
+        seesReefTag = true;
+      } else {
+        seesReefTag = false;
       }
 
       // Loop over pose observations
@@ -198,5 +214,9 @@ public class Vision extends SubsystemBase {
 
   public Rotation2d getNearestCoralRotation() {
     return coralDetectionInputs.coralRotation;
+  }
+
+  public static boolean seesReefTag(){
+    return seesReefTag;
   }
 }

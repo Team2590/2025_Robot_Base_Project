@@ -8,6 +8,10 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.LEDPattern;
+import frc.robot.RobotContainer;
+import frc.robot.RobotState;
+import frc.robot.command_factories.LEDFactory;
+import frc.robot.subsystems.vision.Vision;
 import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -44,6 +48,13 @@ public class NemesisLED extends SubsystemBase {
     patternEnd.applyTo(viewEnd);
 
     led.setData(buffer);
+
+    if (RobotState.endEffectorHasGamePiece() && Vision.seesReefTag()){
+      LEDFactory.readyDriveToPose();
+    }
+    else{
+      LEDFactory.solid();
+    }
   }
 
   public Command setNemesisFlow(Color color1, Color color2) {

@@ -17,6 +17,12 @@ public class LEDFactory {
             Constants.LEDConstantsLeonidas.startColor, Constants.LEDConstantsLeonidas.endColor);
   }
 
+  public static Command readyDriveToPose() {
+    return RobotContainer.getLed()
+        .setColor(
+            Constants.LEDConstantsLeonidas.readyDriveToPoseColor, Constants.LEDConstantsLeonidas.readyDriveToPoseColor);
+  }
+
   public static Command blink() {
     return RobotContainer.getLed()
         .setBlink(

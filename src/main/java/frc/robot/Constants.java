@@ -402,6 +402,7 @@ public final class Constants {
     public static final int halfWay = 29;
     public static final Color startColor = Color.kRed;
     public static final Color endColor = Color.kWhite;
+    public static final Color readyDriveToPoseColor = Color.kGreen;
     public static final double blinkTime = 0.2;
   }
 
