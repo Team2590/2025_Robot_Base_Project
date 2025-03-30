@@ -586,6 +586,7 @@ public class RobotContainer {
     leftJoystick.button(4).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
 
     // rightJoystick
+
     //     .button(3)
     //     .whileTrue(
     //         Atlas.synchronize(

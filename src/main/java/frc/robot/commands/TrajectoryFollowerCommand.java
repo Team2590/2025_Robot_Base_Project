@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.NemesisHolonomicDriveController;
 import java.util.ArrayList;
@@ -36,11 +37,14 @@ public class TrajectoryFollowerCommand extends Command {
   private Rotation2d endGoal;
   private boolean runOnce = false;
 
-  public final NemesisHolonomicDriveController autonomusController =
+  public NemesisHolonomicDriveController autonomusController =
       new NemesisHolonomicDriveController(
-          new PIDController(8.0, 0, 0.0),
-          new PIDController(8.0, 0, 0.0),
-          new PIDController(6.0, 0, 0.2));
+          new PIDController(RobotContainer.getDrive().xControllerP.get(), 0, 0.0),
+          new PIDController(RobotContainer.getDrive().xControllerP.get(), 0, 0.0),
+          new PIDController(
+              RobotContainer.getDrive().thetaControllerP.get(),
+              0,
+              RobotContainer.getDrive().thetaControllerD.get()));
 
   ProfiledPIDController angleController =
       new ProfiledPIDController(

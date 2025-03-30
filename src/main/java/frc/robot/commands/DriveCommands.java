@@ -439,8 +439,8 @@ public class DriveCommands {
                 reachedInitialPosition[0] = true;
                 // Reset controllers with current position and velocity (0) when transitioning to
                 // phase 2
-                drive.xController.reset(currentPose.getX(), 0);
-                drive.yController.reset(currentPose.getY(), 0);
+                // drive.xController.reset(currentPose.getX(), 0);
+                // drive.yController.reset(currentPose.getY(), 0);
               }
 
               // Calculate angle error (normalized between -π and π)
@@ -491,17 +491,17 @@ public class DriveCommands {
               // Calculate rotation speed using drive's snap controller
               double rotationSpeed = drive.thetaController.calculate(currentAngle, targetAngle);
 
-              if (drive.xController.atGoal()) {
-                finalXSpeed = 0;
-              }
+              // if (drive.xController.atGoal()) {
+              //   finalXSpeed = 0;
+              // }
 
-              if (drive.yController.atGoal()) {
-                finalYSpeed = 0;
-              }
+              // if (drive.yController.atGoal()) {
+              //   finalYSpeed = 0;
+              // }
 
-              if (drive.thetaController.atGoal()) {
-                rotationSpeed = 0;
-              }
+              // if (drive.thetaController.atGoal()) {
+              //   rotationSpeed = 0;
+              // }
 
               // Apply speeds to drive
               drive.runVelocity(
@@ -520,8 +520,8 @@ public class DriveCommands {
                 reachedInitialPosition[0] = false;
               }
               Pose2d currentPose = drive.getPose();
-              drive.xController.reset(currentPose.getX(), 0);
-              drive.yController.reset(currentPose.getY(), 0);
+              // drive.xController.reset(currentPose.getX(), 0);
+              // drive.yController.reset(currentPose.getY(), 0);
             });
   }
 

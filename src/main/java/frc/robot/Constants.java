@@ -306,7 +306,7 @@ public final class Constants {
     public static final double kS = 0.59545; // TODO
     public static final double kV = 0.1609; // TODO
     public static final double ELEVATOR_HANDOFF_POS = 16;
-    public static final double ELEVATOR_PROCESSOR_POS = 1;
+    public static final double ELEVATOR_PROCESSOR_POS = 1 + 1.5;
     public static final double ELEVATOR_STOW_POS = 1;
     public static final double ELEVATOR_L2_POS = 3; // TODO
     public static final double ELEVATOR_L3_POS = 11.35; // TODO

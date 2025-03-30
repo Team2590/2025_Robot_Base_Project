@@ -11,6 +11,7 @@ import frc.robot.RobotState;
 import frc.robot.RobotState.ScoringSetpoints;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.util.NemesisMathUtil;
+import java.util.Set;
 
 /**
  * Factory class for creating complex scoring-related commands.
@@ -82,85 +83,97 @@ public class ScoringFactory {
   }
 
   public static Command score(Level level) {
-    return switch (level) {
-      case L1:
-        yield scoreL1();
-      case L2:
-        yield primeForLevel(level)
-            .andThen(
-                new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    level.getElevatorSetpoint(),
-                    RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint))
-            .alongWith(RobotContainer.getEndEffector().stopEndEffector())
-            .withName("Score " + level.name());
-      case L3:
-        yield primeForLevel(level)
-            .andThen(
-                Commands.parallel(
-                    IntakeFactory.setPositionBlocking(
-                        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
-                    ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
-                    ArmFactory.setPositionBlocking(
-                        RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint)))
-            .alongWith(RobotContainer.getEndEffector().stopEndEffector())
-            .withName("Score " + level.name());
-      case L4:
-        yield primeForLevel(level)
-            .andThen(
-                Commands.parallel(
-                    IntakeFactory.setPositionBlocking(
-                        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
-                    ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
-                    ArmFactory.setPositionBlocking(
-                        RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint)))
-            .alongWith(RobotContainer.getEndEffector().stopEndEffector())
-            .withName("Score " + level.name());
-      default:
-        yield primeForLevel(level)
-            .andThen(EndEffectorFactory.runEndEffectorOuttake())
-            .until(() -> !RobotState.endEffectorHasGamePiece())
-            .alongWith(RobotContainer.getEndEffector().stopEndEffector())
-            .withName("Score " + level.name());
-    };
+    return Commands.defer(
+        () -> {
+          return switch (level) {
+            case L1:
+              yield scoreL1();
+            case L2:
+              yield primeForLevel(level)
+                  .andThen(
+                      new MoveFromHandoffCommand(
+                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                          level.getElevatorSetpoint(),
+                          RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint))
+                  .alongWith(RobotContainer.getEndEffector().stopEndEffector())
+                  .withName("Score " + level.name());
+            case L3:
+              yield primeForLevel(level)
+                  .andThen(
+                      Commands.parallel(
+                          IntakeFactory.setPositionBlocking(
+                              Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
+                          ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
+                          ArmFactory.setPositionBlocking(
+                              RobotState.getInstance()
+                                  .getCoralScoringSetpoints()
+                                  .armPlaceSetpoint)))
+                  .alongWith(RobotContainer.getEndEffector().stopEndEffector())
+                  .withName("Score " + level.name());
+            case L4:
+              yield primeForLevel(level)
+                  .andThen(
+                      Commands.parallel(
+                          IntakeFactory.setPositionBlocking(
+                              Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
+                          ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
+                          ArmFactory.setPositionBlocking(
+                              RobotState.getInstance()
+                                  .getCoralScoringSetpoints()
+                                  .armPlaceSetpoint)))
+                  .alongWith(RobotContainer.getEndEffector().stopEndEffector())
+                  .withName("Score " + level.name());
+            default:
+              yield primeForLevel(level)
+                  .andThen(EndEffectorFactory.runEndEffectorOuttake())
+                  .until(() -> !RobotState.endEffectorHasGamePiece())
+                  .alongWith(RobotContainer.getEndEffector().stopEndEffector())
+                  .withName("Score " + level.name());
+          };
+        },
+        Set.of(RobotContainer.getElevator(), RobotContainer.getArm(), RobotContainer.getIntake()));
   }
 
   public static Command primeForLevel(Level level) {
-    switch (level) {
-      case L4:
-        return Commands.parallel(
-                Commands.print("Priming " + level.name()),
-                IntakeFactory.setPositionBlocking(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
-                ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
-                ArmFactory.setPositionBlocking(
-                    RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
-            .withName("Prime " + level.name());
-      case L3:
-        return Commands.parallel(
-                Commands.print("Priming " + level.name()),
-                new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    level.getElevatorSetpoint(),
-                    RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
-            .withName("Prime " + level.name());
-      case L2:
-        return Commands.parallel(
-            Commands.print("Priming " + level.name()),
-            new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    level.getElevatorSetpoint(),
-                    RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)
-                .withName("Prime " + level.name()));
-      default:
-        return Commands.parallel(
-            Commands.print("Priming " + level.name()),
-            new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    level.getElevatorSetpoint(),
-                    RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)
-                .withName("Prime " + level.name()));
-    }
+    return Commands.defer(
+        () -> {
+          switch (level) {
+            case L4:
+              return Commands.parallel(
+                      Commands.print("Priming " + level.name()),
+                      IntakeFactory.setPositionBlocking(
+                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
+                      ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
+                      ArmFactory.setPositionBlocking(
+                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
+                  .withName("Prime " + level.name());
+            case L3:
+              return Commands.parallel(
+                      Commands.print("Priming " + level.name()),
+                      new MoveFromHandoffCommand(
+                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                          level.getElevatorSetpoint(),
+                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
+                  .withName("Prime " + level.name());
+            case L2:
+              return Commands.parallel(
+                  Commands.print("Priming " + level.name()),
+                  new MoveFromHandoffCommand(
+                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                          level.getElevatorSetpoint(),
+                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)
+                      .withName("Prime " + level.name()));
+            default:
+              return Commands.parallel(
+                  Commands.print("Priming " + level.name()),
+                  new MoveFromHandoffCommand(
+                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                          level.getElevatorSetpoint(),
+                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)
+                      .withName("Prime " + level.name()));
+          }
+        },
+        Set.of(RobotContainer.getElevator(), RobotContainer.getArm(), RobotContainer.getIntake()));
   }
 
   public static Command score(ScoringSetpoints setpoints) {
@@ -247,9 +260,17 @@ public class ScoringFactory {
   // }
 
   public static Command scoreAlgaeBarge() {
-    return ElevatorFactory.setPositionRun(Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS)
-        .alongWith(ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_BARGE_POS))
-        .withName("Score Algae Barge");
+
+    return Commands.defer(
+        () -> {
+          return ElevatorFactory.setPositionRun(
+                  Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS)
+              .alongWith(
+                  ArmFactory.setPositionRun(
+                      RobotState.getInstance().getAlgaeScoringSetpoints(Level.L4).armSetpoint))
+              .withName("Score Algae Barge");
+        },
+        Set.of(RobotContainer.getElevator(), RobotContainer.getArm()));
   }
 
   /**
@@ -262,6 +283,7 @@ public class ScoringFactory {
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             Level.PROCESSOR.getElevatorSetpoint(),
             Level.PROCESSOR.getArmScoringSetpoint())
+        .andThen(EndEffectorFactory.runEndEffectorVoltage(12).withTimeout(.75))
         .withName("Score Processor");
   }
 
