@@ -84,7 +84,8 @@ public class RobotState extends SubsystemBase {
 
   private AtomicReference<AligningState> aligningState =
       new AtomicReference<RobotState.AligningState>(AligningState.NOT_ALIGNING);
-  private AtomicReference<AlgaeScoringState> algaeScoringState = new AtomicReference<RobotState.AlgaeScoringState>(AlgaeScoringState.NOT_SCORING);
+  private AtomicReference<AlgaeScoringState> algaeScoringState =
+      new AtomicReference<RobotState.AlgaeScoringState>(AlgaeScoringState.NOT_SCORING);
   private AligningState previousAligningState = AligningState.NOT_ALIGNING;
   private final Lock updateLock = new ReentrantLock();
 
@@ -166,6 +167,66 @@ public class RobotState extends SubsystemBase {
     } else {
       hasGamePiece = true;
     }
+
+    if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get().equals(Alliance.Blue)) {
+        if (NemesisMathUtil.isPoseApprox(targetPose, Constants.ScoringPoses.BlueProcessor, 0.5)) {
+          if (drive.frontScore(Constants.ScoringPoses.BlueProcessor)) {
+            setAlgaeScoringState(AlgaeScoringState.PROCCESOR_FRONT);
+          } else {
+            setAlgaeScoringState(AlgaeScoringState.PROCCESOR_BACK);
+          }
+        } else if (NemesisMathUtil.isPoseApprox(
+            targetPose, Constants.ScoringPoses.BlueBargeScoring1, 0.5)) {
+          if (drive.frontScore(Constants.ScoringPoses.BlueBargeScoring1)) {
+            setAlgaeScoringState(AlgaeScoringState.BARGE_FRONT);
+          } else {
+            setAlgaeScoringState(AlgaeScoringState.BARGE_BACK);
+          }
+        } else if (NemesisMathUtil.isPoseApprox(
+            targetPose, Constants.ScoringPoses.BlueBargeScoring2, 0.5)) {
+          if (drive.frontScore(Constants.ScoringPoses.BlueBargeScoring2)) {
+            setAlgaeScoringState(AlgaeScoringState.BARGE_FRONT);
+          } else {
+            setAlgaeScoringState(AlgaeScoringState.BARGE_BACK);
+          }
+        } else if (NemesisMathUtil.isPoseApprox(
+            targetPose, Constants.ScoringPoses.BlueBargeScoring3, 0.5)) {
+          if (drive.frontScore(Constants.ScoringPoses.BlueBargeScoring3)) {
+            setAlgaeScoringState(AlgaeScoringState.BARGE_FRONT);
+          } else {
+            setAlgaeScoringState(AlgaeScoringState.BARGE_BACK);
+          }
+        }
+      } else {
+        if (NemesisMathUtil.isPoseApprox(
+            targetPose, Constants.ScoringPoses.RedBargeScoring1, 0.5)) {
+          if (drive.frontScore(Constants.ScoringPoses.RedBargeScoring1)) {
+            setAlgaeScoringState(AlgaeScoringState.BARGE_FRONT);
+          } else {
+            setAlgaeScoringState(AlgaeScoringState.BARGE_BACK);
+          }
+        } else if (NemesisMathUtil.isPoseApprox(
+            targetPose, Constants.ScoringPoses.RedBargeScoring2, 0.5)) {
+          if (drive.frontScore(Constants.ScoringPoses.RedBargeScoring2)) {
+            setAlgaeScoringState(AlgaeScoringState.BARGE_FRONT);
+          } else {
+            setAlgaeScoringState(AlgaeScoringState.BARGE_BACK);
+          }
+        } else if (NemesisMathUtil.isPoseApprox(
+            targetPose, Constants.ScoringPoses.RedBargeScoring3, 0.5)) {
+          if (drive.frontScore(Constants.ScoringPoses.RedBargeScoring3)) {
+            setAlgaeScoringState(AlgaeScoringState.BARGE_FRONT);
+          } else {
+            setAlgaeScoringState(AlgaeScoringState.BARGE_BACK);
+          }
+        } else {
+          setAlgaeScoringState(AlgaeScoringState.NOT_SCORING);
+        }
+      }
+    } else {
+      setAlgaeScoringState(AlgaeScoringState.NOT_SCORING);
+    }
     Logger.recordOutput("RobotState/EndEffectorHasGamePiece", hasGamePiece);
   }
 
@@ -206,8 +267,9 @@ public class RobotState extends SubsystemBase {
     } else {
       setAligningState(AligningState.ALIGNING_BACK);
     }
-    System.out.println(getAligningState().toString());
+    System.out.println(getAlgaeScoringState().toString());
     Logger.recordOutput("RobotState/AligningState", getAligningState());
+    Logger.recordOutput("RobotState/AlgaeScoringState", getAlgaeScoringState());
   }
 
   public void setBargeAlignment() {
@@ -223,12 +285,6 @@ public class RobotState extends SubsystemBase {
       bargePose = new Pose2d(7.72, 1.89, new Rotation2d(0));
     }
 
-    if (drive.frontScore(bargePose)) {
-      setAlgaeScoringState(AlgaeScoringState.BARGE_FRONT);
-    } else {
-      setAlgaeScoringState(AlgaeScoringState.BARGE_BACK);
-    }
-
     // System.out.println(getAligningState().toString());
   }
 
@@ -239,16 +295,10 @@ public class RobotState extends SubsystemBase {
       if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
         processorPose = new Pose2d(6.11, 0.60, new Rotation2d(-90));
       } else {
-        processorPose = new Pose2d(11.59, 7.43, new Rotation2d(90));
+        processorPose = new Pose2d(7.7, 5.9, new Rotation2d(90));
       }
     } else {
       processorPose = new Pose2d(6.11, 0.60, new Rotation2d(-90));
-    }
-
-    if (drive.frontScore(processorPose)) {
-      setAlgaeScoringState(AlgaeScoringState.PROCCESOR_FRONT);
-    } else {
-      setAlgaeScoringState(AlgaeScoringState.PROCCESOR_BACK);
     }
 
     // System.out.println(getAligningState().toString());

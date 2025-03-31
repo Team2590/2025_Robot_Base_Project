@@ -706,4 +706,9 @@ public class DriveCommands {
     RobotState.getInstance().setBargeAlignment();
     return Commands.none();
   }
+
+  public static Command processorAlign() {
+    RobotState.getInstance().setProcessorAlignment();
+    return Commands.none();
+  }
 }
