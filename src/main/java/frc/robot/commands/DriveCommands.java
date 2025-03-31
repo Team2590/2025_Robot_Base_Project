@@ -664,8 +664,8 @@ public class DriveCommands {
   private static LoggedTunableNumber thetaControllerTolerance = new LoggedTunableNumber("driveToPoseStraight/thetaController/tolerance", 0);
   // spotless:on
 
+  // spotless:off
   public static Command driveToPoseStraight(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
-    // spotless:off
     PIDController xSpeedController = new PIDController(xControllerkP.get(), xControllerkI.get(), xControllerkD.get());
     PIDController ySpeedController = new PIDController(yControllerkP.get(), yControllerkI.get(), yControllerkD.get());
     PIDController angularSpeedController = new PIDController(thetaControllerkP.get(), thetaControllerkI.get(), thetaControllerkD.get());
@@ -673,7 +673,6 @@ public class DriveCommands {
     xSpeedController.setTolerance(xControllerTolerance.get());
     xSpeedController.setTolerance(yControllerTolerance.get());
     xSpeedController.setTolerance(thetaControllerTolerance.get());
-    // spotless:on
 
     return Commands.run(
             () -> {
@@ -701,16 +700,13 @@ public class DriveCommands {
               ySpeedController.reset();
               angularSpeedController.reset();
 
-              xSpeedController.setPID(
-                  xControllerkP.get(), xControllerkI.get(), xControllerkD.get());
+              xSpeedController.setPID(xControllerkP.get(), xControllerkI.get(), xControllerkD.get());
               xSpeedController.setTolerance(xControllerTolerance.get());
 
-              ySpeedController.setPID(
-                  yControllerkP.get(), yControllerkI.get(), yControllerkD.get());
+              ySpeedController.setPID(yControllerkP.get(), yControllerkI.get(), yControllerkD.get());
               ySpeedController.setTolerance(yControllerTolerance.get());
 
-              angularSpeedController.setPID(
-                  thetaControllerkP.get(), thetaControllerkI.get(), thetaControllerkD.get());
+              angularSpeedController.setPID(thetaControllerkP.get(), thetaControllerkI.get(), thetaControllerkD.get());
               angularSpeedController.setTolerance(thetaControllerTolerance.get());
             })
         .finallyDo(
@@ -720,6 +716,7 @@ public class DriveCommands {
               angularSpeedController.close();
             });
   }
+  // spotless:on
 
   public static Command joystickDriveToCoral(
       Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
