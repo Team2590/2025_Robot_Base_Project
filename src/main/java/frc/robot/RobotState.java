@@ -59,7 +59,7 @@ public class RobotState extends SubsystemBase {
     ALIGNING_BACK
   }
 
-  public class ScoringSetpoints {
+  public static class ScoringSetpoints {
     public double elevatorSetpoint;
     public double armSetpoint;
     public double armPlaceSetpoint;

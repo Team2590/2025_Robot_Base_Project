@@ -563,10 +563,20 @@ public class RobotContainer {
     rightJoystick.povDown().whileTrue(ScoringFactory.scoreProcessor());
     rightJoystick.button(3).whileTrue(ScoringFactory.score(Level.L1));
     rightJoystick.button(4).whileTrue(GamePieceFactory.intakeCoralNoHandoff());
-
+    // rightJoystick.button(11).onTrue(ScoringFactory.prepClimb());
     rightJoystick.button(16).onTrue(ScoringFactory.climb());
 
     leftJoystick.button(4).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+
+    // rightJoystick
+
+    //     .button(3)
+    //     .whileTrue(
+    //         Atlas.synchronize(
+    //             intake.getArmTunableNumber(), elevator.getTunableNumber(),
+    // arm.getTunableNumber()));
+    // rightJoystick.povRight().whileTrue(GamePieceFactory.GrabAlgaeL3());
+    // rightJoystick.povLeft().whileTrue(GamePieceFactory.GrabAlgaeL3());
   }
 
   /**
