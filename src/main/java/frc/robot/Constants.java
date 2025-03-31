@@ -286,7 +286,7 @@ public final class Constants {
     public static final double ARM_BARGE_POS = .175; // TODO: find real value
     // public static final double ARM_SCORING_POS = .7; // TODO: find real value
     public static final double ARM_WRAP_POS = 0.794;
-    public static final double ARM_HANDOFF_POS = 0.757;
+    public static final double ARM_HANDOFF_POS = 0.75;
     public static final double ARM_THRESHOLD_POS = .63;
   }
 
@@ -310,7 +310,7 @@ public final class Constants {
     public static final double ELEVATOR_STOW_POS = 1;
     public static final double ELEVATOR_L2_POS = 3; // TODO
     public static final double ELEVATOR_L3_POS = 11.35; // TODO
-    public static final double ELEVATOR_L4_POS = 23.5; // TODO
+    public static final double ELEVATOR_L4_POS = 24.5; // TODO
     public static final double ELEVATOR_DEALGAE_L2 = 12; // TODO
     public static final double ELEVATOR_DEALGAE_L3 = 19.76; // TODO
     public static final double ELEVATOR_SOURCE_POS = 5.15; // TODO
