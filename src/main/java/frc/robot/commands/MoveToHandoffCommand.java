@@ -3,39 +3,80 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.NemesisMathUtil;
 
 // spotless:off
+
 public class MoveToHandoffCommand extends Command {
-  private double armSetpoint;
-  private double elevatorSetpoint;
-  private double intakeArmSetpoint;
+  private final double targetArmSetpoint;
+  private final double elevatorSetpoint;
+  private final double intakeArmSetpoint;
+  private final double armStowSetpoint;
+
+  LoggedTunableNumber minElevatorHeight = new LoggedTunableNumber("Handoff/MinElevatorHeight", Constants.ElevatorConstantsLeonidas.MIN_ELEVATOR_HEIGHT_ARM_PARALLEL);
 
   public MoveToHandoffCommand() {
-    setName("Move to handoff");
-    this.armSetpoint = Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS;
+    setName("Move to Handoff");
+
+    this.targetArmSetpoint = Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS;
     this.elevatorSetpoint = Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_TRANSITION_POS;
     this.intakeArmSetpoint = Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS;
+    this.armStowSetpoint = Constants.ArmConstantsLeonidas.ARM_SET_STOW;
+
+    // Declare subsystem requirements
     addRequirements(RobotContainer.getElevator(), RobotContainer.getArm(), RobotContainer.getIntake());
   }
 
   @Override
+  public void initialize() {
+  }
+
+  @Override
   public void execute() {
-    if (RobotContainer.getElevator().getRotationCount() < Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS && RobotContainer.getArm().getAbsolutePosition() > Constants.ArmConstantsLeonidas.ARM_VERTICAL_POS + 0.05) {
-      RobotContainer.getElevator().getIO().setPosition(elevatorSetpoint);
+    RobotContainer.getElevator().setPosition(this.elevatorSetpoint);
+
+    if (!RobotContainer.getIntake().hasCoral()) {
+      RobotContainer.getIntake().getArmIO().setPosition(this.intakeArmSetpoint);
+    }
+
+    double currentElevatorPos = RobotContainer.getElevator().getRotationCount();
+    double elevatorThreshold = minElevatorHeight.get();
+
+    if (currentElevatorPos < elevatorThreshold) {
+      RobotContainer.getArm().getIO().setPosition(this.armStowSetpoint);
     } else {
-      RobotContainer.getIntake().getArmIO().setPosition(intakeArmSetpoint);
-      RobotContainer.getElevator().getIO().setPosition(elevatorSetpoint);
-      RobotContainer.getArm().getIO().setPosition(armSetpoint);
+      RobotContainer.getArm().getIO().setPosition(this.targetArmSetpoint);
     }
   }
 
   @Override
   public boolean isFinished() {
-    return
-      NemesisMathUtil.isApprox(RobotContainer.getElevator().getRotationCount(), 0.05, elevatorSetpoint) &&
-      NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), 0.01, armSetpoint) &&
-      NemesisMathUtil.isApprox(RobotContainer.getIntake().getArmRotationCount(), 0.05, intakeArmSetpoint);       
+    boolean intakeAtSetpoint;
+    if (RobotContainer.getIntake().hasCoral()) {
+      intakeAtSetpoint = true;
+    } else {
+      intakeAtSetpoint = NemesisMathUtil.isApprox(
+          RobotContainer.getIntake().getArmRotationCount(),
+          0.05,
+          this.intakeArmSetpoint);
+    }
+
+    boolean elevatorAtSetpoint = NemesisMathUtil.isApprox(
+        RobotContainer.getElevator().getRotationCount(),
+        0.05,
+        this.elevatorSetpoint);
+
+    boolean armAtSetpoint = NemesisMathUtil.isApprox(
+        RobotContainer.getArm().getAbsolutePosition(),
+        0.03,
+        this.targetArmSetpoint);
+
+    return elevatorAtSetpoint && armAtSetpoint && intakeAtSetpoint;
   }
+
+  @Override
+    public void end(boolean interrupted) {
+    }
 }
 // spotless:on
