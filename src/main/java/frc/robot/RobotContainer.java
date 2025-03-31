@@ -480,6 +480,8 @@ public class RobotContainer {
     drive.setDefaultCommand(DriveFactory.joystickDrive());
     // climb buttons
     // Causing NullPointerException on startup in SIM
+    rightJoystick.button(11).whileTrue(ScoringFactory.deployMechanism());
+    rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
 
     // Scoring buttons
@@ -501,11 +503,11 @@ public class RobotContainer {
 
     // Controller App Buttons
     rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
-    rightJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralNoHandoff());
+    rightJoystick.button(3).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
 
     leftJoystick.button(4).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
     // Intake Buttons
-    leftJoystick.button(3).onTrue(ScoringFactory.score(Level.L1));
+    leftJoystick.button(3).onTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
     rightJoystick
         .trigger()
         .and(rightJoystick.button(4).negate())
@@ -591,13 +593,6 @@ public class RobotContainer {
     rightJoystick.povLeft().whileTrue(GamePieceFactory.GrabAlgaeL3());
     rightJoystick.povUp().whileTrue(ScoringFactory.scoreAlgaeBarge());
     rightJoystick.povDown().whileTrue(ScoringFactory.scoreProcessor());
-    rightJoystick.button(3).whileTrue(ScoringFactory.score(Level.L1));
-    rightJoystick.button(4).whileTrue(GamePieceFactory.intakeCoralNoHandoff());
-    // rightJoystick.button(11).onTrue(ScoringFactory.prepClimb());
-    rightJoystick.button(16).onTrue(ScoringFactory.climb());
-
-    leftJoystick.button(4).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
-
     // rightJoystick
     //     .button(3)
     //     .whileTrue(

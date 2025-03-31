@@ -91,7 +91,7 @@ public class ScoringFactory {
                 new MoveFromHandoffCommand(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     level.getElevatorSetpoint(),
-                    RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint))
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST))
             .alongWith(RobotContainer.getEndEffector().stopEndEffector())
             .withName("Score " + level.name());
       case L3:
@@ -102,7 +102,7 @@ public class ScoringFactory {
                         Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
                     ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
                     ArmFactory.setPositionBlocking(
-                        RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint)))
+                        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L3_POST)))
             .alongWith(RobotContainer.getEndEffector().stopEndEffector())
             .withName("Score " + level.name());
       case L4:
@@ -113,7 +113,7 @@ public class ScoringFactory {
                         Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
                     ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
                     ArmFactory.setPositionBlocking(
-                        RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint)))
+                        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L4_POST)))
             .alongWith(RobotContainer.getEndEffector().stopEndEffector())
             .withName("Score " + level.name());
       default:
@@ -134,7 +134,7 @@ public class ScoringFactory {
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
                 ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
                 ArmFactory.setPositionBlocking(
-                    RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
             .withName("Prime " + level.name());
       case L3:
         return Commands.parallel(
@@ -142,7 +142,7 @@ public class ScoringFactory {
                 new MoveFromHandoffCommand(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     level.getElevatorSetpoint(),
-                    RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE))
             .withName("Prime " + level.name());
       case L2:
         return Commands.parallel(
@@ -150,7 +150,7 @@ public class ScoringFactory {
             new MoveFromHandoffCommand(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     level.getElevatorSetpoint(),
-                    RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE)
                 .withName("Prime " + level.name()));
       default:
         return Commands.parallel(
@@ -158,7 +158,7 @@ public class ScoringFactory {
             new MoveFromHandoffCommand(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     level.getElevatorSetpoint(),
-                    RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)
+                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE)
                 .withName("Prime " + level.name()));
     }
   }
@@ -305,17 +305,15 @@ public class ScoringFactory {
     // , ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)
   }
 
+  public static Command deployMechanism() {
+    return ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION);
+  }
+
   public static Command climb() {
-    return new MoveFromHandoffCommand(
-            IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
-            .33,
-            Constants.ArmConstantsLeonidas.ARM_SET_STOW)
-        .andThen(ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION))
-        .andThen(
+    return Commands.parallel(
             // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS),
             // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
-            ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION)
-                .onlyWhile(() -> RobotContainer.getClimb().getLimitSwitchValue()))
+            ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION))
         // .andThen(LEDFactory.auraRizz())
         .withName("Climb");
   }
