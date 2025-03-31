@@ -310,7 +310,7 @@ public final class Constants {
     public static final double ELEVATOR_STOW_POS = 1;
     public static final double ELEVATOR_L2_POS = 3; // TODO
     public static final double ELEVATOR_L3_POS = 11.35; // TODO
-    public static final double ELEVATOR_L4_POS = 24.5; // TODO
+    public static final double ELEVATOR_L4_POS = 25.0; // TODO
     public static final double ELEVATOR_DEALGAE_L2 = 12; // TODO
     public static final double ELEVATOR_DEALGAE_L3 = 19.76; // TODO
     public static final double ELEVATOR_SOURCE_POS = 5.15; // TODO
