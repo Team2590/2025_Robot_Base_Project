@@ -295,8 +295,8 @@ public class FieldConstants {
     for (int face = 0; face < 6; face++) {
       Pose2d poseDirection = new Pose2d(center, Rotation2d.fromDegrees(180 - (60 * face)));
       double adjustY = Units.inchesToMeters(52.738 + Drive.reefYOffset.get());
-      double adjustXLeft = Units.inchesToMeters(6.469 + Drive.reefXOffsetLeft.get());
-      double adjustXRight = Units.inchesToMeters(6.469 + Drive.reefXOffsetRight.get());
+      double adjustXLeft = Units.inchesToMeters(6.469 +  RobotState.getInstance().getReefOffsetLeft());
+      double adjustXRight = Units.inchesToMeters(6.469 +  RobotState.getInstance().getReefOffsetRight());
 
       System.out.println("updating offsets to " + adjustY);
 
