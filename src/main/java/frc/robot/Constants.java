@@ -318,6 +318,7 @@ public final class Constants {
     public static final double ELEVATOR_BARGE_POS = 27.5; // TODO: find real value
     public static final double ELEVATOR_INTAKE_ALGAE_POS = 0; // TODO find real value
     public static final double ELEVATOR_HANDOFF_TRANSITION_POS = ELEVATOR_HANDOFF_POS + 1.5;
+    public static final double MIN_ELEVATOR_HEIGHT_ARM_PARALLEL = 10;
   }
 
   /*   public final class ElevatorConstantsLeonidas {
