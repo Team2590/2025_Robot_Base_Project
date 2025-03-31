@@ -179,8 +179,9 @@ public class ScoringFactory {
 
   public static Command score(ScoringSetpoints setpoints) {
     return primeForLevel(setpoints)
-        .andThen(EndEffectorFactory.runEndEffectorOuttake())
-        .until(() -> !RobotState.endEffectorHasGamePiece())
+        .andThen(
+            ArmFactory.setPositionBlocking(
+                Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST))
         .withName(
             "Score with Elevator setpoint "
                 + setpoints.elevatorSetpoint

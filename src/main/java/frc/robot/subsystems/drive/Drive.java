@@ -63,8 +63,10 @@ public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
   // PathPlanner config constants
   public static LoggedTunableNumber reefYOffset = new LoggedTunableNumber("reefYOffset", -1);
-  public static LoggedTunableNumber reefYOffsetBack = new LoggedTunableNumber("reefYOffsetBack", -1 -29);
-  public static LoggedTunableNumber reefXOffsetLeft = new LoggedTunableNumber("reefXOffsetLeft", 1);
+  public static LoggedTunableNumber reefYOffsetBack =
+      new LoggedTunableNumber("reefYOffsetBack", -1 - 29);
+  public static LoggedTunableNumber reefXOffsetLeft =
+      new LoggedTunableNumber("reefXOffsetLeft", -2);
   public static LoggedTunableNumber reefXOffsetRight =
       new LoggedTunableNumber("reefXOffsetRight", 2);
   private static final double ROBOT_MASS_KG = 74.088;
