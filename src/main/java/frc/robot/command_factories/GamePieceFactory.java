@@ -23,7 +23,7 @@ public class GamePieceFactory {
   }
 
   public static Command intakeCoralGroundAndHandoff() {
-    return Commands.parallel(
+    return Commands.sequence(
             new MoveToHandoffCommand(),
             IntakeFactory.runIntake(
                 () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED))

@@ -14,7 +14,7 @@ public class MoveToHandoffCommand extends Command {
   private final double intakeArmSetpoint;
   private final double armStowSetpoint;
 
-  LoggedTunableNumber minElevatorHeight = new LoggedTunableNumber("DriveToPose/DrivekP", Constants.ElevatorConstantsLeonidas.MIN_ELEVATOR_HEIGHT_ARM_PARALLEL);
+  LoggedTunableNumber minElevatorHeight = new LoggedTunableNumber("Handoff/MinElevatorHeight", Constants.ElevatorConstantsLeonidas.MIN_ELEVATOR_HEIGHT_ARM_PARALLEL);
 
   public MoveToHandoffCommand() {
     setName("Move to Handoff");
