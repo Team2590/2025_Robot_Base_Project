@@ -46,6 +46,7 @@ import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.RobotState.AligningState;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.AlignmentLogger;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashSet;
@@ -55,6 +56,7 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
+import frc.robot.util.AlignmentLogger;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -560,6 +562,89 @@ public class DriveCommands {
         },
         Set.of(driveSubsystem));
   }
+
+ 
+  /**
+   * Fine-tunes robot position and rotation using PID controllers. This is designed to be used after
+   * path following to achieve precise alignment.
+   */
+  public static Command pidAlignment(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
+    // Create PID controllers with appropriate gains
+    PIDController xController = new PIDController(3.0, 0.0, 0.1);
+    PIDController yController = new PIDController(3.0, 0.0, 0.1);
+    PIDController thetaController = new PIDController(4.0, 0.0, 0.2);
+
+    // Enable continuous input for rotation controller
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    // Set tolerances for position and rotation
+    xController.setTolerance(0.01); // 1 cm
+    yController.setTolerance(0.01); // 1 cm
+    thetaController.setTolerance(0.02); // ~1 degree
+
+    return Commands.run(
+            () -> {
+              // Get current pose and target pose
+              Pose2d currentPose = drive.getPose();
+
+              if (targetPoseSupplier.get() == null) {
+                drive.runVelocity(new ChassisSpeeds());
+                return;
+              }
+
+              // Create an internal target pose rotated 180 degrees
+              /*               Pose2d internalTargetPose =
+              new Pose2d(
+                  targetPoseSupplier.get().getTranslation(),
+                  targetPoseSupplier.get().getRotation().plus(new Rotation2d(Math.PI)));
+                   */
+
+              // Calculate PID outputs using the rotated internal target
+              double xSpeed =
+                  xController.calculate(currentPose.getX(), targetPoseSupplier.get().getX());
+              double ySpeed =
+                  yController.calculate(currentPose.getY(), targetPoseSupplier.get().getY());
+              double rotSpeed =
+                  thetaController.calculate(
+                      currentPose.getRotation().getRadians(),
+                      targetPoseSupplier.get().getRotation().getRadians());
+
+              // Limit speeds for fine adjustment
+              double maxLinearSpeed = 1.0; // m/s
+              double maxRotSpeed = 2.0; // rad/s
+
+              xSpeed = MathUtil.clamp(xSpeed, -maxLinearSpeed, maxLinearSpeed);
+              ySpeed = MathUtil.clamp(ySpeed, -maxLinearSpeed, maxLinearSpeed);
+              rotSpeed = MathUtil.clamp(rotSpeed, -maxRotSpeed, maxRotSpeed);
+
+              // Use AlignmentLogger for logging
+              AlignmentLogger.logAlignmentData(
+                  "PID Alignment",
+                  currentPose,
+                  targetPoseSupplier.get(),
+                  "Final Alignment");
+
+              // Apply field-relative speeds
+              drive.runVelocity(
+                  ChassisSpeeds.fromFieldRelativeSpeeds(
+                      xSpeed, ySpeed, rotSpeed, currentPose.getRotation()));
+            },
+            drive)
+        .until(
+            () -> AlignmentLogger.checkAlignmentTolerances(
+                drive.getPose(), 
+                targetPoseSupplier.get()).fullyAligned())
+        .finallyDo(
+            (interrupted) -> {
+              // Stop the drive when done
+              drive.runVelocity(new ChassisSpeeds());
+
+              // Clean up controllers
+              xController.close();
+              yController.close();
+              thetaController.close();
+            });
+  } 
 
   public static Command preciseAlignment(
       Drive driveSubsystem,
