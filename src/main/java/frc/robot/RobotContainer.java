@@ -543,33 +543,16 @@ public class RobotContainer {
     rightJoystick
         .trigger()
         .onTrue(GamePieceFactory.intakeCoralGroundAndHandoff().andThen(ScoringFactory.stow()));
-    // leftJoystick.button(2).whileTrue(new MoveFromHandoffCommand());
+
     leftJoystick
         .button(3)
         .whileTrue(
             IntakeFactory.setPositionBlocking(
                 Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS));
     leftJoystick.button(2).whileTrue(ScoringFactory.stow());
-    // .whileTrue(
-    //     IntakeFactory.setPositionBlocking(
-    //         Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS));
+
     rightJoystick.button(2).whileTrue(GamePieceFactory.intakeAlgaeGround());
-    // leftJoystick
-    //     .trigger()
-    //     .whileTrue(
-    //         Commands.sequence(
-    //             ArmFactory.setPositionBlocking(0.5), ElevatorFactory.setPositionBlocking(10)));
-    // rightJoystick.trigger().whileTrue(new MoveToHandoffCommand());
-    // rightJoystick
-    //     .trigger()
-    //     .and(leftJoystick.button(4).negate())
-    //     .whileTrue(Commands.parallel(null)
-    //         Atlas.synchronize(
-    //             intake.getArmTunableNumber(), elevator.getTunableNumber(),
-    // arm.getTunableNumber()));
-    // drive.setDefaultCommand(DriveFactory.joystickDrive());
-    // rightJoystick.trigger().whileTrue(GamePieceFactory.intakeCoralGroundandHandoff());
-    // // rightJoystick.trigger().whileTrue(new RunCommand(() -> intake.intakeIO.setVoltage(-8)));
+
     leftJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
     leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));

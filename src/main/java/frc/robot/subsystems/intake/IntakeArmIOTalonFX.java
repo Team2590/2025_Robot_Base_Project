@@ -26,9 +26,9 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
   private LoggedTunableNumber kP = new LoggedTunableNumber("IntakeArm/kP", 3);
   private LoggedTunableNumber kD = new LoggedTunableNumber("IntakeArm/kD", 0);
   private LoggedTunableNumber cruiseVelocity =
-      new LoggedTunableNumber("IntakeArm/cruiseVelocity", 400);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 200);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("IntakeArm/jerk", 200);
+      new LoggedTunableNumber("IntakeArm/cruiseVelocity", 500);
+  private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 100);
+  private LoggedTunableNumber jerk = new LoggedTunableNumber("IntakeArm/jerk", 275);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
