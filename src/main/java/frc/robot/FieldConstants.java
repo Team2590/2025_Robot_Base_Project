@@ -342,13 +342,13 @@ public class FieldConstants {
 
     if (Drive.reefXOffsetLeft.hasChanged(0)
         || Drive.reefXOffsetRight.hasChanged(1)
-        || Drive.reefYOffset.hasChanged(2) || RobotState.getInstance().getAligningState()!=AligningState.NOT_ALIGNING){
-    RedReefPoses.reef = getReefPoses(true);
-    BlueReefPoses.reef = getReefPoses(false);
-    RED_REEF_POSES = buildRedReefPosesMap();
-    BLUE_REEF_POSES = buildBlueReefPosesMap();
-
-     }
+        || Drive.reefYOffset.hasChanged(2)
+        || RobotState.getInstance().getAligningState() != AligningState.NOT_ALIGNING) {
+      RedReefPoses.reef = getReefPoses(true);
+      BlueReefPoses.reef = getReefPoses(false);
+      RED_REEF_POSES = buildRedReefPosesMap();
+      BLUE_REEF_POSES = buildBlueReefPosesMap();
+    }
 
     logBlueReefPoses();
   }
