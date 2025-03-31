@@ -409,8 +409,8 @@ public class RobotContainer {
     if (Constants.currentMode == Constants.Mode.SIM) {
       configureButtonBindingsSimulation();
     } else {
-      //   configureButtonBindings();
-      configureButtonBindingsTuning();
+      configureButtonBindings();
+      //   configureButtonBindingsTuning();
     }
   }
 
@@ -486,9 +486,10 @@ public class RobotContainer {
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
     leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
     leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
-    rightJoystick.povDown().whileTrue(ScoringFactory.score(Level.L1));
+    // rightJoystick.povDown().whileTrue(ScoringFactory.score(Level.L1));
     leftJoystick.button(2).whileTrue(ScoringFactory.stow());
     rightJoystick.button(4).and(leftJoystick.trigger()).whileTrue(ScoringFactory.scoreProcessor());
+    // change to follow thru
     leftJoystick
         .trigger()
         .and(rightJoystick.button(4).negate())
@@ -508,9 +509,18 @@ public class RobotContainer {
     rightJoystick
         .trigger()
         .and(rightJoystick.button(4).negate())
-        .whileTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
+        .onTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
 
-    rightJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorManual());
+    rightJoystick
+        .trigger()
+        .and(rightJoystick.button(4))
+        .whileTrue(GamePieceFactory.intakeAlgaeGround());
+
+    rightJoystick
+        .povUp()
+        .whileTrue(
+            EndEffectorFactory.runEndEffectorVoltage(
+                Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE));
 
     // Manual Elevator Control
     rightJoystick.button(14).whileTrue(ElevatorFactory.manualDown());
@@ -528,6 +538,15 @@ public class RobotContainer {
                 .ignoringDisable(true));
     rightJoystick.button(8).onTrue(elevator.resetRotationCountCommand());
 
+    // LEFT POV UP SCORE BARGE
+    leftJoystick.povUp().whileTrue(ScoringFactory.scoreAlgaeBarge());
+    // RIGHT POV DOWN OUTTAKE ITNAKE (SPIT)
+    rightJoystick
+        .povDown()
+        .whileTrue(
+            IntakeFactory.runIntakeVoltage(
+                () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED));
+
     /* for tuning setpoints */
     // rightJoystick
     //     .trigger()
@@ -536,6 +555,7 @@ public class RobotContainer {
     //         Atlas.synchronize(
     //             intake.getArmTunableNumber(), elevator.getTunableNumber(),
     // arm.getTunableNumber()));
+
   }
 
   private void configureButtonBindingsTuning() {
