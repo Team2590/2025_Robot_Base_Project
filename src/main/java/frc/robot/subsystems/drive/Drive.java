@@ -20,6 +20,7 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
@@ -116,6 +117,31 @@ public class Drive extends SubsystemBase {
   LoggedTunableNumber yControllerMaxVel = new LoggedTunableNumber("yController/MaxVel", 1);
   LoggedTunableNumber yControllerMaxAccel = new LoggedTunableNumber("yController/MaxAccel", 1);
   LoggedTunableNumber yControllerTolerance = new LoggedTunableNumber("yController/tolerance", .01);
+
+  public static LoggedTunableNumber maxVelocityMPSScaler =
+      new LoggedTunableNumber("DriveToPoseConstaints/maxVelocityMPSScaler", 1);
+  public static LoggedTunableNumber maxAccelerationMPSSqScaler =
+      new LoggedTunableNumber("DriveToPoseConstaints/maxAccelerationMPSSqScaler", 1);
+  public static LoggedTunableNumber maxAngularVelocityRadPerSecScaler =
+      new LoggedTunableNumber("DriveToPoseConstaints/maxAngularVelocityRadPerSecScaler", 1);
+  public static LoggedTunableNumber maxAngularAccelerationRadPerSecSqScaler =
+      new LoggedTunableNumber("DriveToPoseConstaints/maxAngularAccelerationRadPerSecSqScaler", 1);
+
+  public static PathConstraints fastpathConstraints =
+      new PathConstraints(
+          Constants.DriveToPoseConstraints.maxVelocityMPS,
+          Constants.DriveToPoseConstraints.maxAccelerationMPSSq,
+          Constants.DriveToPoseConstraints.maxAngularVelocityRadPerSec,
+          Constants.DriveToPoseConstraints.maxAngularAccelerationRadPerSecSq);
+
+  public static PathConstraints slowpathConstraints =
+      new PathConstraints(
+          Constants.DriveToPoseConstraints.maxVelocityMPS * maxVelocityMPSScaler.get(),
+          Constants.DriveToPoseConstraints.maxAccelerationMPSSq * maxAccelerationMPSSqScaler.get(),
+          Constants.DriveToPoseConstraints.maxAngularVelocityRadPerSec
+              * maxAngularVelocityRadPerSecScaler.get(),
+          Constants.DriveToPoseConstraints.maxAngularAccelerationRadPerSecSq
+              * maxAngularAccelerationRadPerSecSqScaler.get());
 
   public Drive(
       GyroIO gyroIO,
@@ -448,6 +474,20 @@ public class Drive extends SubsystemBase {
       xController.setConstraints(
           new TrapezoidProfile.Constraints(xControllerMaxVel.get(), xControllerMaxAccel.get()));
     }
+
+    updatePathConstraintsTunableNumbers();
+  }
+
+  public static void updatePathConstraintsTunableNumbers() {
+    slowpathConstraints =
+        new PathConstraints(
+            Constants.DriveToPoseConstraints.maxVelocityMPS * maxVelocityMPSScaler.get(),
+            Constants.DriveToPoseConstraints.maxAccelerationMPSSq
+                * maxAccelerationMPSSqScaler.get(),
+            Constants.DriveToPoseConstraints.maxAngularVelocityRadPerSec
+                * maxAngularVelocityRadPerSecScaler.get(),
+            Constants.DriveToPoseConstraints.maxAngularAccelerationRadPerSecSq
+                * maxAngularAccelerationRadPerSecSqScaler.get());
   }
 
   public Pose2d flipScoringSide(Pose2d targetPose) {
