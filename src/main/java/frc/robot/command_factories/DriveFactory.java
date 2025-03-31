@@ -1,5 +1,7 @@
 package frc.robot.command_factories;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
@@ -38,5 +40,18 @@ public class DriveFactory {
 
     // RobotContainer.factoryCommands.add("Drive To Pose");
     return DriveCommands.driveToPose(targetPose).withName("Drive To Pose");
+  }
+
+  /**
+   * Creates a command to drive to a specific pose.
+   *
+   * @param container The RobotContainer instance
+   * @param targetPose The target pose to drive to
+   * @return Command to drive to pose
+   */
+  public static Command driveToPose(Supplier<Pose2d> targetPose) {
+
+    // RobotContainer.factoryCommands.add("Drive To Pose");
+    return DriveCommands.driveToPose(targetPose.get()).withName("Drive To Pose");
   }
 }

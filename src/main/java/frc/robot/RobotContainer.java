@@ -37,6 +37,7 @@ import frc.robot.command_factories.IntakeFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.commands.EndEffectorDefaultCommand;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.generated.TunerConstantsWrapper;
@@ -556,6 +557,7 @@ public class RobotContainer {
     //     IntakeFactory.setPositionBlocking(
     //         Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS));
     rightJoystick.button(2).whileTrue(GamePieceFactory.intakeAlgaeGround());
+    rightJoystick.button(4).whileTrue(DriveFactory.driveToPose(() -> vision.getNearestCoralPose()));
     // leftJoystick
     //     .trigger()
     //     .whileTrue(
