@@ -278,10 +278,10 @@ public final class Constants {
     public static final double ARM_SCORING_CORAL_POS_L3_PRE = 0.15;
     public static final double ARM_SCORING_CORAL_POSE_L3_POST = 0;
     public static final double ARM_RELEASE_DIFF = 0.078;
-    public static final double ARM_SCORING_CORAL_POS_L4 = 0.12; // TODO
+    public static final double ARM_SCORING_CORAL_POS_L4 = ARM_SET_STOW; // TODO
     public static final double ARM_SCORING_CORAL_POSE_L4_POST = 0;
     public static final double ARM_INTAKE_SOURCE_POSITION = .18; // TODO
-    public static final double ARM_DEALGAE_POSITION = 0;
+    public static final double ARM_DEALGAE_POSITION = 0.012;
     public static final double ARM_INTAKE_ALGAE_POS = .53;
     public static final double ARM_BARGE_POS = .175; // TODO: find real value
     // public static final double ARM_SCORING_POS = .7; // TODO: find real value
