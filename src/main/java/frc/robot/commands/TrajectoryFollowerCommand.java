@@ -39,6 +39,10 @@ public class TrajectoryFollowerCommand extends Command {
   private static final double X_ALIGNMENT_TOLERANCE = 0.05; // meters
   private static final double Y_ALIGNMENT_TOLERANCE = 0.05; // meters
   private static final double ROTATION_ALIGNMENT_TOLERANCE = 0.05; // radians
+  private static final double ALIGNMENT_STABLE_TIME = 0.1; // seconds
+  private double lastAlignmentTime = 0;
+  private boolean wasAligned = false;
+  private Pose2d finalTargetPose;
 
   public final NemesisHolonomicDriveController autonomusController =
       new NemesisHolonomicDriveController(
@@ -126,6 +130,13 @@ public class TrajectoryFollowerCommand extends Command {
             path.generateTrajectory(
                 startingSpeeds, drive.getPose().getRotation(), drive.getConfig());
       }
+
+      // Store the final target pose using trajectory end translation and desired rotation
+      finalTargetPose = new Pose2d(trajectory.getEndState().pose.getTranslation(), endGoal);
+
+      // Log the final target for debugging
+      Logger.recordOutput("TrajectoryFollower/FinalTargetPose", finalTargetPose);
+
     } catch (Exception e) {
       return;
     }
@@ -144,6 +155,8 @@ public class TrajectoryFollowerCommand extends Command {
     Logger.recordOutput("TrajectoryFollower/Poses", Poses);
     timer.reset();
     timer.start();
+    wasAligned = false;
+    lastAlignmentTime = 0;
   }
 
   @Override
@@ -153,10 +166,15 @@ public class TrajectoryFollowerCommand extends Command {
       ChassisSpeeds adjustedSpeeds = autonomusController.calculate(drive.getPose(), goal);
       drive.runVelocity(adjustedSpeeds);
 
-      // Log trajectory following data
+      // Use goal.pose during path following, finalTargetPose during final alignment
+      Pose2d targetPose =
+          timer.get() >= trajectory.getTotalTimeSeconds()
+              ? finalTargetPose // Use stored final pose with end rotation
+              : goal.pose; // Use current trajectory goal
+
       logTrajectoryData(
           drive.getPose(),
-          goal.pose,
+          targetPose,
           timer.get() >= trajectory.getTotalTimeSeconds() ? "Final Rotation" : "Path Following");
 
       if (timer.get() >= trajectory.getTotalTimeSeconds()) {
@@ -168,7 +186,6 @@ public class TrajectoryFollowerCommand extends Command {
             angleController.calculate(
                 drive.getPose().getRotation().getRadians(), endGoal.getRadians());
 
-        // Existing logging
         Logger.recordOutput(
             "TrajectoryFollower/angleControllerError", angleController.getPositionError());
         Logger.recordOutput(
@@ -200,6 +217,21 @@ public class TrajectoryFollowerCommand extends Command {
     return new AlignmentStatus(xAligned, yAligned, rotationAligned, fullyAligned);
   }
 
+  private boolean isStablyAligned(Pose2d currentPose, Pose2d targetPose) {
+    AlignmentStatus status = checkAlignmentTolerances(currentPose, targetPose);
+
+    if (status.fullyAligned()) {
+      if (!wasAligned) {
+        lastAlignmentTime = timer.get();
+        wasAligned = true;
+      }
+      return (timer.get() - lastAlignmentTime) >= ALIGNMENT_STABLE_TIME;
+    } else {
+      wasAligned = false;
+      return false;
+    }
+  }
+
   private void logTrajectoryData(Pose2d currentPose, Pose2d targetPose, String phase) {
     // Calculate errors
     double xError = targetPose.getX() - currentPose.getX();
@@ -229,6 +261,12 @@ public class TrajectoryFollowerCommand extends Command {
     Logger.recordOutput(
         "TrajectoryFollower/ErrorPercent/Rotation",
         Math.abs(rotationError) / ROTATION_ALIGNMENT_TOLERANCE);
+    Logger.recordOutput(
+        "TrajectoryFollower/StableAlignment/TimeInAlignment",
+        wasAligned ? (timer.get() - lastAlignmentTime) : 0.0);
+    Logger.recordOutput(
+        "TrajectoryFollower/StableAlignment/IsStablyAligned",
+        isStablyAligned(currentPose, targetPose));
   }
 
   @Override
@@ -238,12 +276,7 @@ public class TrajectoryFollowerCommand extends Command {
     }
 
     if (timer.get() >= trajectory.getTotalTimeSeconds()) {
-      // Create a target pose with the final rotation we want
-      Pose2d currentPose = drive.getPose();
-      Pose2d targetPose = new Pose2d(currentPose.getX(), currentPose.getY(), endGoal);
-
-      AlignmentStatus alignmentStatus = checkAlignmentTolerances(currentPose, targetPose);
-      return alignmentStatus.fullyAligned();
+      return isStablyAligned(drive.getPose(), finalTargetPose);
     }
 
     return false;
