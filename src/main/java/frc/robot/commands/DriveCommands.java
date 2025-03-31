@@ -46,6 +46,7 @@ import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.RobotState.AligningState;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.LoggedTunableNumber;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashSet;
@@ -647,10 +648,35 @@ public class DriveCommands {
     return path;
   }
 
+  // spotless:off
+  // private static LoggedTunableNumber xControllerkP = new LoggedTunableNumber("driveToPoseStraight/xController/kP", Constants.DriveToPoseStraight.XController.kP);
+  // private static LoggedTunableNumber xControllerkI = new LoggedTunableNumber("driveToPoseStraight/xController/kI", Constants.DriveToPoseStraight.XController.kI);
+  // private static LoggedTunableNumber xControllerkD = new LoggedTunableNumber("driveToPoseStraight/xController/kD", Constants.DriveToPoseStraight.XController.kD);
+  // private static LoggedTunableNumber xControllerTolerance = new LoggedTunableNumber("driveToPoseStraight/xController/tolerance", Constants.DriveToPoseStraight.XController.tolerance);  
+
+  // private static LoggedTunableNumber yControllerkP = new LoggedTunableNumber("driveToPoseStraight/yController/kP", Constants.DriveToPoseStraight.YController.kP);
+  // private static LoggedTunableNumber yControllerkI = new LoggedTunableNumber("driveToPoseStraight/yController/kI", Constants.DriveToPoseStraight.YController.kI);
+  // private static LoggedTunableNumber yControllerkD = new LoggedTunableNumber("driveToPoseStraight/yController/kD", Constants.DriveToPoseStraight.YController.kD);
+  // private static LoggedTunableNumber yControllerTolerance = new LoggedTunableNumber("driveToPoseStraight/yController/tolerance", Constants.DriveToPoseStraight.YController.tolerance);
+
+  // private static LoggedTunableNumber thetaControllerkP = new LoggedTunableNumber("driveToPoseStraight/thetaController/kP", Constants.DriveToPoseStraight.ThetaController.kP);
+  // private static LoggedTunableNumber thetaControllerkI = new LoggedTunableNumber("driveToPoseStraight/thetaController/kI", Constants.DriveToPoseStraight.ThetaController.kI);
+  // private static LoggedTunableNumber thetaControllerkD = new LoggedTunableNumber("driveToPoseStraight/thetaController/kD", Constants.DriveToPoseStraight.ThetaController.kD);
+  // private static LoggedTunableNumber thetaControllerTolerance = new LoggedTunableNumber("driveToPoseStraight/thetaController/tolerance", Constants.DriveToPoseStraight.ThetaController.tolerance);
+  // spotless:on
+
+  // spotless:off
   public static Command driveToPoseStraight(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
-    PIDController xSpeedController = new PIDController(5, 0, 0.1);
-    PIDController ySpeedController = new PIDController(5, 0, 0.1);
-    PIDController angularSpeedController = new PIDController(3, 0, 0.025);
+    PIDController xSpeedController = new PIDController(Constants.DriveToPoseStraight.XController.kP, Constants.DriveToPoseStraight.XController.kI, Constants.DriveToPoseStraight.XController.kD);
+    PIDController ySpeedController = new PIDController(Constants.DriveToPoseStraight.YController.kP, Constants.DriveToPoseStraight.YController.kI, Constants.DriveToPoseStraight.YController.kD);
+    PIDController angularSpeedController = new PIDController(Constants.DriveToPoseStraight.ThetaController.kP, Constants.DriveToPoseStraight.ThetaController.kI, Constants.DriveToPoseStraight.ThetaController.kD);
+
+    xSpeedController.setTolerance(Constants.DriveToPoseStraight.XController.tolerance);
+    ySpeedController.setTolerance(Constants.DriveToPoseStraight.YController.tolerance);
+    angularSpeedController.setTolerance(Constants.DriveToPoseStraight.ThetaController.tolerance);
+
+    angularSpeedController.enableContinuousInput(-Math.PI, -Math.PI);
+
     return Commands.run(
             () -> {
               Pose2d currentPose = drive.getPose();
@@ -676,14 +702,24 @@ public class DriveCommands {
               xSpeedController.reset();
               ySpeedController.reset();
               angularSpeedController.reset();
+
+              xSpeedController.setPID(Constants.DriveToPoseStraight.XController.kP, Constants.DriveToPoseStraight.XController.kI, Constants.DriveToPoseStraight.XController.kD);
+              xSpeedController.setTolerance(Constants.DriveToPoseStraight.XController.tolerance);
+
+              ySpeedController.setPID(Constants.DriveToPoseStraight.YController.kP, Constants.DriveToPoseStraight.YController.kI, Constants.DriveToPoseStraight.YController.kD);
+              ySpeedController.setTolerance(Constants.DriveToPoseStraight.YController.tolerance);
+
+              angularSpeedController.setPID(Constants.DriveToPoseStraight.ThetaController.kP, Constants.DriveToPoseStraight.ThetaController.kI, Constants.DriveToPoseStraight.ThetaController.kD);
+              angularSpeedController.setTolerance(Constants.DriveToPoseStraight.ThetaController.tolerance);
             })
         .finallyDo(
             () -> {
               xSpeedController.close();
               ySpeedController.close();
               angularSpeedController.close();
-            });
+            }).until(() -> xSpeedController.atSetpoint() && ySpeedController.atSetpoint() && angularSpeedController.atSetpoint());
   }
+  // spotless:on
 
   public static Command joystickDriveToCoral(
       Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
