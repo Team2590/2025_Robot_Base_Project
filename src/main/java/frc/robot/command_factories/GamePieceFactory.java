@@ -16,7 +16,7 @@ public class GamePieceFactory {
             Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
             Constants.ArmConstantsLeonidas.ARM_INTAKE_ALGAE_POS)
-        .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()))
+        .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())).andThen(ScoringFactory.stow())
         .withName("Intake Algae Ground");
   }
 
