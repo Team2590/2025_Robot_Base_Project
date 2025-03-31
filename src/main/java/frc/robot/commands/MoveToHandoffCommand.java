@@ -24,7 +24,9 @@ public class MoveToHandoffCommand extends Command {
     if (RobotContainer.getElevator().getRotationCount() < Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS && RobotContainer.getArm().getAbsolutePosition() > Constants.ArmConstantsLeonidas.ARM_VERTICAL_POS + 0.05) {
       RobotContainer.getElevator().getIO().setPosition(elevatorSetpoint);
     } else {
-      RobotContainer.getIntake().getArmIO().setPosition(intakeArmSetpoint);
+      if (!RobotContainer.getIntake().hasCoral()){
+        RobotContainer.getIntake().getArmIO().setPosition(intakeArmSetpoint);
+      }
       RobotContainer.getElevator().getIO().setPosition(elevatorSetpoint);
       RobotContainer.getArm().getIO().setPosition(armSetpoint);
     }
@@ -32,10 +34,16 @@ public class MoveToHandoffCommand extends Command {
 
   @Override
   public boolean isFinished() {
+    boolean intakeAtsetpoint;
+    if (RobotContainer.getIntake().hasCoral()){
+      intakeAtsetpoint = true;
+    }else{
+      intakeAtsetpoint = NemesisMathUtil.isApprox(RobotContainer.getIntake().getArmRotationCount(), 0.05, intakeArmSetpoint);
+    }
     return
       NemesisMathUtil.isApprox(RobotContainer.getElevator().getRotationCount(), 0.05, elevatorSetpoint) &&
       NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), 0.01, armSetpoint) &&
-      NemesisMathUtil.isApprox(RobotContainer.getIntake().getArmRotationCount(), 0.05, intakeArmSetpoint);       
+      intakeAtsetpoint;       
   }
 }
 // spotless:on
