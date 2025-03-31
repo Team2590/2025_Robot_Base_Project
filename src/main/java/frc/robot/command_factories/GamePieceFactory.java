@@ -12,17 +12,21 @@ import frc.robot.commands.MoveToHandoffCommand;
 public class GamePieceFactory {
 
   public static Command intakeAlgaeGround() {
-    return Commands.parallel(new MoveFromHandoffCommand(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
-            Constants.ArmConstantsLeonidas.ARM_INTAKE_ALGAE_POS)
-        .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())).andThen(ScoringFactory.stow())
+    return Commands.parallel(
+            new MoveFromHandoffCommand(
+                    Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
+                    Constants.ArmConstantsLeonidas.ARM_INTAKE_ALGAE_POS)
+                .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()))
+        .andThen(ScoringFactory.stow())
         .withName("Intake Algae Ground");
   }
 
   public static Command intakeCoralGroundAndHandoff() {
-    return Commands.parallel(new MoveToHandoffCommand(), IntakeFactory.runIntake(
-        () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED))
+    return Commands.parallel(
+            new MoveToHandoffCommand(),
+            IntakeFactory.runIntake(
+                () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED))
         .andThen(
             Commands.parallel(
                 IntakeFactory.runIntake(
