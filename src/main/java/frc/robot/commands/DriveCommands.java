@@ -697,7 +697,7 @@ public class DriveCommands {
     return command
         .beforeStarting(
             () -> {
-              robotState.setProcessorAlignment();
+              robotState.setAligningStateBasedOnTargetPose(preciseTarget);
             })
         .finallyDo(robotState::resetAligningState);
   }
