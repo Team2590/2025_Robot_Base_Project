@@ -648,17 +648,17 @@ public class DriveCommands {
   }
 
   // spotless:off
-  private static LoggedTunableNumber xControllerkP = new LoggedTunableNumber("driveToPoseStraight/xController/kP", 5);
+  private static LoggedTunableNumber xControllerkP = new LoggedTunableNumber("driveToPoseStraight/xController/kP", 2.25);
   private static LoggedTunableNumber xControllerkI = new LoggedTunableNumber("driveToPoseStraight/xController/kI", 0);
   private static LoggedTunableNumber xControllerkD = new LoggedTunableNumber("driveToPoseStraight/xController/kD", 0);
   private static LoggedTunableNumber xControllerTolerance = new LoggedTunableNumber("driveToPoseStraight/xController/tolerance", 0);  
 
-  private static LoggedTunableNumber yControllerkP = new LoggedTunableNumber("driveToPoseStraight/yController/kP", 5);
+  private static LoggedTunableNumber yControllerkP = new LoggedTunableNumber("driveToPoseStraight/yController/kP", 2.25);
   private static LoggedTunableNumber yControllerkI = new LoggedTunableNumber("driveToPoseStraight/yController/kI", 0);
   private static LoggedTunableNumber yControllerkD = new LoggedTunableNumber("driveToPoseStraight/yController/kD", 0);
   private static LoggedTunableNumber yControllerTolerance = new LoggedTunableNumber("driveToPoseStraight/yController/tolerance", 0);
 
-  private static LoggedTunableNumber thetaControllerkP = new LoggedTunableNumber("driveToPoseStraight/thetaController/kP", 3);
+  private static LoggedTunableNumber thetaControllerkP = new LoggedTunableNumber("driveToPoseStraight/thetaController/kP", 3.5);
   private static LoggedTunableNumber thetaControllerkI = new LoggedTunableNumber("driveToPoseStraight/thetaController/kI", 0);
   private static LoggedTunableNumber thetaControllerkD = new LoggedTunableNumber("driveToPoseStraight/thetaController/kD", 0);
   private static LoggedTunableNumber thetaControllerTolerance = new LoggedTunableNumber("driveToPoseStraight/thetaController/tolerance", 0);
