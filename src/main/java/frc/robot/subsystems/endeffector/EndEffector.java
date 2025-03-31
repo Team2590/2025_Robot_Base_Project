@@ -14,8 +14,8 @@ public class EndEffector extends SubsystemBase {
   private final EndEffectorIO.EndEffectorIOInputs inputs = new EndEffectorIO.EndEffectorIOInputs();
   private boolean isRunning = false;
   private LoggedTunableNumber PROX_THRESHOLD =
-      new LoggedTunableNumber("EndEffector/ProxThreshold", 2000);
-  private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 20);
+      new LoggedTunableNumber("EndEffector/ProxThreshold", 2250);
+  private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 15);
   private LinearFilter filter = LinearFilter.movingAverage((int) taps.get());
   private double filtered_data;
   private LoggedTunableNumber runVoltage =
