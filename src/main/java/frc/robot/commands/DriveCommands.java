@@ -46,6 +46,7 @@ import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.RobotState.AligningState;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.AlignmentLogger;
 import frc.robot.util.LoggedTunableNumber;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -56,6 +57,8 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
+import frc.robot.util.AlignmentLogger;
+import frc.robot.Constants.AlignmentConstants.ToleranceMode;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -562,6 +565,15 @@ public class DriveCommands {
         Set.of(driveSubsystem));
   }
 
+ 
+  /**
+   * Fine-tunes robot position and rotation using PID controllers. This is designed to be used after
+   * path following to achieve precise alignment.
+   */
+  public static Command pidAlignment(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
+    return new PIDAlignmentCommand(drive, targetPoseSupplier);
+  }
+
   public static Command preciseAlignment(
       Drive driveSubsystem,
       Supplier<Pose2d> preciseTarget,
@@ -737,5 +749,49 @@ public class DriveCommands {
               robotState.setAligningStateBasedOnTargetPose(preciseTarget);
             })
         .finallyDo(robotState::resetAligningState);
+  }
+
+  public static Command preciseAlignmentWithPID(
+      Drive driveSubsystem,
+      Supplier<Pose2d> preciseTarget,
+      Supplier<Rotation2d> approachDirection) {
+    return Commands.defer(
+        () -> {
+            PathConstraints constraints = Constants.DriveToPoseConstraints.slowpathConstraints;
+            if (preciseTarget.get().getRotation() == null
+                || driveSubsystem.getPose().getRotation() == null) {
+                return Commands.none();
+            }
+            try {
+                // Create the TrajectoryFollowerCommand with LOOSE tolerances
+                Command trajectoryCommand = new TrajectoryFollowerCommand(
+                    () -> getPreciseAlignmentPath(
+                        constraints,
+                        driveSubsystem.getChassisSpeeds(),
+                        driveSubsystem.getPose(),
+                        preciseTarget.get(),
+                        (RobotState.getInstance().getAligningState()
+                                == AligningState.ALIGNING_BACK)
+                            ? approachDirection.get().plus(new Rotation2d(Math.PI))
+                            : approachDirection.get()),
+                    driveSubsystem,
+                    preciseTarget.get().getRotation(),
+                    false,  // isInitialPoint
+                    new ChassisSpeeds(),  // startingSpeeds
+                    ToleranceMode.LOOSE);
+
+                // Create the PIDAlignmentCommand with STRICT tolerances
+                Command pidCommand = new PIDAlignmentCommand(
+                    driveSubsystem,
+                    preciseTarget,
+                    ToleranceMode.STRICT);
+
+                // Return a sequence of both commands
+                return Commands.sequence(trajectoryCommand, pidCommand);
+            } catch (Exception e) {
+                return Commands.print("Follow Path Exception: " + e.getMessage());
+            }
+        },
+        Set.of(driveSubsystem));
   }
 }
