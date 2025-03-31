@@ -16,7 +16,7 @@ public class EndEffector extends SubsystemBase {
   // private LoggedTunableNumber PROX_THRESHOLD =
   //     new LoggedTunableNumber("EndEffector/ProxThreshold", 2250);
   private LoggedTunableNumber CURRENT_THRESHOLD =
-      new LoggedTunableNumber("EndEffector/CurrentThreshold", 25);
+      new LoggedTunableNumber("EndEffector/CurrentThreshold", 15); // good for coral
   private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 15);
   private LinearFilter filter = LinearFilter.movingAverage((int) taps.get());
   private double filtered_data;

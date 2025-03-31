@@ -68,7 +68,7 @@ public class Drive extends SubsystemBase {
   public static LoggedTunableNumber reefXOffsetLeft =
       new LoggedTunableNumber("reefXOffsetLeft", -2);
   public static LoggedTunableNumber reefXOffsetRight =
-      new LoggedTunableNumber("reefXOffsetRight", 1);
+      new LoggedTunableNumber("reefXOffsetRight", 2);
   private static final double ROBOT_MASS_KG = 74.088;
   private static final double ROBOT_MOI = 6.883;
   private static final double WHEEL_COF = 1.2;
