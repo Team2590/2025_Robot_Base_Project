@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -42,7 +43,8 @@ public class TrajectoryFollowerCommand extends Command {
   private static final double ALIGNMENT_STABLE_TIME = 0.1; // seconds
   private double lastAlignmentTime = 0;
   private boolean wasAligned = false;
-  private Pose2d finalTargetPose;
+  private Pose2d finalTargetPose = null;
+  private boolean initializationComplete = false;
 
   public final NemesisHolonomicDriveController autonomusController =
       new NemesisHolonomicDriveController(
@@ -97,6 +99,10 @@ public class TrajectoryFollowerCommand extends Command {
   public void initialize() {
     angleController.enableContinuousInput(-Math.PI, Math.PI);
     angleController.setTolerance(.01);
+    timer.reset();
+    timer.start();
+    initializationComplete = false;
+
     try {
       if (!firstTime) {
         path = pathSupplier.get();
@@ -131,14 +137,18 @@ public class TrajectoryFollowerCommand extends Command {
                 startingSpeeds, drive.getPose().getRotation(), drive.getConfig());
       }
 
-      // Store the final target pose using trajectory end translation and desired rotation
+      // Store the final target pose
       finalTargetPose = new Pose2d(trajectory.getEndState().pose.getTranslation(), endGoal);
 
-      // Log the final target for debugging
-      Logger.recordOutput("TrajectoryFollower/FinalTargetPose", finalTargetPose);
+      initializationComplete = true;
 
+      // Log initial state
+      Logger.recordOutput("TrajectoryFollower/Initialization/Complete", true);
+      Logger.recordOutput("TrajectoryFollower/FinalTargetPose", finalTargetPose);
     } catch (Exception e) {
-      return;
+      Logger.recordOutput("TrajectoryFollower/Initialization/Error", true);
+      finalTargetPose = null;
+      initializationComplete = false;
     }
 
     List<Pose2d> poses = new ArrayList<>();
@@ -166,15 +176,9 @@ public class TrajectoryFollowerCommand extends Command {
       ChassisSpeeds adjustedSpeeds = autonomusController.calculate(drive.getPose(), goal);
       drive.runVelocity(adjustedSpeeds);
 
-      // Use goal.pose during path following, finalTargetPose during final alignment
-      Pose2d targetPose =
-          timer.get() >= trajectory.getTotalTimeSeconds()
-              ? finalTargetPose // Use stored final pose with end rotation
-              : goal.pose; // Use current trajectory goal
-
+      // Log trajectory data
       logTrajectoryData(
           drive.getPose(),
-          targetPose,
           timer.get() >= trajectory.getTotalTimeSeconds() ? "Final Rotation" : "Path Following");
 
       if (timer.get() >= trajectory.getTotalTimeSeconds()) {
@@ -195,6 +199,7 @@ public class TrajectoryFollowerCommand extends Command {
         drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));
       }
     } catch (Exception e) {
+      Logger.recordOutput("TrajectoryFollower/Error/ExecuteError", true);
       return;
     }
   }
@@ -203,36 +208,6 @@ public class TrajectoryFollowerCommand extends Command {
       boolean xAligned, boolean yAligned, boolean rotationAligned, boolean fullyAligned) {}
 
   private AlignmentStatus checkAlignmentTolerances(Pose2d currentPose, Pose2d targetPose) {
-    double xError = targetPose.getX() - currentPose.getX();
-    double yError = targetPose.getY() - currentPose.getY();
-    double rotationError =
-        MathUtil.angleModulus(
-            targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians());
-
-    boolean xAligned = Math.abs(xError) <= X_ALIGNMENT_TOLERANCE;
-    boolean yAligned = Math.abs(yError) <= Y_ALIGNMENT_TOLERANCE;
-    boolean rotationAligned = Math.abs(rotationError) <= ROTATION_ALIGNMENT_TOLERANCE;
-    boolean fullyAligned = xAligned && yAligned && rotationAligned;
-
-    return new AlignmentStatus(xAligned, yAligned, rotationAligned, fullyAligned);
-  }
-
-  private boolean isStablyAligned(Pose2d currentPose, Pose2d targetPose) {
-    AlignmentStatus status = checkAlignmentTolerances(currentPose, targetPose);
-
-    if (status.fullyAligned()) {
-      if (!wasAligned) {
-        lastAlignmentTime = timer.get();
-        wasAligned = true;
-      }
-      return (timer.get() - lastAlignmentTime) >= ALIGNMENT_STABLE_TIME;
-    } else {
-      wasAligned = false;
-      return false;
-    }
-  }
-
-  private void logTrajectoryData(Pose2d currentPose, Pose2d targetPose, String phase) {
     // Calculate errors
     double xError = targetPose.getX() - currentPose.getX();
     double yError = targetPose.getY() - currentPose.getY();
@@ -240,46 +215,87 @@ public class TrajectoryFollowerCommand extends Command {
         MathUtil.angleModulus(
             targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians());
 
-    // Get alignment status
-    AlignmentStatus alignmentStatus = checkAlignmentTolerances(currentPose, targetPose);
+    // Log raw error calculations
+    Logger.recordOutput("TrajectoryFollower/Debug/RawErrors/X", xError);
+    Logger.recordOutput("TrajectoryFollower/Debug/RawErrors/Y", yError);
+    Logger.recordOutput("TrajectoryFollower/Debug/RawErrors/Rotation", rotationError);
 
-    // Log all data
+    // Log tolerance checks
+    boolean xAligned = Math.abs(xError) <= X_ALIGNMENT_TOLERANCE;
+    boolean yAligned = Math.abs(yError) <= Y_ALIGNMENT_TOLERANCE;
+    boolean rotationAligned = Math.abs(rotationError) <= ROTATION_ALIGNMENT_TOLERANCE;
+
+    // Log individual tolerance results
+    Logger.recordOutput("TrajectoryFollower/Debug/ToleranceChecks/X_Error", Math.abs(xError));
+    Logger.recordOutput("TrajectoryFollower/Debug/ToleranceChecks/Y_Error", Math.abs(yError));
+    Logger.recordOutput(
+        "TrajectoryFollower/Debug/ToleranceChecks/Rotation_Error", Math.abs(rotationError));
+    Logger.recordOutput(
+        "TrajectoryFollower/Debug/ToleranceChecks/X_Tolerance", X_ALIGNMENT_TOLERANCE);
+    Logger.recordOutput(
+        "TrajectoryFollower/Debug/ToleranceChecks/Y_Tolerance", Y_ALIGNMENT_TOLERANCE);
+    Logger.recordOutput(
+        "TrajectoryFollower/Debug/ToleranceChecks/Rotation_Tolerance",
+        ROTATION_ALIGNMENT_TOLERANCE);
+
+    boolean fullyAligned = xAligned && yAligned && rotationAligned;
+
+    // Log the inputs used for this calculation
+    Logger.recordOutput("TrajectoryFollower/Debug/CheckInputs/CurrentPose", currentPose);
+    Logger.recordOutput("TrajectoryFollower/Debug/CheckInputs/TargetPose", targetPose);
+
+    return new AlignmentStatus(xAligned, yAligned, rotationAligned, fullyAligned);
+  }
+
+  private void logTrajectoryData(Pose2d currentPose, String phase) {
+    // Calculate errors
+    double xError = finalTargetPose.getX() - currentPose.getX();
+    double yError = finalTargetPose.getY() - currentPose.getY();
+    double rotationError =
+        MathUtil.angleModulus(
+            finalTargetPose.getRotation().getRadians() - currentPose.getRotation().getRadians());
+
+    // Get alignment status
+    AlignmentStatus alignmentStatus = checkAlignmentTolerances(currentPose, finalTargetPose);
+
+    // Log essential data
     Logger.recordOutput("TrajectoryFollower/Phase", phase);
     Logger.recordOutput("TrajectoryFollower/CurrentPose", currentPose);
-    Logger.recordOutput("TrajectoryFollower/TargetPose", targetPose);
-    Logger.recordOutput("TrajectoryFollower/Errors/X", xError);
-    Logger.recordOutput("TrajectoryFollower/Errors/Y", yError);
-    Logger.recordOutput("TrajectoryFollower/Errors/Rotation", rotationError);
+    Logger.recordOutput("TrajectoryFollower/FinalTargetPose", finalTargetPose);
+
+    // Log errors in absolute units
+    Logger.recordOutput("TrajectoryFollower/Errors/X_Meters", xError);
+    Logger.recordOutput("TrajectoryFollower/Errors/Y_Meters", yError);
+    Logger.recordOutput(
+        "TrajectoryFollower/Errors/Rotation_Degrees", Units.radiansToDegrees(rotationError));
+
+    // Log alignment status
     Logger.recordOutput("TrajectoryFollower/Aligned/X", alignmentStatus.xAligned());
     Logger.recordOutput("TrajectoryFollower/Aligned/Y", alignmentStatus.yAligned());
     Logger.recordOutput("TrajectoryFollower/Aligned/Rotation", alignmentStatus.rotationAligned());
     Logger.recordOutput("TrajectoryFollower/Aligned/Full", alignmentStatus.fullyAligned());
+
+    // Log tolerances for reference
+    Logger.recordOutput("TrajectoryFollower/Tolerances/X_Meters", X_ALIGNMENT_TOLERANCE);
+    Logger.recordOutput("TrajectoryFollower/Tolerances/Y_Meters", Y_ALIGNMENT_TOLERANCE);
     Logger.recordOutput(
-        "TrajectoryFollower/ErrorPercent/X", Math.abs(xError) / X_ALIGNMENT_TOLERANCE);
-    Logger.recordOutput(
-        "TrajectoryFollower/ErrorPercent/Y", Math.abs(yError) / Y_ALIGNMENT_TOLERANCE);
-    Logger.recordOutput(
-        "TrajectoryFollower/ErrorPercent/Rotation",
-        Math.abs(rotationError) / ROTATION_ALIGNMENT_TOLERANCE);
-    Logger.recordOutput(
-        "TrajectoryFollower/StableAlignment/TimeInAlignment",
-        wasAligned ? (timer.get() - lastAlignmentTime) : 0.0);
-    Logger.recordOutput(
-        "TrajectoryFollower/StableAlignment/IsStablyAligned",
-        isStablyAligned(currentPose, targetPose));
+        "TrajectoryFollower/Tolerances/Rotation_Degrees",
+        Units.radiansToDegrees(ROTATION_ALIGNMENT_TOLERANCE));
   }
 
   @Override
   public boolean isFinished() {
-    if (this.trajectory == null) {
-      return true;
+    boolean finished = false;
+
+    if (this.trajectory == null || finalTargetPose == null) {
+      finished = true;
+    } else if (timer.get() >= trajectory.getTotalTimeSeconds()) {
+      finished = checkAlignmentTolerances(drive.getPose(), finalTargetPose).fullyAligned();
     }
 
-    if (timer.get() >= trajectory.getTotalTimeSeconds()) {
-      return isStablyAligned(drive.getPose(), finalTargetPose);
-    }
-
-    return false;
+    // Log isFinished status
+    Logger.recordOutput("TrajectoryFollower/isFinished", finished);
+    return finished;
   }
 
   @Override
