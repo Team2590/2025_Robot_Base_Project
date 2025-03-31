@@ -258,7 +258,7 @@ public final class Constants {
     public static final double ARM_FACTORY_SAFETY_MAX = .8;
     public static final int canID = 1;
     public static final String canBus = "Takeover";
-    public static final int currentLimitAmps = 10;
+    public static final int currentLimitAmps = 60;
     public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 1; // was a 94.18
@@ -274,7 +274,7 @@ public final class Constants {
     public static final double ARM_OPERATIONAL_MIN_POS = -.5;
     public static final double ARM_OPERATIONAL_MAX_POS = 1;
     public static final double ARM_SCORING_CORAL_POS_L2_PRE = 0.15;
-    public static final double ARM_SCORING_CORAL_POSE_L2_POST = 0;
+    public static final double ARM_SCORING_CORAL_POSE_L2_POST = 0.015;
     public static final double ARM_SCORING_CORAL_POS_L3_PRE = 0.15;
     public static final double ARM_SCORING_CORAL_POSE_L3_POST = 0;
     public static final double ARM_RELEASE_DIFF = 0.078;
@@ -306,7 +306,7 @@ public final class Constants {
     public static final double kS = 0.59545; // TODO
     public static final double kV = 0.1609; // TODO
     public static final double ELEVATOR_HANDOFF_POS = 16;
-    public static final double ELEVATOR_PROCESSOR_POS = 1;
+    public static final double ELEVATOR_PROCESSOR_POS = 1 + 1.5;
     public static final double ELEVATOR_STOW_POS = 1;
     public static final double ELEVATOR_L2_POS = 3; // TODO
     public static final double ELEVATOR_L3_POS = 11.35; // TODO
@@ -318,6 +318,7 @@ public final class Constants {
     public static final double ELEVATOR_BARGE_POS = 27.5; // TODO: find real value
     public static final double ELEVATOR_INTAKE_ALGAE_POS = 0; // TODO find real value
     public static final double ELEVATOR_HANDOFF_TRANSITION_POS = ELEVATOR_HANDOFF_POS + 1.5;
+    public static final double MIN_ELEVATOR_HEIGHT_ARM_PARALLEL = 0;
   }
 
   /*   public final class ElevatorConstantsLeonidas {
@@ -391,9 +392,9 @@ public final class Constants {
     public static final boolean invert = false;
     public static final boolean brake = false;
     public static final double reduction = 1;
-    public static final double CLIMB_MECHANISM_POSITION = 13; // 13
-    public static final double CLIMB_MAX_POSITION = 189;
-    public static final double CLIMB_VOLTAGE = 8.0; // 2.0 tested
+    public static final double CLIMB_MECHANISM_POSITION = 47.2; // 13
+    public static final double CLIMB_MAX_POSITION = 208 - 50;
+    public static final double CLIMB_VOLTAGE = 2.0; // 2.0 tested
   }
 
   public final class LEDConstantsLeonidas {
@@ -412,6 +413,29 @@ public final class Constants {
     static boolean invert = false;
     static double reduction = 1;
     static boolean brake = true;
+  }
+
+  public static class DriveToPoseStraight {
+    public static class XController {
+      public static double kP = 2.25;
+      public static double kI = 0;
+      public static double kD = 0;
+      public static double tolerance = 0;
+    }
+
+    public static class YController {
+      public static double kP = 2.25;
+      public static double kI = 0;
+      public static double kD = 0;
+      public static double tolerance = 0;
+    }
+
+    public static class ThetaController {
+      public static double kP = 3.5;
+      public static double kI = 0;
+      public static double kD = 0;
+      public static double tolerance = 0;
+    }
   }
 
   public static final int BLINKIN_LED_CONTROLLER_PORT = 0; // TODO
