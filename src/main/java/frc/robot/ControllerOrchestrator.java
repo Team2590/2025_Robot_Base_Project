@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.command_factories.DriveToPose;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.commands.DriveCommands;
@@ -97,10 +98,9 @@ public class ControllerOrchestrator {
 
   /** Command that needs to be bound to a button to driveToTarget. */
   public Command bindDriveToTargetCommand(Drive drive) {
-    return DriveCommands.preciseAlignment(
+    return new DriveToPose(
         drive,
-        () -> RobotState.getInstance().getTargetPose(),
-        () -> RobotState.getInstance().getTargetPose().getRotation());
+        () -> RobotState.getInstance().getTargetPose());
   }
 
   // This commands will drive to pose while "priming for intake" at coral source
