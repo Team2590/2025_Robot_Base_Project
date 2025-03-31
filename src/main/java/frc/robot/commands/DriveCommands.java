@@ -701,10 +701,4 @@ public class DriveCommands {
             })
         .finallyDo(robotState::resetAligningState);
   }
-
-  public static Command driveToBarge() {
-    Pose2d processorPose = new Pose2d(6.11, 0.60, new Rotation2d(-90));
-    RobotState.getInstance().setBargeAlignment();
-    return Commands.none();
-  }
 }
