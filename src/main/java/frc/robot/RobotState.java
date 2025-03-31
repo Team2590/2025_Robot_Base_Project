@@ -189,30 +189,54 @@ public class RobotState extends SubsystemBase {
     } else {
       setAligningState(AligningState.ALIGNING_BACK);
     }
+    System.out.println(getAligningState().toString());
     Logger.recordOutput("RobotState/AligningState", getAligningState());
   }
 
   public void setBargeAlignment() {
     Pose2d bargePose;
 
-    if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
-      bargePose = new Pose2d(7.72, 1.89, new Rotation2d(0));
+    if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
+        bargePose = new Pose2d(7.72, 1.89, new Rotation2d(0));
+      } else {
+        bargePose = new Pose2d(9.93, 6.15, new Rotation2d(-180));
+      }
     } else {
-      bargePose = new Pose2d(9.93, 6.15, new Rotation2d(-180));
+      bargePose = new Pose2d(7.72, 1.89, new Rotation2d(0));
     }
 
-    setAligningStateBasedOnTargetPose(() -> bargePose);
+    if (drive.frontScore(bargePose)) {
+      setAligningState(AligningState.ALIGNING_FRONT);
+    } else {
+      setAligningState(AligningState.ALIGNING_BACK);
+    }
+
+    // System.out.println(getAligningState().toString());
+    Logger.recordOutput("RobotState/AligningState", getAligningState());
   }
 
   public void setProcessorAlignment() {
     Pose2d processorPose;
 
-    if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
-      processorPose = new Pose2d(6.11, 0.60, new Rotation2d(-90));
+    if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
+        processorPose = new Pose2d(6.11, 0.60, new Rotation2d(-90));
+      } else {
+        processorPose = new Pose2d(11.59, 7.43, new Rotation2d(90));
+      }
     } else {
-      processorPose = new Pose2d(11.59, 7.43, new Rotation2d(90));
+      processorPose = new Pose2d(6.11, 0.60, new Rotation2d(-90));
     }
-    setAligningStateBasedOnTargetPose(() -> processorPose);
+
+    if (drive.frontScore(processorPose)) {
+      setAligningState(AligningState.ALIGNING_FRONT);
+    } else {
+      setAligningState(AligningState.ALIGNING_BACK);
+    }
+    
+    // System.out.println(getAligningState().toString());
+    Logger.recordOutput("RobotState/AligningState", getAligningState());
   }
 
   public void resetAligningState() {
