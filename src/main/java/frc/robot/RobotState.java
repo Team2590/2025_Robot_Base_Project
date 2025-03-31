@@ -62,6 +62,14 @@ public class RobotState extends SubsystemBase {
     ALIGNING_BACK
   }
 
+  public static enum AlgaeScoringState {
+    PROCCESOR_FRONT,
+    PROCCESOR_BACK,
+    BARGE_FRONT,
+    BARGE_BACK,
+    NOT_SCORING,
+  }
+
   public class ScoringSetpoints {
     public double elevatorSetpoint;
     public double armSetpoint;
@@ -76,6 +84,7 @@ public class RobotState extends SubsystemBase {
 
   private AtomicReference<AligningState> aligningState =
       new AtomicReference<RobotState.AligningState>(AligningState.NOT_ALIGNING);
+  private AtomicReference<AlgaeScoringState> algaeScoringState = new AtomicReference<RobotState.AlgaeScoringState>(AlgaeScoringState.NOT_SCORING);
   private AligningState previousAligningState = AligningState.NOT_ALIGNING;
   private final Lock updateLock = new ReentrantLock();
 
@@ -182,6 +191,14 @@ public class RobotState extends SubsystemBase {
     aligningState.set(state);
   }
 
+  public AlgaeScoringState getAlgaeScoringState() {
+    return algaeScoringState.get();
+  }
+
+  public void setAlgaeScoringState(AlgaeScoringState state) {
+    algaeScoringState.set(state);
+  }
+
   /** Align to the front or back of the robot based on the given target pose. */
   public void setAligningStateBasedOnTargetPose(Supplier<Pose2d> targetPose) {
     if (drive.frontScore(targetPose.get())) {
@@ -207,13 +224,12 @@ public class RobotState extends SubsystemBase {
     }
 
     if (drive.frontScore(bargePose)) {
-      setAligningState(AligningState.ALIGNING_FRONT);
+      setAlgaeScoringState(AlgaeScoringState.BARGE_FRONT);
     } else {
-      setAligningState(AligningState.ALIGNING_BACK);
+      setAlgaeScoringState(AlgaeScoringState.BARGE_BACK);
     }
 
     // System.out.println(getAligningState().toString());
-    Logger.recordOutput("RobotState/AligningState", getAligningState());
   }
 
   public void setProcessorAlignment() {
@@ -230,13 +246,12 @@ public class RobotState extends SubsystemBase {
     }
 
     if (drive.frontScore(processorPose)) {
-      setAligningState(AligningState.ALIGNING_FRONT);
+      setAlgaeScoringState(AlgaeScoringState.PROCCESOR_FRONT);
     } else {
-      setAligningState(AligningState.ALIGNING_BACK);
+      setAlgaeScoringState(AlgaeScoringState.PROCCESOR_BACK);
     }
-    
+
     // System.out.println(getAligningState().toString());
-    Logger.recordOutput("RobotState/AligningState", getAligningState());
   }
 
   public void resetAligningState() {

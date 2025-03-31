@@ -701,4 +701,9 @@ public class DriveCommands {
             })
         .finallyDo(robotState::resetAligningState);
   }
+
+  public static Command bargeAlign() {
+    RobotState.getInstance().setBargeAlignment();
+    return Commands.none();
+  }
 }
