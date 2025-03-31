@@ -1,6 +1,9 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.Constants.ElevatorConstantsLeonidas;
@@ -187,6 +190,29 @@ public class RobotState extends SubsystemBase {
       setAligningState(AligningState.ALIGNING_BACK);
     }
     Logger.recordOutput("RobotState/AligningState", getAligningState());
+  }
+
+  public void setBargeAlignment() {
+    Pose2d bargePose;
+
+    if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
+      bargePose = new Pose2d(7.72, 1.89, new Rotation2d(0));
+    } else {
+      bargePose = new Pose2d(9.93, 6.15, new Rotation2d(-180));
+    }
+
+    setAligningStateBasedOnTargetPose(() -> bargePose);
+  }
+
+  public void setProcessorAlignment() {
+    Pose2d processorPose;
+
+    if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
+      processorPose = new Pose2d(6.11, 0.60, new Rotation2d(-90));
+    } else {
+      processorPose = new Pose2d(11.59, 7.43, new Rotation2d(90));
+    }
+    setAligningStateBasedOnTargetPose(() -> processorPose);
   }
 
   public void resetAligningState() {
