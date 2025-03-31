@@ -12,16 +12,17 @@ import frc.robot.commands.MoveToHandoffCommand;
 public class GamePieceFactory {
 
   public static Command intakeAlgaeGround() {
-    return new MoveFromHandoffCommand(
+    return Commands.parallel(new MoveFromHandoffCommand(
             Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
             Constants.ArmConstantsLeonidas.ARM_INTAKE_ALGAE_POS)
-        .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
+        .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()))
         .withName("Intake Algae Ground");
   }
 
   public static Command intakeCoralGroundAndHandoff() {
-    return new MoveToHandoffCommand()
+    return Commands.parallel(new MoveToHandoffCommand(), IntakeFactory.runIntake(
+        () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED))
         .andThen(
             Commands.parallel(
                 IntakeFactory.runIntake(
@@ -42,7 +43,6 @@ public class GamePieceFactory {
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS))
         .withName("Handoff");
-    // .onlyIf(() -> !RobotState.endEffectorHasGamePiece());
   }
 
   public static Command intakeCoralNoHandoff() {
