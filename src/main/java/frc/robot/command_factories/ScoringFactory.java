@@ -4,13 +4,15 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
-import frc.robot.Constants.IntakeConstantsLeonidas;
+import frc.robot.Constants.IntakeArmConstantsLeonidas;
 import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.RobotState.ScoringSetpoints;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.util.NemesisMathUtil;
+import java.util.Set;
 
 /**
  * Factory class for creating complex scoring-related commands.
@@ -82,81 +84,97 @@ public class ScoringFactory {
   }
 
   public static Command score(Level level) {
-    return switch (level) {
-      case L1:
-        yield scoreL1();
-      case L2:
-        yield primeForLevel(level)
-            .andThen(
-                new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    level.getElevatorSetpoint(),
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST))
-            .withName("Score " + level.name());
-      case L3:
-        yield primeForLevel(level)
-            .andThen(
-                Commands.parallel(
-                    IntakeFactory.setPositionBlocking(
-                        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
-                    ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
-                    ArmFactory.setPositionBlocking(
-                        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L3_POST)))
-            .withName("Score " + level.name());
-      case L4:
-        yield primeForLevel(level)
-            .andThen(
-                Commands.parallel(
-                    IntakeFactory.setPositionBlocking(
-                        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
-                    ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
-                    ArmFactory.setPositionBlocking(
-                        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L4_POST)))
-            .withName("Score " + level.name());
-      default:
-        yield primeForLevel(level)
-            .andThen(EndEffectorFactory.runEndEffectorOuttake())
-            .until(() -> !RobotState.endEffectorHasGamePiece())
-            .withName("Score " + level.name());
-    };
+    return Commands.defer(
+        () -> {
+          return switch (level) {
+            case L1:
+              yield scoreL1();
+            case L2:
+              yield primeForLevel(level)
+                  .andThen(
+                      new MoveFromHandoffCommand(
+                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                          level.getElevatorSetpoint(),
+                          RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint))
+                  .alongWith(RobotContainer.getEndEffector().stopEndEffector())
+                  .withName("Score " + level.name());
+            case L3:
+              yield primeForLevel(level)
+                  .andThen(
+                      Commands.parallel(
+                          IntakeFactory.setPositionBlocking(
+                              Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
+                          ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
+                          ArmFactory.setPositionBlocking(
+                              RobotState.getInstance()
+                                  .getCoralScoringSetpoints()
+                                  .armPlaceSetpoint)))
+                  .alongWith(RobotContainer.getEndEffector().stopEndEffector())
+                  .withName("Score " + level.name());
+            case L4:
+              yield primeForLevel(level)
+                  .andThen(
+                      Commands.parallel(
+                          IntakeFactory.setPositionBlocking(
+                              Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
+                          ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
+                          ArmFactory.setPositionBlocking(
+                              RobotState.getInstance()
+                                  .getCoralScoringSetpoints()
+                                  .armPlaceSetpoint)))
+                  .alongWith(RobotContainer.getEndEffector().stopEndEffector())
+                  .withName("Score " + level.name());
+            default:
+              yield primeForLevel(level)
+                  .andThen(EndEffectorFactory.runEndEffectorOuttake())
+                  .until(() -> !RobotState.endEffectorHasGamePiece())
+                  .alongWith(RobotContainer.getEndEffector().stopEndEffector())
+                  .withName("Score " + level.name());
+          };
+        },
+        Set.of(RobotContainer.getElevator(), RobotContainer.getArm(), RobotContainer.getIntake()));
   }
 
   public static Command primeForLevel(Level level) {
-    switch (level) {
-      case L4:
-        return Commands.parallel(
-                Commands.print("Priming " + level.name()),
-                IntakeFactory.setPositionBlocking(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
-                ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
-                ArmFactory.setPositionBlocking(
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
-            .withName("Prime " + level.name());
-      case L3:
-        return Commands.parallel(
-                Commands.print("Priming " + level.name()),
-                new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    level.getElevatorSetpoint(),
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE))
-            .withName("Prime " + level.name());
-      case L2:
-        return Commands.parallel(
-            Commands.print("Priming " + level.name()),
-            new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    level.getElevatorSetpoint(),
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE)
-                .withName("Prime " + level.name()));
-      default:
-        return Commands.parallel(
-            Commands.print("Priming " + level.name()),
-            new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                    level.getElevatorSetpoint(),
-                    Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE)
-                .withName("Prime " + level.name()));
-    }
+    return Commands.defer(
+        () -> {
+          switch (level) {
+            case L4:
+              return Commands.parallel(
+                      Commands.print("Priming " + level.name()),
+                      IntakeFactory.setPositionBlocking(
+                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
+                      ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
+                      ArmFactory.setPositionBlocking(
+                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
+                  .withName("Prime " + level.name());
+            case L3:
+              return Commands.parallel(
+                      Commands.print("Priming " + level.name()),
+                      new MoveFromHandoffCommand(
+                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                          level.getElevatorSetpoint(),
+                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
+                  .withName("Prime " + level.name());
+            case L2:
+              return Commands.parallel(
+                  Commands.print("Priming " + level.name()),
+                  new MoveFromHandoffCommand(
+                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                          level.getElevatorSetpoint(),
+                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)
+                      .withName("Prime " + level.name()));
+            default:
+              return Commands.parallel(
+                  Commands.print("Priming " + level.name()),
+                  new MoveFromHandoffCommand(
+                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                          level.getElevatorSetpoint(),
+                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)
+                      .withName("Prime " + level.name()));
+          }
+        },
+        Set.of(RobotContainer.getElevator(), RobotContainer.getArm(), RobotContainer.getIntake()));
   }
 
   public static Command score(ScoringSetpoints setpoints) {
@@ -202,8 +220,17 @@ public class ScoringFactory {
   }
 
   public static Command scoreAlgaeBarge() {
-    return ElevatorFactory.setPositionRun(Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS)
-        .alongWith(ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_BARGE_POS));
+
+    return Commands.defer(
+        () -> {
+          return ElevatorFactory.setPositionRun(
+                  Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS)
+              .alongWith(
+                  ArmFactory.setPositionRun(
+                      RobotState.getInstance().getAlgaeScoringSetpoints(Level.L4).armSetpoint))
+              .withName("Score Algae Barge");
+        },
+        Set.of(RobotContainer.getElevator(), RobotContainer.getArm()));
   }
 
   /**
@@ -216,6 +243,7 @@ public class ScoringFactory {
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             Level.PROCESSOR.getElevatorSetpoint(),
             Level.PROCESSOR.getArmScoringSetpoint())
+        .andThen(EndEffectorFactory.runEndEffectorVoltage(12).withTimeout(.75))
         .withName("Score Processor");
   }
 
@@ -251,7 +279,7 @@ public class ScoringFactory {
     // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS),
     // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
     return new MoveFromHandoffCommand(
-            IntakeConstantsLeonidas.INTAKE_FACTORY_CORAL_POSITION,
+            IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
             .33,
             Constants.ArmConstantsLeonidas.ARM_SET_STOW)
         // .andThen(LEDFactory.blink())
@@ -259,17 +287,8 @@ public class ScoringFactory {
     // , ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)
   }
 
-  public static Command deployMechanism() {
-    return ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION);
-  }
-
   public static Command climb() {
-    return Commands.parallel(
-            // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS),
-            // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
-            ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION))
-        // .andThen(LEDFactory.auraRizz())
-        .withName("Climb");
+    return new ClimbCommand();
   }
 
   public static Command setDefaults() {
@@ -282,20 +301,21 @@ public class ScoringFactory {
 
   public static Command primeL4WhileMoving() {
     return Commands.sequence(
-        Commands.waitUntil(
-            () -> {
-              Pose2d currentPose = RobotContainer.getDrive().getPose();
-              for (Pose2d pose : FieldConstants.RED_REEF_POSES.values()) {
-                if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
-                  return true; // 1.5 meters max distance to start raising elevator
-              }
-              for (Pose2d pose : FieldConstants.BLUE_REEF_POSES.values()) {
-                if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
-                  return true; // 1.5 meters max distance to start raising elevator
-              }
-              return false;
-            }),
-        primeForLevel(Level.L4) // ,
-        );
+            Commands.waitUntil(
+                () -> {
+                  Pose2d currentPose = RobotContainer.getDrive().getPose();
+                  for (Pose2d pose : FieldConstants.RED_REEF_POSES.values()) {
+                    if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
+                      return true; // 1.5 meters max distance to start raising elevator
+                  }
+                  for (Pose2d pose : FieldConstants.BLUE_REEF_POSES.values()) {
+                    if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
+                      return true; // 1.5 meters max distance to start raising elevator
+                  }
+                  return false;
+                }),
+            primeForLevel(Level.L4) // ,
+            )
+        .withName("Prime L4 while moving");
   }
 }

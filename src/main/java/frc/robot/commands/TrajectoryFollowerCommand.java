@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.NemesisHolonomicDriveController;
 import java.util.ArrayList;
@@ -36,11 +37,14 @@ public class TrajectoryFollowerCommand extends Command {
   private Rotation2d endGoal;
   private boolean runOnce = false;
 
-  public final NemesisHolonomicDriveController autonomusController =
+  public NemesisHolonomicDriveController autonomusController =
       new NemesisHolonomicDriveController(
-          new PIDController(8.0, 0, 0.0),
-          new PIDController(8.0, 0, 0.0),
-          new PIDController(6.0, 0, 0.2));
+          new PIDController(RobotContainer.getDrive().xControllerP.get(), 0, 0.0),
+          new PIDController(RobotContainer.getDrive().xControllerP.get(), 0, 0.0),
+          new PIDController(
+              RobotContainer.getDrive().thetaControllerP.get(),
+              0,
+              RobotContainer.getDrive().thetaControllerD.get()));
 
   ProfiledPIDController angleController =
       new ProfiledPIDController(
@@ -138,6 +142,7 @@ public class TrajectoryFollowerCommand extends Command {
       Poses[i] = poses.get(i);
     }
     Logger.recordOutput("TrajectoryFollower/Poses", Poses);
+    Logger.recordOutput("TrajectoryFollower/finalPose", Poses[Poses.length - 1]);
     timer.reset();
     timer.start();
   }
@@ -151,13 +156,17 @@ public class TrajectoryFollowerCommand extends Command {
       drive.runVelocity(adjustedSpeeds);
 
       if (timer.get() >= trajectory.getTotalTimeSeconds()) {
-        if (!runOnce){
+        if (!runOnce) {
           runOnce = true;
           angleController.reset(drive.getPose().getRotation().getRadians());
         }
-        double omega = angleController.calculate(drive.getPose().getRotation().getRadians(), endGoal.getRadians());
-        Logger.recordOutput("TrajectoryFollower/angleControllerError", angleController.getPositionError());
-        Logger.recordOutput("TrajectoryFollower/angleControllerAtSetpoint", angleController.atSetpoint());
+        double omega =
+            angleController.calculate(
+                drive.getPose().getRotation().getRadians(), endGoal.getRadians());
+        Logger.recordOutput(
+            "TrajectoryFollower/angleControllerError", angleController.getPositionError());
+        Logger.recordOutput(
+            "TrajectoryFollower/angleControllerAtSetpoint", angleController.atSetpoint());
         ChassisSpeeds speeds = new ChassisSpeeds(0, 0, omega);
 
         drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));

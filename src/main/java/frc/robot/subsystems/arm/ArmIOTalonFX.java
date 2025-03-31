@@ -32,17 +32,12 @@ public class ArmIOTalonFX implements ArmIO {
   private TalonFX arm;
   private CANcoder armCancoder;
   LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 3);
-  LoggedTunableNumber kI = new LoggedTunableNumber("Arm/kI", 0);
   LoggedTunableNumber kD = new LoggedTunableNumber("Arm/kD", 0);
-  LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS", 0);
-  LoggedTunableNumber kV = new LoggedTunableNumber("Arm/kV", 0);
-  LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG", 0);
   LoggedTunableNumber MotionMagicCruiseVelocity1 =
       new LoggedTunableNumber("Arm/MotionMagicCruiseVelocity", 1000);
   LoggedTunableNumber MotionMagicAcceleration1 =
       new LoggedTunableNumber("Arm/MotionMagicAcceleration", 15);
   LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", 3000);
-  LoggedTunableNumber ff = new LoggedTunableNumber("Arm/Feedforward", 0);
   LoggedTunableNumber setPos = new LoggedTunableNumber("Arm/setpointPos", 0);
   Slot0Configs slot0;
   TalonFXConfiguration cfg;
@@ -93,11 +88,7 @@ public class ArmIOTalonFX implements ArmIO {
 
     slot0 = cfg.Slot0;
     slot0.kP = kP.get();
-    slot0.kI = kI.get();
     slot0.kD = kD.get();
-    slot0.kS = kS.get();
-    slot0.kG = kG.get();
-    slot0.kV = kV.get();
     slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
     FeedbackConfigs fdb = cfg.Feedback;
@@ -185,24 +176,8 @@ public class ArmIOTalonFX implements ArmIO {
       arm.getConfigurator().apply(cfg);
     }
 
-    if (kI.hasChanged(0)) {
-      slot0.kI = kI.get();
-      arm.getConfigurator().apply(cfg);
-    }
     if (kD.hasChanged(0)) {
       slot0.kD = kD.get();
-      arm.getConfigurator().apply(cfg);
-    }
-    if (kS.hasChanged(0)) {
-      slot0.kS = kS.get();
-      arm.getConfigurator().apply(cfg);
-    }
-    if (kV.hasChanged(0)) {
-      slot0.kV = kV.get();
-      arm.getConfigurator().apply(cfg);
-    }
-    if (kG.hasChanged(0)) {
-      slot0.kG = kG.get();
       arm.getConfigurator().apply(cfg);
     }
     if (MotionMagicCruiseVelocity1.hasChanged(0)) {
@@ -217,9 +192,6 @@ public class ArmIOTalonFX implements ArmIO {
     if (MotionMagicJerk1.hasChanged(0)) {
       mm.MotionMagicJerk = MotionMagicJerk1.get();
       arm.getConfigurator().apply(cfg);
-    }
-    if (ff.hasChanged(0)) {
-      mmv.FeedForward = ff.get();
     }
   }
 
