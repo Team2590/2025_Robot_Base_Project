@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
+import frc.robot.Constants.AlignmentConstants.ToleranceMode;
 
 public class TrajectoryFollowerCommand extends Command {
 
@@ -40,6 +41,7 @@ public class TrajectoryFollowerCommand extends Command {
   private boolean runOnce = false;
   private Pose2d finalTargetPose = null;
   private boolean initializationComplete = false;
+  private final ToleranceMode toleranceMode;
 
   public final NemesisHolonomicDriveController autonomusController =
       new NemesisHolonomicDriveController(
@@ -59,12 +61,14 @@ public class TrajectoryFollowerCommand extends Command {
       Drive drive,
       Rotation2d endGoalRotation,
       boolean isInitialPoint,
-      ChassisSpeeds startingSpeeds) {
+      ChassisSpeeds startingSpeeds,
+      ToleranceMode toleranceMode) {
     this.pathSupplier = path;
     this.drive = drive;
     this.isInitialPoint = isInitialPoint;
     this.startingSpeeds = startingSpeeds;
     this.endGoal = endGoalRotation;
+    this.toleranceMode = toleranceMode;
     addRequirements(drive);
   }
 
@@ -72,8 +76,9 @@ public class TrajectoryFollowerCommand extends Command {
       Supplier<PathPlannerPath> path,
       Drive drive,
       Rotation2d endGoalRotation,
+      boolean isInitialPoint,
       ChassisSpeeds startingSpeeds) {
-    this(path, drive, endGoalRotation, false, startingSpeeds);
+    this(path, drive, endGoalRotation, isInitialPoint, startingSpeeds, ToleranceMode.STRICT);
   }
 
   public TrajectoryFollowerCommand(
@@ -174,7 +179,8 @@ public class TrajectoryFollowerCommand extends Command {
           "TrajectoryFollower",
           drive.getPose(),
           finalTargetPose,
-          timer.get() >= trajectory.getTotalTimeSeconds() ? "Final Rotation" : "Path Following");
+          timer.get() >= trajectory.getTotalTimeSeconds() ? "Final Rotation" : "Path Following",
+          toleranceMode);
 
       if (timer.get() >= trajectory.getTotalTimeSeconds()) {
         if (!runOnce) {
@@ -206,7 +212,7 @@ public class TrajectoryFollowerCommand extends Command {
     }
 
     if (timer.get() >= trajectory.getTotalTimeSeconds()) {
-      return AlignmentLogger.checkAlignmentTolerances(drive.getPose(), finalTargetPose).fullyAligned();
+      return AlignmentLogger.checkAlignmentTolerances(drive.getPose(), finalTargetPose, toleranceMode).fullyAligned();
     }
 
     return false;

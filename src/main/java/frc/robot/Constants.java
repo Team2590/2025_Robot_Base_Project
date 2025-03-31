@@ -37,6 +37,7 @@ import frc.robot.util.PolygonLocator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import edu.wpi.first.math.util.Units;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -555,5 +556,22 @@ public final class Constants {
 
     /** Replaying from a log file. */
     REPLAY
+  }
+
+  public static class AlignmentConstants {
+    public enum ToleranceMode {
+      STRICT,
+      LOOSE
+    }
+
+    // Strict tolerances (current values)
+    public static final double STRICT_X_TOLERANCE = 0.025;  // meters
+    public static final double STRICT_Y_TOLERANCE = 0.025;  // meters
+    public static final double STRICT_ROTATION_TOLERANCE = Units.degreesToRadians(2.0);  // 2 degrees in radians
+
+    // Loose tolerances (more forgiving)
+    public static final double LOOSE_X_TOLERANCE = 0.15;  // meters
+    public static final double LOOSE_Y_TOLERANCE = 0.15;  // meters
+    public static final double LOOSE_ROTATION_TOLERANCE = Units.degreesToRadians(8.0);  // 8 degrees in radians
   }
 }
