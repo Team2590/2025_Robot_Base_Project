@@ -414,6 +414,29 @@ public final class Constants {
     static boolean brake = true;
   }
 
+  public static class DriveToPoseStraight {
+    public static class XController {
+      public static double kP = 2.25;
+      public static double kI = 0;
+      public static double kD = 0;
+      public static double tolerance = 0;
+    }
+
+    public static class YController {
+      public static double kP = 2.25;
+      public static double kI = 0;
+      public static double kD = 0;
+      public static double tolerance = 0;
+    }
+
+    public static class ThetaController {
+      public static double kP = 3.5;
+      public static double kI = 0;
+      public static double kD = 0;
+      public static double tolerance = 0;
+    }
+  }
+
   public static final int BLINKIN_LED_CONTROLLER_PORT = 0; // TODO
 
   public enum LEDPattern {
