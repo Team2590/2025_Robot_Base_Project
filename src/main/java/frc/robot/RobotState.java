@@ -59,7 +59,7 @@ public class RobotState extends SubsystemBase {
     ALIGNING_BACK
   }
 
-  public class ScoringSetpoints {
+  public static class ScoringSetpoints {
     public double elevatorSetpoint;
     public double armSetpoint;
     public double armPlaceSetpoint;
@@ -145,7 +145,8 @@ public class RobotState extends SubsystemBase {
     updateLock.lock();
     try {
       setAligningStateBasedOnTargetPose(() -> controllerApp.getTarget().pose());
-      updateScoringConfigurationSimple(() -> controllerApp.getTarget().pose());
+      updateScoringConfigurationSimple(
+          () -> controllerApp.getTarget().pose(), () -> controllerApp.getTarget().scoringLevel());
     } finally {
       updateLock.unlock();
     }
@@ -201,7 +202,9 @@ public class RobotState extends SubsystemBase {
     hasGamePiece = false;
   }
 
-  private void updateScoringConfigurationSimple(Supplier<Pose2d> originalTargetPose) {
+  private void updateScoringConfigurationSimple(
+      Supplier<Pose2d> originalTargetPose, Supplier<Level> elevatorSetpoint) {
+    coralScoringSetpoints.elevatorSetpoint = elevatorSetpoint.get().getElevatorSetpoint();
 
     if (aligningState.get() == AligningState.ALIGNING_FRONT) {
       coralScoringSetpoints.armSetpoint = .15;

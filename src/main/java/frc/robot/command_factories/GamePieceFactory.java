@@ -8,6 +8,7 @@ import frc.robot.RobotState;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.commands.MoveToHandoffCommand;
+import java.util.Set;
 
 public class GamePieceFactory {
 
@@ -46,6 +47,7 @@ public class GamePieceFactory {
         .andThen(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS))
+        .andThen(ScoringFactory.stow())
         .withName("Handoff");
   }
 
@@ -62,20 +64,35 @@ public class GamePieceFactory {
   }
 
   public static Command GrabAlgaeL2() {
-    return new MoveFromHandoffCommand(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
-            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint)
-        .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
-        .withName("Grab Algae L2");
+
+    return Commands.defer(
+        () -> {
+          return new MoveFromHandoffCommand(
+                  Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                  RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
+                  RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint)
+              .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
+              .withName("Grab Algae L2");
+        },
+        Set.of(
+            RobotContainer.getArm(),
+            RobotContainer.getElevator(),
+            RobotContainer.getEndEffector()));
   }
 
   public static Command GrabAlgaeL3() {
-    return new MoveFromHandoffCommand(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint,
-            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint)
-        .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
-        .withName("Grab Algae L3");
+    return Commands.defer(
+        () -> {
+          return new MoveFromHandoffCommand(
+                  Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                  RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint,
+                  RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint)
+              .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
+              .withName("Grab Algae L2");
+        },
+        Set.of(
+            RobotContainer.getArm(),
+            RobotContainer.getElevator(),
+            RobotContainer.getEndEffector()));
   }
 }

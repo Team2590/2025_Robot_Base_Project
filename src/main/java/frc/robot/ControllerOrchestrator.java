@@ -97,11 +97,7 @@ public class ControllerOrchestrator {
 
   /** Command that needs to be bound to a button to driveToTarget. */
   public Command bindDriveToTargetCommand(Drive drive) {
-    return DriveCommands.preciseAlignment(
-            drive,
-            () -> RobotState.getInstance().getTargetPose(),
-            () -> RobotState.getInstance().getTargetPose().getRotation())
-        .withName("Drive to Pose alignment");
+    return DriveCommands.driveToPoseStraight(drive, () -> RobotState.getInstance().getTargetPose());
   }
 
   // This commands will drive to pose while "priming for intake" at coral source

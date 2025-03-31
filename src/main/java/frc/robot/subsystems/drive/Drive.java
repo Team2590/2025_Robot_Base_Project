@@ -27,7 +27,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -41,7 +41,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -54,6 +53,7 @@ import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.NemesisHolonomicDriveController;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -62,10 +62,13 @@ import org.littletonrobotics.junction.Logger;
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
   // PathPlanner config constants
-  public static LoggedTunableNumber reefYOffset = new LoggedTunableNumber("reefYOffset", 0);
-  public static LoggedTunableNumber reefXOffsetLeft = new LoggedTunableNumber("reefXOffsetLeft", 0);
+  public static LoggedTunableNumber reefYOffset = new LoggedTunableNumber("reefYOffset", -1);
+  public static LoggedTunableNumber reefYOffsetBack =
+      new LoggedTunableNumber("reefYOffsetBack", -1 - 29);
+  public static LoggedTunableNumber reefXOffsetLeft =
+      new LoggedTunableNumber("reefXOffsetLeft", -2);
   public static LoggedTunableNumber reefXOffsetRight =
-      new LoggedTunableNumber("reefXOffsetRight", 0);
+      new LoggedTunableNumber("reefXOffsetRight", 2);
   private static final double ROBOT_MASS_KG = 74.088;
   private static final double ROBOT_MOI = 6.883;
   private static final double WHEEL_COF = 1.2;
@@ -91,41 +94,46 @@ public class Drive extends SubsystemBase {
       };
   private SwerveDrivePoseEstimator poseEstimator;
 
-  public ProfiledPIDController thetaController =
-      new ProfiledPIDController(1.5, 0, 0.1, new TrapezoidProfile.Constraints(2.0, 4.0));
-  LoggedTunableNumber thetaControllerP = new LoggedTunableNumber("thetaController/kP", .30);
-  LoggedTunableNumber thetaControllerD = new LoggedTunableNumber("thetaController/kD", .0000);
-  LoggedTunableNumber thetaControllerTolerance =
+  public static PIDController thetaController =
+      new PIDController(1.5, 0, 0.1); // new TrapezoidProfile.Constraints(2.0, 4.0));
+  public LoggedTunableNumber thetaControllerP = new LoggedTunableNumber("thetaController/kP", 1.5);
+  public LoggedTunableNumber thetaControllerD = new LoggedTunableNumber("thetaController/kD", .2);
+  public LoggedTunableNumber thetaControllerTolerance =
       new LoggedTunableNumber("thetaController/tolerance", .01);
-  LoggedTunableNumber thetaControllerMaxVel = new LoggedTunableNumber("thetaController/MaxVel", 1);
-  LoggedTunableNumber thetaControllerMaxAccel =
+  public LoggedTunableNumber thetaControllerMaxVel =
+      new LoggedTunableNumber("thetaController/MaxVel", 1);
+  public LoggedTunableNumber thetaControllerMaxAccel =
       new LoggedTunableNumber("thetaController/MaxAccel", 1);
 
-  public ProfiledPIDController xController =
-      new ProfiledPIDController(1.5, 0, 0.1, new TrapezoidProfile.Constraints(2.0, 4.0));
-  LoggedTunableNumber xControllerP = new LoggedTunableNumber("xController/kP", .7);
-  LoggedTunableNumber xControllerD = new LoggedTunableNumber("xController/kD", .0000);
-  LoggedTunableNumber xControllerMaxVel = new LoggedTunableNumber("xController/MaxVel", 1);
-  LoggedTunableNumber xControllerMaxAccel = new LoggedTunableNumber("xController/MaxAccel", 1);
-  LoggedTunableNumber xControllerTolerance = new LoggedTunableNumber("xController/tolerance", .01);
+  public static PIDController xController =
+      new PIDController(1.5, 0, 0.1); // , new TrapezoidProfile.Constraints(2.0, 4.0));
+  public LoggedTunableNumber xControllerP = new LoggedTunableNumber("xController/kP", 3);
+  public LoggedTunableNumber xControllerD = new LoggedTunableNumber("xController/kD", .0000);
+  public LoggedTunableNumber xControllerMaxVel = new LoggedTunableNumber("xController/MaxVel", 1);
+  public LoggedTunableNumber xControllerMaxAccel =
+      new LoggedTunableNumber("xController/MaxAccel", 1);
+  public LoggedTunableNumber xControllerTolerance =
+      new LoggedTunableNumber("xController/tolerance", .01);
 
-  public ProfiledPIDController yController =
-      new ProfiledPIDController(1.5, 0, 0.1, new TrapezoidProfile.Constraints(2.0, 4.0));
+  public static PIDController yController =
+      new PIDController(1.5, 0, 0.1); // new TrapezoidProfile.Constraints(2.0, 4.0));
 
-  LoggedTunableNumber yControllerP = new LoggedTunableNumber("yController/kP", .7);
-  LoggedTunableNumber yControllerD = new LoggedTunableNumber("yController/kD", .0000);
-  LoggedTunableNumber yControllerMaxVel = new LoggedTunableNumber("yController/MaxVel", 1);
-  LoggedTunableNumber yControllerMaxAccel = new LoggedTunableNumber("yController/MaxAccel", 1);
-  LoggedTunableNumber yControllerTolerance = new LoggedTunableNumber("yController/tolerance", .01);
+  public LoggedTunableNumber yControllerP = new LoggedTunableNumber("yController/kP", 1);
+  public LoggedTunableNumber yControllerD = new LoggedTunableNumber("yController/kD", .0000);
+  public LoggedTunableNumber yControllerMaxVel = new LoggedTunableNumber("yController/MaxVel", 1);
+  public LoggedTunableNumber yControllerMaxAccel =
+      new LoggedTunableNumber("yController/MaxAccel", 1);
+  public LoggedTunableNumber yControllerTolerance =
+      new LoggedTunableNumber("yController/tolerance", .01);
 
   public static LoggedTunableNumber maxVelocityMPSScaler =
-      new LoggedTunableNumber("DriveToPoseConstaints/maxVelocityMPSScaler", 1);
+      new LoggedTunableNumber("DriveToPoseConstaints/maxVelocityMPSScaler", .5);
   public static LoggedTunableNumber maxAccelerationMPSSqScaler =
-      new LoggedTunableNumber("DriveToPoseConstaints/maxAccelerationMPSSqScaler", 1);
+      new LoggedTunableNumber("DriveToPoseConstaints/maxAccelerationMPSSqScaler", .5);
   public static LoggedTunableNumber maxAngularVelocityRadPerSecScaler =
-      new LoggedTunableNumber("DriveToPoseConstaints/maxAngularVelocityRadPerSecScaler", 1);
+      new LoggedTunableNumber("DriveToPoseConstaints/maxAngularVelocityRadPerSecScaler", .5);
   public static LoggedTunableNumber maxAngularAccelerationRadPerSecSqScaler =
-      new LoggedTunableNumber("DriveToPoseConstaints/maxAngularAccelerationRadPerSecSqScaler", 1);
+      new LoggedTunableNumber("DriveToPoseConstaints/maxAngularAccelerationRadPerSecSqScaler", .5);
 
   public static PathConstraints fastpathConstraints =
       new PathConstraints(
@@ -142,6 +150,9 @@ public class Drive extends SubsystemBase {
               * maxAngularVelocityRadPerSecScaler.get(),
           Constants.DriveToPoseConstraints.maxAngularAccelerationRadPerSecSq
               * maxAngularAccelerationRadPerSecSqScaler.get());
+
+  public static NemesisHolonomicDriveController alignController =
+      new NemesisHolonomicDriveController(xController, yController, thetaController);
 
   public Drive(
       GyroIO gyroIO,
@@ -450,18 +461,25 @@ public class Drive extends SubsystemBase {
     if (thetaControllerP.hasChanged(hashCode())
         || thetaControllerD.hasChanged(hashCode())
         || thetaControllerTolerance.hasChanged(hashCode())) {
-      thetaController.setPID(thetaControllerP.get(), 0.0, thetaControllerD.get());
-      thetaController.setTolerance(thetaControllerTolerance.get());
+
+      alignController.setThetaController_P(thetaControllerP.get());
+      alignController.setThetaController_D(thetaControllerD.get());
+
+      // thetaController.setPID(thetaControllerP.get(), 0.0, thetaControllerD.get());
+      // thetaController.setTolerance(thetaControllerTolerance.get());
     }
     if (yControllerP.hasChanged(hashCode())
         || yControllerD.hasChanged(hashCode())
         || yControllerTolerance.hasChanged(hashCode())
         || yControllerMaxVel.hasChanged(hashCode())
         || yControllerMaxAccel.hasChanged(hashCode())) {
-      yController.setPID(yControllerP.get(), 0.0, yControllerD.get());
-      yController.setTolerance(yControllerTolerance.get());
-      yController.setConstraints(
-          new TrapezoidProfile.Constraints(yControllerMaxVel.get(), yControllerMaxAccel.get()));
+
+      alignController.setYController_P(yControllerP.get());
+      alignController.setYController_D(yControllerD.get());
+      // yController.setPID(yControllerP.get(), 0.0, yControllerD.get());
+      // yController.setTolerance(yControllerTolerance.get());
+      // yController.setConstraints(
+      //     new TrapezoidProfile.Constraints(yControllerMaxVel.get(), yControllerMaxAccel.get()));
     }
 
     if (xControllerP.hasChanged(hashCode())
@@ -469,10 +487,13 @@ public class Drive extends SubsystemBase {
         || xControllerTolerance.hasChanged(hashCode())
         || xControllerMaxVel.hasChanged(hashCode())
         || xControllerMaxAccel.hasChanged(hashCode())) {
-      xController.setPID(xControllerP.get(), 0.0, xControllerD.get());
-      xController.setTolerance(xControllerTolerance.get());
-      xController.setConstraints(
-          new TrapezoidProfile.Constraints(xControllerMaxVel.get(), xControllerMaxAccel.get()));
+
+      alignController.setXController_P(yControllerP.get());
+      alignController.setXController_D(yControllerD.get());
+      // xController.setPID(xControllerP.get(), 0.0, xControllerD.get());
+      // xController.setTolerance(xControllerTolerance.get());
+      // xController.setConstraints(
+      //     new TrapezoidProfile.Constraints(xControllerMaxVel.get(), xControllerMaxAccel.get()));
     }
 
     updatePathConstraintsTunableNumbers();
