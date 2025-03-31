@@ -280,24 +280,21 @@ public class RobotState extends SubsystemBase {
     }
   }
 
-  public double getReefOffsetLeft(){
+  public double getReefOffsetLeft() {
 
-    if(aligningState.get()==AligningState.ALIGNING_BACK){
+    if (aligningState.get() == AligningState.ALIGNING_BACK) {
       return Drive.reefXOffsetRight.get();
-    }
-    else{
+    } else {
       return Drive.reefXOffsetLeft.get();
     }
   }
 
-  public double getReefOffsetRight(){
+  public double getReefOffsetRight() {
 
-    if(aligningState.get() == AligningState.ALIGNING_BACK){
-
+    if (aligningState.get() == AligningState.ALIGNING_BACK) {
 
       return Drive.reefXOffsetLeft.get();
-    }
-    else{
+    } else {
       return Drive.reefXOffsetRight.get();
     }
   }

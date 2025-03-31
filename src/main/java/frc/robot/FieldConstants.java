@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.RobotState.AligningState;
 import frc.robot.subsystems.drive.Drive;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -295,8 +296,10 @@ public class FieldConstants {
     for (int face = 0; face < 6; face++) {
       Pose2d poseDirection = new Pose2d(center, Rotation2d.fromDegrees(180 - (60 * face)));
       double adjustY = Units.inchesToMeters(52.738 + Drive.reefYOffset.get());
-      double adjustXLeft = Units.inchesToMeters(6.469 +  RobotState.getInstance().getReefOffsetLeft());
-      double adjustXRight = Units.inchesToMeters(6.469 +  RobotState.getInstance().getReefOffsetRight());
+      double adjustXLeft =
+          Units.inchesToMeters(6.469 + RobotState.getInstance().getReefOffsetLeft());
+      double adjustXRight =
+          Units.inchesToMeters(6.469 + RobotState.getInstance().getReefOffsetRight());
 
       System.out.println("updating offsets to " + adjustY);
 
@@ -334,15 +337,20 @@ public class FieldConstants {
 
   public static void updateTunableNumbers() {
 
+    Logger.recordOutput("RobotState/leftOffset", RobotState.getInstance().getReefOffsetLeft());
+    Logger.recordOutput("RobotState/rightOffset", RobotState.getInstance().getReefOffsetRight());
+
     if (Drive.reefXOffsetLeft.hasChanged(0)
         || Drive.reefXOffsetRight.hasChanged(1)
-        || Drive.reefYOffset.hasChanged(2)) {
-      RedReefPoses.reef = getReefPoses(true);
-      BlueReefPoses.reef = getReefPoses(false);
-      RED_REEF_POSES = buildRedReefPosesMap();
-      BLUE_REEF_POSES = buildBlueReefPosesMap();
-      logBlueReefPoses();
-    }
+        || Drive.reefYOffset.hasChanged(2) || RobotState.getInstance().getAligningState()!=AligningState.NOT_ALIGNING){
+    RedReefPoses.reef = getReefPoses(true);
+    BlueReefPoses.reef = getReefPoses(false);
+    RED_REEF_POSES = buildRedReefPosesMap();
+    BLUE_REEF_POSES = buildBlueReefPosesMap();
+
+     }
+
+    logBlueReefPoses();
   }
 }
 
