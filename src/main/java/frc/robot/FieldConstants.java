@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.RobotState.AligningState;
 import frc.robot.subsystems.drive.Drive;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -207,6 +206,18 @@ public class FieldConstants {
   public static final Pose2d CageDeepRight =
       new Pose2d(new Translation2d(8.023, 5.059), Rotation2d.fromDegrees(0));
 
+  public static Pose2d convertBackScoring(Pose2d frontPose) {
+    double moveLeftDistanceMeters = Units.inchesToMeters(-1.5);
+    Translation2d leftTranslation =
+        new Translation2d(
+            moveLeftDistanceMeters, frontPose.getRotation().plus(Rotation2d.fromDegrees(90)));
+    Pose2d backPose =
+        new Pose2d(
+            frontPose.getTranslation().plus(leftTranslation),
+            frontPose.getRotation().plus(new Rotation2d(0)));
+    return backPose;
+  }
+
   public static Map<String, Pose2d> BLUE_REEF_POSES = buildBlueReefPosesMap();
   public static Map<String, Pose2d> RED_REEF_POSES = buildRedReefPosesMap();
 
@@ -336,20 +347,7 @@ public class FieldConstants {
 
   public static void updateTunableNumbers() {
 
-    Logger.recordOutput("RobotState/leftOffset", RobotState.getInstance().getReefOffsetLeft());
-    Logger.recordOutput("RobotState/rightOffset", RobotState.getInstance().getReefOffsetRight());
-
-    if (Drive.reefXOffsetLeft.hasChanged(0)
-        || Drive.reefXOffsetRight.hasChanged(1)
-        || Drive.reefYOffset.hasChanged(2)
-        || RobotState.getInstance().getAligningState() != AligningState.NOT_ALIGNING) {
-      RedReefPoses.reef = getReefPoses(true);
-      BlueReefPoses.reef = getReefPoses(false);
-      RED_REEF_POSES = buildRedReefPosesMap();
-      BLUE_REEF_POSES = buildBlueReefPosesMap();
-    }
-
-    // logBlueReefPoses();
+    logBlueReefPoses();
   }
 }
 

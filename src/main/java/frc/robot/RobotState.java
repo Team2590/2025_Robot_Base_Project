@@ -222,6 +222,10 @@ public class RobotState extends SubsystemBase {
 
     targetPose = drive.flipScoringSide(originalTargetPose.get());
 
+    if (aligningState.get() == AligningState.ALIGNING_BACK) {
+      targetPose = FieldConstants.convertBackScoring(targetPose);
+    }
+
     Logger.recordOutput("RobotState/Pose", targetPose);
     Logger.recordOutput("RobotState/CoralArmSetpoint", coralScoringSetpoints.armSetpoint);
     Logger.recordOutput("RobotState/algaeArmSetpoint", dealgaeSetpoints.armSetpoint);
