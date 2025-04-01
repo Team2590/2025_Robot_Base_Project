@@ -270,7 +270,6 @@ public class RobotState extends SubsystemBase {
       coralScoringSetpoints.armPlaceSetpoint = 0;
       dealgaeSetpoints.armSetpoint = 0;
       dealgaeSetpoints.armPlaceSetpoint = 0;
-      algaeScoringSetpoints.armSetpoint = .175;
 
     } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
 
@@ -278,7 +277,16 @@ public class RobotState extends SubsystemBase {
       coralScoringSetpoints.armPlaceSetpoint = .5 - 0;
       dealgaeSetpoints.armSetpoint = .5 - 0;
       dealgaeSetpoints.armPlaceSetpoint = .5 - 0;
+    }
+
+    if (getAlgaeScoringState() == AlgaeScoringState.BARGE_FRONT
+        || getAlgaeScoringState() == AlgaeScoringState.PROCCESOR_FRONT) {
+      algaeScoringSetpoints.armSetpoint = .175;
+      System.out.println(algaeScoringSetpoints.armSetpoint);
+    } else if (getAlgaeScoringState() == AlgaeScoringState.BARGE_BACK
+        || getAlgaeScoringState() == AlgaeScoringState.PROCCESOR_BACK) {
       algaeScoringSetpoints.armSetpoint = .5 - .175;
+      System.out.println(algaeScoringSetpoints.armSetpoint);
     }
 
     targetPose = drive.flipScoringSide(originalTargetPose.get());
