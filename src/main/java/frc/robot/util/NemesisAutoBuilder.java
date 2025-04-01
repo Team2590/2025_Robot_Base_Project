@@ -29,17 +29,13 @@ public class NemesisAutoBuilder {
     SE_Left
   }
 
-  private static Command driveAndScore(ReefTarget reefTarget, Level level) {
+  private static void driveAndScore(ReefTarget reefTarget, Level level) {
     String name = reefTarget + "_" + level;
     Command command =
         Commands.sequence(driveToPoseCommandForAuto(reefTarget), ScoringFactory.score(level))
             .withName(name);
     NamedCommands.registerCommand(name, command);
-    return command;
-  }
-
-  private static Command driveAndScoreL4(ReefTarget reefTarget) {
-    return driveAndScore(reefTarget, Level.L4);
+    System.out.println("Registered NamedCommand: " + name);
   }
 
   private static Pose2d getReefPose(ReefTarget reefTarget) {
@@ -48,9 +44,12 @@ public class NemesisAutoBuilder {
         : FieldConstants.RED_REEF_POSES.get(reefTarget.name());
   }
 
+  /**
+   * Creates named commands that go to all the reef targets and score at L4.
+   */
   public static void registerNamedCommandsForAutos() {
     for (ReefTarget reefTarget : ReefTarget.values()) {
-      driveAndScoreL4(reefTarget);
+      driveAndScore(reefTarget, Level.L4);
     }
   }
 
