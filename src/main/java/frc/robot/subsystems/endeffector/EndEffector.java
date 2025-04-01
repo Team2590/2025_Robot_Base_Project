@@ -13,19 +13,14 @@ public class EndEffector extends SubsystemBase {
   private final EndEffectorIO io;
   private final EndEffectorIO.EndEffectorIOInputs inputs = new EndEffectorIO.EndEffectorIOInputs();
   private boolean isRunning = false;
-  private LoggedTunableNumber PROX_THRESHOLD =
-      new LoggedTunableNumber("EndEffector/ProxThreshold", 2250);
   private LoggedTunableNumber CURRENT_THRESHOLD =
       new LoggedTunableNumber("EndEffector/CurrentThreshold", 15); // good for coral
   private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 15);
-  private LinearFilter filter_prox = LinearFilter.movingAverage((int) taps.get());
   private LinearFilter filter_current = LinearFilter.movingAverage((int) taps.get());
   private double stator_current_filtered_data;
-  private double prox_filtered_data;
   private LoggedTunableNumber runVoltage =
       new LoggedTunableNumber(
           "EndEffector/runVoltage", Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE);
-  private AnalogInput prox = new AnalogInput(Constants.EndEffectorConstantsLeonidas.PROX_CHANNEL);
 
   public EndEffector(EndEffectorIO io) {
     this.io = io;
@@ -36,14 +31,11 @@ public class EndEffector extends SubsystemBase {
     io.updateInputs(inputs);
     // filtered_data = filter.calculate(prox.getValue());
     stator_current_filtered_data = filter_current.calculate(inputs.statorCurrentAmps);
-    prox_filtered_data = filter_prox.calculate(prox.getValue());
 
-    Logger.recordOutput("EndEffector/proxValue", prox.getValue());
     Logger.recordOutput("EndEffector/current", inputs.statorCurrentAmps);
 
     if (taps.hasChanged(0)) {
       filter_current = LinearFilter.movingAverage((int) taps.get());
-      filter_prox = LinearFilter.movingAverage((int) taps.get());
     }
   }
 
