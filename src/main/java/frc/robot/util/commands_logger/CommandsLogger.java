@@ -37,7 +37,7 @@ public class CommandsLogger {
   public void run() {
     updateInputs(loggerInputs);
     clearCurrent();
-    Logger.processInputs("Commands Logger", loggerInputs);
+    // Logger.processInputs("Commands Logger", loggerInputs);
   }
 
   public static CommandsLogger getInstance() {

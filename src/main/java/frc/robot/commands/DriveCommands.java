@@ -448,16 +448,6 @@ public class DriveCommands {
               double currentAngle = currentPose.getRotation().getRadians();
               double angleError = MathUtil.angleModulus(targetAngle - currentAngle);
 
-              // Log values for debugging
-              // Logger.recordOutput("DriveCommands/targetPose", targetPose);
-              // Logger.recordOutput("DriveCommands/robotEndPose", robotEndPose);
-              // Logger.recordOutput("DriveCommands/distanceToTarget", distanceToTarget);
-              // Logger.recordOutput("DriveCommands/angleError", angleError);
-              // Logger.recordOutput(
-              //     "DriveCommands/atTargetPosition", distanceToTarget < positionThreshold);
-              // Logger.recordOutput(
-              //     "DriveCommands/phase", reachedInitialPosition[0] ? "GoToTarget" : "Approach");
-
               // Adjust blending for more direct movement when far away
               double blendThreshold = 0.000001; // Meters where we start blending
               double autoWeight = Math.min(distanceToTarget / blendThreshold, 1.0);
