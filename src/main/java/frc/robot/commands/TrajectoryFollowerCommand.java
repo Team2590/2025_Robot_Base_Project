@@ -36,11 +36,9 @@ public class TrajectoryFollowerCommand extends Command {
   private Rotation2d endGoal;
   private boolean runOnce = false;
 
-  public final NemesisHolonomicDriveController autonomusController =
+  public NemesisHolonomicDriveController autonomusController =
       new NemesisHolonomicDriveController(
-          new PIDController(8.0, 0, 0.0),
-          new PIDController(8.0, 0, 0.0),
-          new PIDController(6.0, 0, 0.2));
+          new PIDController(8, 0, 0.0), new PIDController(8, 0, 0.0), new PIDController(6, 0, .2));
 
   ProfiledPIDController angleController =
       new ProfiledPIDController(
@@ -138,6 +136,7 @@ public class TrajectoryFollowerCommand extends Command {
       Poses[i] = poses.get(i);
     }
     Logger.recordOutput("TrajectoryFollower/Poses", Poses);
+    Logger.recordOutput("TrajectoryFollower/finalPose", Poses[Poses.length - 1]);
     timer.reset();
     timer.start();
   }

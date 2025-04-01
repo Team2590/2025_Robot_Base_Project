@@ -8,20 +8,26 @@ import frc.robot.RobotState;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.commands.MoveToHandoffCommand;
+import java.util.Set;
 
 public class GamePieceFactory {
 
   public static Command intakeAlgaeGround() {
-    return new MoveFromHandoffCommand(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
-            Constants.ArmConstantsLeonidas.ARM_INTAKE_ALGAE_POS)
-        .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
+    return Commands.parallel(
+            new MoveFromHandoffCommand(
+                    Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
+                    Constants.ArmConstantsLeonidas.ARM_INTAKE_ALGAE_POS)
+                .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()))
+        .andThen(ScoringFactory.stow())
         .withName("Intake Algae Ground");
   }
 
   public static Command intakeCoralGroundAndHandoff() {
-    return new MoveToHandoffCommand()
+    return Commands.sequence(
+            new MoveToHandoffCommand(),
+            IntakeFactory.runIntake(
+                () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED))
         .andThen(
             Commands.parallel(
                 IntakeFactory.runIntake(
@@ -41,8 +47,8 @@ public class GamePieceFactory {
         .andThen(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS))
+        .andThen(ScoringFactory.stow())
         .withName("Handoff");
-    // .onlyIf(() -> !RobotState.endEffectorHasGamePiece());
   }
 
   public static Command intakeCoralNoHandoff() {
@@ -58,20 +64,35 @@ public class GamePieceFactory {
   }
 
   public static Command GrabAlgaeL2() {
-    return new MoveFromHandoffCommand(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
-            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint)
-        .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
-        .withName("Grab Algae L2");
+
+    return Commands.defer(
+        () -> {
+          return new MoveFromHandoffCommand(
+                  Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                  RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
+                  RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint)
+              .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
+              .withName("Grab Algae L2");
+        },
+        Set.of(
+            RobotContainer.getArm(),
+            RobotContainer.getElevator(),
+            RobotContainer.getEndEffector()));
   }
 
   public static Command GrabAlgaeL3() {
-    return new MoveFromHandoffCommand(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint,
-            RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint)
-        .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
-        .withName("Grab Algae L3");
+    return Commands.defer(
+        () -> {
+          return new MoveFromHandoffCommand(
+                  Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                  RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint,
+                  RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint)
+              .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
+              .withName("Grab Algae L2");
+        },
+        Set.of(
+            RobotContainer.getArm(),
+            RobotContainer.getElevator(),
+            RobotContainer.getEndEffector()));
   }
 }

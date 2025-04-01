@@ -13,9 +13,11 @@ public class EndEffector extends SubsystemBase {
   private final EndEffectorIO io;
   private final EndEffectorIO.EndEffectorIOInputs inputs = new EndEffectorIO.EndEffectorIOInputs();
   private boolean isRunning = false;
-  private LoggedTunableNumber PROX_THRESHOLD =
-      new LoggedTunableNumber("EndEffector/ProxThreshold", 1500);
-  private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 30);
+  // private LoggedTunableNumber PROX_THRESHOLD =
+  //     new LoggedTunableNumber("EndEffector/ProxThreshold", 2250);
+  private LoggedTunableNumber CURRENT_THRESHOLD =
+      new LoggedTunableNumber("EndEffector/CurrentThreshold", 15); // good for coral
+  private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 15);
   private LinearFilter filter = LinearFilter.movingAverage((int) taps.get());
   private double filtered_data;
   private LoggedTunableNumber runVoltage =
@@ -30,9 +32,11 @@ public class EndEffector extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    filtered_data = filter.calculate(prox.getValue());
+    // filtered_data = filter.calculate(prox.getValue());
+    filtered_data = filter.calculate(inputs.statorCurrentAmps);
 
-    Logger.recordOutput("EndEffector/filter", prox.getValue());
+    // Logger.recordOutput("EndEffector/filter", prox.getValue());
+    Logger.recordOutput("EndEffector/filter", inputs.statorCurrentAmps);
 
     if (taps.hasChanged(0)) {
       filter = LinearFilter.movingAverage((int) taps.get());
@@ -113,7 +117,7 @@ public class EndEffector extends SubsystemBase {
   }
 
   public boolean hasGamePiece() {
-    return filtered_data >= PROX_THRESHOLD.get();
+    return filtered_data >= CURRENT_THRESHOLD.get();
   }
 
   public boolean isRunning() {
