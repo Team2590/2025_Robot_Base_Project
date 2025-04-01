@@ -279,15 +279,15 @@ public final class Constants {
     public static final double ARM_SCORING_CORAL_POS_L3_PRE = 0.15;
     public static final double ARM_SCORING_CORAL_POSE_L3_POST = 0;
     public static final double ARM_RELEASE_DIFF = 0.078;
-    public static final double ARM_SCORING_CORAL_POS_L4 = 0.12; // TODO
+    public static final double ARM_SCORING_CORAL_POS_L4 = ARM_SET_STOW; // TODO
     public static final double ARM_SCORING_CORAL_POSE_L4_POST = 0;
     public static final double ARM_INTAKE_SOURCE_POSITION = .18; // TODO
-    public static final double ARM_DEALGAE_POSITION = 0;
+    public static final double ARM_DEALGAE_POSITION = 0.012;
     public static final double ARM_INTAKE_ALGAE_POS = .53;
     public static final double ARM_BARGE_POS = .175; // TODO: find real value
     // public static final double ARM_SCORING_POS = .7; // TODO: find real value
     public static final double ARM_WRAP_POS = 0.794;
-    public static final double ARM_HANDOFF_POS = 0.757;
+    public static final double ARM_HANDOFF_POS = 0.75;
     public static final double ARM_THRESHOLD_POS = .63;
   }
 
@@ -311,7 +311,7 @@ public final class Constants {
     public static final double ELEVATOR_STOW_POS = 1;
     public static final double ELEVATOR_L2_POS = 3; // TODO
     public static final double ELEVATOR_L3_POS = 11.35; // TODO
-    public static final double ELEVATOR_L4_POS = 23.5; // TODO
+    public static final double ELEVATOR_L4_POS = 24.5; // TODO
     public static final double ELEVATOR_DEALGAE_L2 = 12; // TODO
     public static final double ELEVATOR_DEALGAE_L3 = 19.76; // TODO
     public static final double ELEVATOR_SOURCE_POS = 5.15; // TODO
@@ -421,21 +421,21 @@ public final class Constants {
       public static double kP = 2.25;
       public static double kI = 0;
       public static double kD = 0;
-      public static double tolerance = 0;
+      public static double tolerance = 0.01;
     }
 
     public static class YController {
       public static double kP = 2.25;
       public static double kI = 0;
       public static double kD = 0;
-      public static double tolerance = 0;
+      public static double tolerance = 0.01;
     }
 
     public static class ThetaController {
       public static double kP = 3.5;
       public static double kI = 0;
       public static double kD = 0;
-      public static double tolerance = 0;
+      public static double tolerance = 0.01;
     }
   }
 

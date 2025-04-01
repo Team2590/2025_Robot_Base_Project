@@ -3,7 +3,6 @@ package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,7 +18,7 @@ public class Intake extends SubsystemBase {
   private IntakeArmIO intakeArmIO;
   private IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
   // private IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
-  private Alert intakeDisconnected;
+  // private Alert intakeDisconnected;
   private IntakeArm intakeArm;
   private LoggedTunableNumber PROX_ONE_THRESHOLD = new LoggedTunableNumber("Intake/ProxOneThreshold", 500);
   private LoggedTunableNumber PROX_TWO_THRESHOLD = new LoggedTunableNumber("Intake/ProxTwoThreshold", 500);
@@ -34,7 +33,7 @@ public class Intake extends SubsystemBase {
   public Intake(IntakeIO intakeIO, IntakeArmIO intakeArmIO) {
     this.intakeIO = intakeIO;
     this.intakeArmIO = intakeArmIO;
-    intakeDisconnected = new Alert("Intake motor disconnected!", Alert.AlertType.kWarning);
+    // intakeDisconnected = new Alert("Intake motor disconnected!", Alert.AlertType.kWarning);
     intakeArm = new IntakeArm(intakeArmIO);
     intakeIO.setNeutralMode(NeutralModeValue.Brake);
     proxOneFilter = LinearFilter.movingAverage((int) LINEAR_FILTER_SAMPLES.get());
@@ -44,8 +43,8 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     intakeIO.updateInputs(intakeInputs);
-    Logger.processInputs("Intake", intakeInputs);
-    intakeDisconnected.set(!intakeInputs.connected);
+    // Logger.processInputs("Intake", intakeInputs);
+    // intakeDisconnected.set(!intakeInputs.connected);
 
     proxOneFilteredData = proxOneFilter.calculate(proxOne.getValue());
     proxTwoFilteredData = proxTwoFilter.calculate(proxTwo.getValue());
@@ -60,21 +59,21 @@ public class Intake extends SubsystemBase {
   }
 
   private class IntakeArm extends SubsystemBase {
-    private final Alert intakeArmDisconnected;
+    // private final Alert intakeArmDisconnected;
     private final IntakeArmIO intakeArmIO;
     private final IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
     private double setpointTolerance = 0.05;
 
     public IntakeArm(IntakeArmIO intakeArmIO) {
       this.intakeArmIO = intakeArmIO;
-      Logger.processInputs("IntakeArm", intakeArmInputs);
-      intakeArmDisconnected = new Alert("Intake Arm motor disconnected!", Alert.AlertType.kWarning);
+      // Logger.processInputs("IntakeArm", intakeArmInputs);
+      // intakeArmDisconnected = new Alert("Intake Arm motor disconnected!", Alert.AlertType.kWarning);
     }
 
     public void periodic() {
       intakeArmIO.updateInputs(intakeArmInputs);
       intakeArmIO.updateTunableNumbers();
-      intakeArmDisconnected.set(!intakeArmInputs.connected);
+      // intakeArmDisconnected.set(!intakeArmInputs.connected);
     }
 
     public Command resetRotationCountCommand() {
