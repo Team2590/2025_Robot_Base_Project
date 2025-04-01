@@ -402,7 +402,7 @@ public class DriveCommands {
    * path following to achieve precise alignment.
    */
   public static Command pidAlignment(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
-    return new DriveToPoseStraight(drive, targetPoseSupplier);
+    return new NemesisDriveToPoseStraight(drive, targetPoseSupplier);
   }
 
   private static PathPlannerPath getPreciseAlignmentPath(
