@@ -13,15 +13,15 @@ import org.littletonrobotics.junction.Logger;
 
 import frc.robot.Constants;
 
-public class DriveToPoseStraight extends Command {
+public class NemesisDriveToPoseStraight extends Command {
   private final Drive drive;
   private final Supplier<Pose2d> targetPoseSupplier;
   private final PIDController xController;
   private final PIDController yController;
   private final PIDController thetaController;
-  private final String prefix = "DriveToPoseStraight";
+  private final String prefix = "NemesisDriveToPoseStraight";
 
-  public DriveToPoseStraight(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
+  public NemesisDriveToPoseStraight(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
     this.drive = drive;
     this.targetPoseSupplier = targetPoseSupplier;
 

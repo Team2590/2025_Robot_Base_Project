@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.DriveToPoseStraight;
+import frc.robot.commands.NemesisDriveToPoseStraight;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
@@ -89,7 +89,7 @@ public class ControllerOrchestrator {
 
   /** Command that needs to be bound to a button to driveToTarget. */
   public Command bindDriveToTargetCommand(Drive drive) {
-    return new DriveToPoseStraight(drive, () -> RobotState.getInstance().getTargetPose());
+    return new NemesisDriveToPoseStraight(drive, () -> RobotState.getInstance().getTargetPose());
   }
 
   // This commands will drive to pose while "priming for intake" at coral source
