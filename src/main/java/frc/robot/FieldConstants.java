@@ -347,7 +347,7 @@ public class FieldConstants {
 
   public static void updateTunableNumbers() {
 
-    logBlueReefPoses();
+    // logBlueReefPoses();
   }
 }
 
