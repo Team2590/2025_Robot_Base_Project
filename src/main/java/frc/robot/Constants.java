@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -37,7 +38,6 @@ import frc.robot.util.PolygonLocator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-import edu.wpi.first.math.util.Units;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -348,7 +348,7 @@ public final class Constants {
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 120; // TODO
     public static final boolean invert = false; // TODO
-    public static final boolean brake = true; // TODO
+    public static final boolean brake = false; // TODO
     public static final double reduction = 1;
     public static final double INTAKE_VOLTAGE = 12;
     public static final double OUTTAKE_VOLTAGE = -12;

@@ -180,8 +180,10 @@ public class ScoringFactory {
   public static Command score(ScoringSetpoints setpoints) {
     return primeForLevel(setpoints)
         .andThen(
-            ArmFactory.setPositionBlocking(
-                Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST))
+            Commands.parallel(
+                EndEffectorFactory.runEndEffectorVoltage(0),
+                ArmFactory.setPositionBlocking(
+                    RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint)))
         .withName(
             "Score with Elevator setpoint "
                 + setpoints.elevatorSetpoint

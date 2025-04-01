@@ -300,46 +300,6 @@ public class RobotState extends SubsystemBase {
     Logger.recordOutput("RobotState/processorArmSetpoint", processorArmPos);
   }
 
-  private void updateScoringConfiguration(Supplier<Pose2d> originalTargetPose) {
-    AligningState currentAligningState = aligningState.get();
-
-    if (currentAligningState != previousAligningState) {
-      double offset = 0;
-      double magnitude = 1;
-
-      if (currentAligningState == AligningState.ALIGNING_BACK) {
-        offset = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL;
-        magnitude = -1;
-      }
-      coralScoringSetpoints.armSetpoint = magnitude * coralScoringSetpoints.armSetpoint + offset;
-      coralScoringSetpoints.armPlaceSetpoint =
-          magnitude * coralScoringSetpoints.armPlaceSetpoint + offset;
-
-      // update algae setpoints
-      dealgaeSetpoints.armSetpoint = magnitude * dealgaeSetpoints.armSetpoint + offset;
-      dealgaeSetpoints.armPlaceSetpoint = magnitude * dealgaeSetpoints.armPlaceSetpoint + offset;
-
-      // Update algae scoring setpoints
-      algaeScoringSetpoints.armSetpoint = magnitude * algaeScoringSetpoints.armSetpoint + offset;
-      algaeScoringSetpoints.armPlaceSetpoint =
-          magnitude * algaeScoringSetpoints.armPlaceSetpoint + offset;
-      targetPose = drive.flipScoringSide(originalTargetPose.get());
-
-      // Update the previous state
-      previousAligningState = currentAligningState;
-
-      Logger.recordOutput("RobotState/Pose", targetPose);
-      Logger.recordOutput("RobotState/CoralArmSetpoint", coralScoringSetpoints.armSetpoint);
-      Logger.recordOutput(
-          "RobotState/CoralArmPlaceSetpoint", coralScoringSetpoints.armPlaceSetpoint);
-      Logger.recordOutput("RobotState/algaeArmSetpoint", dealgaeSetpoints.armSetpoint);
-      Logger.recordOutput("RobotState/algaePlaceSetpoint", dealgaeSetpoints.armPlaceSetpoint);
-      Logger.recordOutput("RobotState/algaeScoringArmSetpoint", algaeScoringSetpoints.armSetpoint);
-      Logger.recordOutput(
-          "RobotState/algaeScoringPlaceSetpoint", algaeScoringSetpoints.armPlaceSetpoint);
-    }
-  }
-
   public Pose2d getTargetPose() {
     updateLock.lock();
     try {
