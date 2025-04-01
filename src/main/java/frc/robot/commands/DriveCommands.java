@@ -44,10 +44,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.DriveToPoseConstraints;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
-import frc.robot.RobotState.AligningState;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.util.AlignmentLogger;
-import frc.robot.util.LoggedTunableNumber;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashSet;
@@ -57,7 +54,6 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
-import frc.robot.util.AlignmentLogger;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -396,7 +392,6 @@ public class DriveCommands {
         Set.of(driveSubsystem));
   }
 
- 
   /**
    * Fine-tunes robot position and rotation using PID controllers. This is designed to be used after
    * path following to achieve precise alignment.
