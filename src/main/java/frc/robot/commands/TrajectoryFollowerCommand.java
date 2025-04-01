@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.NemesisHolonomicDriveController;
 import java.util.ArrayList;
@@ -39,12 +38,7 @@ public class TrajectoryFollowerCommand extends Command {
 
   public NemesisHolonomicDriveController autonomusController =
       new NemesisHolonomicDriveController(
-          new PIDController(8, 0, 0.0),
-          new PIDController(8, 0, 0.0),
-          new PIDController(
-              6,
-              0,
-              .2));
+          new PIDController(8, 0, 0.0), new PIDController(8, 0, 0.0), new PIDController(6, 0, .2));
 
   ProfiledPIDController angleController =
       new ProfiledPIDController(

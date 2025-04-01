@@ -482,9 +482,21 @@ public class DriveCommands {
   }
 
   public static Command driveToPoseStraight(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
-    PIDController xSpeedController = new PIDController(Constants.DriveToPoseStraight.XController.kP, Constants.DriveToPoseStraight.XController.kI, Constants.DriveToPoseStraight.XController.kD);
-    PIDController ySpeedController = new PIDController(Constants.DriveToPoseStraight.YController.kP, Constants.DriveToPoseStraight.YController.kI, Constants.DriveToPoseStraight.YController.kD);
-    PIDController angularSpeedController = new PIDController(Constants.DriveToPoseStraight.ThetaController.kP, Constants.DriveToPoseStraight.ThetaController.kI, Constants.DriveToPoseStraight.ThetaController.kD);
+    PIDController xSpeedController =
+        new PIDController(
+            Constants.DriveToPoseStraight.XController.kP,
+            Constants.DriveToPoseStraight.XController.kI,
+            Constants.DriveToPoseStraight.XController.kD);
+    PIDController ySpeedController =
+        new PIDController(
+            Constants.DriveToPoseStraight.YController.kP,
+            Constants.DriveToPoseStraight.YController.kI,
+            Constants.DriveToPoseStraight.YController.kD);
+    PIDController angularSpeedController =
+        new PIDController(
+            Constants.DriveToPoseStraight.ThetaController.kP,
+            Constants.DriveToPoseStraight.ThetaController.kI,
+            Constants.DriveToPoseStraight.ThetaController.kD);
 
     xSpeedController.setTolerance(Constants.DriveToPoseStraight.XController.tolerance);
     ySpeedController.setTolerance(Constants.DriveToPoseStraight.YController.tolerance);
@@ -518,21 +530,36 @@ public class DriveCommands {
               ySpeedController.reset();
               angularSpeedController.reset();
 
-              xSpeedController.setPID(Constants.DriveToPoseStraight.XController.kP, Constants.DriveToPoseStraight.XController.kI, Constants.DriveToPoseStraight.XController.kD);
+              xSpeedController.setPID(
+                  Constants.DriveToPoseStraight.XController.kP,
+                  Constants.DriveToPoseStraight.XController.kI,
+                  Constants.DriveToPoseStraight.XController.kD);
               xSpeedController.setTolerance(Constants.DriveToPoseStraight.XController.tolerance);
 
-              ySpeedController.setPID(Constants.DriveToPoseStraight.YController.kP, Constants.DriveToPoseStraight.YController.kI, Constants.DriveToPoseStraight.YController.kD);
+              ySpeedController.setPID(
+                  Constants.DriveToPoseStraight.YController.kP,
+                  Constants.DriveToPoseStraight.YController.kI,
+                  Constants.DriveToPoseStraight.YController.kD);
               ySpeedController.setTolerance(Constants.DriveToPoseStraight.YController.tolerance);
 
-              angularSpeedController.setPID(Constants.DriveToPoseStraight.ThetaController.kP, Constants.DriveToPoseStraight.ThetaController.kI, Constants.DriveToPoseStraight.ThetaController.kD);
-              angularSpeedController.setTolerance(Constants.DriveToPoseStraight.ThetaController.tolerance);
+              angularSpeedController.setPID(
+                  Constants.DriveToPoseStraight.ThetaController.kP,
+                  Constants.DriveToPoseStraight.ThetaController.kI,
+                  Constants.DriveToPoseStraight.ThetaController.kD);
+              angularSpeedController.setTolerance(
+                  Constants.DriveToPoseStraight.ThetaController.tolerance);
             })
         .finallyDo(
             () -> {
               xSpeedController.close();
               ySpeedController.close();
               angularSpeedController.close();
-            }).until(() -> xSpeedController.atSetpoint() && ySpeedController.atSetpoint() && angularSpeedController.atSetpoint());
+            })
+        .until(
+            () ->
+                xSpeedController.atSetpoint()
+                    && ySpeedController.atSetpoint()
+                    && angularSpeedController.atSetpoint());
   }
   // spotless:on
 
