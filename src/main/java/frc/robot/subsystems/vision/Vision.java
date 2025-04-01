@@ -150,20 +150,20 @@ public class Vision extends SubsystemBase {
             VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
       }
 
-      // Log camera datadata
-      Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
-          tagPoses.toArray(new Pose3d[tagPoses.size()]));
-      Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
-          robotPoses.toArray(new Pose3d[robotPoses.size()]));
-      Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesAccepted",
-          robotPosesAccepted.toArray(new Pose3d[robotPosesAccepted.size()]));
-      Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
-          robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
-      Logger.processInputs("Vision/CoralDetection", coralDetectionInputs);
+      // // Log camera datadata
+      // Logger.recordOutput(
+      //     "Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
+      //     tagPoses.toArray(new Pose3d[tagPoses.size()]));
+      // Logger.recordOutput(
+      //     "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
+      //     robotPoses.toArray(new Pose3d[robotPoses.size()]));
+      // Logger.recordOutput(
+      //     "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesAccepted",
+      //     robotPosesAccepted.toArray(new Pose3d[robotPosesAccepted.size()]));
+      // Logger.recordOutput(
+      //     "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
+      //     robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
+      // Logger.processInputs("Vision/CoralDetection", coralDetectionInputs);
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);
       allRobotPosesAccepted.addAll(robotPosesAccepted);
