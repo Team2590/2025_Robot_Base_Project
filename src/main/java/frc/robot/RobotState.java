@@ -286,7 +286,7 @@ public class RobotState extends SubsystemBase {
     } else if (getAlgaeScoringState() == AlgaeScoringState.BARGE_BACK
         || getAlgaeScoringState() == AlgaeScoringState.PROCCESOR_BACK) {
       algaeScoringSetpoints.armSetpoint = .5 - .175;
-      System.out.println(algaeScoringSetpoints.armSetpoint);
+      // System.out.println(algaeScoringSetpoints.armSetpoint);
     }
 
     targetPose = drive.flipScoringSide(originalTargetPose.get());
