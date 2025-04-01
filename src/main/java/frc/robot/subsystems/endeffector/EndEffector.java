@@ -119,7 +119,8 @@ public class EndEffector extends SubsystemBase {
   }
 
   public boolean hasGamePiece() {
-    return stator_current_filtered_data >= CURRENT_THRESHOLD.get() || prox_filtered_data >= PROX_THRESHOLD.get();
+    return stator_current_filtered_data >= CURRENT_THRESHOLD.get()
+        || prox_filtered_data >= PROX_THRESHOLD.get();
   }
 
   public boolean isRunning() {
