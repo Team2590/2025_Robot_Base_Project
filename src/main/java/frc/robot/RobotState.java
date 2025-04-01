@@ -61,12 +61,9 @@ public class RobotState extends SubsystemBase {
     ALIGNING_BACK
   }
 
-  public static enum AlgaeScoringState {
-    PROCCESOR_FRONT,
-    PROCCESOR_BACK,
+  public static enum BargeScoringState {
     BARGE_FRONT,
     BARGE_BACK,
-    NOT_SCORING,
   }
 
   public static class ScoringSetpoints {
@@ -83,8 +80,8 @@ public class RobotState extends SubsystemBase {
 
   private AtomicReference<AligningState> aligningState =
       new AtomicReference<RobotState.AligningState>(AligningState.NOT_ALIGNING);
-  private AtomicReference<AlgaeScoringState> algaeScoringState =
-      new AtomicReference<RobotState.AlgaeScoringState>(AlgaeScoringState.NOT_SCORING);
+  private double bargeArmPosition = 0.175;
+  private double processorArmPosition = 0;
   private AligningState previousAligningState = AligningState.NOT_ALIGNING;
   private final Lock updateLock = new ReentrantLock();
 
@@ -192,14 +189,6 @@ public class RobotState extends SubsystemBase {
     aligningState.set(state);
   }
 
-  public AlgaeScoringState getAlgaeScoringState() {
-    return algaeScoringState.get();
-  }
-
-  public void setAlgaeScoringState(AlgaeScoringState state) {
-    algaeScoringState.set(state);
-  }
-
   /** Align to the front or back of the robot based on the given target pose. */
   public void setAligningStateBasedOnTargetPose(Supplier<Pose2d> targetPose) {
     if (drive.frontScore(targetPose.get())) {
@@ -228,24 +217,18 @@ public class RobotState extends SubsystemBase {
       }
     }
 
-    if (poseChanged
-        && NemesisMathUtil.isTranslationApprox(
-            bargePose.getTranslation(), getPose().getTranslation(), 2)) {
+    if (poseChanged) {
       if (drive.frontScore(bargePose)) {
-        setAlgaeScoringState(AlgaeScoringState.BARGE_FRONT);
+        bargeArmPosition = 0.175;
       } else {
-        setAlgaeScoringState(AlgaeScoringState.BARGE_BACK);
+        bargeArmPosition = 0.325;
       }
-    } else if (poseChanged
-        && NemesisMathUtil.isTranslationApprox(
-            processorPose.getTranslation(), getPose().getTranslation(), 2)) {
+
       if (drive.frontScore(processorPose)) {
-        setAlgaeScoringState(AlgaeScoringState.PROCCESOR_FRONT);
+        processorArmPosition = 0;
       } else {
-        setAlgaeScoringState(AlgaeScoringState.PROCCESOR_BACK);
+        processorArmPosition = 0.5;
       }
-    } else {
-      setAlgaeScoringState(AlgaeScoringState.NOT_SCORING);
     }
   }
 
@@ -279,18 +262,6 @@ public class RobotState extends SubsystemBase {
       dealgaeSetpoints.armPlaceSetpoint = .5 - 0;
     }
 
-    if (getAlgaeScoringState() == AlgaeScoringState.BARGE_FRONT) {
-      algaeScoringSetpoints.armSetpoint = .175;
-      // System.out.pri`  ntln(algaeScoringSetpoints.armSetpoint);
-    } else if (getAlgaeScoringState() == AlgaeScoringState.BARGE_BACK) {
-      algaeScoringSetpoints.armSetpoint = .5 - .175;
-      // System.out.println(algaeScoringSetpoints.armSetpoint);
-    } else if (getAlgaeScoringState() == AlgaeScoringState.PROCCESOR_FRONT) {
-      algaeScoringSetpoints.armSetpoint = 0;
-    } else if (getAlgaeScoringState() == AlgaeScoringState.PROCCESOR_BACK) {
-      algaeScoringSetpoints.armPlaceSetpoint = 0.5;
-    }
-
     targetPose = drive.flipScoringSide(originalTargetPose.get());
 
     if (aligningState.get() == AligningState.ALIGNING_BACK) {
@@ -304,6 +275,8 @@ public class RobotState extends SubsystemBase {
     Logger.recordOutput("RobotState/algaeScoringArmSetpoint", algaeScoringSetpoints.armSetpoint);
     Logger.recordOutput(
         "RobotState/algaeScoringPlaceSetpoint", algaeScoringSetpoints.armPlaceSetpoint);
+    Logger.recordOutput("RobotState/bargeArmSetpoint", bargeArmPosition);
+    Logger.recordOutput("RobotState/processorArmSetpoint", processorArmPosition);
   }
 
   private void updateScoringConfiguration(Supplier<Pose2d> originalTargetPose) {
@@ -407,6 +380,14 @@ public class RobotState extends SubsystemBase {
     } finally {
       updateLock.unlock();
     }
+  }
+
+  public double getProcessorArmPos() {
+    return processorArmPosition;
+  }
+
+  public double getBargeArmPos() {
+    return bargeArmPosition;
   }
 
   /*

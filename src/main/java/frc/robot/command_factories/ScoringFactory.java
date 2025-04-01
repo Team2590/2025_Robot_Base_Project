@@ -265,13 +265,9 @@ public class ScoringFactory {
 
     return Commands.defer(
         () -> {
-          System.out.println(
-              RobotState.getInstance().getAlgaeScoringSetpoints(Level.L4).armSetpoint);
           return ElevatorFactory.setPositionRun(
                   Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS)
-              .alongWith(
-                  ArmFactory.setPositionRun(
-                      RobotState.getInstance().getAlgaeScoringSetpoints(Level.L4).armSetpoint))
+              .alongWith(ArmFactory.setPositionRun(RobotState.getInstance().getBargeArmPos()))
               .withName("Score Algae Barge");
         },
         Set.of(RobotContainer.getElevator(), RobotContainer.getArm()));
@@ -286,8 +282,7 @@ public class ScoringFactory {
     return new MoveFromHandoffCommand(
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             Level.PROCESSOR.getElevatorSetpoint(),
-            RobotState.getInstance().getAlgaeScoringSetpoints(Level.PROCESSOR).armSetpoint)
-        .andThen(EndEffectorFactory.runEndEffectorVoltage(12).withTimeout(.75))
+            RobotState.getInstance().getProcessorArmPos())
         .withName("Score Processor");
   }
 
