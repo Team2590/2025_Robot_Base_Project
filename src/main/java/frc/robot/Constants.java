@@ -434,7 +434,7 @@ public final class Constants {
       public static double kP = 3.5;
       public static double kI = 0;
       public static double kD = 0;
-      public static double tolerance = 0.01;
+      public static double tolerance = 0.1;
     }
   }
 
