@@ -405,43 +405,6 @@ public class DriveCommands {
     return new DriveToPoseStraight(drive, targetPoseSupplier);
   }
 
-  public static Command preciseAlignment(
-      Drive driveSubsystem,
-      Supplier<Pose2d> preciseTarget,
-      Supplier<Rotation2d> approachDirection) {
-    return Commands.defer(
-        () -> {
-          PathConstraints constraints = Constants.DriveToPoseConstraints.slowpathConstraints;
-          if (preciseTarget.get().getRotation() == null
-              || driveSubsystem.getPose().getRotation() == null) {
-            return Commands.none();
-          }
-          try {
-            Command pathCommand =
-                new TrajectoryFollowerCommand(
-                    () ->
-                        getPreciseAlignmentPath(
-                            constraints,
-                            driveSubsystem.getChassisSpeeds(),
-                            driveSubsystem.getPose(),
-                            // (RobotState.getInstance().getAligningState() ==
-                            // AligningState.ALIGNING_BACK ?
-                            // preciseTarget.get().transformBy(0,RobotContainer.getDrive().reefYOffsetBack.get(),0 ):preciseTarget.get() ,
-                            preciseTarget.get(),
-                            (RobotState.getInstance().getAligningState()
-                                    == AligningState.ALIGNING_BACK)
-                                ? approachDirection.get().plus(new Rotation2d(Math.PI))
-                                : approachDirection.get()),
-                    preciseTarget.get().getRotation(),
-                    driveSubsystem);
-            return pathCommand;
-          } catch (Exception e) {
-            return Commands.print("Follow Path Exception: " + e.getMessage());
-          }
-        },
-        Set.of(driveSubsystem));
-  }
-
   private static PathPlannerPath getPreciseAlignmentPath(
       PathConstraints constraints,
       ChassisSpeeds measuredSpeedsFieldRelative,
