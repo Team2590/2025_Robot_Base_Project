@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.487542808219178,
-        "y": 7.57857448630137
+        "x": 7.181565587660845,
+        "y": 7.174735035615808
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.140368150684931,
-        "y": 5.204516267123289
+        "x": 2.829561121323529,
+        "y": 7.661842974494485
       },
       "isLocked": false,
-      "linkedName": "TopSource"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.144778262867647,
-        "y": 4.144886690027573
+        "x": 3.685983796296296,
+        "y": 5.113007812499999
       },
       "prevControl": {
-        "x": 2.2637594272512085,
-        "y": 4.693401244822094
+        "x": 3.0950005026424634,
+        "y": 5.200259219898896
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "S_L"
+      "linkedName": "SW_R"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 4.7,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -59.99999999999999
   },
   "reversed": false,
-  "folder": "auto1",
+  "folder": "SprintA",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -54.0
+    "rotation": -178.73105541528562
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

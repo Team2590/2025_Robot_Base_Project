@@ -3,10 +3,10 @@
   "robotLength": 0.927,
   "holonomicMode": true,
   "pathFolders": [
-    "auton4",
-    "auton1",
-    "auton2",
-    "auton3"
+    "A_three_piece",
+    "auto1",
+    "SprintA",
+    "auton4"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
@@ -34,6 +34,7 @@
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
   "robotFeatures": [
-    "{\"name\":\"CoralOuttake\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.3,\"y\":0.1335},\"size\":{\"width\":0.05,\"length\":0.3},\"borderRadius\":0.002,\"strokeWidth\":0.04,\"filled\":true}}"
+    "{\"name\":\"CoralOuttake\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.3,\"y\":0.0235},\"size\":{\"width\":0.05,\"length\":0.3},\"borderRadius\":0.002,\"strokeWidth\":0.04,\"filled\":true}}",
+    "{\"name\":\"BackCoralOuttake\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":-0.3,\"y\":-0.024},\"size\":{\"width\":0.05,\"length\":0.3},\"borderRadius\":0.002,\"strokeWidth\":0.02,\"filled\":true}}"
   ]
 }

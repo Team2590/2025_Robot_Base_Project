@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B_N_L"
+                  "pathName": null
                 }
               }
             ]
@@ -74,7 +74,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "l_2_to_source"
+                  "pathName": null
                 }
               },
               {

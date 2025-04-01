@@ -13,19 +13,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "NE_R_intake_SE_L"
+            "pathName": "NE_R_intake_SE_R"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SE_L_intake_SE_R"
+            "pathName": "SE_R_intake_SE_L"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SE_R_intake_NE_L"
+            "pathName": "SE_L_intake_NE_L"
           }
         }
       ]

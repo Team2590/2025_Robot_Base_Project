@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.56,
-        "y": 4.96
+        "x": 3.685983796296296,
+        "y": 5.113007812499999
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8699058219178086,
-        "y": 5.880672089041095
+        "x": 2.9958896182141044,
+        "y": 6.0336799015410945
       },
       "isLocked": false,
       "linkedName": "SW_R"
@@ -59,7 +59,7 @@
     "rotation": -54.0
   },
   "reversed": false,
-  "folder": "auton1",
+  "folder": "auto1",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -59.99999999999999
