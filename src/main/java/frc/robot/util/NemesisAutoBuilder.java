@@ -12,9 +12,10 @@ import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.DriveCommands;
 
+/** This class is a result of relentless pursuit by our very own Dhurv Shah! */
 public class NemesisAutoBuilder {
 
-  public enum ReefTarget {
+  private enum ReefTarget {
     S_Right,
     S_Left,
     SW_Right,
@@ -35,7 +36,7 @@ public class NemesisAutoBuilder {
         Commands.sequence(driveToPoseCommandForAuto(reefTarget), ScoringFactory.score(level))
             .withName(name);
     NamedCommands.registerCommand(name, command);
-    System.out.println("Registered NamedCommand: " + name);
+    // System.out.println("Registered NamedCommand: " + name);
   }
 
   private static Pose2d getReefPose(ReefTarget reefTarget) {
@@ -44,9 +45,7 @@ public class NemesisAutoBuilder {
         : FieldConstants.RED_REEF_POSES.get(reefTarget.name());
   }
 
-  /**
-   * Creates named commands that go to all the reef targets and score at L4.
-   */
+  /** Creates named commands that go to all the reef targets and score at L4. */
   public static void registerNamedCommandsForAutos() {
     for (ReefTarget reefTarget : ReefTarget.values()) {
       driveAndScore(reefTarget, Level.L4);
