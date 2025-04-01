@@ -63,7 +63,7 @@ public class Drive extends SubsystemBase {
   public static LoggedTunableNumber reefYOffsetBack =
       new LoggedTunableNumber("reefYOffsetBack", -1 - 29);
   public static LoggedTunableNumber reefXOffsetLeft =
-      new LoggedTunableNumber("reefXOffsetLeft", -2);
+      new LoggedTunableNumber("reefXOffsetLeft", 0);
   public static LoggedTunableNumber reefXOffsetRight =
       new LoggedTunableNumber("reefXOffsetRight", 0);
   public static LoggedTunableNumber xControllerP =
