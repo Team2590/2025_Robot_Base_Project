@@ -14,7 +14,7 @@ public class EndEffector extends SubsystemBase {
   private final EndEffectorIO.EndEffectorIOInputs inputs = new EndEffectorIO.EndEffectorIOInputs();
   private boolean isRunning = false;
   private LoggedTunableNumber CURRENT_THRESHOLD =
-      new LoggedTunableNumber("EndEffector/CurrentThreshold", 15); // good for coral
+      new LoggedTunableNumber("EndEffector/CurrentThreshold", 15);
   private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 15);
   private LinearFilter filter_current = LinearFilter.movingAverage((int) taps.get());
   private double stator_current_filtered_data;
@@ -29,7 +29,6 @@ public class EndEffector extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    // filtered_data = filter.calculate(prox.getValue());
     stator_current_filtered_data = filter_current.calculate(inputs.statorCurrentAmps);
 
     Logger.recordOutput("EndEffector/current", inputs.statorCurrentAmps);
