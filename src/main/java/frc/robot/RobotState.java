@@ -18,7 +18,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import lombok.Getter;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class RobotState extends SubsystemBase {
@@ -171,7 +170,6 @@ public class RobotState extends SubsystemBase {
     return vision.getNearestCoralPose();
   }
 
-  @AutoLogOutput(key = "PreciseAlignment/AligningState")
   public AligningState getAligningState() {
     return aligningState.get();
   }
@@ -224,9 +222,12 @@ public class RobotState extends SubsystemBase {
 
     targetPose = drive.flipScoringSide(originalTargetPose.get());
 
+    if (aligningState.get() == AligningState.ALIGNING_BACK) {
+      targetPose = FieldConstants.convertBackScoring(targetPose);
+    }
+
     Logger.recordOutput("RobotState/Pose", targetPose);
     Logger.recordOutput("RobotState/CoralArmSetpoint", coralScoringSetpoints.armSetpoint);
-    Logger.recordOutput("RobotState/CoralArmPlaceSetpoint", coralScoringSetpoints.armPlaceSetpoint);
     Logger.recordOutput("RobotState/algaeArmSetpoint", dealgaeSetpoints.armSetpoint);
     Logger.recordOutput("RobotState/algaePlaceSetpoint", dealgaeSetpoints.armPlaceSetpoint);
     Logger.recordOutput("RobotState/algaeScoringArmSetpoint", algaeScoringSetpoints.armSetpoint);
@@ -280,6 +281,25 @@ public class RobotState extends SubsystemBase {
       return targetPose;
     } finally {
       updateLock.unlock();
+    }
+  }
+
+  public double getReefOffsetLeft() {
+
+    if (aligningState.get() == AligningState.ALIGNING_BACK) {
+      return Drive.reefXOffsetRight.get();
+    } else {
+      return Drive.reefXOffsetLeft.get();
+    }
+  }
+
+  public double getReefOffsetRight() {
+
+    if (aligningState.get() == AligningState.ALIGNING_BACK) {
+
+      return Drive.reefXOffsetLeft.get();
+    } else {
+      return Drive.reefXOffsetRight.get();
     }
   }
 

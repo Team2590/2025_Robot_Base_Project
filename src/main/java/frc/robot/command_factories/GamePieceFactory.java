@@ -15,7 +15,7 @@ public class GamePieceFactory {
   public static Command intakeAlgaeGround() {
     return Commands.parallel(
             new MoveFromHandoffCommand(
-                    Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
+                    Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
                     Constants.ArmConstantsLeonidas.ARM_INTAKE_ALGAE_POS)
                 .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()))

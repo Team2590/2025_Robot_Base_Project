@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -54,7 +55,7 @@ public final class Constants {
   public static class DriveToPoseConstraints {
     public static double maxVelocityMPS = 3;
     public static double maxAccelerationMPSSq = 3;
-    public static double maxAngularVelocityRadPerSec = 3;
+    public static double maxAngularVelocityRadPerSec = 6;
     public static double maxAngularAccelerationRadPerSecSq = 3;
 
     public static LoggedTunableNumber maxVelocityMPSScaler =
@@ -416,25 +417,26 @@ public final class Constants {
   }
 
   public static class DriveToPoseStraight {
+
+    public static double maxVelocityMPS = 3;
+    public static double maxAngularVelocityRadPerSec = 6;
+
     public static class XController {
       public static double kP = 2.25;
-      public static double kI = 0;
       public static double kD = 0;
-      public static double tolerance = 0;
+      public static double tolerance = 0.01; // ~.4 inches
     }
 
     public static class YController {
       public static double kP = 2.25;
-      public static double kI = 0;
       public static double kD = 0;
-      public static double tolerance = 0;
+      public static double tolerance = 0.01;
     }
 
     public static class ThetaController {
       public static double kP = 3.5;
-      public static double kI = 0;
       public static double kD = 0;
-      public static double tolerance = 0;
+      public static double tolerance = Units.degreesToRadians(1.0);
     }
   }
 
