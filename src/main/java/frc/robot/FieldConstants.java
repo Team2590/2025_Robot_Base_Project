@@ -206,6 +206,19 @@ public class FieldConstants {
   public static final Pose2d CageDeepRight =
       new Pose2d(new Translation2d(8.023, 5.059), Rotation2d.fromDegrees(0));
 
+  public static final double BACK_SCORING_DIFFERENCE = Units.inchesToMeters(-1.4);
+  public static Pose2d convertBackScoring(Pose2d frontPose) {
+    double moveLeftDistanceMeters = BACK_SCORING_DIFFERENCE;
+    Translation2d translation =
+        new Translation2d(
+            moveLeftDistanceMeters, frontPose.getRotation().plus(Rotation2d.fromDegrees(90)));
+    Pose2d backPose =
+        new Pose2d(
+            frontPose.getTranslation().plus(translation),
+            frontPose.getRotation().plus(new Rotation2d(0)));
+    return backPose;
+  }
+
   public static Map<String, Pose2d> BLUE_REEF_POSES = buildBlueReefPosesMap();
   public static Map<String, Pose2d> RED_REEF_POSES = buildRedReefPosesMap();
 
@@ -289,14 +302,15 @@ public class FieldConstants {
           new Translation2d(Units.inchesToMeters(176.746), aprilTagLayout.getFieldWidth() / 2.0);
     }
 
-    Logger.recordOutput("Center", new Pose2d(center, new Rotation2d()));
     Pose2d[][] returnPoses = new Pose2d[6][2];
 
     for (int face = 0; face < 6; face++) {
       Pose2d poseDirection = new Pose2d(center, Rotation2d.fromDegrees(180 - (60 * face)));
       double adjustY = Units.inchesToMeters(52.738 + Drive.reefYOffset.get());
-      double adjustXLeft = Units.inchesToMeters(6.469 + Drive.reefXOffsetLeft.get());
-      double adjustXRight = Units.inchesToMeters(6.469 + Drive.reefXOffsetRight.get());
+      double adjustXLeft =
+          Units.inchesToMeters(7.87 + RobotState.getInstance().getReefOffsetLeft());
+      double adjustXRight =
+          Units.inchesToMeters(7.87 + RobotState.getInstance().getReefOffsetRight());
 
       System.out.println("updating offsets to " + adjustY);
 
@@ -334,15 +348,7 @@ public class FieldConstants {
 
   public static void updateTunableNumbers() {
 
-    if (Drive.reefXOffsetLeft.hasChanged(0)
-        || Drive.reefXOffsetRight.hasChanged(1)
-        || Drive.reefYOffset.hasChanged(2)) {
-      RedReefPoses.reef = getReefPoses(true);
-      BlueReefPoses.reef = getReefPoses(false);
-      RED_REEF_POSES = buildRedReefPosesMap();
-      BLUE_REEF_POSES = buildBlueReefPosesMap();
-      logBlueReefPoses();
-    }
+    // logBlueReefPoses();
   }
 }
 
