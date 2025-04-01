@@ -1,7 +1,7 @@
 package frc.robot.command_factories;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.IntakeConstantsLeonidas;
+import frc.robot.Constants.IntakeArmConstantsLeonidas;
 import frc.robot.RobotContainer;
 import java.util.function.DoubleSupplier;
 
@@ -19,7 +19,15 @@ public class IntakeFactory {
    * @return Command to run the intake
    */
   public static Command runIntake(DoubleSupplier intakeSpeed) {
-    return RobotContainer.getIntake().runIntake(intakeSpeed.getAsDouble()).withName("Run Intake");
+    return RobotContainer.getIntake()
+        .runIntakeUntilHasCoral(intakeSpeed.getAsDouble())
+        .withName("Run Intake");
+  }
+
+  public static Command runIntakeVoltage(DoubleSupplier speed) {
+    return RobotContainer.getIntake()
+        .runIntakeVoltage(speed.getAsDouble())
+        .withName("Run Intake Voltage");
   }
 
   /**
@@ -30,7 +38,7 @@ public class IntakeFactory {
    */
   public static Command setIntakeCoralPosition() {
     return RobotContainer.getIntake()
-        .setPosition(IntakeConstantsLeonidas.INTAKE_FACTORY_CORAL_POSITION)
+        .setPosition(IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS)
         .withName("Set Intake Coral Position");
   }
 
@@ -49,7 +57,7 @@ public class IntakeFactory {
    */
   public static Command setIntakeAlgaePosition() {
     return RobotContainer.getIntake()
-        .setPosition(IntakeConstantsLeonidas.INTAKE_FACTORY_ALGAE_POSITION)
+        .setPosition(IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS)
         .withName("Set Intake Algae Position");
   }
 
@@ -61,7 +69,7 @@ public class IntakeFactory {
    */
   public static Command setHomePosition() {
     return RobotContainer.getIntake()
-        .setPosition(IntakeConstantsLeonidas.INTAKE_FACTORY_HOME_POSITION)
+        .setPosition(IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS)
         .withName("Set Intake Home Position");
   }
 
@@ -73,7 +81,7 @@ public class IntakeFactory {
    */
   public static Command setHoldingAlgaePosition() {
     return RobotContainer.getIntake()
-        .setPosition(IntakeConstantsLeonidas.INTAKE_FACTORY_HOLDING_ALGAE_POSITION)
+        .setPosition(IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS)
         .withName("Set Intake Home Position");
   }
 }

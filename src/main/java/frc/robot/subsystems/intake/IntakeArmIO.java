@@ -26,7 +26,15 @@ public interface IntakeArmIO {
 
   public void resetRotationCount();
 
+  public default void setPositionLoggedNumber() {}
+
+  public default double getTunableNumber() {
+    return 0;
+  }
+
   public void setNeutralMode(NeutralModeValue mode);
 
   public default void setVoltage(double volts) {}
+
+  public double getRotationCount();
 }

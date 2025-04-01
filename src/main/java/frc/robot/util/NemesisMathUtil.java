@@ -37,4 +37,13 @@ public class NemesisMathUtil {
   public static double distance(Pose2d pose1, Pose2d pose2) {
     return Math.hypot(pose1.getX() - pose2.getX(), pose1.getY() - pose2.getY());
   }
+
+  public static double selectClosest(double t1, double t2, double curr) {
+
+    if (Math.abs(t1 - curr) < Math.abs(t2 - curr)) {
+      return t1;
+    } else {
+      return t2;
+    }
+  }
 }

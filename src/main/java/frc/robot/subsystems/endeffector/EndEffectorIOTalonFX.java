@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -15,15 +16,10 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.AnalogInput;
-import frc.robot.Constants.EndEffectorConstantsLeonidas;
-import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.StickyFaultUtil;
 
 public class EndEffectorIOTalonFX implements EndEffectorIO {
   private final TalonFX leader;
-  private LoggedTunableNumber voltageTunableNumber =
-      new LoggedTunableNumber("EndEffector/voltage", 6);
-  LoggedTunableNumber ff = new LoggedTunableNumber("Arm/Feedforward", 0);
   Slot0Configs slot0;
   TalonFXConfiguration cfg;
   MotionMagicConfigs mm;
@@ -35,8 +31,6 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
   private StatusSignal<Current> supplyCurrent;
   private StatusSignal<Current> torqueCurrent;
   private StatusSignal<Temperature> tempCelsius;
-  private double statorCurrentAmps;
-  private AnalogInput proxInput = new AnalogInput(EndEffectorConstantsLeonidas.proxSensor_ID);
 
   public EndEffectorIOTalonFX(
       int canID,
@@ -46,6 +40,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
       boolean brake,
       double reduction) {
     leader = new TalonFX(canID, canBus);
+    StickyFaultUtil.clearMotorStickyFaults(leader, "endeffector");
 
     cfg = new TalonFXConfiguration();
 
@@ -63,7 +58,6 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
     supplyCurrent = leader.getSupplyCurrent();
     torqueCurrent = leader.getTorqueCurrent();
     tempCelsius = leader.getDeviceTemp();
-    statorCurrentAmps = leader.getStatorCurrent().getValueAsDouble();
     this.reduction = reduction;
 
     BaseStatusSignal.setUpdateFrequencyForAll(
@@ -87,13 +81,12 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
     inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
     inputs.tempCelsius = tempCelsius.getValueAsDouble();
     inputs.rotationCount = leader.getPosition().getValueAsDouble();
-    statorCurrentAmps = leader.getStatorCurrent().getValueAsDouble();
-    inputs.proxValue = proxInput.getValue();
+    inputs.statorCurrentAmps = leader.getStatorCurrent().getValueAsDouble();
   }
 
   @Override
   public void setVoltage(double voltage) {
-    leader.setVoltage(voltage);
+    leader.setControl((new VoltageOut(voltage)));
   }
 
   @Override
@@ -104,9 +97,5 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
   @Override
   public void setVelocity(double velocity) {
     leader.set(velocity);
-  }
-
-  public double getProxValue() {
-    return proxInput.getValue();
   }
 }

@@ -20,8 +20,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
+// import edu.wpi.first.wpilibj.Alert;
+// import edu.wpi.first.wpilibj.Alert.AlertType;
 import org.littletonrobotics.junction.Logger;
 
 public class Module {
@@ -32,9 +32,9 @@ public class Module {
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       constants;
 
-  private final Alert driveDisconnectedAlert;
-  private final Alert turnDisconnectedAlert;
-  private final Alert turnEncoderDisconnectedAlert;
+  // private final Alert driveDisconnectedAlert;
+  // private final Alert turnDisconnectedAlert;
+  // private final Alert turnEncoderDisconnectedAlert;
   private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
 
   public Module(
@@ -45,17 +45,18 @@ public class Module {
     this.io = io;
     this.index = index;
     this.constants = constants;
-    driveDisconnectedAlert =
-        new Alert(
-            "Disconnected drive motor on module " + Integer.toString(index) + ".",
-            AlertType.kError);
-    turnDisconnectedAlert =
-        new Alert(
-            "Disconnected turn motor on module " + Integer.toString(index) + ".", AlertType.kError);
-    turnEncoderDisconnectedAlert =
-        new Alert(
-            "Disconnected turn encoder on module " + Integer.toString(index) + ".",
-            AlertType.kError);
+    // driveDisconnectedAlert =
+    //     new Alert(
+    //         "Disconnected drive motor on module " + Integer.toString(index) + ".",
+    //         AlertType.kError);
+    // turnDisconnectedAlert =
+    //     new Alert(
+    //         "Disconnected turn motor on module " + Integer.toString(index) + ".",
+    // AlertType.kError);
+    // turnEncoderDisconnectedAlert =
+    //     new Alert(
+    //         "Disconnected turn encoder on module " + Integer.toString(index) + ".",
+    //         AlertType.kError);
   }
 
   public void periodic() {
@@ -72,9 +73,9 @@ public class Module {
     }
 
     // Update alerts
-    driveDisconnectedAlert.set(!inputs.driveConnected);
-    turnDisconnectedAlert.set(!inputs.turnConnected);
-    turnEncoderDisconnectedAlert.set(!inputs.turnEncoderConnected);
+    // driveDisconnectedAlert.set(!inputs.driveConnected);
+    // turnDisconnectedAlert.set(!inputs.turnConnected);
+    // turnEncoderDisconnectedAlert.set(!inputs.turnEncoderConnected);
   }
 
   /** Runs the module with the specified setpoint state. Mutates the state to optimize it. */
