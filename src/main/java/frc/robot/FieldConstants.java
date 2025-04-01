@@ -290,7 +290,6 @@ public class FieldConstants {
           new Translation2d(Units.inchesToMeters(176.746), aprilTagLayout.getFieldWidth() / 2.0);
     }
 
-    Logger.recordOutput("Center", new Pose2d(center, new Rotation2d()));
     Pose2d[][] returnPoses = new Pose2d[6][2];
 
     for (int face = 0; face < 6; face++) {
@@ -350,7 +349,7 @@ public class FieldConstants {
       BLUE_REEF_POSES = buildBlueReefPosesMap();
     }
 
-    logBlueReefPoses();
+    // logBlueReefPoses();
   }
 }
 

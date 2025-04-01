@@ -21,7 +21,7 @@ public class Climb extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Climb", inputs);
+    // Logger.processInputs("Climb", inputs);
     Logger.recordOutput("Climb/LimitSwitch", climbLimitSwitch.get());
   }
 
