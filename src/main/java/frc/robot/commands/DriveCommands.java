@@ -58,7 +58,6 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import frc.robot.util.AlignmentLogger;
-import frc.robot.Constants.AlignmentConstants.ToleranceMode;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -403,7 +402,7 @@ public class DriveCommands {
    * path following to achieve precise alignment.
    */
   public static Command pidAlignment(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
-    return new PIDAlignmentCommand(drive, targetPoseSupplier);
+    return new DriveToPoseStraight(drive, targetPoseSupplier);
   }
 
   public static Command preciseAlignment(
@@ -498,17 +497,17 @@ public class DriveCommands {
     PIDController xSpeedController =
         new PIDController(
             Constants.DriveToPoseStraight.XController.kP,
-            Constants.DriveToPoseStraight.XController.kI,
+            0,
             Constants.DriveToPoseStraight.XController.kD);
     PIDController ySpeedController =
         new PIDController(
             Constants.DriveToPoseStraight.YController.kP,
-            Constants.DriveToPoseStraight.YController.kI,
+            0,
             Constants.DriveToPoseStraight.YController.kD);
     PIDController angularSpeedController =
         new PIDController(
             Constants.DriveToPoseStraight.ThetaController.kP,
-            Constants.DriveToPoseStraight.ThetaController.kI,
+            0,
             Constants.DriveToPoseStraight.ThetaController.kD);
 
     xSpeedController.setTolerance(Constants.DriveToPoseStraight.XController.tolerance);
@@ -545,19 +544,19 @@ public class DriveCommands {
 
               xSpeedController.setPID(
                   Constants.DriveToPoseStraight.XController.kP,
-                  Constants.DriveToPoseStraight.XController.kI,
+                  0,
                   Constants.DriveToPoseStraight.XController.kD);
               xSpeedController.setTolerance(Constants.DriveToPoseStraight.XController.tolerance);
 
               ySpeedController.setPID(
                   Constants.DriveToPoseStraight.YController.kP,
-                  Constants.DriveToPoseStraight.YController.kI,
+                  0,
                   Constants.DriveToPoseStraight.YController.kD);
               ySpeedController.setTolerance(Constants.DriveToPoseStraight.YController.tolerance);
 
               angularSpeedController.setPID(
                   Constants.DriveToPoseStraight.ThetaController.kP,
-                  Constants.DriveToPoseStraight.ThetaController.kI,
+                  0,
                   Constants.DriveToPoseStraight.ThetaController.kD);
               angularSpeedController.setTolerance(
                   Constants.DriveToPoseStraight.ThetaController.tolerance);
@@ -592,49 +591,5 @@ public class DriveCommands {
               robotState.setAligningStateBasedOnTargetPose(preciseTarget);
             })
         .finallyDo(robotState::resetAligningState);
-  }
-
-  public static Command preciseAlignmentWithPID(
-      Drive driveSubsystem,
-      Supplier<Pose2d> preciseTarget,
-      Supplier<Rotation2d> approachDirection) {
-    return Commands.defer(
-        () -> {
-            PathConstraints constraints = Constants.DriveToPoseConstraints.slowpathConstraints;
-            if (preciseTarget.get().getRotation() == null
-                || driveSubsystem.getPose().getRotation() == null) {
-                return Commands.none();
-            }
-            try {
-                // Create the TrajectoryFollowerCommand with LOOSE tolerances
-                Command trajectoryCommand = new TrajectoryFollowerCommand(
-                    () -> getPreciseAlignmentPath(
-                        constraints,
-                        driveSubsystem.getChassisSpeeds(),
-                        driveSubsystem.getPose(),
-                        preciseTarget.get(),
-                        (RobotState.getInstance().getAligningState()
-                                == AligningState.ALIGNING_BACK)
-                            ? approachDirection.get().plus(new Rotation2d(Math.PI))
-                            : approachDirection.get()),
-                    driveSubsystem,
-                    preciseTarget.get().getRotation(),
-                    false,  // isInitialPoint
-                    new ChassisSpeeds(),  // startingSpeeds
-                    ToleranceMode.LOOSE);
-
-                // Create the PIDAlignmentCommand with STRICT tolerances
-                Command pidCommand = new PIDAlignmentCommand(
-                    driveSubsystem,
-                    preciseTarget,
-                    ToleranceMode.STRICT);
-
-                // Return a sequence of both commands
-                return Commands.sequence(trajectoryCommand, pidCommand);
-            } catch (Exception e) {
-                return Commands.print("Follow Path Exception: " + e.getMessage());
-            }
-        },
-        Set.of(driveSubsystem));
   }
 }

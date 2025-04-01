@@ -55,7 +55,7 @@ public final class Constants {
   public static class DriveToPoseConstraints {
     public static double maxVelocityMPS = 3;
     public static double maxAccelerationMPSSq = 3;
-    public static double maxAngularVelocityRadPerSec = 3;
+    public static double maxAngularVelocityRadPerSec = 6;
     public static double maxAngularAccelerationRadPerSecSq = 3;
 
     public static LoggedTunableNumber maxVelocityMPSScaler =
@@ -417,25 +417,26 @@ public final class Constants {
   }
 
   public static class DriveToPoseStraight {
+
+    public static double maxVelocityMPS = 3;
+    public static double maxAngularVelocityRadPerSec = 6;
+
     public static class XController {
       public static double kP = 2.25;
-      public static double kI = 0;
       public static double kD = 0;
-      public static double tolerance = 0.01;
+      public static double tolerance = 0.01; // ~.4 inches
     }
 
     public static class YController {
       public static double kP = 2.25;
-      public static double kI = 0;
       public static double kD = 0;
       public static double tolerance = 0.01;
     }
 
     public static class ThetaController {
       public static double kP = 3.5;
-      public static double kI = 0;
       public static double kD = 0;
-      public static double tolerance = 0.01;
+      public static double tolerance = Units.degreesToRadians(1.0);
     }
   }
 
@@ -580,22 +581,5 @@ public final class Constants {
 
     /** Replaying from a log file. */
     REPLAY
-  }
-
-  public static class AlignmentConstants {
-    public enum ToleranceMode {
-      STRICT,
-      LOOSE
-    }
-
-    // Strict tolerances (current values)
-    public static final double STRICT_X_TOLERANCE = 0.025;  // meters
-    public static final double STRICT_Y_TOLERANCE = 0.025;  // meters
-    public static final double STRICT_ROTATION_TOLERANCE = Units.degreesToRadians(2.0);  // 2 degrees in radians
-
-    // Loose tolerances (more forgiving)
-    public static final double LOOSE_X_TOLERANCE = 0.15;  // meters
-    public static final double LOOSE_Y_TOLERANCE = 0.15;  // meters
-    public static final double LOOSE_ROTATION_TOLERANCE = Units.degreesToRadians(8.0);  // 8 degrees in radians
   }
 }

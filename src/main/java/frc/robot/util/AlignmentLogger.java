@@ -3,8 +3,7 @@ package frc.robot.util;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Constants.AlignmentConstants;
-import frc.robot.Constants.AlignmentConstants.ToleranceMode;
+import frc.robot.Constants;
 import org.littletonrobotics.junction.Logger;
 
 public class AlignmentLogger {
@@ -16,20 +15,16 @@ public class AlignmentLogger {
 
     public static AlignmentStatus checkAlignmentTolerances(
             Pose2d currentPose, 
-            Pose2d targetPose, 
-            ToleranceMode toleranceMode) {
+            Pose2d targetPose) {
         
         double xError = targetPose.getX() - currentPose.getX();
         double yError = targetPose.getY() - currentPose.getY();
         double rotationError = MathUtil.angleModulus(
             targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians());
 
-        double xTolerance = (toleranceMode == ToleranceMode.STRICT) ? 
-            AlignmentConstants.STRICT_X_TOLERANCE : AlignmentConstants.LOOSE_X_TOLERANCE;
-        double yTolerance = (toleranceMode == ToleranceMode.STRICT) ? 
-            AlignmentConstants.STRICT_Y_TOLERANCE : AlignmentConstants.LOOSE_Y_TOLERANCE;
-        double rotationTolerance = (toleranceMode == ToleranceMode.STRICT) ? 
-            AlignmentConstants.STRICT_ROTATION_TOLERANCE : AlignmentConstants.LOOSE_ROTATION_TOLERANCE;
+        double xTolerance = Constants.DriveToPoseStraight.XController.tolerance;
+        double yTolerance = Constants.DriveToPoseStraight.YController.tolerance;
+        double rotationTolerance = Constants.DriveToPoseStraight.ThetaController.tolerance;
 
         boolean xAligned = Math.abs(xError) <= xTolerance;
         boolean yAligned = Math.abs(yError) <= yTolerance;
@@ -39,17 +34,10 @@ public class AlignmentLogger {
         return new AlignmentStatus(xAligned, yAligned, rotationAligned, fullyAligned);
     }
 
-    // Overload for backward compatibility, defaults to STRICT mode
-    public static AlignmentStatus checkAlignmentTolerances(Pose2d currentPose, Pose2d targetPose) {
-        return checkAlignmentTolerances(currentPose, targetPose, ToleranceMode.STRICT);
-    }
-
     public static void logAlignmentData(
             String prefix, 
             Pose2d currentPose, 
-            Pose2d targetPose, 
-            String phase,
-            ToleranceMode toleranceMode) {
+            Pose2d targetPose) {
         
         // Calculate errors
         double xError = targetPose.getX() - currentPose.getX();
@@ -58,10 +46,9 @@ public class AlignmentLogger {
             targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians());
 
         // Get alignment status
-        AlignmentStatus alignmentStatus = checkAlignmentTolerances(currentPose, targetPose, toleranceMode);
+        AlignmentStatus alignmentStatus = checkAlignmentTolerances(currentPose, targetPose);
 
         // Log essential data
-        Logger.recordOutput(prefix + "/Phase", phase);
         Logger.recordOutput(prefix + "/CurrentPose", currentPose);
         Logger.recordOutput(prefix + "/TargetPose", targetPose);
         
@@ -76,23 +63,5 @@ public class AlignmentLogger {
         Logger.recordOutput(prefix + "/Aligned/Y", alignmentStatus.yAligned());
         Logger.recordOutput(prefix + "/Aligned/Rotation", alignmentStatus.rotationAligned());
         Logger.recordOutput(prefix + "/Aligned/Full", alignmentStatus.fullyAligned());
-        
-        // Log tolerances for reference
-        double xTolerance = (toleranceMode == ToleranceMode.STRICT) ? 
-            AlignmentConstants.STRICT_X_TOLERANCE : AlignmentConstants.LOOSE_X_TOLERANCE;
-        double yTolerance = (toleranceMode == ToleranceMode.STRICT) ? 
-            AlignmentConstants.STRICT_Y_TOLERANCE : AlignmentConstants.LOOSE_Y_TOLERANCE;
-        double rotationTolerance = (toleranceMode == ToleranceMode.STRICT) ? 
-            AlignmentConstants.STRICT_ROTATION_TOLERANCE : AlignmentConstants.LOOSE_ROTATION_TOLERANCE;
-
-        Logger.recordOutput(prefix + "/Tolerances/X_Meters", xTolerance);
-        Logger.recordOutput(prefix + "/Tolerances/Y_Meters", yTolerance);
-        Logger.recordOutput(prefix + "/Tolerances/Rotation_Degrees", 
-            Units.radiansToDegrees(rotationTolerance));
-    }
-
-    // Overload for backward compatibility, defaults to STRICT mode
-    public static void logAlignmentData(String prefix, Pose2d currentPose, Pose2d targetPose, String phase) {
-        logAlignmentData(prefix, currentPose, targetPose, phase, ToleranceMode.STRICT);
     }
 } 

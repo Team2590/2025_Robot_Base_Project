@@ -8,40 +8,37 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.AlignmentLogger;
 import java.util.function.Supplier;
-import frc.robot.Constants.AlignmentConstants.ToleranceMode;
 
-public class PIDAlignmentCommand extends Command {
+import org.littletonrobotics.junction.Logger;
+
+import frc.robot.Constants;
+
+public class DriveToPoseStraight extends Command {
   private final Drive drive;
   private final Supplier<Pose2d> targetPoseSupplier;
   private final PIDController xController;
   private final PIDController yController;
   private final PIDController thetaController;
-  private final ToleranceMode toleranceMode;
+  private final String prefix = "DriveToPoseStraight";
 
-  public PIDAlignmentCommand(Drive drive, Supplier<Pose2d> targetPoseSupplier, ToleranceMode toleranceMode) {
+  public DriveToPoseStraight(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
     this.drive = drive;
     this.targetPoseSupplier = targetPoseSupplier;
-    this.toleranceMode = toleranceMode;
 
     // Create PID controllers with appropriate gains
-    this.xController = new PIDController(8.0, 0.0, 0.0);
-    this.yController = new PIDController(8.0, 0.0, 0.0);
-    this.thetaController = new PIDController(6.0, 0.0, 0.2);
+    this.xController = new PIDController(Constants.DriveToPoseStraight.XController.kP, 0.0, Constants.DriveToPoseStraight.XController.kD);
+    this.yController = new PIDController(Constants.DriveToPoseStraight.YController.kP, 0.0, Constants.DriveToPoseStraight.YController.kD);
+    this.thetaController = new PIDController(Constants.DriveToPoseStraight.ThetaController.kP, 0.0, Constants.DriveToPoseStraight.ThetaController.kD);
 
     // Enable continuous input for rotation controller
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     // Set tolerances for position and rotation
-    xController.setTolerance(0.01); // 1 cm
-    yController.setTolerance(0.01); // 1 cm
-    thetaController.setTolerance(0.02); // ~1 degree
+    xController.setTolerance(Constants.DriveToPoseStraight.XController.tolerance);
+    yController.setTolerance(Constants.DriveToPoseStraight.YController.tolerance);
+    thetaController.setTolerance(Constants.DriveToPoseStraight.ThetaController.tolerance);
 
     addRequirements(drive);
-  }
-
-  // Overload constructor with default STRICT tolerance
-  public PIDAlignmentCommand(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
-    this(drive, targetPoseSupplier, ToleranceMode.STRICT);
   }
 
   @Override
@@ -50,6 +47,25 @@ public class PIDAlignmentCommand extends Command {
     xController.reset();
     yController.reset();
     thetaController.reset();
+
+    xController.setPID(
+      Drive.xControllerP.get(),
+    0,
+    Constants.DriveToPoseStraight.XController.kD);
+    xController.setTolerance(Constants.DriveToPoseStraight.XController.tolerance);
+
+    yController.setPID(
+      Drive.yControllerP.get(),
+    0,
+    Constants.DriveToPoseStraight.YController.kD);
+    yController.setTolerance(Constants.DriveToPoseStraight.YController.tolerance);
+
+    thetaController.setPID(
+      Drive.ThetaConstrollerP.get(),
+    0,
+    Constants.DriveToPoseStraight.ThetaController.kD);
+    thetaController.setTolerance(
+    Constants.DriveToPoseStraight.ThetaController.tolerance);
   }
 
   @Override
@@ -70,8 +86,8 @@ public class PIDAlignmentCommand extends Command {
             currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
 
     // Limit speeds for fine adjustment
-    double maxLinearSpeed = 1.0; // m/s
-    double maxRotSpeed = 2.0; // rad/s
+    double maxLinearSpeed = Constants.DriveToPoseStraight.maxVelocityMPS; // m/s
+    double maxRotSpeed = Constants.DriveToPoseStraight.maxAngularVelocityRadPerSec; // rad/s
 
     xSpeed = MathUtil.clamp(xSpeed, -maxLinearSpeed, maxLinearSpeed);
     ySpeed = MathUtil.clamp(ySpeed, -maxLinearSpeed, maxLinearSpeed);
@@ -79,11 +95,9 @@ public class PIDAlignmentCommand extends Command {
 
     // Use AlignmentLogger for logging
     AlignmentLogger.logAlignmentData(
-        "PID Alignment", 
+        prefix, 
         currentPose, 
-        targetPose, 
-        "Final Alignment",
-        toleranceMode);
+        targetPose);
 
     // Apply field-relative speeds
     drive.runVelocity(
@@ -100,7 +114,7 @@ public class PIDAlignmentCommand extends Command {
     }
 
     return AlignmentLogger.checkAlignmentTolerances(
-        currentPose, targetPose, toleranceMode).fullyAligned();
+        currentPose, targetPose).fullyAligned();
   }
 
   @Override
