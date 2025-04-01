@@ -39,12 +39,12 @@ public class TrajectoryFollowerCommand extends Command {
 
   public NemesisHolonomicDriveController autonomusController =
       new NemesisHolonomicDriveController(
-          new PIDController(RobotContainer.getDrive().xControllerP.get(), 0, 0.0),
-          new PIDController(RobotContainer.getDrive().xControllerP.get(), 0, 0.0),
+          new PIDController(8, 0, 0.0),
+          new PIDController(8, 0, 0.0),
           new PIDController(
-              RobotContainer.getDrive().thetaControllerP.get(),
+              6,
               0,
-              RobotContainer.getDrive().thetaControllerD.get()));
+              .2));
 
   ProfiledPIDController angleController =
       new ProfiledPIDController(

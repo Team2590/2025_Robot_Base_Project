@@ -43,7 +43,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     intakeIO.updateInputs(intakeInputs);
-    Logger.processInputs("Intake", intakeInputs);
+    // Logger.processInputs("Intake", intakeInputs);
     // intakeDisconnected.set(!intakeInputs.connected);
 
     proxOneFilteredData = proxOneFilter.calculate(proxOne.getValue());
@@ -66,7 +66,7 @@ public class Intake extends SubsystemBase {
 
     public IntakeArm(IntakeArmIO intakeArmIO) {
       this.intakeArmIO = intakeArmIO;
-      Logger.processInputs("IntakeArm", intakeArmInputs);
+      // Logger.processInputs("IntakeArm", intakeArmInputs);
       // intakeArmDisconnected = new Alert("Intake Arm motor disconnected!", Alert.AlertType.kWarning);
     }
 
