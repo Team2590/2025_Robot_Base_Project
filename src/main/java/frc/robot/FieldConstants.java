@@ -206,14 +206,15 @@ public class FieldConstants {
   public static final Pose2d CageDeepRight =
       new Pose2d(new Translation2d(8.023, 5.059), Rotation2d.fromDegrees(0));
 
+  public static final double BACK_SCORING_DIFFERENCE = Units.inchesToMeters(-1.4);
   public static Pose2d convertBackScoring(Pose2d frontPose) {
-    double moveLeftDistanceMeters = Units.inchesToMeters(-1.5);
-    Translation2d leftTranslation =
+    double moveLeftDistanceMeters = BACK_SCORING_DIFFERENCE;
+    Translation2d translation =
         new Translation2d(
             moveLeftDistanceMeters, frontPose.getRotation().plus(Rotation2d.fromDegrees(90)));
     Pose2d backPose =
         new Pose2d(
-            frontPose.getTranslation().plus(leftTranslation),
+            frontPose.getTranslation().plus(translation),
             frontPose.getRotation().plus(new Rotation2d(0)));
     return backPose;
   }
@@ -307,9 +308,9 @@ public class FieldConstants {
       Pose2d poseDirection = new Pose2d(center, Rotation2d.fromDegrees(180 - (60 * face)));
       double adjustY = Units.inchesToMeters(52.738 + Drive.reefYOffset.get());
       double adjustXLeft =
-          Units.inchesToMeters(6.469 + RobotState.getInstance().getReefOffsetLeft());
+          Units.inchesToMeters(7.87 + RobotState.getInstance().getReefOffsetLeft());
       double adjustXRight =
-          Units.inchesToMeters(6.469 + RobotState.getInstance().getReefOffsetRight());
+          Units.inchesToMeters(7.87 + RobotState.getInstance().getReefOffsetRight());
 
       System.out.println("updating offsets to " + adjustY);
 

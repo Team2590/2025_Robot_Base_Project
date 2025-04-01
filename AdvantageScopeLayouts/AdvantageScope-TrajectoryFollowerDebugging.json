@@ -1,0 +1,124 @@
+{
+  "hubs": [
+    {
+      "x": -487,
+      "y": -1394,
+      "width": 1616,
+      "height": 1112,
+      "state": {
+        "sidebar": {
+          "width": 500,
+          "expanded": [
+            "/AdvantageKit",
+            "/AdvantageKit/RealOutputs",
+            "/AdvantageKit/RealOutputs/Odometry",
+            "/AdvantageKit/RealOutputs/TrajectoryFollower",
+            "/AdvantageKit/RealOutputs/TrajectoryFollower/Aligned",
+            "/AdvantageKit/RealOutputs/TrajectoryFollower/FinalTargetPose/rotation",
+            "/AdvantageKit/RealOutputs/TrajectoryFollower/FinalTargetPose/translation",
+            "/AdvantageKit/RealOutputs/TrajectoryFollower/CurrentPose/translation",
+            "/AdvantageKit/RealOutputs/TrajectoryFollower/Debug/CheckInputs",
+            "/AdvantageKit/RealOutputs/TrajectoryFollower/Debug/CheckInputs/CurrentPose",
+            "/AdvantageKit/RealOutputs/TrajectoryFollower/Debug/CheckInputs/TargetPose",
+            "/AdvantageKit/RealOutputs/TrajectoryFollower/Debug/CheckInputs/CurrentPose/rotation",
+            "/AdvantageKit/RealOutputs/TrajectoryFollower/Debug/CheckInputs/CurrentPose/translation",
+            "/AdvantageKit/RealOutputs/TrajectoryFollower/Debug/CheckInputs/TargetPose/rotation",
+            "/AdvantageKit/RealOutputs/TrajectoryFollower/Debug/CheckInputs/TargetPose/translation"
+          ]
+        },
+        "tabs": {
+          "selected": 2,
+          "tabs": [
+            {
+              "type": 0,
+              "title": "",
+              "controller": null,
+              "controllerUUID": "fprgxpj8grbple033ffws7y9demg731b",
+              "renderer": "#/",
+              "controlsHeight": 0
+            },
+            {
+              "type": 1,
+              "title": "Line Graph",
+              "controller": {
+                "leftSources": [],
+                "rightSources": [],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "p5a32x3zlkphlhgz8z9o0slo0tf8ex8k",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 2,
+              "title": "Odometry",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "robot",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Robot",
+                    "logType": "Pose2d",
+                    "visible": false,
+                    "options": {}
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/TrajectoryFollower/FinalTargetPose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/TrajectoryFollower/CurrentPose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "color": "#ffff00"
+                    }
+                  }
+                ],
+                "game": "2025 Field (Welded)",
+                "bumpers": "auto",
+                "origin": "blue",
+                "orientation": 0,
+                "size": 30
+              },
+              "controllerUUID": "0ey7rx1idjk0ejxkonl6an6y2ormdole",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 3,
+              "title": "3D Field",
+              "controller": {
+                "sources": [],
+                "game": "2025 Field (Welded)",
+                "origin": "blue"
+              },
+              "controllerUUID": "phvpph3p1m4jnvrrjkfkjth8z7i26xus",
+              "renderer": null,
+              "controlsHeight": 200
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "satellites": [],
+  "version": "4.1.1"
+}

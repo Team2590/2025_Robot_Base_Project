@@ -37,6 +37,7 @@ import frc.robot.util.PolygonLocator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import edu.wpi.first.math.util.Units;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -54,7 +55,7 @@ public final class Constants {
   public static class DriveToPoseConstraints {
     public static double maxVelocityMPS = 3;
     public static double maxAccelerationMPSSq = 3;
-    public static double maxAngularVelocityRadPerSec = 3;
+    public static double maxAngularVelocityRadPerSec = 6;
     public static double maxAngularAccelerationRadPerSecSq = 3;
 
     public static LoggedTunableNumber maxVelocityMPSScaler =
@@ -420,25 +421,26 @@ public final class Constants {
   }
 
   public static class DriveToPoseStraight {
+
+    public static double maxVelocityMPS = 3;
+    public static double maxAngularVelocityRadPerSec = 6;
+
     public static class XController {
       public static double kP = 2.25;
-      public static double kI = 0;
       public static double kD = 0;
-      public static double tolerance = 0.01;
+      public static double tolerance = 0.01; // ~.4 inches
     }
 
     public static class YController {
       public static double kP = 2.25;
-      public static double kI = 0;
       public static double kD = 0;
       public static double tolerance = 0.01;
     }
 
     public static class ThetaController {
       public static double kP = 3.5;
-      public static double kI = 0;
       public static double kD = 0;
-      public static double tolerance = 0.01;
+      public static double tolerance = Units.degreesToRadians(1.0);
     }
   }
 
