@@ -70,8 +70,6 @@ import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.NemesisAutoBuilder;
-import frc.robot.util.NemesisAutoBuilder.ReefTarget;
-import frc.robot.util.NemesisAutoBuilder.SourceSide;
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -360,20 +358,8 @@ public class RobotContainer {
     // setup Named Commands:
     registerNamedCommands();
 
-    NemesisAutoBuilder.addRoutine(
-        "Nemesis Auto Builder Test 3",
-        NemesisAutoBuilder.generateScoringSequence(ReefTarget.NE_Left, Level.L4, SourceSide.LEFT));
-
-    NemesisAutoBuilder.addRoutine(
-        "Nemesis Auto Builder Test 4",
-        NemesisAutoBuilder.generateScoringSequence(ReefTarget.NE_Right, SourceSide.LEFT),
-        NemesisAutoBuilder.generateScoringSequence(ReefTarget.NE_Left, SourceSide.LEFT),
-        NemesisAutoBuilder.generateScoringSequence(ReefTarget.SE_Right, SourceSide.LEFT),
-        NemesisAutoBuilder.generateScoringSequence(ReefTarget.SE_Left, SourceSide.LEFT));
-
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    NemesisAutoBuilder.addRoutinesToChooser(autoChooser);
 
     // // Set up SysId routines
     autoChooser.addOption(
@@ -654,6 +640,8 @@ public class RobotContainer {
     // for a certain condition.
     NamedCommands.registerCommand(
         "WaitAndPrint", Commands.waitSeconds(5).andThen(Commands.print("Done waiting ...")));
+
+    NemesisAutoBuilder.registerNamedCommandsForAutos();
   }
 
   //   public boolean inReef() {

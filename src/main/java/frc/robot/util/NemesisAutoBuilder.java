@@ -1,21 +1,18 @@
 package frc.robot.util;
 
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.command_factories.AutoFactory;
+import frc.robot.FieldConstants;
+import frc.robot.RobotContainer;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
-import java.util.HashMap;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import frc.robot.commands.DriveCommands;
 
 public class NemesisAutoBuilder {
-  private static HashMap<String, Command> autoRoutines = new HashMap<String, Command>();
-
-  public enum SourceSide {
-    LEFT,
-    RIGHT
-  }
 
   public enum ReefTarget {
     S_Right,
@@ -32,33 +29,33 @@ public class NemesisAutoBuilder {
     SE_Left
   }
 
-  public static Command generateScoringSequence(
-      ReefTarget reefTarget, Level level, SourceSide sourceSide) {
-    return Commands.sequence(
-        AutoFactory.driveTo(NemesisAutoBuilderPoses.getReefPose(reefTarget)),
-        ScoringFactory.score(level),
-        AutoFactory.driveTo(NemesisAutoBuilderPoses.getNearSourcePose(sourceSide)));
+  private static Command driveAndScore(ReefTarget reefTarget, Level level) {
+    String name = reefTarget + "_" + level;
+    Command command =
+        Commands.sequence(driveToPoseCommandForAuto(reefTarget), ScoringFactory.score(level))
+            .withName(name);
+    NamedCommands.registerCommand(name, command);
+    return command;
   }
 
-  public static Command generateScoringSequence(ReefTarget reefTarget, SourceSide sourceSide) {
-    return generateScoringSequence(reefTarget, Level.L4, sourceSide);
+  private static Command driveAndScoreL4(ReefTarget reefTarget) {
+    return driveAndScore(reefTarget, Level.L4);
   }
 
-  public static void addRoutine(String name, Command... sequences) {
-    autoRoutines.put(name, Commands.sequence(sequences));
+  private static Pose2d getReefPose(ReefTarget reefTarget) {
+    return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+        ? FieldConstants.BLUE_REEF_POSES.get(reefTarget.name())
+        : FieldConstants.RED_REEF_POSES.get(reefTarget.name());
   }
 
-  public static void addRoutine(String name, Command routine) {
-    autoRoutines.put(name, routine);
+  public static void registerNamedCommandsForAutos() {
+    for (ReefTarget reefTarget : ReefTarget.values()) {
+      driveAndScoreL4(reefTarget);
+    }
   }
 
-  public static SendableChooser<Command> buildAutoChooser() {
-    SendableChooser<Command> chooser = new SendableChooser<Command>();
-    autoRoutines.forEach((name, routine) -> chooser.addOption(name, routine));
-    return chooser;
-  }
-
-  public static void addRoutinesToChooser(LoggedDashboardChooser<Command> chooser) {
-    autoRoutines.forEach((name, routine) -> chooser.addOption(name, routine));
+  private static Command driveToPoseCommandForAuto(ReefTarget reefTarget) {
+    return DriveCommands.driveToPoseStraight(
+        RobotContainer.getDrive(), () -> getReefPose(reefTarget));
   }
 }
