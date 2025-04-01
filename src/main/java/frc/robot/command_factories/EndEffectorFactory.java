@@ -1,7 +1,9 @@
 package frc.robot.command_factories;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.RobotState;
 
 public class EndEffectorFactory {
 
@@ -29,7 +31,9 @@ public class EndEffectorFactory {
   }
 
   public static Command runEndEffectorGrabAndHoldAlgae() {
-    return RobotContainer.getEndEffector().runEndEffectorGrabAndHoldAlgaeCommand();
+    return RobotContainer.getEndEffector()
+        .runEndEffectorVoltage(Constants.EndEffectorConstantsLeonidas.INTAKE_ALGAE_VOLTAGE)
+        .until(() -> RobotState.endEffectorHasGamePiece());
   }
   /**
    * Creates a command to run the endeffector outtake.

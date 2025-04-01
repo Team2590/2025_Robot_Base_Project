@@ -18,7 +18,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import lombok.Getter;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class RobotState extends SubsystemBase {
@@ -145,7 +144,8 @@ public class RobotState extends SubsystemBase {
     updateLock.lock();
     try {
       setAligningStateBasedOnTargetPose(() -> controllerApp.getTarget().pose());
-      updateScoringConfiguration(() -> controllerApp.getTarget().pose());
+      updateScoringConfigurationSimple(
+          () -> controllerApp.getTarget().pose(), () -> controllerApp.getTarget().scoringLevel());
     } finally {
       updateLock.unlock();
     }
@@ -170,7 +170,6 @@ public class RobotState extends SubsystemBase {
     return vision.getNearestCoralPose();
   }
 
-  @AutoLogOutput(key = "PreciseAlignment/AligningState")
   public AligningState getAligningState() {
     return aligningState.get();
   }
@@ -199,6 +198,41 @@ public class RobotState extends SubsystemBase {
 
   public static void clearEndEffectorHasGamePiece() {
     hasGamePiece = false;
+  }
+
+  private void updateScoringConfigurationSimple(
+      Supplier<Pose2d> originalTargetPose, Supplier<Level> elevatorSetpoint) {
+    coralScoringSetpoints.elevatorSetpoint = elevatorSetpoint.get().getElevatorSetpoint();
+
+    if (aligningState.get() == AligningState.ALIGNING_FRONT) {
+      coralScoringSetpoints.armSetpoint = .15;
+      coralScoringSetpoints.armPlaceSetpoint = 0;
+      dealgaeSetpoints.armSetpoint = 0;
+      dealgaeSetpoints.armPlaceSetpoint = 0;
+      algaeScoringSetpoints.armSetpoint = .175;
+
+    } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
+
+      coralScoringSetpoints.armSetpoint = .5 - .15;
+      coralScoringSetpoints.armPlaceSetpoint = .5 - 0;
+      dealgaeSetpoints.armSetpoint = .5 - 0;
+      dealgaeSetpoints.armPlaceSetpoint = .5 - 0;
+      algaeScoringSetpoints.armSetpoint = .5 - .175;
+    }
+
+    targetPose = drive.flipScoringSide(originalTargetPose.get());
+
+    if (aligningState.get() == AligningState.ALIGNING_BACK) {
+      targetPose = FieldConstants.convertBackScoring(targetPose);
+    }
+
+    Logger.recordOutput("RobotState/Pose", targetPose);
+    Logger.recordOutput("RobotState/CoralArmSetpoint", coralScoringSetpoints.armSetpoint);
+    Logger.recordOutput("RobotState/algaeArmSetpoint", dealgaeSetpoints.armSetpoint);
+    Logger.recordOutput("RobotState/algaePlaceSetpoint", dealgaeSetpoints.armPlaceSetpoint);
+    Logger.recordOutput("RobotState/algaeScoringArmSetpoint", algaeScoringSetpoints.armSetpoint);
+    Logger.recordOutput(
+        "RobotState/algaeScoringPlaceSetpoint", algaeScoringSetpoints.armPlaceSetpoint);
   }
 
   private void updateScoringConfiguration(Supplier<Pose2d> originalTargetPose) {
@@ -250,6 +284,25 @@ public class RobotState extends SubsystemBase {
     }
   }
 
+  public double getReefOffsetLeft() {
+
+    if (aligningState.get() == AligningState.ALIGNING_BACK) {
+      return Drive.reefXOffsetRight.get();
+    } else {
+      return Drive.reefXOffsetLeft.get();
+    }
+  }
+
+  public double getReefOffsetRight() {
+
+    if (aligningState.get() == AligningState.ALIGNING_BACK) {
+
+      return Drive.reefXOffsetLeft.get();
+    } else {
+      return Drive.reefXOffsetRight.get();
+    }
+  }
+
   public ScoringSetpoints getCoralScoringSetpoints() {
     updateLock.lock();
     try {
@@ -276,7 +329,7 @@ public class RobotState extends SubsystemBase {
     updateLock.lock();
     try {
       // Manually set the requested levels elevator setpoint because I am too stupid to figure out a
-      // better way
+      // better wayf
       ScoringSetpoints setpoint_copy = algaeScoringSetpoints;
       setpoint_copy.elevatorSetpoint = level.getElevatorSetpoint();
       return setpoint_copy;

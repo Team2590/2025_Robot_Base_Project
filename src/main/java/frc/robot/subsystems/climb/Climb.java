@@ -1,5 +1,6 @@
 package frc.robot.subsystems.climb;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -11,6 +12,7 @@ public class Climb extends SubsystemBase {
   private ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
   private LoggedTunableNumber runVoltage =
       new LoggedTunableNumber("Climb/runVoltage", Constants.ClimbConstantsLeonidas.CLIMB_VOLTAGE);
+  private DigitalInput climbLimitSwitch = new DigitalInput(0);
 
   public Climb(ClimbIO io) {
     this.io = io;
@@ -19,11 +21,11 @@ public class Climb extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Climb", inputs);
+    // Logger.processInputs("Climb", inputs);
+    Logger.recordOutput("Climb/LimitSwitch", climbLimitSwitch.get());
   }
 
   public Command runClimb(double voltage) {
-    System.out.println("Running climb");
     return runEnd(() -> io.setVoltage(runVoltage.get()), io::stop);
   }
 
@@ -37,5 +39,9 @@ public class Climb extends SubsystemBase {
 
   public void resetRotationCountFunction() {
     io.resetRotationCount();
+  }
+
+  public boolean getLimitSwitchValue() {
+    return climbLimitSwitch.get();
   }
 }
