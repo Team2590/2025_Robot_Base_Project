@@ -53,6 +53,8 @@ public class RobotState extends SubsystemBase {
           Level.DEALGAE_L2.getElevatorSetpoint(),
           Level.DEALGAE_L2.getarmPreScoreSetpoint(),
           Level.DEALGAE_L2.getArmScoringSetpoint());
+  private double bargeArmPos = 0.175;
+  private double processorArmPos = 0;
 
   /** The aligning state for scoring, if we are aligning to front or back of the robot. */
   public static enum AligningState {
@@ -64,6 +66,11 @@ public class RobotState extends SubsystemBase {
   public static enum BargeScoringState {
     BARGE_FRONT,
     BARGE_BACK,
+  }
+
+  public static enum ProcessorScoringState {
+    PROCESSOR_FRONT,
+    PROCESSOR_BACK,
   }
 
   public static class ScoringSetpoints {
@@ -80,8 +87,10 @@ public class RobotState extends SubsystemBase {
 
   private AtomicReference<AligningState> aligningState =
       new AtomicReference<RobotState.AligningState>(AligningState.NOT_ALIGNING);
-  private double bargeArmPosition = 0.175;
-  private double processorArmPosition = 0;
+  private AtomicReference<BargeScoringState> bargeState =
+      new AtomicReference<BargeScoringState>(BargeScoringState.BARGE_FRONT);
+  private AtomicReference<ProcessorScoringState> processorState =
+      new AtomicReference<ProcessorScoringState>(ProcessorScoringState.PROCESSOR_FRONT);
   private AligningState previousAligningState = AligningState.NOT_ALIGNING;
   private final Lock updateLock = new ReentrantLock();
 
@@ -219,15 +228,15 @@ public class RobotState extends SubsystemBase {
 
     if (poseChanged) {
       if (drive.frontScore(bargePose)) {
-        bargeArmPosition = 0.175;
+        setBargeState(BargeScoringState.BARGE_FRONT);
       } else {
-        bargeArmPosition = 0.325;
+        setBargeState(BargeScoringState.BARGE_BACK);
       }
 
       if (drive.frontScore(processorPose)) {
-        processorArmPosition = 0;
+        setProcessorState(ProcessorScoringState.PROCESSOR_FRONT);
       } else {
-        processorArmPosition = 0.5;
+        setProcessorState(ProcessorScoringState.PROCESSOR_BACK);
       }
     }
   }
@@ -268,6 +277,18 @@ public class RobotState extends SubsystemBase {
       targetPose = FieldConstants.convertBackScoring(targetPose);
     }
 
+    if (processorState.get() == ProcessorScoringState.PROCESSOR_FRONT) {
+      processorArmPos = 0;
+    } else {
+      processorArmPos = 0.5;
+    }
+
+    if (bargeState.get() == BargeScoringState.BARGE_FRONT) {
+      bargeArmPos = 0.175;
+    } else {
+      bargeArmPos = 0.325;
+    }
+
     Logger.recordOutput("RobotState/Pose", targetPose);
     Logger.recordOutput("RobotState/CoralArmSetpoint", coralScoringSetpoints.armSetpoint);
     Logger.recordOutput("RobotState/algaeArmSetpoint", dealgaeSetpoints.armSetpoint);
@@ -275,8 +296,8 @@ public class RobotState extends SubsystemBase {
     Logger.recordOutput("RobotState/algaeScoringArmSetpoint", algaeScoringSetpoints.armSetpoint);
     Logger.recordOutput(
         "RobotState/algaeScoringPlaceSetpoint", algaeScoringSetpoints.armPlaceSetpoint);
-    Logger.recordOutput("RobotState/bargeArmSetpoint", bargeArmPosition);
-    Logger.recordOutput("RobotState/processorArmSetpoint", processorArmPosition);
+    Logger.recordOutput("RobotState/bargeArmSetpoint", bargeArmPos);
+    Logger.recordOutput("RobotState/processorArmSetpoint", processorArmPos);
   }
 
   private void updateScoringConfiguration(Supplier<Pose2d> originalTargetPose) {
@@ -382,12 +403,38 @@ public class RobotState extends SubsystemBase {
     }
   }
 
+  public ProcessorScoringState getProcessorState() {
+    return processorState.get();
+  }
+
+  public BargeScoringState getBargeState() {
+    return bargeState.get();
+  }
+
+  public void setProcessorState(ProcessorScoringState state) {
+    processorState.set(state);
+  }
+
+  public void setBargeState(BargeScoringState state) {
+    bargeState.set(state);
+  }
+
   public double getProcessorArmPos() {
-    return processorArmPosition;
+    updateLock.lock();
+    try {
+      return processorArmPos;
+    } finally {
+      updateLock.unlock();
+    }
   }
 
   public double getBargeArmPos() {
-    return bargeArmPosition;
+    updateLock.lock();
+    try {
+      return bargeArmPos;
+    } finally {
+      updateLock.unlock();
+    }
   }
 
   /*
