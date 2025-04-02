@@ -44,4 +44,8 @@ public class Climb extends SubsystemBase {
   public boolean getLimitSwitchValue() {
     return climbLimitSwitch.get();
   }
+
+  public ClimbIO getIO() {
+    return io;
+  }
 }

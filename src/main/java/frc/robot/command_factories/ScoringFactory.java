@@ -9,7 +9,6 @@ import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.RobotState.ScoringSetpoints;
-import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.util.NemesisMathUtil;
 import java.util.Set;
@@ -288,7 +287,7 @@ public class ScoringFactory {
   }
 
   public static Command climb() {
-    return new ClimbCommand();
+    return ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION);
   }
 
   public static Command setDefaults() {

@@ -13,6 +13,8 @@ public class EndEffector extends SubsystemBase {
   private final EndEffectorIO io;
   private final EndEffectorIO.EndEffectorIOInputs inputs = new EndEffectorIO.EndEffectorIOInputs();
   private boolean isRunning = false;
+  private LoggedTunableNumber PROX_THRESHOLD =
+      new LoggedTunableNumber("EndEffector/ProxThreshold", 2000);
   private LoggedTunableNumber CURRENT_THRESHOLD =
       new LoggedTunableNumber("EndEffector/CurrentThreshold", 15);
   private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 15);
@@ -29,7 +31,9 @@ public class EndEffector extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    // filtered_data = filter.calculate(prox.getValue());
     stator_current_filtered_data = filter_current.calculate(inputs.statorCurrentAmps);
+    // prox_filtered_data = filter.calculate(prox.getValue());
 
     Logger.recordOutput("EndEffector/current", inputs.statorCurrentAmps);
 

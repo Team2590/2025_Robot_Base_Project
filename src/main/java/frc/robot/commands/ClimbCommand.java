@@ -1,37 +1,25 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
-import frc.robot.command_factories.ClimbFactory;
+import frc.robot.subsystems.climb.Climb;
 import frc.robot.util.NemesisMathUtil;
 import java.util.Set;
 
 public class ClimbCommand extends Command {
 
-  private Trigger limitSwitch = new Trigger(() -> RobotContainer.getClimb().getLimitSwitchValue());
-  private Command deployMech =
-      Commands.sequence(
-          new MoveFromHandoffCommand(
-              Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
-              .33,
-              Constants.ArmConstantsLeonidas.ARM_SET_STOW),
-          ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION));
-
-  // return new MoveFromHandoffCommand(
-  //     IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
-  //     .33,
-  //     Constants.ArmConstantsLeonidas.ARM_SET_STOW)
-  // .andThen(ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION))
-  // .andThen(
-  //     // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS),
-  //     // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
-  //     ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION)
-  //         .onlyWhile(() -> RobotContainer.getClimb().getLimitSwitchValue()))
-  // // .andThen(LEDFactory.auraRizz())
-  // .withName("Climb");
+  // private Trigger limitSwitch = new Trigger(() ->
+  // RobotContainer.getClimb().getLimitSwitchValue());
+  private Climb climb;
+  private boolean pressed = false;
+  // private Command deployMech =
+  //     Commands.sequence(
+  //         new MoveFromHandoffCommand(
+  //             Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
+  //             .33,
+  //             Constants.ArmConstantsLeonidas.ARM_SET_STOW),
+  //         ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION));
 
   public ClimbCommand() {
     setName("Climb Command");
@@ -43,13 +31,32 @@ public class ClimbCommand extends Command {
             RobotContainer.getIntake()));
   }
 
+  public void initialize() {
+    climb = RobotContainer.getClimb();
+    RobotContainer.getElevator().getIO().setPosition(Constants.ArmConstantsLeonidas.ARM_SET_STOW);
+    RobotContainer.getIntake()
+        .getArmIO()
+        .setPosition(Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS);
+    RobotContainer.getArm().getIO().setPosition(Constants.ArmConstantsLeonidas.ARM_SET_STOW);
+  }
+
   @Override
   public void execute() {
     // Set subsystems in correct positions
-    deployMech.schedule();
-    if (deployMech.isFinished()) {
-      limitSwitch.onTrue(
-          ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION));
+    if (climb.getLimitSwitchValue()) pressed = true;
+
+    if (pressed) {
+      if (climb.getRotationCount() < Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION) {
+        climb.getIO().setVoltage(Constants.ClimbConstantsLeonidas.CLIMB_VOLTAGE);
+      } else {
+        climb.getIO().stop();
+      }
+    } else {
+      if (climb.getRotationCount() < Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION) {
+        climb.getIO().setVoltage(Constants.ClimbConstantsLeonidas.CLIMB_VOLTAGE);
+      } else {
+        climb.getIO().stop();
+      }
     }
   }
 
