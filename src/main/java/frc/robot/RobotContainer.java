@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
+import frc.robot.command_factories.ClimbFactory;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
@@ -70,6 +71,7 @@ import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.NemesisAutoBuilder;
+import frc.robot.util.NemesisAutoBuilder.ReefTarget;
 import java.util.List;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -388,6 +390,9 @@ public class RobotContainer {
         "Intake FF Characterization",
         new FeedForwardCharacterization(
             intake, intake::setVoltage, intake::getCharacterizationVelocity));
+
+    autoChooser.addOption(
+        "Hybrid Test 2", NemesisAutoBuilder.driveAndScore(ReefTarget.NE_Right, Level.L4));
   }
 
   /** Initialize default commands */
@@ -482,6 +487,11 @@ public class RobotContainer {
     // climb buttons
     // Causing NullPointerException on startup in SIM
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
+    rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
+    rightJoystick
+        .button(11)
+        .whileTrue(
+            ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION));
 
     // Scoring buttons
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
@@ -621,7 +631,8 @@ public class RobotContainer {
     // NamedCommands.registerCommand("PrimeL1",
     // ScoringFactory.primeForLevel(ScoringFactory.Level.L1));
     // TODO: Prime for Source
-    NamedCommands.registerCommand("intakeSource", GamePieceFactory.intakeAlgaeGround());
+    NamedCommands.registerCommand(
+        "intakeHandoff", GamePieceFactory.intakeCoralGroundAndHandoffNoStow());
 
     // Scoring Commands
     NamedCommands.registerCommand("ScoreL4", ScoringFactory.score(ScoringFactory.Level.L4));
@@ -629,6 +640,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("ScoreL2", ScoringFactory.score(ScoringFactory.Level.L2));
     NamedCommands.registerCommand("ScoreL1", ScoringFactory.score(ScoringFactory.Level.L1));
     NamedCommands.registerCommand("PrimeL4WhileMoving", ScoringFactory.primeL4WhileMoving());
+    NamedCommands.registerCommand("IntakeUprightCoral", GamePieceFactory.intakeAlgaeGround());
 
     // Does this need priming?
     NamedCommands.registerCommand("ScoreProcessor", ScoringFactory.scoreProcessor());

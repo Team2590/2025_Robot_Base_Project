@@ -10,12 +10,12 @@ import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
-import frc.robot.commands.DriveCommands;
+import frc.robot.commands.NemesisDriveToPoseStraight;
 
 /** This class is a result of relentless pursuit by our very own Dhurv Shah! */
 public class NemesisAutoBuilder {
 
-  private enum ReefTarget {
+  public enum ReefTarget {
     S_Right,
     S_Left,
     SW_Right,
@@ -30,12 +30,13 @@ public class NemesisAutoBuilder {
     SE_Left
   }
 
-  private static void driveAndScore(ReefTarget reefTarget, Level level) {
+  public static Command driveAndScore(ReefTarget reefTarget, Level level) {
     String name = reefTarget + "_" + level;
     Command command =
         Commands.sequence(driveToPoseCommandForAuto(reefTarget), ScoringFactory.score(level))
             .withName(name);
     NamedCommands.registerCommand(name, command);
+    return command;
     // System.out.println("Registered NamedCommand: " + name);
   }
 
@@ -52,8 +53,7 @@ public class NemesisAutoBuilder {
     }
   }
 
-  private static Command driveToPoseCommandForAuto(ReefTarget reefTarget) {
-    return DriveCommands.driveToPoseStraight(
-        RobotContainer.getDrive(), () -> getReefPose(reefTarget));
+  public static Command driveToPoseCommandForAuto(ReefTarget reefTarget) {
+    return new NemesisDriveToPoseStraight(RobotContainer.getDrive(), () -> getReefPose(reefTarget));
   }
 }

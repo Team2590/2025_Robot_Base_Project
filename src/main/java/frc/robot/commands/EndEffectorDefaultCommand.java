@@ -10,7 +10,7 @@ public class EndEffectorDefaultCommand extends Command {
 
   @Override
   public void execute() {
-    RobotContainer.getEndEffector().getIO().setVoltage(-1.5);
+    RobotContainer.getEndEffector().getIO().setVoltage(0);
   }
 
   @Override

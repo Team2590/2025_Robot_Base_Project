@@ -11,13 +11,26 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": null
+                  "pathName": "C_NE_R"
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "PrimeL4WhileMoving"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "PrimeL4"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -36,22 +49,16 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": null
+                  "pathName": "NE_R_intake_p3_SW_R"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "PrimeSource"
+                  "name": "IntakeUprightCoral"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "intakeSource"
           }
         },
         {
@@ -61,13 +68,26 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": null
+                  "pathName": "p3_SE_R"
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "PrimeL4WhileMoving"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "PrimeL4"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -86,22 +106,16 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SW_L_to_source-2"
+                  "pathName": "SE_R_p2"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "PrimeSource"
+                  "name": "IntakeUprightCoral"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "intakeSource"
           }
         },
         {
@@ -111,13 +125,26 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": null
+                  "pathName": "p2_S_R"
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "PrimeL4WhileMoving"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.25
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "PrimeL4"
+                      }
+                    }
+                  ]
                 }
               }
             ]

@@ -11,15 +11,21 @@
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "ScoreL4"
+            "pathName": "NE_R_intake_SE_R"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "SE_R_intake_SE_L"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SE_L_intake_NE_L"
           }
         }
       ]

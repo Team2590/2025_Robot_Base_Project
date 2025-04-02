@@ -3,48 +3,57 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.176377848662664,
-        "y": 0.15071216566593762
+        "x": 3.144778262867647,
+        "y": 4.144886690027573
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.048110507605227,
-        "y": 0.36529895281289826
+        "x": 2.505354578354779,
+        "y": 3.584645349839154
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "S_L"
     },
     {
       "anchor": {
-        "x": 5.872153043122271,
-        "y": 0.7892087711517456
+        "x": 1.2822919060202205,
+        "y": 2.150751809512867
       },
       "prevControl": {
-        "x": 5.447000286299047,
-        "y": 0.7714462334163197
+        "x": 0.40886758269406565,
+        "y": 2.109557855794437
       },
       "nextControl": {
-        "x": 6.186237291894105,
-        "y": 0.8023309566048021
+        "x": 2.130194091796875,
+        "y": 2.1907420438878673
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.694559821915939,
-        "y": 0.15071216566593762
+        "x": 3.144778262867647,
+        "y": 3.823872644761029
       },
       "prevControl": {
-        "x": 6.9300107464519645,
-        "y": 0.6175226869541471
+        "x": 3.651504516601558,
+        "y": 3.8563117532169113
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "S_R"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.29719727951635866,
+      "rotationDegrees": -56.640205996767925
+    },
+    {
+      "waypointRelativePos": 0.9138402382645806,
+      "rotationDegrees": -51.64409047625179
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -61,7 +70,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "SprintA",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

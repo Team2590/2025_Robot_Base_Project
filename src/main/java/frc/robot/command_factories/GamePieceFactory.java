@@ -51,6 +51,33 @@ public class GamePieceFactory {
         .withName("Handoff");
   }
 
+  public static Command intakeCoralGroundAndHandoffNoStow() {
+    return Commands.sequence(
+            new MoveToHandoffCommand(),
+            IntakeFactory.runIntake(
+                () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED))
+        .andThen(
+            Commands.parallel(
+                IntakeFactory.runIntake(
+                    () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_INTAKE_SPEED),
+                Commands.waitUntil(() -> RobotContainer.getIntake().detectCoral())
+                    .andThen(
+                        IntakeFactory.setPositionBlocking(
+                            Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS))
+                    .andThen(ElevatorFactory.setPositionBlocking(13.9))))
+        .andThen(
+            Commands.parallel(
+                    EndEffectorFactory.runEndEffectorVoltage(
+                        -Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE),
+                    IntakeFactory.runIntakeVoltage(
+                        () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED))
+                .until(() -> RobotState.endEffectorHasGamePiece()))
+        .andThen(
+            ElevatorFactory.setPositionBlocking(
+                Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS))
+        .withName("Handoff");
+  }
+
   public static Command intakeCoralNoHandoff() {
     return Commands.parallel(
             IntakeFactory.setPositionBlocking(
