@@ -5,18 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "C_NE_R"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ScoreL4"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
