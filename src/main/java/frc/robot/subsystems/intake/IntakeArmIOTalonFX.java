@@ -25,10 +25,11 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
   private TalonFX leader;
   private LoggedTunableNumber kP = new LoggedTunableNumber("IntakeArm/kP", 3);
   private LoggedTunableNumber kD = new LoggedTunableNumber("IntakeArm/kD", 0);
+  private LoggedTunableNumber kG = new LoggedTunableNumber("IntakeArm/kG", 0);
   private LoggedTunableNumber cruiseVelocity =
-      new LoggedTunableNumber("IntakeArm/cruiseVelocity", 500);
+      new LoggedTunableNumber("IntakeArm/cruiseVelocity", 600);
   private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 100);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("IntakeArm/jerk", 275);
+  private LoggedTunableNumber jerk = new LoggedTunableNumber("IntakeArm/jerk", 300);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
@@ -58,6 +59,7 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
 
     slot0Configs.kP = kP.get();
     slot0Configs.kD = kD.get();
+    slot0Configs.kG = kG.get();
     slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
 
     motionMagicConfigs.MotionMagicCruiseVelocity = cruiseVelocity.get();
@@ -118,6 +120,12 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
 
     if (jerk.hasChanged(0)) {
       motionMagicConfigs.MotionMagicJerk = jerk.get();
+      leader.getConfigurator().apply(talonFXConfig);
+    }
+
+    if (kG.hasChanged(0)){
+      slot0Configs.kG = kG.get();
+      
       leader.getConfigurator().apply(talonFXConfig);
     }
   }

@@ -353,6 +353,7 @@ public final class Constants {
     public static final double INTAKE_VOLTAGE = 12;
     public static final double OUTTAKE_VOLTAGE = -12;
     public static final double INTAKE_ALGAE_VOLTAGE = -8;
+    public static final double HOLD_ALGAE_VOLTAGE = -.5;
     public static final int PROX_CHANNEL = 0;
   }
 
