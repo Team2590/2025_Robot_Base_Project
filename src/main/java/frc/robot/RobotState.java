@@ -1,6 +1,9 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.Constants.ElevatorConstantsLeonidas;
@@ -50,12 +53,24 @@ public class RobotState extends SubsystemBase {
           Level.DEALGAE_L2.getElevatorSetpoint(),
           Level.DEALGAE_L2.getarmPreScoreSetpoint(),
           Level.DEALGAE_L2.getArmScoringSetpoint());
+  private double bargeArmPos = 0.175;
+  private double processorArmPos = 0;
 
   /** The aligning state for scoring, if we are aligning to front or back of the robot. */
   public static enum AligningState {
     NOT_ALIGNING,
     ALIGNING_FRONT,
     ALIGNING_BACK
+  }
+
+  public static enum BargeScoringState {
+    BARGE_FRONT,
+    BARGE_BACK,
+  }
+
+  public static enum ProcessorScoringState {
+    PROCESSOR_FRONT,
+    PROCESSOR_BACK,
   }
 
   public static class ScoringSetpoints {
@@ -72,6 +87,10 @@ public class RobotState extends SubsystemBase {
 
   private AtomicReference<AligningState> aligningState =
       new AtomicReference<RobotState.AligningState>(AligningState.NOT_ALIGNING);
+  private AtomicReference<BargeScoringState> bargeState =
+      new AtomicReference<BargeScoringState>(BargeScoringState.BARGE_FRONT);
+  private AtomicReference<ProcessorScoringState> processorState =
+      new AtomicReference<ProcessorScoringState>(ProcessorScoringState.PROCESSOR_FRONT);
   private AligningState previousAligningState = AligningState.NOT_ALIGNING;
   private final Lock updateLock = new ReentrantLock();
 
@@ -155,6 +174,7 @@ public class RobotState extends SubsystemBase {
       hasGamePiece = true;
     }
     Logger.recordOutput("RobotState/EndEffectorHasGamePiece", hasGamePiece);
+    setBargeProcessorAlignment();
   }
 
   /**
@@ -188,6 +208,39 @@ public class RobotState extends SubsystemBase {
     Logger.recordOutput("RobotState/AligningState", getAligningState());
   }
 
+  public void setBargeProcessorAlignment() {
+    Pose2d bargePose = new Pose2d();
+    Pose2d processorPose = new Pose2d();
+
+    boolean poseChanged = false;
+
+    if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
+        bargePose = new Pose2d(9.96, 2.02, new Rotation2d(-Math.PI));
+        processorPose = new Pose2d(11.59, 7.43, new Rotation2d(90));
+        poseChanged = true;
+      } else {
+        bargePose = new Pose2d(7.71, 6.10, new Rotation2d(0));
+        processorPose = new Pose2d(6.11, 0.60, new Rotation2d(-90));
+        poseChanged = true;
+      }
+    }
+
+    if (poseChanged) {
+      if (drive.frontScore(bargePose)) {
+        setBargeState(BargeScoringState.BARGE_FRONT);
+      } else {
+        setBargeState(BargeScoringState.BARGE_BACK);
+      }
+
+      if (drive.frontScore(processorPose)) {
+        setProcessorState(ProcessorScoringState.PROCESSOR_FRONT);
+      } else {
+        setProcessorState(ProcessorScoringState.PROCESSOR_BACK);
+      }
+    }
+  }
+
   public void resetAligningState() {
     setAligningState(AligningState.NOT_ALIGNING);
   }
@@ -205,25 +258,35 @@ public class RobotState extends SubsystemBase {
     coralScoringSetpoints.elevatorSetpoint = elevatorSetpoint.get().getElevatorSetpoint();
 
     if (aligningState.get() == AligningState.ALIGNING_FRONT) {
-      coralScoringSetpoints.armSetpoint = .15;
-      coralScoringSetpoints.armPlaceSetpoint = 0;
-      dealgaeSetpoints.armSetpoint = 0;
-      dealgaeSetpoints.armPlaceSetpoint = 0;
-      algaeScoringSetpoints.armSetpoint = .175;
+      coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE; // .15
+      coralScoringSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST; // 0
+      dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_PRE; // 0
+      dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_POST; // 0
 
     } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
 
-      coralScoringSetpoints.armSetpoint = .5 - .15;
-      coralScoringSetpoints.armPlaceSetpoint = .5 - 0;
-      dealgaeSetpoints.armSetpoint = .5 - 0;
-      dealgaeSetpoints.armPlaceSetpoint = .5 - 0;
-      algaeScoringSetpoints.armSetpoint = .5 - .175;
+      coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE; // .5 - .15
+      coralScoringSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST; // .5 - 0
+      dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION - Constants.ArmConstantsLeonidas.ARM_DEALGAE_PRE; // .5 - 0
+      dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION - Constants.ArmConstantsLeonidas.ARM_DEALGAE_POST; // .5 - 0
     }
 
     targetPose = drive.flipScoringSide(originalTargetPose.get());
 
     if (aligningState.get() == AligningState.ALIGNING_BACK) {
       targetPose = FieldConstants.convertBackScoring(targetPose);
+    }
+
+    if (processorState.get() == ProcessorScoringState.PROCESSOR_FRONT) {
+      processorArmPos = Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS;
+    } else {
+      processorArmPos = Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS;
+    }
+
+    if (bargeState.get() == BargeScoringState.BARGE_FRONT) {
+      bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS;
+    } else {
+      bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS_BACK;
     }
 
     Logger.recordOutput("RobotState/Pose", targetPose);
@@ -233,46 +296,8 @@ public class RobotState extends SubsystemBase {
     Logger.recordOutput("RobotState/algaeScoringArmSetpoint", algaeScoringSetpoints.armSetpoint);
     Logger.recordOutput(
         "RobotState/algaeScoringPlaceSetpoint", algaeScoringSetpoints.armPlaceSetpoint);
-  }
-
-  private void updateScoringConfiguration(Supplier<Pose2d> originalTargetPose) {
-    AligningState currentAligningState = aligningState.get();
-
-    if (currentAligningState != previousAligningState) {
-      double offset = 0;
-      double magnitude = 1;
-
-      if (currentAligningState == AligningState.ALIGNING_BACK) {
-        offset = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL;
-        magnitude = -1;
-      }
-      coralScoringSetpoints.armSetpoint = magnitude * coralScoringSetpoints.armSetpoint + offset;
-      coralScoringSetpoints.armPlaceSetpoint =
-          magnitude * coralScoringSetpoints.armPlaceSetpoint + offset;
-
-      // update algae setpoints
-      dealgaeSetpoints.armSetpoint = magnitude * dealgaeSetpoints.armSetpoint + offset;
-      dealgaeSetpoints.armPlaceSetpoint = magnitude * dealgaeSetpoints.armPlaceSetpoint + offset;
-
-      // Update algae scoring setpoints
-      algaeScoringSetpoints.armSetpoint = magnitude * algaeScoringSetpoints.armSetpoint + offset;
-      algaeScoringSetpoints.armPlaceSetpoint =
-          magnitude * algaeScoringSetpoints.armPlaceSetpoint + offset;
-      targetPose = drive.flipScoringSide(originalTargetPose.get());
-
-      // Update the previous state
-      previousAligningState = currentAligningState;
-
-      Logger.recordOutput("RobotState/Pose", targetPose);
-      Logger.recordOutput("RobotState/CoralArmSetpoint", coralScoringSetpoints.armSetpoint);
-      Logger.recordOutput(
-          "RobotState/CoralArmPlaceSetpoint", coralScoringSetpoints.armPlaceSetpoint);
-      Logger.recordOutput("RobotState/algaeArmSetpoint", dealgaeSetpoints.armSetpoint);
-      Logger.recordOutput("RobotState/algaePlaceSetpoint", dealgaeSetpoints.armPlaceSetpoint);
-      Logger.recordOutput("RobotState/algaeScoringArmSetpoint", algaeScoringSetpoints.armSetpoint);
-      Logger.recordOutput(
-          "RobotState/algaeScoringPlaceSetpoint", algaeScoringSetpoints.armPlaceSetpoint);
-    }
+    Logger.recordOutput("RobotState/bargeArmSetpoint", bargeArmPos);
+    Logger.recordOutput("RobotState/processorArmSetpoint", processorArmPos);
   }
 
   public Pose2d getTargetPose() {
@@ -333,6 +358,40 @@ public class RobotState extends SubsystemBase {
       ScoringSetpoints setpoint_copy = algaeScoringSetpoints;
       setpoint_copy.elevatorSetpoint = level.getElevatorSetpoint();
       return setpoint_copy;
+    } finally {
+      updateLock.unlock();
+    }
+  }
+
+  public ProcessorScoringState getProcessorState() {
+    return processorState.get();
+  }
+
+  public BargeScoringState getBargeState() {
+    return bargeState.get();
+  }
+
+  public void setProcessorState(ProcessorScoringState state) {
+    processorState.set(state);
+  }
+
+  public void setBargeState(BargeScoringState state) {
+    bargeState.set(state);
+  }
+
+  public double getProcessorArmPos() {
+    updateLock.lock();
+    try {
+      return processorArmPos;
+    } finally {
+      updateLock.unlock();
+    }
+  }
+
+  public double getBargeArmPos() {
+    updateLock.lock();
+    try {
+      return bargeArmPos;
     } finally {
       updateLock.unlock();
     }

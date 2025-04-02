@@ -206,8 +206,7 @@ public class FieldConstants {
   public static final Pose2d CageDeepRight =
       new Pose2d(new Translation2d(8.023, 5.059), Rotation2d.fromDegrees(0));
 
-  public static final double BACK_SCORING_DIFFERENCE = Units.inchesToMeters(-1.4);
-
+  public static final double BACK_SCORING_DIFFERENCE = Units.inchesToMeters(-1.4); //.75
   public static Pose2d convertBackScoring(Pose2d frontPose) {
     double moveLeftDistanceMeters = BACK_SCORING_DIFFERENCE;
     Translation2d translation =
