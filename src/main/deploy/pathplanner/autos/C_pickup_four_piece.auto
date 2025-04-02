@@ -55,7 +55,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeUprightCoral"
+                  "name": "IntakeUprightCoralNoStow"
                 }
               }
             ]
@@ -112,7 +112,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeUprightCoral"
+                  "name": "IntakeUprightCoralNoStow"
                 }
               }
             ]
@@ -169,7 +169,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeUprightCoral"
+                  "name": "IntakeUprightCoralNoStow"
                 }
               }
             ]
