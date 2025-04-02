@@ -4,8 +4,9 @@
   "holonomicMode": true,
   "pathFolders": [
     "A_three_piece",
-    "auto1",
+    "C_three_piece_source",
     "SprintA",
+    "auto1",
     "auton4"
   ],
   "autoFolders": [],
