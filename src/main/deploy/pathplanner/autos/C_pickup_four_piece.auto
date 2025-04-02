@@ -212,6 +212,12 @@
           "data": {
             "name": "ScoreL4"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow-Mechanism"
+          }
         }
       ]
     }
