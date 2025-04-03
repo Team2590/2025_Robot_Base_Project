@@ -26,7 +26,7 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
   private TalonFX leader;
   private LoggedTunableNumber kP = new LoggedTunableNumber("IntakeArm/kP", 1.4);
   private LoggedTunableNumber kD = new LoggedTunableNumber("IntakeArm/kD", 0);
-  private LoggedTunableNumber kG = new LoggedTunableNumber("IntakeArm/kG", 0.075);
+  private LoggedTunableNumber kG = new LoggedTunableNumber("IntakeArm/kG", 0.06);
   private LoggedTunableNumber cruiseVelocity =
       new LoggedTunableNumber("IntakeArm/cruiseVelocity", 1500);
   private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 25);
