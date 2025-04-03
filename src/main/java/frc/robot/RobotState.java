@@ -255,7 +255,7 @@ public class RobotState extends SubsystemBase {
 
   private void updateScoringConfigurationSimple(
       Supplier<Pose2d> originalTargetPose, Supplier<Level> elevatorSetpoint) {
-    if (edu.wpi.first.wpilibj.RobotState.isAutonomous()) return;
+    if (DriverStation.isAutonomous()) return;
 
     if (aligningState.get() == AligningState.ALIGNING_FRONT) {
       coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE; // .15
