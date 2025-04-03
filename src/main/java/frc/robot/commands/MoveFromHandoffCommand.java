@@ -9,7 +9,8 @@ public class MoveFromHandoffCommand extends Command {
   private double armSetpoint;
   private double elevatorSetpoint;
   private double intakeArmSetpoint;
-  private double armThreshold;
+  private double armThresholdFront;
+  private double armThresholdBack;
 
   /**
    * @param armThreshold - max arm rotation count to achieve before being able to move in parallel
@@ -17,7 +18,8 @@ public class MoveFromHandoffCommand extends Command {
   public MoveFromHandoffCommand(
       double intakeTargetPos, double elevatorTargetPos, double armTargetPos) {
     setName("Move to handoff");
-    this.armThreshold = Constants.ArmConstantsLeonidas.ARM_THRESHOLD_POS;
+    this.armThresholdFront = Constants.ArmConstantsLeonidas.ARM_THRESHOLD_POS;
+    this.armThresholdBack = Constants.ArmConstantsLeonidas.ARM_THRESHOLD_POS - Constants.ArmConstantsLeonidas.ARM_SET_STOW;
     this.armSetpoint = armTargetPos;
     this.elevatorSetpoint = elevatorTargetPos;
     this.intakeArmSetpoint = intakeTargetPos;
@@ -35,14 +37,27 @@ public class MoveFromHandoffCommand extends Command {
 
   @Override
   public void execute() {
-    if (RobotContainer.getArm().getAbsolutePosition() > armThreshold
-        && elevatorSetpoint < Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
-      RobotContainer.getArm().getIO().setPosition(armSetpoint);
-    } else {
-      RobotContainer.getIntake().getArmIO().setPosition(intakeArmSetpoint);
-      RobotContainer.getElevator().getIO().setPosition(elevatorSetpoint);
-      RobotContainer.getArm().getIO().setPosition(armSetpoint);
+
+    if (this.armSetpoint >= RobotContainer.getArm().getAbsolutePosition()){  // scoring front
+      if (RobotContainer.getArm().getAbsolutePosition() <= armThresholdFront
+          && elevatorSetpoint < Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
+          RobotContainer.getArm().getIO().setPosition(armSetpoint);
+      } else {
+          RobotContainer.getIntake().getArmIO().setPosition(intakeArmSetpoint);
+          RobotContainer.getElevator().getIO().setPosition(elevatorSetpoint);
+          RobotContainer.getArm().getIO().setPosition(armSetpoint);
+      }
+    }else{
+      if (RobotContainer.getArm().getAbsolutePosition() >= armThresholdBack
+          && elevatorSetpoint < Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
+          RobotContainer.getArm().getIO().setPosition(armSetpoint);
+      } else {
+          RobotContainer.getIntake().getArmIO().setPosition(intakeArmSetpoint);
+          RobotContainer.getElevator().getIO().setPosition(elevatorSetpoint);
+          RobotContainer.getArm().getIO().setPosition(armSetpoint);
+      }
     }
+
   }
 
   @Override

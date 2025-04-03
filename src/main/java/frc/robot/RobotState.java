@@ -258,17 +258,17 @@ public class RobotState extends SubsystemBase {
     coralScoringSetpoints.elevatorSetpoint = elevatorSetpoint.get().getElevatorSetpoint();
 
     if (aligningState.get() == AligningState.ALIGNING_FRONT) {
-      coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE; // .15
-      coralScoringSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST; // 0
-      dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_PRE; // 0
-      dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_POST; // 0
+      coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_PRE; // .15
+      coralScoringSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POST; // 0
+      dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION; //0.012
+      dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION; // 0.012
 
     } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
 
-      coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE; // .5 - .15
-      coralScoringSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST; // .5 - 0
-      dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION - Constants.ArmConstantsLeonidas.ARM_DEALGAE_PRE; // .5 - 0
-      dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION - Constants.ArmConstantsLeonidas.ARM_DEALGAE_POST; // .5 - 0
+      coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_PRE; // -.65
+      coralScoringSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POST; // -.5
+      dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION;
+      dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION;
     }
 
     targetPose = drive.flipScoringSide(originalTargetPose.get());
@@ -280,13 +280,13 @@ public class RobotState extends SubsystemBase {
     if (processorState.get() == ProcessorScoringState.PROCESSOR_FRONT) {
       processorArmPos = Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS;
     } else {
-      processorArmPos = Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS;
+      processorArmPos = Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS_BACK;
     }
 
     if (bargeState.get() == BargeScoringState.BARGE_FRONT) {
       bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS;
     } else {
-      bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS_BACK;
+      bargeArmPos = Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS_BACK - Constants.ArmConstantsLeonidas.ARM_BARGE_POS;
     }
 
     Logger.recordOutput("RobotState/Pose", targetPose);
@@ -394,22 +394,6 @@ public class RobotState extends SubsystemBase {
       return bargeArmPos;
     } finally {
       updateLock.unlock();
-    }
-  }
-
-  /*
-   * Helper Function, picks the closest value for the arm setpoint based on if the cancoder is wrapped or not
-   */
-  public static double wrapArmSetpoint(double setpoint) {
-
-    double current = RobotContainer.getArm().getAbsolutePosition();
-    double wrappedSetpoint = setpoint + ArmConstantsLeonidas.ARM_WRAP_POS;
-    // Only wrap if we are able to freely rotate without fear of collision
-    if (RobotContainer.getElevator().getRotationCount()
-        >= ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
-      return NemesisMathUtil.selectClosest(setpoint, wrappedSetpoint, current);
-    } else {
-      return setpoint;
     }
   }
 }

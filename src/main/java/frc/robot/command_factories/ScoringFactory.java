@@ -28,20 +28,16 @@ public class ScoringFactory {
         Constants.ArmConstantsLeonidas.ARM_SET_STOW),
     L2(
         Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS,
-        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE,
-        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST),
+        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_PRE,
+        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POST),
     L3(
         Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS,
-        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE,
-        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L3_POST),
+        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_PRE,
+        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POST),
     L4(
         Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS,
         Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4,
-        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4),
-    SOURCE(
-        Constants.ElevatorConstantsLeonidas.ELEVATOR_SOURCE_POS,
-        Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION,
-        Constants.ArmConstantsLeonidas.ARM_INTAKE_SOURCE_POSITION),
+        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POST),
     DEALGAE_L2(
         Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2,
         Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION,

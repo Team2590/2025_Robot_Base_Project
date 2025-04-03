@@ -60,17 +60,6 @@ public class ControllerOrchestrator {
     return target;
   }
 
-  public Target getSourceTarget() {
-    Target target;
-    Pose2d pose = lookupPoseBasedOnAlliance(getSource());
-    if (pose == null) {
-      // System.err.println("---> Using Default Source Target: ");
-      return new Target(
-          lookupPoseBasedOnAlliance(DEFAULT_SOURCE_TARGET), ScoringFactory.Level.SOURCE);
-    }
-    return new Target(lookupPoseBasedOnAlliance(getSource()), ScoringFactory.Level.SOURCE);
-  }
-
   /**
    * Command that needs to be bound to a button to execute scoring at the level specified by
    * Controller App.
@@ -90,20 +79,6 @@ public class ControllerOrchestrator {
   /** Command that needs to be bound to a button to driveToTarget. */
   public Command bindDriveToTargetCommand(Drive drive) {
     return new NemesisDriveToPoseStraight(drive, () -> RobotState.getInstance().getTargetPose());
-  }
-
-  // This commands will drive to pose while "priming for intake" at coral source
-  public Command bindDriveToSourceIntake(Drive drive) {
-    var requirements = new HashSet<Subsystem>();
-    requirements.add(drive);
-    return Commands.defer(
-        () -> {
-          return new ParallelCommandGroup(
-              DriveCommands.preciseAlignmentAutoBuilder(
-                  drive, () -> getSourceTarget().pose(), getSourceTarget().pose().getRotation()),
-              GamePieceFactory.intakeCoralGroundAndHandoff());
-        },
-        requirements);
   }
 
   private static Target parseTargetString(String targetString) {
