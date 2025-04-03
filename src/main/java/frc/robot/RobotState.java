@@ -301,6 +301,7 @@ public class RobotState extends SubsystemBase {
 
     Logger.recordOutput("RobotState/Pose", targetPose);
     Logger.recordOutput("RobotState/CoralArmSetpoint", coralScoringSetpoints.armSetpoint);
+    Logger.recordOutput("RobotState/CoralElevatorSetpoint", coralScoringSetpoints.elevatorSetpoint);
     Logger.recordOutput("RobotState/algaeArmSetpoint", dealgaeSetpoints.armSetpoint);
     Logger.recordOutput("RobotState/algaePlaceSetpoint", dealgaeSetpoints.armPlaceSetpoint);
     Logger.recordOutput("RobotState/algaeScoringArmSetpoint", algaeScoringSetpoints.armSetpoint);

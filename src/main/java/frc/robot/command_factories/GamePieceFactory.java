@@ -129,7 +129,10 @@ public class GamePieceFactory {
                       RobotState.getInstance()
                           .getDealgaeSetpoints(Level.DEALGAE_L2)
                           .armPlaceSetpoint)
-                  .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()))
+                  .alongWith(
+                      EndEffectorFactory.runEndEffectorVoltage(
+                              Constants.EndEffectorConstantsLeonidas.INTAKE_ALGAE_VOLTAGE)
+                          .until(() -> RobotState.endEffectorHasGamePiece())))
               .andThen(
                   EndEffectorFactory.runEndEffectorVoltage(
                       Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE))
@@ -152,7 +155,10 @@ public class GamePieceFactory {
                       RobotState.getInstance()
                           .getDealgaeSetpoints(Level.DEALGAE_L3)
                           .armPlaceSetpoint)
-                  .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()))
+                  .alongWith(
+                      EndEffectorFactory.runEndEffectorVoltage(
+                              Constants.EndEffectorConstantsLeonidas.INTAKE_ALGAE_VOLTAGE)
+                          .until(() -> RobotState.endEffectorHasGamePiece())))
               .andThen(
                   EndEffectorFactory.runEndEffectorVoltage(
                       Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE))
