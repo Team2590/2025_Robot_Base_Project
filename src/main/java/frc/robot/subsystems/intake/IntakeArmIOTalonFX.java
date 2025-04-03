@@ -123,9 +123,9 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
       leader.getConfigurator().apply(talonFXConfig);
     }
 
-    if (kG.hasChanged(0)){
+    if (kG.hasChanged(0)) {
       slot0Configs.kG = kG.get();
-      
+
       leader.getConfigurator().apply(talonFXConfig);
     }
   }

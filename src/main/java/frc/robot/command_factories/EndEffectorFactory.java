@@ -33,7 +33,10 @@ public class EndEffectorFactory {
   public static Command runEndEffectorGrabAndHoldAlgae() {
     return RobotContainer.getEndEffector()
         .runEndEffectorVoltage(Constants.EndEffectorConstantsLeonidas.INTAKE_ALGAE_VOLTAGE)
-        .until(() -> RobotState.endEffectorHasGamePiece()).andThen(RobotContainer.getEndEffector().runEndEffectorVoltage(Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE));
+        .until(() -> RobotState.endEffectorHasGamePiece())
+        .andThen(
+            RobotContainer.getEndEffector()
+                .runEndEffectorVoltage(Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE));
   }
   /**
    * Creates a command to run the endeffector outtake.

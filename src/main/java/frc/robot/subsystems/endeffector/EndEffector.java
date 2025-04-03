@@ -16,7 +16,7 @@ public class EndEffector extends SubsystemBase {
   private LoggedTunableNumber PROX_THRESHOLD =
       new LoggedTunableNumber("EndEffector/ProxThreshold", 2000);
   private LoggedTunableNumber CURRENT_THRESHOLD =
-      new LoggedTunableNumber("EndEffector/CurrentThreshold", 15);
+      new LoggedTunableNumber("EndEffector/CurrentThreshold", 20);
   private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 15);
   private LinearFilter filter_current = LinearFilter.movingAverage((int) taps.get());
   private LinearFilter filter_prox = LinearFilter.movingAverage((int) taps.get());
@@ -119,8 +119,8 @@ public class EndEffector extends SubsystemBase {
   }
 
   public boolean hasGamePiece() {
-    return prox_filtered_data >= PROX_THRESHOLD.get() || stator_current_filtered_data >= CURRENT_THRESHOLD.get();
-    
+    return prox_filtered_data >= PROX_THRESHOLD.get()
+        || stator_current_filtered_data >= CURRENT_THRESHOLD.get();
   }
 
   public boolean isRunning() {
