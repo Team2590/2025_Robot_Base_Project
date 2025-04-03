@@ -103,10 +103,7 @@ public class ControllerOrchestrator {
           return Commands.parallel(
                   new NemesisDriveToPoseStraight(
                       drive, () -> RobotState.getInstance().getTargetPose()),
-                  ScoringFactory.primeForLevel(RobotState.getInstance().getCoralScoringSetpoints()))
-              .andThen(
-                  ArmFactory.setPositionBlocking(
-                      RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint));
+                  ScoringFactory.primeForLevel(RobotState.getInstance().getCoralScoringSetpoints()));
         },
         requirements);
   }
