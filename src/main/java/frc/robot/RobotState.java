@@ -94,6 +94,8 @@ public class RobotState extends SubsystemBase {
   private AligningState previousAligningState = AligningState.NOT_ALIGNING;
   private final Lock updateLock = new ReentrantLock();
 
+  private boolean hasAlgae =false;
+
   private RobotState(
       Arm arm,
       Drive drive,
@@ -241,6 +243,19 @@ public class RobotState extends SubsystemBase {
     }
   }
 
+  public double getEndEffectorCurrent(){
+    if(hasAlgae){
+      return -1;
+    }
+    else{
+      return 0;
+    }
+  }
+
+  public void setHasAlgae(boolean v){
+   hasAlgae= v ;
+  }
+
   public void resetAligningState() {
     setAligningState(AligningState.NOT_ALIGNING);
   }
@@ -360,6 +375,7 @@ public class RobotState extends SubsystemBase {
       updateLock.unlock();
     }
   }
+  
 
   public ScoringSetpoints getAlgaeScoringSetpoints(Level level) {
     updateLock.lock();
@@ -407,6 +423,9 @@ public class RobotState extends SubsystemBase {
       updateLock.unlock();
     }
   }
+
+
+
 
   /*
    * Helper Function, picks the closest value for the arm setpoint based on if the cancoder is wrapped or not

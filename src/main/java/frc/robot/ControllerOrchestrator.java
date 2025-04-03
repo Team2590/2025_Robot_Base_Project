@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.command_factories.ArmFactory;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.commands.DriveCommands;
@@ -101,12 +100,8 @@ public class ControllerOrchestrator {
     return Commands.defer(
         () -> {
           return Commands.parallel(
-                  new NemesisDriveToPoseStraight(
-                      drive, () -> RobotState.getInstance().getTargetPose()),
-                  ScoringFactory.primeForLevel(RobotState.getInstance().getCoralScoringSetpoints()))
-              .andThen(
-                  ArmFactory.setPositionBlocking(
-                      RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint));
+              new NemesisDriveToPoseStraight(drive, () -> RobotState.getInstance().getTargetPose()),
+              ScoringFactory.primeForLevel(RobotState.getInstance().getCoralScoringSetpoints()));
         },
         requirements);
   }

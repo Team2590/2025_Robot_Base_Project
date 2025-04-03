@@ -80,6 +80,10 @@ public class Intake extends SubsystemBase {
       return runOnce(() -> intakeArmIO.resetRotationCount());
     }
 
+    public void resetArmRotationCount(){
+      intakeArmIO.resetRotationCount();
+    }
+
     public void setInitPosition() {
       intakeArmIO.setInitPosition();
     }

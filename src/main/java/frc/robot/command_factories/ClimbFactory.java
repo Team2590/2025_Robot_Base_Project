@@ -11,7 +11,13 @@ public class ClimbFactory {
         .until(() -> RobotContainer.getClimb().getRotationCount() > position)
         .withName("Run climb");
   }
+
+  public static Command manualRunClimb(){
+
+    return RobotContainer.getClimb().runClimb(Constants.ClimbConstantsLeonidas.CLIMB_VOLTAGE-3);
+  }
 }
+
   // public static Command finishClimb() {
   //   return RobotContainer.getClimb()
   //       .runClimb(Constants.ClimbConstantsLeonidas.CLIMB_VOLTAGE)

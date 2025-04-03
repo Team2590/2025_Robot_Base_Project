@@ -29,6 +29,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
+import frc.robot.command_factories.ArmFactory;
+import frc.robot.command_factories.ClimbFactory;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
@@ -72,6 +74,7 @@ import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.NemesisAutoBuilder;
 import frc.robot.util.NemesisAutoBuilder.ReefTarget;
 import java.util.List;
+import java.util.Set;
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -398,7 +401,7 @@ public class RobotContainer {
   public void initDefaultCommands() {
     // elevator.setDefaultCommand(new ElevatorDefaultCommand());
     // arm.setDefaultCommand(new ArmDefaultCommand());
-    endEffector.setDefaultCommand(new EndEffectorDefaultCommand());
+    endEffector.setDefaultCommand(Commands.defer(()-> { return new EndEffectorDefaultCommand();}, Set.of(endEffector)));
     // intake.setDefaultCommand(new IntakeDefaultCommand());
   }
 
@@ -488,6 +491,11 @@ public class RobotContainer {
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
     rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
     rightJoystick.button(11).whileTrue(ScoringFactory.deployMech());
+    rightJoystick
+        .button(13)
+        .whileTrue(
+            EndEffectorFactory.runEndEffectorVoltage(
+                Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE));
 
     // Scoring buttons
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
@@ -506,11 +514,23 @@ public class RobotContainer {
     rightJoystick.povRight().onTrue(GamePieceFactory.GrabAlgaeL2());
     rightJoystick.povLeft().onTrue(GamePieceFactory.GrabAlgaeL3());
 
+
+    //Manual Climb
+    leftJoystick.button(8).whileTrue(ClimbFactory.manualRunClimb());
+
     // Controller App Buttons
-    rightJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    rightJoystick.button(2).whileTrue(controllerApp.driveAndAutoScoreCommand(drive, elevator, arm));
     rightJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralNoHandoff());
 
-    leftJoystick.button(4).whileTrue(controllerApp.driveAndAutoScoreCommand(drive, elevator, arm));
+    leftJoystick
+        .button(4)
+        .whileTrue(
+            Commands.defer(
+                () -> {
+                  return ArmFactory.setPositionBlocking(
+                      RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint);
+                },
+                Set.of(arm)));
 
     // Intake Buttons
     leftJoystick.button(3).onTrue(ScoringFactory.score(Level.L1));
@@ -529,6 +549,7 @@ public class RobotContainer {
         .whileTrue(
             EndEffectorFactory.runEndEffectorVoltage(
                 Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE));
+
 
     // Manual Elevator Control
     rightJoystick.button(14).whileTrue(ElevatorFactory.manualDown());

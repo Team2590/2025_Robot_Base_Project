@@ -32,6 +32,7 @@ public class GamePieceFactory {
 
   public static Command intakeAlgaeGroundNoStow() {
     return Commands.parallel(
+            Commands.runOnce(()-> RobotState.getInstance().setHasAlgae(true)),
             new MoveFromHandoffCommand(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
@@ -130,6 +131,8 @@ public class GamePieceFactory {
                           .getDealgaeSetpoints(Level.DEALGAE_L2)
                           .armPlaceSetpoint)
                   .alongWith(
+                    Commands.runOnce(()-> RobotState.getInstance().setHasAlgae(true)),
+
                       EndEffectorFactory.runEndEffectorVoltage(
                               Constants.EndEffectorConstantsLeonidas.INTAKE_ALGAE_VOLTAGE)
                           .until(() -> RobotState.endEffectorHasGamePiece())))
@@ -156,6 +159,7 @@ public class GamePieceFactory {
                           .getDealgaeSetpoints(Level.DEALGAE_L3)
                           .armPlaceSetpoint)
                   .alongWith(
+                    Commands.runOnce(()-> RobotState.getInstance().setHasAlgae(true)),
                       EndEffectorFactory.runEndEffectorVoltage(
                               Constants.EndEffectorConstantsLeonidas.INTAKE_ALGAE_VOLTAGE)
                           .until(() -> RobotState.endEffectorHasGamePiece())))
