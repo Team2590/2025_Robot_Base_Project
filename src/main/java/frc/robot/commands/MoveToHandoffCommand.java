@@ -59,7 +59,7 @@ public class MoveToHandoffCommand extends Command {
     } else {
       intakeAtSetpoint = NemesisMathUtil.isApprox(
           RobotContainer.getIntake().getArmRotationCount(),
-          0.15,
+          0.05,
           this.intakeArmSetpoint);
     }
 
