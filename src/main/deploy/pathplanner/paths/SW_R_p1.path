@@ -3,51 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.971262659143518,
-        "y": 5.249096137152779
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 3.0904796180681897,
-        "y": 5.553101749188805
-      },
-      "isLocked": false,
-      "linkedName": "SW_L"
-    },
-    {
-      "anchor": {
-        "x": 1.0783921185661764,
-        "y": 5.875094424977021
-      },
-      "prevControl": {
-        "x": 1.5166583684433264,
-        "y": 5.606988592659519
-      },
-      "nextControl": {
-        "x": 0.6401258686890265,
-        "y": 6.143200257294524
-      },
-      "isLocked": false,
-      "linkedName": "l8"
-    },
-    {
-      "anchor": {
         "x": 3.685983796296296,
         "y": 5.113007812499999
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.4768099529422516,
+        "y": 5.3514116753472205
+      },
+      "isLocked": false,
+      "linkedName": "SW_R"
+    },
+    {
+      "anchor": {
+        "x": 1.7222861842105264,
+        "y": 5.853125
+      },
       "prevControl": {
-        "x": 3.4667519198839094,
-        "y": 5.247121139073849
+        "x": 1.4771410152877962,
+        "y": 5.902154033784546
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SW_R"
+      "linkedName": "l8"
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 0.8025760135135135,
-      "rotationDegrees": -105.93658511836142
+      "rotationDegrees": -1.8946177150758818
     }
   ],
   "constraintZones": [],
@@ -63,7 +47,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": -2.337305859123789
   },
   "reversed": false,
   "folder": "SprintA",

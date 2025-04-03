@@ -3,38 +3,43 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.016994863013698,
-        "y": 1.8087114726027391
+        "x": 3.92,
+        "y": 2.84
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.175556506849315,
-        "y": 2.199379280821918
+        "x": 2.634634352097204,
+        "y": 2.6910065553975158
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "NE_R_intake_SE_L_end"
     },
     {
       "anchor": {
-        "x": 5.32,
-        "y": 2.99
+        "x": 1.5587171052631579,
+        "y": 3.7171052631578947
       },
       "prevControl": {
-        "x": 5.550393835616438,
-        "y": 2.818786274333093
+        "x": 1.7742006590526003,
+        "y": 3.5903502315170464
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "NE_R"
+      "linkedName": "p2"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.4917175239755885,
+      "rotationDegrees": -39.446
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 2.5,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -44.06080905426448
   },
   "reversed": false,
-  "folder": null,
+  "folder": "C_pickup_four_piece",
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": 124.23746277685753
+    "velocity": 0.0,
+    "rotation": 59.99999999999999
   },
   "useDefaultConstraints": false
 }

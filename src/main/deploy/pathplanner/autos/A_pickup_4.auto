@@ -11,7 +11,26 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "A_SW_L"
+                  "pathName": "A_SW_R"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.75
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "PrimeL4"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -30,7 +49,26 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SW_R_p1_SW_R_L"
+                  "pathName": "SW_R_p1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeUprightCoralNoStow"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "p1"
                 }
               },
               {
@@ -38,11 +76,62 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
+                      "type": "wait",
                       "data": {
-                        "name": "intakeHandoff"
+                        "waitTime": 0.75
                       }
                     },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "PrimeL4"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S_L_p2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeUprightCoralNoStow"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "p2_S_R"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
                     {
                       "type": "wait",
                       "data": {
@@ -74,41 +163,16 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SW_R_p2_S_L"
+                  "pathName": "S_R_p3"
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "intakeHandoff"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "PrimeL4"
-                      }
-                    }
-                  ]
+                  "name": "IntakeUprightCoralNoStow"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ScoreL4"
           }
         },
         {
@@ -118,7 +182,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S_L_p3_S_R"
+                  "pathName": "p3_SE_L"
                 }
               },
               {
@@ -126,15 +190,9 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
-                      "data": {
-                        "name": "intakeHandoff"
-                      }
-                    },
-                    {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.5
+                        "waitTime": 0.6
                       }
                     },
                     {
@@ -153,6 +211,12 @@
           "type": "named",
           "data": {
             "name": "ScoreL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow-Mechanism"
           }
         }
       ]

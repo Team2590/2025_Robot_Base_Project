@@ -62,9 +62,10 @@ public class Drive extends SubsystemBase {
   public static LoggedTunableNumber reefYOffset = new LoggedTunableNumber("reefYOffset", -1);
   public static LoggedTunableNumber reefYOffsetBack =
       new LoggedTunableNumber("reefYOffsetBack", -1 - 29);
-  public static LoggedTunableNumber reefXOffsetLeft = new LoggedTunableNumber("reefXOffsetLeft", 0);
+  public static LoggedTunableNumber reefXOffsetLeft =
+      new LoggedTunableNumber("reefXOffsetLeft", .79);
   public static LoggedTunableNumber reefXOffsetRight =
-      new LoggedTunableNumber("reefXOffsetRight", 0);
+      new LoggedTunableNumber("reefXOffsetRight", -3.94);
   public static LoggedTunableNumber xControllerP =
       new LoggedTunableNumber(
           "DriveToPoseStraight/xControllerP", Constants.DriveToPoseStraight.XController.kP);
