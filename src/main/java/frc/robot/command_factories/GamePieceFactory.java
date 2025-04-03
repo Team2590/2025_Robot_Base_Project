@@ -33,6 +33,14 @@ public class GamePieceFactory {
         .withName("Intake Algae Ground No Stow");
   }
 
+  public static Command intakeUprightCoralNoStow() {
+    return new MoveFromHandoffCommand(
+        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+        Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
+        Constants.ArmConstantsLeonidas.ARM_INTAKE_ALGAE_POS)
+        .andThen(EndEffectorFactory.runEndEffectorVoltage(-12).until(() -> RobotState.endEffectorHasGamePiece()));
+  }
+
   public static Command intakeCoralGroundAndHandoff() {
     return Commands.sequence(
             new MoveToHandoffCommand(),
