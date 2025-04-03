@@ -21,7 +21,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.5
+                        "waitTime": 0.75
                       }
                     },
                     {
@@ -55,7 +55,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeUprightCoral"
+                  "name": "IntakeUprightCoralNoStow"
                 }
               }
             ]
@@ -69,6 +69,63 @@
                 "type": "path",
                 "data": {
                   "pathName": "C_pickup_p3_SE_R"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.75
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "PrimeL4"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "C_pickup-SE_R_p2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeUprightCoralNoStow"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "C_pickup-p2_S_R"
                 }
               },
               {
@@ -106,13 +163,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "C_pickup-SE_R_p2"
+                  "pathName": "C_pickup-S_R_p1"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeUprightCoral"
+                  "name": "IntakeUprightCoralNoStow"
                 }
               }
             ]
@@ -125,7 +182,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "C_pickup-p2_S_R"
+                  "pathName": "C_pickup-p1_S_L"
                 }
               },
               {
@@ -135,7 +192,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.25
+                        "waitTime": 0.6
                       }
                     },
                     {
@@ -154,6 +211,12 @@
           "type": "named",
           "data": {
             "name": "ScoreL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow-Mechanism"
           }
         }
       ]
