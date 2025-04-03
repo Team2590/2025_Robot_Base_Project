@@ -178,9 +178,7 @@ public class ScoringFactory {
 
   public static Command score(ScoringSetpoints setpoints) {
     return primeForLevel(setpoints)
-        .andThen(
-            ArmFactory.setPositionBlocking(
-                Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST))
+        .andThen(ArmFactory.setPositionBlocking(setpoints.armPlaceSetpoint))
         .withName(
             "Score with Elevator setpoint "
                 + setpoints.elevatorSetpoint
@@ -252,8 +250,7 @@ public class ScoringFactory {
   public static Command scoreL1() {
     return Commands.sequence(
         IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.L1_POS),
-        IntakeFactory.runIntake(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)
-            .withName("Score L1"));
+        IntakeFactory.runIntake(() -> 5).withName("Score L1"));
   }
 
   // public static Command deAlgaeify() {

@@ -17,16 +17,15 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 import frc.robot.util.SafetyChecker.MechanismType;
 
 public class IntakeArmIOTalonFX implements IntakeArmIO {
   private TalonFX leader;
-  private LoggedTunableNumber kP = new LoggedTunableNumber("IntakeArm/kP", 1.4);
+  private LoggedTunableNumber kP = new LoggedTunableNumber("IntakeArm/kP", 1.75);
   private LoggedTunableNumber kD = new LoggedTunableNumber("IntakeArm/kD", 0);
-  private LoggedTunableNumber kG = new LoggedTunableNumber("IntakeArm/kG", 0.06);
+  private LoggedTunableNumber kG = new LoggedTunableNumber("IntakeArm/kG", 0);
   private LoggedTunableNumber cruiseVelocity =
       new LoggedTunableNumber("IntakeArm/cruiseVelocity", 1500);
   private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 25);
@@ -147,7 +146,7 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
   }
 
   public void setInitPosition() {
-    leader.setPosition(Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS);
+    leader.setPosition(0);
   }
 
   @Override

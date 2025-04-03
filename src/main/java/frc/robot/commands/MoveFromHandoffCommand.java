@@ -28,7 +28,7 @@ public class MoveFromHandoffCommand extends Command {
   /** Defaulting to stow */
   public MoveFromHandoffCommand() {
     this(
-        Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+        Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
         Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS,
         Constants.ArmConstantsLeonidas.ARM_SET_STOW);
   }

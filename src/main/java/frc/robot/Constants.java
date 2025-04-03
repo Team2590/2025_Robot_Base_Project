@@ -375,14 +375,14 @@ public final class Constants {
   }
 
   public final class IntakeArmConstantsLeonidas {
-    public static final double INTAKE_GROUND_CORAL_POS = -0.1;
-    public static final double INTAKE_HANDOFF_POS = .376;
-    public static final double INTAKE_HOME_POS = .265;
+    public static final double INTAKE_GROUND_CORAL_POS = .41;
+    public static final double INTAKE_HANDOFF_POS = .018;
+    public static final double INTAKE_HOME_POS = .15;
     public static final double L1_POS = .15;
     public static final int canID = 52;
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 40;
-    public static final boolean invert = false;
+    public static final boolean invert = true;
     public static final boolean brake = true;
     public static final double reduction = 19.16;
     public static final double kS = 0;
@@ -399,7 +399,7 @@ public final class Constants {
     public static final boolean brake = false;
     public static final double reduction = 1;
     public static final double CLIMB_MECHANISM_POSITION = 47.2; // 13
-    public static final double CLIMB_MAX_POSITION = 175;
+    public static final double CLIMB_MAX_POSITION = 190;
     public static final double CLIMB_VOLTAGE = 11.0; // 2.0 tested
   }
 
