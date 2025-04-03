@@ -401,7 +401,7 @@ public class RobotContainer {
   public void initDefaultCommands() {
     // elevator.setDefaultCommand(new ElevatorDefaultCommand());
     // arm.setDefaultCommand(new ArmDefaultCommand());
-    endEffector.setDefaultCommand(new EndEffectorDefaultCommand());
+    endEffector.setDefaultCommand(Commands.defer(()-> { return new EndEffectorDefaultCommand();}, Set.of(endEffector)));
     // intake.setDefaultCommand(new IntakeDefaultCommand());
   }
 

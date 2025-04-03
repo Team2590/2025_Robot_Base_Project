@@ -262,6 +262,7 @@ public class ScoringFactory {
     return Commands.defer(
         () -> {
           return Commands.parallel(
+            Commands.runOnce(()-> RobotState.getInstance().setHasAlgae(true)),
                   EndEffectorFactory.runEndEffectorVoltage(
                       Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE),
                   ElevatorFactory.setPositionRun(
