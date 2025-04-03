@@ -286,6 +286,10 @@ public class ScoringFactory {
     // , ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)
   }
 
+  public static Command deployMech() {
+    return ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION);
+  }
+
   public static Command climb() {
     return ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MAX_POSITION);
   }

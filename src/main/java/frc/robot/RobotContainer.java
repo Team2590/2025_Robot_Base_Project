@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
-import frc.robot.command_factories.ClimbFactory;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
@@ -488,10 +487,7 @@ public class RobotContainer {
     // Causing NullPointerException on startup in SIM
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
     rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
-    rightJoystick
-        .button(11)
-        .whileTrue(
-            ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION));
+    rightJoystick.button(11).whileTrue(ScoringFactory.deployMech());
 
     // Scoring buttons
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
