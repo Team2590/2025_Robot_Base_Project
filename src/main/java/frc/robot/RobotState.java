@@ -255,7 +255,7 @@ public class RobotState extends SubsystemBase {
 
   private void updateScoringConfigurationSimple(
       Supplier<Pose2d> originalTargetPose, Supplier<Level> elevatorSetpoint) {
-    coralScoringSetpoints.elevatorSetpoint = elevatorSetpoint.get().getElevatorSetpoint();
+    if (DriverStation.isAutonomous()) return;
 
     if (aligningState.get() == AligningState.ALIGNING_FRONT) {
       coralScoringSetpoints.armSetpoint =
@@ -264,21 +264,11 @@ public class RobotState extends SubsystemBase {
           Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST; // 0
       dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_PRE; // 0
       dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_POST; // 0
-
     } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
-
-      coralScoringSetpoints.armSetpoint =
-          Constants.ArmConstantsLeonidas.BACK_HORIZONTAL
-              - Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE; // .5 - .15
-      coralScoringSetpoints.armPlaceSetpoint =
-          Constants.ArmConstantsLeonidas.BACK_HORIZONTAL
-              - Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST; // .5 - 0
-      dealgaeSetpoints.armSetpoint =
-          Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION
-              - Constants.ArmConstantsLeonidas.ARM_DEALGAE_PRE; // .5 - 0
-      dealgaeSetpoints.armPlaceSetpoint =
-          Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION
-              - Constants.ArmConstantsLeonidas.ARM_DEALGAE_POST; // .5 - 0
+      coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE; // .5 - .15
+      coralScoringSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.BACK_HORIZONTAL - Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST; // .5 - 0
+      dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION - Constants.ArmConstantsLeonidas.ARM_DEALGAE_PRE; // .5 - 0
+      dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION - Constants.ArmConstantsLeonidas.ARM_DEALGAE_POST; // .5 - 0
     }
 
     targetPose = drive.flipScoringSide(originalTargetPose.get());
