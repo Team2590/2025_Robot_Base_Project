@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.32,
-        "y": 2.99
+        "x": 5.23,
+        "y": 2.94
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.095,
-        "y": 1.8897499999999994
+        "x": 5.147615131578947,
+        "y": 2.071792763157895
       },
       "isLocked": false,
       "linkedName": "NE_R"
     },
     {
       "anchor": {
-        "x": 1.6025771103896103,
-        "y": 2.1873782467532465
+        "x": 1.683799342105263,
+        "y": 2.1776315789473686
       },
       "prevControl": {
-        "x": 2.1025771103896096,
-        "y": 2.1873782467532465
+        "x": 2.6267269736842103,
+        "y": 2.1872532894736842
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,7 +47,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -3.012787504183304
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "C_pickup_four_piece",

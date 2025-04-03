@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.01,
-        "y": 2.79
+        "x": 3.92,
+        "y": 2.84
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.818871922813866,
-        "y": 2.628847717635985
+        "x": 3.728871922813866,
+        "y": 2.6788477176359846
       },
       "isLocked": false,
       "linkedName": "NE_R_intake_SE_L_end"
@@ -84,7 +84,7 @@
     "rotation": 59.99999999999999
   },
   "reversed": false,
-  "folder": "C_pickup_four_piece",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 59.99999999999999

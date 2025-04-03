@@ -1,7 +1,6 @@
 package frc.robot.subsystems.endeffector;
 
 import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -116,8 +115,7 @@ public class EndEffector extends SubsystemBase {
   }
 
   public boolean hasGamePiece() {
-    return
-    stator_current_filtered_data >= CURRENT_THRESHOLD.get();
+    return stator_current_filtered_data >= CURRENT_THRESHOLD.get();
     // prox_filtered_data >= PROX_THRESHOLD.get();
   }
 

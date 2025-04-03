@@ -3,37 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.92,
-        "y": 2.84
+        "x": 1.4913651315789471,
+        "y": 5.497121710526316
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.634634352097204,
-        "y": 2.6910065553975158
+        "x": 1.7353999170032046,
+        "y": 5.161939183205589
       },
       "isLocked": false,
-      "linkedName": "NE_R_intake_SE_L_end"
+      "linkedName": "p1"
     },
     {
       "anchor": {
-        "x": 1.5587171052631579,
-        "y": 3.7171052631578947
+        "x": 3.149,
+        "y": 4.25
       },
       "prevControl": {
-        "x": 1.7742006590526003,
-        "y": 3.5903502315170464
+        "x": 2.5882401315789476,
+        "y": 4.2078125
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "p2"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.4917175239755885,
-      "rotationDegrees": -39.446
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -47,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -44.06080905426448
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "C_pickup_four_piece",
   "idealStartingState": {
-    "velocity": 0.0,
-    "rotation": 59.99999999999999
+    "velocity": 0,
+    "rotation": -56.83533755858566
   },
   "useDefaultConstraints": false
 }
