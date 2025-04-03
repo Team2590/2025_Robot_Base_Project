@@ -67,4 +67,10 @@ public class IntakeArmIOSim implements IntakeArmIO {
   public double getRotationCount() {
     return sim.getAngularPositionRotations();
   }
+
+  @Override
+  public void setInitPosition() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setInitPosition'");
+  }
 }

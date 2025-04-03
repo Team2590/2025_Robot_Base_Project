@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.683799342105263,
-        "y": 2.1776315789473686
+        "x": 1.5587171052631579,
+        "y": 3.7171052631578947
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8961348684210524,
-        "y": 2.3123355263157896
+        "x": 2.3440068493150683,
+        "y": 2.575021404109589
       },
       "isLocked": false,
-      "linkedName": "p3"
+      "linkedName": "p2"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 3.0
       },
       "prevControl": {
-        "x": 2.8815363890467784,
-        "y": 2.3464820129583503
+        "x": 3.395563923494418,
+        "y": 3.052450019090151
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 3.3,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -45,10 +45,10 @@
     "rotation": 59.99999999999999
   },
   "reversed": false,
-  "folder": "SprintA",
+  "folder": "C_pickup_four_piece",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -44.06080905426448
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

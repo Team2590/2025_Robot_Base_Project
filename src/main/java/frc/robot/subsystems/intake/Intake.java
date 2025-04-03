@@ -20,7 +20,7 @@ public class Intake extends SubsystemBase {
   // private IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
   // private Alert intakeDisconnected;
   private IntakeArm intakeArm;
-  private LoggedTunableNumber PROX_ONE_THRESHOLD = new LoggedTunableNumber("Intake/ProxOneThreshold", 500);
+  private LoggedTunableNumber PROX_ONE_THRESHOLD = new LoggedTunableNumber("Intake/ProxOneThreshold", 600);
   private LoggedTunableNumber PROX_TWO_THRESHOLD = new LoggedTunableNumber("Intake/ProxTwoThreshold", 500);
   private LoggedTunableNumber LINEAR_FILTER_SAMPLES = new LoggedTunableNumber("Intake/LinearFilterSamples", 10);
   private LinearFilter proxOneFilter;
@@ -62,7 +62,7 @@ public class Intake extends SubsystemBase {
     // private final Alert intakeArmDisconnected;
     private final IntakeArmIO intakeArmIO;
     private final IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
-    private double setpointTolerance = 0.05;
+    private double setpointTolerance = 0.1;
 
     public IntakeArm(IntakeArmIO intakeArmIO) {
       this.intakeArmIO = intakeArmIO;
@@ -80,8 +80,8 @@ public class Intake extends SubsystemBase {
       return runOnce(() -> intakeArmIO.resetRotationCount());
     }
 
-    public void resetRotationCount() {
-      intakeArmIO.resetRotationCount();
+    public void setInitPosition() {
+      intakeArmIO.setInitPosition();
     }
 
     public Command setPosition(double position) {
@@ -137,8 +137,8 @@ public class Intake extends SubsystemBase {
     return intakeArm.resetRotationCountCommand();
   }
 
-  public void resetArmRotationCount() {
-    intakeArm.resetRotationCount();
+  public void setInitArmRotationCount() {
+    intakeArm.setInitPosition();
   }
 
   public void setVoltage(double volts) {

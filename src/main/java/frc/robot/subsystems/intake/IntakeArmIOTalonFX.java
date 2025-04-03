@@ -17,18 +17,20 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 import frc.robot.util.SafetyChecker.MechanismType;
 
 public class IntakeArmIOTalonFX implements IntakeArmIO {
   private TalonFX leader;
-  private LoggedTunableNumber kP = new LoggedTunableNumber("IntakeArm/kP", 3);
+  private LoggedTunableNumber kP = new LoggedTunableNumber("IntakeArm/kP", 1.4);
   private LoggedTunableNumber kD = new LoggedTunableNumber("IntakeArm/kD", 0);
+  private LoggedTunableNumber kG = new LoggedTunableNumber("IntakeArm/kG", 0.075);
   private LoggedTunableNumber cruiseVelocity =
-      new LoggedTunableNumber("IntakeArm/cruiseVelocity", 500);
-  private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 100);
-  private LoggedTunableNumber jerk = new LoggedTunableNumber("IntakeArm/jerk", 275);
+      new LoggedTunableNumber("IntakeArm/cruiseVelocity", 1500);
+  private LoggedTunableNumber acceleration = new LoggedTunableNumber("IntakeArm/acceleration", 25);
+  private LoggedTunableNumber jerk = new LoggedTunableNumber("IntakeArm/jerk", 1500);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
@@ -58,6 +60,7 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
 
     slot0Configs.kP = kP.get();
     slot0Configs.kD = kD.get();
+    slot0Configs.kG = kG.get();
     slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
 
     motionMagicConfigs.MotionMagicCruiseVelocity = cruiseVelocity.get();
@@ -120,6 +123,12 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
       motionMagicConfigs.MotionMagicJerk = jerk.get();
       leader.getConfigurator().apply(talonFXConfig);
     }
+
+    if (kG.hasChanged(0)) {
+      slot0Configs.kG = kG.get();
+
+      leader.getConfigurator().apply(talonFXConfig);
+    }
   }
 
   @Override
@@ -135,6 +144,10 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
     } else {
       System.out.println("CAN'T MOVE INTAKE ARM, SAFETY CHECK FAILED");
     }
+  }
+
+  public void setInitPosition() {
+    leader.setPosition(Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS);
   }
 
   @Override

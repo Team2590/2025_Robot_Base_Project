@@ -179,10 +179,8 @@ public class ScoringFactory {
   public static Command score(ScoringSetpoints setpoints) {
     return primeForLevel(setpoints)
         .andThen(
-            Commands.parallel(
-                EndEffectorFactory.runEndEffectorVoltage(0),
-                ArmFactory.setPositionBlocking(
-                    RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint)))
+            ArmFactory.setPositionBlocking(
+                Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST))
         .withName(
             "Score with Elevator setpoint "
                 + setpoints.elevatorSetpoint
@@ -208,6 +206,43 @@ public class ScoringFactory {
                 + setpoints.armSetpoint);
   }
 
+  // public static Command scoreTeleop(Level level) {
+  //   return switch (level) {
+  //     case L1:
+  //       yield scoreL1();
+  //     default:
+  //       yield primeForLevelTeleop(level).withName("Score " + level.name());
+  //   };
+  // }
+
+  // public static Command primeForLevelTeleop(Level level) {
+  //   switch (level) {
+  //     case L4:
+  //       return Commands.sequence(
+  //               Commands.parallel(
+  //                   Commands.print("Priming " + level.name()),
+  //                   ElevatorFactory.setPositionRun(level.getElevatorPosition())),
+  //
+  // ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
+  //           .withName("Prime " + level.name());
+  //     case L3:
+  //       return Commands.sequence(
+  //               Commands.parallel(
+  //                   Commands.print("Priming " + level.name()),
+  //                   ElevatorFactory.setPositionRun(level.getElevatorPosition())),
+  //
+  // ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3))
+  //           .withName("Prime " + level.name());
+  //     default:
+  //       return Commands.sequence(
+  //               Commands.parallel(
+  //                   Commands.print("Priming " + level.name()),
+  //                   ElevatorFactory.setPositionRun(level.getElevatorPosition())),
+  //               ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS))
+  //           .withName("Prime " + level.name());
+  //   }
+  // }
+
   /**
    * Creates a command sequence for scoring at L1.
    *
@@ -221,16 +256,27 @@ public class ScoringFactory {
             .withName("Score L1"));
   }
 
+  // public static Command deAlgaeify() {
+  //   return Commands.sequence(ElevatorFactory.setPositionBlocking())
+  // }
+
   public static Command scoreAlgaeBarge() {
 
     return Commands.defer(
         () -> {
-          return ElevatorFactory.setPositionRun(
-                  Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS)
-              .alongWith(ArmFactory.setPositionRun(RobotState.getInstance().getBargeArmPos()))
+          return Commands.parallel(
+                  EndEffectorFactory.runEndEffectorVoltage(
+                      Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE),
+                  ElevatorFactory.setPositionRun(
+                      Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS),
+                  ArmFactory.setPositionRun(
+                      RobotState.getInstance().getAlgaeScoringSetpoints(Level.L4).armSetpoint))
               .withName("Score Algae Barge");
         },
-        Set.of(RobotContainer.getElevator(), RobotContainer.getArm()));
+        Set.of(
+            RobotContainer.getElevator(),
+            RobotContainer.getArm(),
+            RobotContainer.getEndEffector()));
   }
 
   /**
@@ -239,10 +285,13 @@ public class ScoringFactory {
    * @return Command sequence for processor scoring
    */
   public static Command scoreProcessor() {
-    return new MoveFromHandoffCommand(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-            Level.PROCESSOR.getElevatorSetpoint(),
-            RobotState.getInstance().getProcessorArmPos())
+    return Commands.parallel(
+            EndEffectorFactory.runEndEffectorVoltage(
+                Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE),
+            new MoveFromHandoffCommand(
+                Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                Level.PROCESSOR.getElevatorSetpoint(),
+                Level.PROCESSOR.getArmScoringSetpoint()))
         .withName("Score Processor");
   }
 

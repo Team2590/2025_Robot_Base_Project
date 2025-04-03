@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.961,
-        "y": 0.8121043113425924
+        "x": 7.016994863013698,
+        "y": 2.064148116438356
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.705109157986111,
-        "y": 1.2891413483796295
+        "x": 5.761104020999809,
+        "y": 2.5411851534753933
       },
       "isLocked": false,
       "linkedName": "startC bot"
@@ -25,7 +25,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SE_R"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -62,7 +62,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -179.98011483900535
+    "rotation": 124.87532834460225
   },
   "useDefaultConstraints": false
 }

@@ -20,12 +20,12 @@ public class EndEffector extends SubsystemBase {
   private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 10);
   private LinearFilter filter_current = LinearFilter.movingAverage((int) taps.get());
   private LinearFilter filter_prox = LinearFilter.movingAverage((int) taps.get());
-  private AnalogInput prox = new AnalogInput(0);
   private double stator_current_filtered_data;
   private double prox_filtered_data;
   private LoggedTunableNumber runVoltage =
       new LoggedTunableNumber(
           "EndEffector/runVoltage", Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE);
+  private AnalogInput prox = new AnalogInput(Constants.EndEffectorConstantsLeonidas.PROX_CHANNEL);
 
   public EndEffector(EndEffectorIO io) {
     this.io = io;
@@ -103,7 +103,7 @@ public class EndEffector extends SubsystemBase {
   public Command runEndEffectorVoltage(double voltage) {
     return runEnd(
         () -> {
-          io.setVelocity(voltage);
+          io.setVoltage(voltage);
           isRunning = true;
         },
         () -> {

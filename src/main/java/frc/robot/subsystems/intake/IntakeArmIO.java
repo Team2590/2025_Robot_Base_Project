@@ -37,4 +37,6 @@ public interface IntakeArmIO {
   public default void setVoltage(double volts) {}
 
   public double getRotationCount();
+
+  public void setInitPosition();
 }
