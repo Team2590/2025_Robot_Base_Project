@@ -5,6 +5,7 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.NemesisMathUtil;
+import org.littletonrobotics.junction.Logger;
 
 // spotless:off
 
@@ -58,7 +59,7 @@ public class MoveToHandoffCommand extends Command {
     } else {
       intakeAtSetpoint = NemesisMathUtil.isApprox(
           RobotContainer.getIntake().getArmRotationCount(),
-          0.05,
+          0.15,
           this.intakeArmSetpoint);
     }
 
@@ -69,8 +70,12 @@ public class MoveToHandoffCommand extends Command {
 
     boolean armAtSetpoint = NemesisMathUtil.isApprox(
         RobotContainer.getArm().getAbsolutePosition(),
-        0.03,
+        0.05,
         this.targetArmSetpoint);
+    
+      Logger.recordOutput("MoveToHandoff/armAtsetpoint", armAtSetpoint);
+      Logger.recordOutput("MoveToHandoff/elevatorAtSetpoint", elevatorAtSetpoint);
+      Logger.recordOutput("MoveToHandoff/intakeAtSetpoint", intakeAtSetpoint);
 
     return elevatorAtSetpoint && armAtSetpoint && intakeAtSetpoint;
   }

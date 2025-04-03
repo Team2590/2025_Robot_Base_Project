@@ -14,7 +14,7 @@ public class EndEffector extends SubsystemBase {
   private final EndEffectorIO.EndEffectorIOInputs inputs = new EndEffectorIO.EndEffectorIOInputs();
   private boolean isRunning = false;
   private LoggedTunableNumber PROX_THRESHOLD =
-      new LoggedTunableNumber("EndEffector/ProxThreshold", 2000);
+      new LoggedTunableNumber("EndEffector/ProxThreshold", 1500);
   private LoggedTunableNumber CURRENT_THRESHOLD =
       new LoggedTunableNumber("EndEffector/CurrentThreshold", 20);
   private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 15);
@@ -101,7 +101,7 @@ public class EndEffector extends SubsystemBase {
   public Command runEndEffectorVoltage(double voltage) {
     return runEnd(
         () -> {
-          io.setVelocity(voltage);
+          io.setVoltage(voltage);
           isRunning = true;
         },
         () -> {
@@ -119,8 +119,8 @@ public class EndEffector extends SubsystemBase {
   }
 
   public boolean hasGamePiece() {
-    return prox_filtered_data >= PROX_THRESHOLD.get()
-        || stator_current_filtered_data >= CURRENT_THRESHOLD.get();
+    return prox_filtered_data >= PROX_THRESHOLD.get();
+    // || stator_current_filtered_data >= CURRENT_THRESHOLD.get();
   }
 
   public boolean isRunning() {

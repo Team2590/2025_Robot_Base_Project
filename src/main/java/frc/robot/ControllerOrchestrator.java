@@ -93,13 +93,15 @@ public class ControllerOrchestrator {
     return new NemesisDriveToPoseStraight(drive, () -> RobotState.getInstance().getTargetPose());
   }
 
-    /** Command that needs to be bound to a button to driveToTarget. */
-    public Command driveAndAutoScoreCommand(Drive drive) {
-      return Commands.parallel(
-        new NemesisDriveToPoseStraight(drive, () -> RobotState.getInstance().getTargetPose()), 
-        ScoringFactory.primeForLevel(RobotState.getInstance().getCoralScoringSetpoints()))
-        .andThen(ArmFactory.setPositionBlocking(RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint));
-    }
+  /** Command that needs to be bound to a button to driveToTarget. */
+  public Command driveAndAutoScoreCommand(Drive drive) {
+    return Commands.parallel(
+            new NemesisDriveToPoseStraight(drive, () -> RobotState.getInstance().getTargetPose()),
+            ScoringFactory.primeForLevel(RobotState.getInstance().getCoralScoringSetpoints()))
+        .andThen(
+            ArmFactory.setPositionBlocking(
+                RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint));
+  }
 
   // This commands will drive to pose while "priming for intake" at coral source
   public Command bindDriveToSourceIntake(Drive drive) {

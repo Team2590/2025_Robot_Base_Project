@@ -9,7 +9,6 @@ import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.RobotState.ScoringSetpoints;
-import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.util.NemesisMathUtil;
 import java.util.Set;
@@ -265,14 +264,19 @@ public class ScoringFactory {
 
     return Commands.defer(
         () -> {
-          return ElevatorFactory.setPositionRun(
-                  Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS)
-              .alongWith(
+          return Commands.parallel(
+                  EndEffectorFactory.runEndEffectorVoltage(
+                      Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE),
+                  ElevatorFactory.setPositionRun(
+                      Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS),
                   ArmFactory.setPositionRun(
                       RobotState.getInstance().getAlgaeScoringSetpoints(Level.L4).armSetpoint))
               .withName("Score Algae Barge");
         },
-        Set.of(RobotContainer.getElevator(), RobotContainer.getArm()));
+        Set.of(
+            RobotContainer.getElevator(),
+            RobotContainer.getArm(),
+            RobotContainer.getEndEffector()));
   }
 
   /**
@@ -281,11 +285,13 @@ public class ScoringFactory {
    * @return Command sequence for processor scoring
    */
   public static Command scoreProcessor() {
-    return new MoveFromHandoffCommand(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-            Level.PROCESSOR.getElevatorSetpoint(),
-            Level.PROCESSOR.getArmScoringSetpoint())
-        .andThen(EndEffectorFactory.runEndEffectorVoltage(12).withTimeout(.75))
+    return Commands.parallel(
+            EndEffectorFactory.runEndEffectorVoltage(
+                Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE),
+            new MoveFromHandoffCommand(
+                Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                Level.PROCESSOR.getElevatorSetpoint(),
+                Level.PROCESSOR.getArmScoringSetpoint()))
         .withName("Score Processor");
   }
 
@@ -329,9 +335,9 @@ public class ScoringFactory {
     // , ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)
   }
 
-  public static Command climb() {
-    return new ClimbCommand();
-  }
+  // public static Command climb() {
+  //   return new ClimbCommand();
+  // }
 
   public static Command setDefaults() {
     return Commands.parallel(

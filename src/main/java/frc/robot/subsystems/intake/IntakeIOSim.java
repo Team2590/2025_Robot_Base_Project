@@ -44,4 +44,6 @@ public class IntakeIOSim implements IntakeIO {
   public void setNeutralMode(NeutralModeValue mode) {
     // TODO Auto-generated method stub
   }
+
+  public void setInitPosition() {}
 }

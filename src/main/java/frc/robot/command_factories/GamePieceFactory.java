@@ -18,8 +18,15 @@ public class GamePieceFactory {
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
                     Constants.ArmConstantsLeonidas.ARM_INTAKE_ALGAE_POS)
-                .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()))
-        .andThen(ScoringFactory.stow())
+                .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
+                .andThen(
+                    Commands.parallel(
+                        ScoringFactory.stow(),
+                        EndEffectorFactory.runEndEffectorVoltage(
+                            Constants.EndEffectorConstantsLeonidas
+                                .HOLD_ALGAE_VOLTAGE)))) // .until(()->
+        // RobotContainer.getEndEffector().hasGamePiece()))
+        // .andThen(ScoringFactory.stow())
         .withName("Intake Algae Ground");
   }
 
@@ -93,11 +100,18 @@ public class GamePieceFactory {
 
     return Commands.defer(
         () -> {
-          return new MoveFromHandoffCommand(
-                  Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                  RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).elevatorSetpoint,
-                  RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armPlaceSetpoint)
-              .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
+          return (new MoveFromHandoffCommand(
+                      Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                      RobotState.getInstance()
+                          .getDealgaeSetpoints(Level.DEALGAE_L2)
+                          .elevatorSetpoint,
+                      RobotState.getInstance()
+                          .getDealgaeSetpoints(Level.DEALGAE_L2)
+                          .armPlaceSetpoint)
+                  .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()))
+              .andThen(
+                  EndEffectorFactory.runEndEffectorVoltage(
+                      Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE))
               .withName("Grab Algae L2");
         },
         Set.of(
@@ -109,11 +123,18 @@ public class GamePieceFactory {
   public static Command GrabAlgaeL3() {
     return Commands.defer(
         () -> {
-          return new MoveFromHandoffCommand(
-                  Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                  RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).elevatorSetpoint,
-                  RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armPlaceSetpoint)
-              .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
+          return (new MoveFromHandoffCommand(
+                      Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                      RobotState.getInstance()
+                          .getDealgaeSetpoints(Level.DEALGAE_L3)
+                          .elevatorSetpoint,
+                      RobotState.getInstance()
+                          .getDealgaeSetpoints(Level.DEALGAE_L3)
+                          .armPlaceSetpoint)
+                  .alongWith(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae()))
+              .andThen(
+                  EndEffectorFactory.runEndEffectorVoltage(
+                      Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE))
               .withName("Grab Algae L2");
         },
         Set.of(
