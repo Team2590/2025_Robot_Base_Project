@@ -72,6 +72,8 @@ import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.NemesisAutoBuilder;
 import frc.robot.util.NemesisAutoBuilder.ReefTarget;
 import java.util.List;
+import java.util.Set;
+
 import lombok.Getter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -398,7 +400,7 @@ public class RobotContainer {
   public void initDefaultCommands() {
     // elevator.setDefaultCommand(new ElevatorDefaultCommand());
     // arm.setDefaultCommand(new ArmDefaultCommand());
-    endEffector.setDefaultCommand(new EndEffectorDefaultCommand());
+    endEffector.setDefaultCommand(Commands.defer(()-> { return new EndEffectorDefaultCommand();}, Set.of(endEffector)));
     // intake.setDefaultCommand(new IntakeDefaultCommand());
   }
 
