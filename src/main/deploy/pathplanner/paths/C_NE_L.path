@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.683799342105263,
-        "y": 2.1776315789473686
+        "x": 7.016994863013698,
+        "y": 2.064148116438356
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8961348684210524,
-        "y": 2.3123355263157896
+        "x": 5.649657534246575,
+        "y": 1.9589683219178082
       },
       "isLocked": false,
-      "linkedName": "p3"
+      "linkedName": "startC bot"
     },
     {
       "anchor": {
-        "x": 3.64,
-        "y": 3.0
+        "x": 4.96,
+        "y": 2.78
       },
       "prevControl": {
-        "x": 2.8815363890467784,
-        "y": 2.3464820129583503
+        "x": 5.679708904109589,
+        "y": 2.469841609589041
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SE_L"
+      "linkedName": "NE_L"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": "SprintA",
+  "folder": "C_pickup_four_piece",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 124.87532834460225
   },
   "useDefaultConstraints": true
 }

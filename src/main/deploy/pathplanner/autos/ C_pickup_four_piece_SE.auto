@@ -125,7 +125,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "C_pickup-p2_S_R"
+                  "pathName": "C_pickup-p2_SE_L"
                 }
               },
               {
@@ -163,7 +163,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "C_pickup-S_R_p1"
+                  "pathName": "SE_L_p1"
                 }
               },
               {
