@@ -65,7 +65,6 @@ public class GamePieceFactory {
         .andThen(
             ElevatorFactory.setPositionBlocking(
                 Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS))
-        .andThen(ScoringFactory.stow())
         .withName("Handoff");
   }
 
