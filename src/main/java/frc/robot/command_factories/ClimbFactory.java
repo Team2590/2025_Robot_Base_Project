@@ -14,7 +14,7 @@ public class ClimbFactory {
 
   public static Command manualRunClimb(){
 
-    return RobotContainer.getClimb().runClimb(Constants.ClimbConstantsLeonidas.CLIMB_VOLTAGE-3);
+    return RobotContainer.getClimb().runClimb(Constants.ClimbConstantsLeonidas.CLIMB_VOLTAGE-6);
   }
 }
 
