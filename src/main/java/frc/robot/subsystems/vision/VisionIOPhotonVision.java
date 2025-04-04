@@ -46,7 +46,16 @@ public class VisionIOPhotonVision implements VisionIO {
     for (CameraConfig config : cameraConfigs) {
       CameraThread thread = new CameraThread(config.name(), config.robotToCamera());
       cameraThreads.add(thread);
+    }
+
+    // Fixes race condition with Alerts being created in PhotonCamera
+    // which causes ConcurrentModificationException. 
+    for (CameraThread thread : cameraThreads) {
       thread.start();
+      try {
+        Thread.sleep(20);
+      } catch (InterruptedException ignore) {
+      }
     }
   }
 
