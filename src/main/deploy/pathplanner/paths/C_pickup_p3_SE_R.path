@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.549095394736842,
-        "y": 2.533634868421052
+        "x": 1.6828767123287671,
+        "y": 2.1843535958904114
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5849796455445553,
-        "y": 2.624987350610588
+        "x": 2.7187609631364804,
+        "y": 2.2757060780799474
       },
       "isLocked": false,
-      "linkedName": "p3"
+      "linkedName": "C_side_p1"
     },
     {
       "anchor": {
-        "x": 4.01,
-        "y": 2.76
+        "x": 3.94,
+        "y": 2.8
       },
       "prevControl": {
-        "x": 3.2955,
-        "y": 2.0839999999999996
+        "x": 3.2255000000000003,
+        "y": 2.1239999999999997
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "NE_R_intake_SE_L_end"
+      "linkedName": "SE_R"
     }
   ],
   "rotationTargets": [],
@@ -48,7 +48,7 @@
   "folder": "C_pickup_four_piece",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 32.96940390346214
+    "rotation": -2.3081461864491613
   },
   "useDefaultConstraints": false
 }

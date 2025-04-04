@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.549095394736842,
-        "y": 2.533634868421052
+        "x": 1.6828767123287671,
+        "y": 2.244456335616438
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7614309210526313,
-        "y": 2.668338815789473
+        "x": 2.8952122386445565,
+        "y": 2.3791602829848593
       },
       "isLocked": false,
       "linkedName": "p3"
@@ -48,7 +48,7 @@
   "folder": "SprintA",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 32.96940390346214
+    "rotation": -0.45536419199043354
   },
   "useDefaultConstraints": true
 }
