@@ -269,7 +269,10 @@ public class RobotState extends SubsystemBase {
 
   private void updateScoringConfigurationSimple(
       Supplier<Pose2d> originalTargetPose, Supplier<Level> elevatorSetpoint) {
-    if (DriverStation.isAutonomous()) return;
+    if (DriverStation.isAutonomous()) {
+      setAligningState(AligningState.ALIGNING_FRONT);
+      return;
+    }
 
     coralScoringSetpoints.elevatorSetpoint = elevatorSetpoint.get().getElevatorSetpoint();
 
@@ -288,8 +291,8 @@ public class RobotState extends SubsystemBase {
           Constants.ArmConstantsLeonidas.BACK_HORIZONTAL
               - Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST; // .5 - 0
       dealgaeSetpoints.armSetpoint =
-          Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION
-              - Constants.ArmConstantsLeonidas.ARM_DEALGAE_PRE; // .5 - 0
+          Constants.ArmConstantsLeonidas.BACK_HORIZONTAL
+              - Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION; // .5 - 0
       dealgaeSetpoints.armPlaceSetpoint =
           Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION
               - Constants.ArmConstantsLeonidas.ARM_DEALGAE_POST; // .5 - 0

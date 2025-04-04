@@ -12,7 +12,7 @@ public class EndEffectorDefaultCommand extends Command {
   @Override
   public void execute() {
     double voltage = RobotState.getInstance().getEndEffectorCurrent();
-    RobotContainer.getEndEffector().getIO().setVoltage(voltage);
+    RobotContainer.getEndEffector().getIO().setVoltage(0);
   }
 
   @Override

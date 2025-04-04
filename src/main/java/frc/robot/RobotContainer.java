@@ -604,6 +604,11 @@ public class RobotContainer {
 
     leftJoystick.button(2).onTrue(GamePieceFactory.intakeAlgaeGround());
 
+    leftJoystick.button(3).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+
+    rightJoystick.button(3).onTrue(GamePieceFactory.GrabAlgaeL2());
+    rightJoystick.button(4).onTrue(GamePieceFactory.GrabAlgaeL3());
+
     // leftJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
     // leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
     // leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));

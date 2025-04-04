@@ -127,9 +127,7 @@ public class GamePieceFactory {
                       RobotState.getInstance()
                           .getDealgaeSetpoints(Level.DEALGAE_L2)
                           .elevatorSetpoint,
-                      RobotState.getInstance()
-                          .getDealgaeSetpoints(Level.DEALGAE_L2)
-                          .armPlaceSetpoint)
+                      RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L2).armSetpoint)
                   .alongWith(
                       Commands.runOnce(() -> RobotState.getInstance().setHasAlgae(true)),
                       EndEffectorFactory.runEndEffectorVoltage(
@@ -154,9 +152,7 @@ public class GamePieceFactory {
                       RobotState.getInstance()
                           .getDealgaeSetpoints(Level.DEALGAE_L3)
                           .elevatorSetpoint,
-                      RobotState.getInstance()
-                          .getDealgaeSetpoints(Level.DEALGAE_L3)
-                          .armPlaceSetpoint)
+                      RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armSetpoint)
                   .alongWith(
                       Commands.runOnce(() -> RobotState.getInstance().setHasAlgae(true)),
                       EndEffectorFactory.runEndEffectorVoltage(

@@ -27,6 +27,10 @@ public class Climb extends SubsystemBase {
     return runEnd(() -> io.setVoltage(runVoltage.get()), io::stop);
   }
 
+  public Command runClimbVoltage(double voltage) {
+    return runEnd(() -> io.setVoltage(voltage), io::stop);
+  }
+
   public Command resetRotationCount() {
     return runOnce(io::resetRotationCount);
   }

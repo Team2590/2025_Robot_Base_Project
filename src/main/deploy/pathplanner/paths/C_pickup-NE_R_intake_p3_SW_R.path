@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.683799342105263,
-        "y": 2.1776315789473686
+        "x": 1.6828767123287671,
+        "y": 2.244456335616438
       },
       "prevControl": {
-        "x": 2.6267269736842103,
-        "y": 2.1872532894736842
+        "x": 2.6258043439077143,
+        "y": 2.254078046142754
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,7 +47,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -0.45536419199043354
   },
   "reversed": false,
   "folder": "C_pickup_four_piece",

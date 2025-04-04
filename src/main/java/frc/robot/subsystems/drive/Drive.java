@@ -59,13 +59,12 @@ import org.littletonrobotics.junction.Logger;
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
   // PathPlanner config constants
-  public static LoggedTunableNumber reefYOffset = new LoggedTunableNumber("reefYOffset", 0);
+  public static LoggedTunableNumber reefYOffset = new LoggedTunableNumber("reefYOffset", 0+.5);
   public static LoggedTunableNumber reefYOffsetBack =
       new LoggedTunableNumber("reefYOffsetBack", -1 - 29);
-  public static LoggedTunableNumber reefXOffsetLeft =
-      new LoggedTunableNumber("reefXOffsetLeft", .79);
+  public static LoggedTunableNumber reefXOffsetLeft = new LoggedTunableNumber("reefXOffsetLeft", 0);
   public static LoggedTunableNumber reefXOffsetRight =
-      new LoggedTunableNumber("reefXOffsetRight", -3.94);
+      new LoggedTunableNumber("reefXOffsetRight", 0);
   public static LoggedTunableNumber xControllerP =
       new LoggedTunableNumber(
           "DriveToPoseStraight/xControllerP", Constants.DriveToPoseStraight.XController.kP);
