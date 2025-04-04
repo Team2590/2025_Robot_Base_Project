@@ -12,9 +12,9 @@ public class ClimbFactory {
         .withName("Run climb");
   }
 
-  public static Command manualRunClimb(){
+  public static Command manualRunClimb() {
 
-    return RobotContainer.getClimb().runClimb(Constants.ClimbConstantsLeonidas.CLIMB_VOLTAGE-6);
+    return RobotContainer.getClimb().runClimb(Constants.ClimbConstantsLeonidas.CLIMB_VOLTAGE - 6);
   }
 }
 
