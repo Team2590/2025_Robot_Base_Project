@@ -49,7 +49,7 @@ public class VisionIOPhotonVision implements VisionIO {
     }
 
     // Fixes race condition with Alerts being created in PhotonCamera
-    // which causes ConcurrentModificationException. 
+    // which causes ConcurrentModificationException.
     for (CameraThread thread : cameraThreads) {
       thread.start();
       try {

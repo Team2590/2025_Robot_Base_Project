@@ -357,6 +357,8 @@ public class FieldConstants {
       BLUE_REEF_POSES = buildBlueReefPosesMap();
       RED_REEF_POSES = buildRedReefPosesMap();
     }
+
+    logBlueReefPoses();
   }
 }
 

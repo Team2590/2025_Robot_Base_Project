@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.92,
-        "y": 2.84
+        "x": 4.01,
+        "y": 2.75
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.728871922813866,
-        "y": 2.6788477176359846
+        "x": 3.818871922813866,
+        "y": 2.5888477176359848
       },
       "isLocked": false,
       "linkedName": "NE_R_intake_SE_L_end"
