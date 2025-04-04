@@ -399,7 +399,7 @@ public final class Constants {
     public static final boolean brake = false;
     public static final double reduction = 1;
     public static final double CLIMB_MECHANISM_POSITION = 47.2; // 13
-    public static final double CLIMB_MAX_POSITION = 200;
+    public static final double CLIMB_MAX_POSITION = 215;
     public static final double CLIMB_VOLTAGE = 11.0; // 2.0 tested
   }
 
