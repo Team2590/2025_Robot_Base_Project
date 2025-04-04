@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5587171052631579,
-        "y": 3.7171052631578947
+        "x": 1.6645559210526315,
+        "y": 3.9865131578947364
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.563956555521309,
-        "y": 3.670119291137419
+        "x": 2.6697953713107827,
+        "y": 3.939527185874261
       },
       "isLocked": false,
       "linkedName": "p2"
@@ -48,7 +48,7 @@
   "folder": "C_pickup_four_piece",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -44.06080905426448
+    "rotation": -2.161079488226393
   },
   "useDefaultConstraints": false
 }

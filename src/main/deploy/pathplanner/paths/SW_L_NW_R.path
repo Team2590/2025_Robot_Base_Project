@@ -32,16 +32,16 @@
     },
     {
       "anchor": {
-        "x": 4.987004484953703,
-        "y": 5.249096137152779
+        "x": 4.97,
+        "y": 5.3
       },
       "prevControl": {
-        "x": 5.319092465753425,
-        "y": 5.6703125
+        "x": 5.302087980799722,
+        "y": 5.721216362847221
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "NW_R"
     }
   ],
   "rotationTargets": [
