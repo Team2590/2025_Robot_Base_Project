@@ -401,7 +401,12 @@ public class RobotContainer {
   public void initDefaultCommands() {
     // elevator.setDefaultCommand(new ElevatorDefaultCommand());
     // arm.setDefaultCommand(new ArmDefaultCommand());
-    endEffector.setDefaultCommand(Commands.defer(()-> { return new EndEffectorDefaultCommand();}, Set.of(endEffector)));
+    endEffector.setDefaultCommand(
+        Commands.defer(
+            () -> {
+              return new EndEffectorDefaultCommand();
+            },
+            Set.of(endEffector)));
     // intake.setDefaultCommand(new IntakeDefaultCommand());
   }
 
@@ -514,8 +519,7 @@ public class RobotContainer {
     rightJoystick.povRight().onTrue(GamePieceFactory.GrabAlgaeL2());
     rightJoystick.povLeft().onTrue(GamePieceFactory.GrabAlgaeL3());
 
-
-    //Manual Climb
+    // Manual Climb
     leftJoystick.button(8).whileTrue(ClimbFactory.manualRunClimb());
 
     // Controller App Buttons
@@ -549,7 +553,6 @@ public class RobotContainer {
         .whileTrue(
             EndEffectorFactory.runEndEffectorVoltage(
                 Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE));
-
 
     // Manual Elevator Control
     rightJoystick.button(14).whileTrue(ElevatorFactory.manualDown());

@@ -348,8 +348,15 @@ public class FieldConstants {
   }
 
   public static void updateTunableNumbers() {
-
-    logBlueReefPoses();
+    // logBlueReefPoses();
+    // Rebuild the reef poses if y offset is changed in AdvantageScope
+    if (Drive.reefYOffset.hasChanged("ReefYOffset".hashCode())) {
+      System.out.println("Rebuilding reef poses, new y offset: " + Drive.reefYOffset.get());
+      BlueReefPoses.reef = getReefPoses(false);
+      BlueReefPoses.reef = getReefPoses(true);
+      BLUE_REEF_POSES = buildBlueReefPosesMap();
+      RED_REEF_POSES = buildRedReefPosesMap();
+    }
   }
 }
 
