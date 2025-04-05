@@ -36,8 +36,6 @@ public class RobotState extends SubsystemBase {
   @Getter private static boolean endEffectorhasCoral;
   private static boolean hasGamePiece;
   private final ControllerOrchestrator controllerApp;
-  private final Pose2d bargePoseBlue = new Pose2d(9.96, 2.02, new Rotation2d(-Math.PI));
-  private final Pose2d bargePoseRed = new Pose2d(9.96, 2.02, new Rotation2d(-Math.PI));
 
   private static Pose2d targetPose = new Pose2d();
   private ScoringSetpoints coralScoringSetpoints =
@@ -55,7 +53,7 @@ public class RobotState extends SubsystemBase {
           Level.DEALGAE_L2.getElevatorSetpoint(),
           Level.DEALGAE_L2.getarmPreScoreSetpoint(),
           Level.DEALGAE_L2.getArmScoringSetpoint());
-  private double bargeArmPos = 0.175;
+  private double bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS;
   private double processorArmPos = 0;
 
   /** The aligning state for scoring, if we are aligning to front or back of the robot. */
@@ -178,7 +176,7 @@ public class RobotState extends SubsystemBase {
       hasGamePiece = true;
     }
     Logger.recordOutput("RobotState/EndEffectorHasGamePiece", hasGamePiece);
-    setBargeProcessorAlignment();
+    // setBargeProcessorAlignment();
   }
 
   /**
@@ -276,6 +274,12 @@ public class RobotState extends SubsystemBase {
       return;
     }
 
+    if (shouldScoreFrontBarge()) {
+      bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS;
+    } else {
+      bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS_BACK;
+    }
+
     coralScoringSetpoints.elevatorSetpoint = elevatorSetpoint.get().getElevatorSetpoint();
 
     if (aligningState.get() == AligningState.ALIGNING_FRONT) {
@@ -310,12 +314,6 @@ public class RobotState extends SubsystemBase {
       processorArmPos = Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS;
     } else {
       processorArmPos = Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS;
-    }
-
-    if (bargeState.get() == BargeScoringState.BARGE_FRONT) {
-      bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS;
-    } else {
-      bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS_BACK;
     }
 
     Logger.recordOutput("RobotState/Pose", targetPose);
@@ -398,7 +396,13 @@ public class RobotState extends SubsystemBase {
   }
 
   public BargeScoringState getBargeState() {
-    return bargeState.get();
+
+    updateLock.lock();
+    try {
+      return bargeState.get();
+    } finally {
+      updateLock.unlock();
+    }
   }
 
   public void setProcessorState(ProcessorScoringState state) {
@@ -441,5 +445,31 @@ public class RobotState extends SubsystemBase {
     } else {
       return setpoint;
     }
+  }
+
+  public static boolean shouldScoreFrontBarge() {
+    // Normalize the heading to be within -180 to 180 degrees for consistent comparison.
+    // This handles cases where the heading might wrap around.
+
+    double robotHeadingDegrees = RobotContainer.getDrive().getPose().getRotation().getDegrees();
+    while (robotHeadingDegrees > 180) {
+      robotHeadingDegrees -= 360;
+    }
+    while (robotHeadingDegrees <= -180) {
+      robotHeadingDegrees += 360;
+    }
+
+    if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get() == Alliance.Blue) {
+        // On blue, front is closer to 0 degrees.
+        // We consider the front to be within +/- 90 degrees of 0.
+        return robotHeadingDegrees > -90 && robotHeadingDegrees <= 90;
+      } else { // Red Alliance
+        // On red, front is closer to 180 degrees (or -180).
+        // We consider the front to be within +/- 90 degrees of 180 (or -180).
+        return robotHeadingDegrees > 90 || robotHeadingDegrees <= -90;
+      }
+    }
+    return true;
   }
 }
