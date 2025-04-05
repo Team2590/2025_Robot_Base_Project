@@ -668,6 +668,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeUprightCoral", GamePieceFactory.intakeAlgaeGround());
     NamedCommands.registerCommand(
         "IntakeUprightCoralNoStow", GamePieceFactory.intakeUprightCoralNoStow());
+    NamedCommands.registerCommand("ScoreL4Sequentially", ScoringFactory.scoreL4Sequentially());
 
     // Does this need priming?
     NamedCommands.registerCommand("ScoreProcessor", ScoringFactory.scoreProcessor());
