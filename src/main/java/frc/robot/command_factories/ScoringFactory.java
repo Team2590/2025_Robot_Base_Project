@@ -316,7 +316,7 @@ public class ScoringFactory {
     return new MoveFromHandoffCommand(
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS,
-            Constants.ArmConstantsLeonidas.ARM_SET_STOW)
+            Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)
         .withName("Stow");
   }
 
