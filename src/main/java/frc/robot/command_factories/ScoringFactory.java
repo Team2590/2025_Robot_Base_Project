@@ -269,7 +269,7 @@ public class ScoringFactory {
                   ElevatorFactory.setPositionRun(
                       Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS),
                   ArmFactory.setPositionRun(
-                      RobotState.getInstance().getAlgaeScoringSetpoints(Level.L4).armSetpoint))
+                      RobotState.getInstance().getBargeArmPos()))
               .withName("Score Algae Barge");
         },
         Set.of(
@@ -370,8 +370,12 @@ public class ScoringFactory {
         .withName("Prime L4 while moving");
   }
 
-public static Command scoreL4Sequentially() {
-  return new SequentialCommandGroup(ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SET_STOW), ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),Commands.waitSeconds(.5),
-  ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L4_POST));
-}
+  public static Command scoreL4Sequentially() {
+    return new SequentialCommandGroup(
+        ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SET_STOW),
+        ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
+        Commands.waitSeconds(.5),
+        ArmFactory.setPositionBlocking(
+            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L4_POST));
+  }
 }
