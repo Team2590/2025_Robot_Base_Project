@@ -268,7 +268,8 @@ public final class Constants {
     public static final double ARM_VERTICAL_POS = .25;
     // public static final double magOffset = -.596436; // -.398
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
-    public static final double magOffset = .142; // -0.15; // -0.379; // -.3347; // -.635; // TODO
+    public static final double magOffset =
+        .146; // .142; // -0.15; // -0.379; // -.3347; // -.635; // TODO
     public static final double sensorReduction = 58.8; // TODO
     public static final double BACK_HORIZONTAL = 0.5;
     public static final double ARM_PROCESSOR_POS = 0;
@@ -399,7 +400,7 @@ public final class Constants {
     public static final boolean brake = false;
     public static final double reduction = 1;
     public static final double CLIMB_MECHANISM_POSITION = 47.2; // 13
-    public static final double CLIMB_MAX_POSITION = 215;
+    public static final double CLIMB_MAX_POSITION = 220;
     public static final double CLIMB_VOLTAGE = 11.0; // 2.0 tested
   }
 
