@@ -36,6 +36,8 @@ public class RobotState extends SubsystemBase {
   @Getter private static boolean endEffectorhasCoral;
   private static boolean hasGamePiece;
   private final ControllerOrchestrator controllerApp;
+  private final Pose2d bargePoseBlue = new Pose2d(9.96, 2.02, new Rotation2d(-Math.PI));
+  private final Pose2d bargePoseRed = new Pose2d(9.96, 2.02, new Rotation2d(-Math.PI));
 
   private static Pose2d targetPose = new Pose2d();
   private ScoringSetpoints coralScoringSetpoints =

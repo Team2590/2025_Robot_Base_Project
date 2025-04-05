@@ -5,6 +5,8 @@
       "anchor": {
         "x": 3.99,
         "y": 5.29
+        "x": 3.99,
+        "y": 5.29
       },
       "prevControl": null,
       "nextControl": {
@@ -34,13 +36,18 @@
       "anchor": {
         "x": 5.04,
         "y": 5.25
+        "x": 5.04,
+        "y": 5.25
       },
       "prevControl": {
+        "x": 5.372087980799722,
+        "y": 5.671216362847221
         "x": 5.372087980799722,
         "y": 5.671216362847221
       },
       "nextControl": null,
       "isLocked": false,
+      "linkedName": "NW_R"
       "linkedName": "NW_R"
     }
   ],
@@ -77,6 +84,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.35,
+    "maxVelocity": 3.35,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -93,5 +101,6 @@
     "velocity": 0,
     "rotation": -59.99999999999999
   },
+  "useDefaultConstraints": false
   "useDefaultConstraints": false
 }

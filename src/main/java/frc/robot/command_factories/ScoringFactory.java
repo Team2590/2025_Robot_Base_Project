@@ -3,6 +3,7 @@ package frc.robot.command_factories;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeArmConstantsLeonidas;
 import frc.robot.FieldConstants;
@@ -368,4 +369,9 @@ public class ScoringFactory {
             )
         .withName("Prime L4 while moving");
   }
+
+public static Command scoreL4Sequentially() {
+  return new SequentialCommandGroup(ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SET_STOW), ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),Commands.waitSeconds(.5),
+  ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L4_POST));
+}
 }

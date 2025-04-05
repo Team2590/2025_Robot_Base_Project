@@ -18,13 +18,18 @@
       "anchor": {
         "x": 1.6828767123287671,
         "y": 2.1843535958904114
+        "x": 1.6828767123287671,
+        "y": 2.1843535958904114
       },
       "prevControl": {
+        "x": 2.6258043439077143,
+        "y": 2.193975306416727
         "x": 2.6258043439077143,
         "y": 2.193975306416727
       },
       "nextControl": null,
       "isLocked": false,
+      "linkedName": "C_side_p1"
       "linkedName": "C_side_p1"
     }
   ],
@@ -32,6 +37,21 @@
     {
       "waypointRelativePos": 0.6367924528301918,
       "rotationDegrees": 0.0
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.7830508474576271,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
     }
   ],
   "constraintZones": [
@@ -61,6 +81,7 @@
   },
   "goalEndState": {
     "velocity": 0,
+    "rotation": -2.3081461864491613
     "rotation": -2.3081461864491613
   },
   "reversed": false,
