@@ -448,9 +448,6 @@ public class RobotState extends SubsystemBase {
   }
 
   public static boolean shouldScoreFrontBarge() {
-    // Normalize the heading to be within -180 to 180 degrees for consistent comparison.
-    // This handles cases where the heading might wrap around.
-
     double robotHeadingDegrees = RobotContainer.getDrive().getPose().getRotation().getDegrees();
     while (robotHeadingDegrees > 180) {
       robotHeadingDegrees -= 360;
@@ -461,12 +458,8 @@ public class RobotState extends SubsystemBase {
 
     if (DriverStation.getAlliance().isPresent()) {
       if (DriverStation.getAlliance().get() == Alliance.Blue) {
-        // On blue, front is closer to 0 degrees.
-        // We consider the front to be within +/- 90 degrees of 0.
         return robotHeadingDegrees > -90 && robotHeadingDegrees <= 90;
       } else { // Red Alliance
-        // On red, front is closer to 180 degrees (or -180).
-        // We consider the front to be within +/- 90 degrees of 180 (or -180).
         return robotHeadingDegrees > 90 || robotHeadingDegrees <= -90;
       }
     }
