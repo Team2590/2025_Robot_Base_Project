@@ -268,8 +268,7 @@ public class ScoringFactory {
                       Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE),
                   ElevatorFactory.setPositionRun(
                       Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS),
-                  ArmFactory.setPositionRun(
-                      RobotState.getInstance().getBargeArmPos()))
+                  ArmFactory.setPositionRun(RobotState.getInstance().getBargeArmPos()))
               .withName("Score Algae Barge");
         },
         Set.of(

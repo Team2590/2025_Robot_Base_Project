@@ -516,8 +516,8 @@ public class RobotContainer {
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
 
     // De-Algae Buttons
-    rightJoystick.povRight().onTrue(GamePieceFactory.GrabAlgaeL2());
-    rightJoystick.povLeft().onTrue(GamePieceFactory.GrabAlgaeL3());
+    rightJoystick.povRight().onTrue(GamePieceFactory.GrabAlgaeL3());
+    rightJoystick.povLeft().onTrue(GamePieceFactory.GrabAlgaeL2());
 
     // Manual Climb
     leftJoystick.button(8).whileTrue(ClimbFactory.manualRunClimb());
