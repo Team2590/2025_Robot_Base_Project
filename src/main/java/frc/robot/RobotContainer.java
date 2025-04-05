@@ -661,6 +661,10 @@ public class RobotContainer {
 
     // Scoring Commands
     NamedCommands.registerCommand("ScoreL4", ScoringFactory.score(ScoringFactory.Level.L4));
+    // .andThen(
+    //     elevator
+    //         .setPositionBlocking((ScoringFactory.Level.L4.getElevatorSetpoint() - 5))
+    //         .andThen(ScoringFactory.stow())));
     NamedCommands.registerCommand("ScoreL3", ScoringFactory.score(ScoringFactory.Level.L3));
     NamedCommands.registerCommand("ScoreL2", ScoringFactory.score(ScoringFactory.Level.L2));
     NamedCommands.registerCommand("ScoreL1", ScoringFactory.score(ScoringFactory.Level.L1));
