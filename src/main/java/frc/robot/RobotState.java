@@ -16,11 +16,15 @@ import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.NemesisMathUtil;
+
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import lombok.Getter;
+
+import org.apache.commons.math3.analysis.function.Constant;
 import org.littletonrobotics.junction.Logger;
 
 public class RobotState extends SubsystemBase {
@@ -55,6 +59,10 @@ public class RobotState extends SubsystemBase {
           Level.DEALGAE_L2.getArmScoringSetpoint());
   private double bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS;
   private double processorArmPos = 0;
+
+  private HashMap<String, Double> smartDeAlgaeSetpoints= new HashMap<>();
+  
+  
 
   /** The aligning state for scoring, if we are aligning to front or back of the robot. */
   public static enum AligningState {
@@ -111,6 +119,19 @@ public class RobotState extends SubsystemBase {
     this.intake = intake;
     this.vision = vision;
     this.controllerApp = controllerApp;
+
+    smartDeAlgaeSetpoints.put("N_",  Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2);
+    smartDeAlgaeSetpoints.put("NW_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
+    smartDeAlgaeSetpoints.put("NE_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
+    smartDeAlgaeSetpoints.put("NW_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
+    smartDeAlgaeSetpoints.put("SE_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2);
+    smartDeAlgaeSetpoints.put("SW_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2);
+    smartDeAlgaeSetpoints.put("S_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
+    
+
+
+
+
   }
 
   /**
@@ -319,7 +340,9 @@ public class RobotState extends SubsystemBase {
     Logger.recordOutput("RobotState/Pose", targetPose);
     Logger.recordOutput("RobotState/CoralArmSetpoint", coralScoringSetpoints.armSetpoint);
     Logger.recordOutput("RobotState/CoralElevatorSetpoint", coralScoringSetpoints.elevatorSetpoint);
-    Logger.recordOutput("RobotState/algaeArmSetpoint", dealgaeSetpoints.armSetpoint);
+
+    Logger.recordOutput("RobotState/SmartDealgaeElevatorSetpoint", dealgaeSetpoints.elevatorSetpoint);
+    Logger.recordOutput("RobotState/DealgaeArmSetpoint", dealgaeSetpoints.armSetpoint);
     Logger.recordOutput("RobotState/algaePlaceSetpoint", dealgaeSetpoints.armPlaceSetpoint);
     Logger.recordOutput("RobotState/algaeScoringArmSetpoint", algaeScoringSetpoints.armSetpoint);
     Logger.recordOutput(
@@ -365,13 +388,26 @@ public class RobotState extends SubsystemBase {
     }
   }
 
+  
+
   public ScoringSetpoints getDealgaeSetpoints(Level level) {
     updateLock.lock();
     try {
       // Manually set the requested levels elevator setpoint because I am too stupid to figure out a
       // better way
+      
       ScoringSetpoints setpoint_copy = dealgaeSetpoints;
-      setpoint_copy.elevatorSetpoint = level.getElevatorSetpoint();
+
+      String key= controllerApp.getMoveTo();
+      for(String side: smartDeAlgaeSetpoints.keySet()){
+
+          if(key.contains(side)){
+            setpoint_copy.elevatorSetpoint=smartDeAlgaeSetpoints.get(side);
+          }
+      }
+      //setpoint_copy.elevatorSetpoint = level.getElevatorSetpoint();
+      Logger.recordOutput("RobotState/SmartDealgaeAcutal", setpoint_copy.elevatorSetpoint);
+      System.out.println("Dealgae Setpoint is+ " + setpoint_copy.elevatorSetpoint);
       return setpoint_copy;
     } finally {
       updateLock.unlock();
