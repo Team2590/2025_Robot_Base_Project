@@ -14,6 +14,7 @@ import frc.robot.RobotState.ScoringSetpoints;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.util.NemesisMathUtil;
 import java.util.Set;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * Factory class for creating complex scoring-related commands.
@@ -141,7 +142,14 @@ public class ScoringFactory {
         () -> {
           double armPosition = RobotState.getInstance().getCoralScoringSetpoints().armSetpoint;
 
-          if (RobotState.getInstance().getAligningState() == AligningState.ALIGNING_BACK && RobotContainer.getArm().getAbsolutePosition() < 0) armPosition--;
+          Logger.recordOutput("Back_Scoring/startingPos", RobotContainer.getArm().getAbsolutePosition());
+          Logger.recordOutput("Back_Scoring/aligningState", RobotState.getInstance().getAligningState());
+          Logger.recordOutput("Back_Scoring/goalPos", RobotContainer.getArm().getAbsolutePosition());
+
+          if (RobotState.getInstance().getAligningState() == AligningState.ALIGNING_BACK
+              && RobotContainer.getArm().getAbsolutePosition() < 0) armPosition--;
+
+          Logger.recordOutput("Back_Scoring/setpoint", armPosition);
 
           switch (level) {
             case L4:
@@ -150,8 +158,7 @@ public class ScoringFactory {
                       IntakeFactory.setPositionBlocking(
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
                       ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
-                      ArmFactory.setPositionBlocking(
-                          armPosition))
+                      ArmFactory.setPositionBlocking(armPosition))
                   .withName("Prime " + level.name());
             case L3:
               return Commands.parallel(
@@ -273,8 +280,7 @@ public class ScoringFactory {
                       Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE),
                   ElevatorFactory.setPositionRun(
                       Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS),
-                  ArmFactory.setPositionRun(
-                      RobotState.getInstance().getBargeArmPos()))
+                  ArmFactory.setPositionRun(RobotState.getInstance().getBargeArmPos()))
               .withName("Score Algae Barge");
         },
         Set.of(
