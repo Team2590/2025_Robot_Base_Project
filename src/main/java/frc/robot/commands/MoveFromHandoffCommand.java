@@ -35,8 +35,7 @@ public class MoveFromHandoffCommand extends Command {
 
   @Override
   public void execute() {
-    if ((RobotContainer.getArm().getAbsolutePosition() > armThreshold
-            || RobotContainer.getArm().getAbsolutePosition() < armThreshold - 0.5)
+    if ((RobotContainer.getArm().getAbsolutePosition() > armThreshold)
         && elevatorSetpoint < Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
       RobotContainer.getArm().getIO().setPosition(armSetpoint);
     } else {

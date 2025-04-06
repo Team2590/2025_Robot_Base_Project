@@ -9,12 +9,10 @@ import frc.robot.Constants.IntakeArmConstantsLeonidas;
 import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
-import frc.robot.RobotState.AligningState;
 import frc.robot.RobotState.ScoringSetpoints;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.util.NemesisMathUtil;
 import java.util.Set;
-import org.littletonrobotics.junction.Logger;
 
 /**
  * Factory class for creating complex scoring-related commands.
@@ -140,16 +138,14 @@ public class ScoringFactory {
   public static Command primeForLevel(Level level) {
     return Commands.defer(
         () -> {
-          double armPosition = RobotState.getInstance().getCoralScoringSetpoints().armSetpoint;
+          // double armPosition = RobotState.getInstance().getCoralScoringSetpoints().armSetpoint;
 
-          Logger.recordOutput("Back_Scoring/startingPos", RobotContainer.getArm().getAbsolutePosition());
-          Logger.recordOutput("Back_Scoring/aligningState", RobotState.getInstance().getAligningState());
-          Logger.recordOutput("Back_Scoring/goalPos", RobotContainer.getArm().getAbsolutePosition());
-
-          if (RobotState.getInstance().getAligningState() == AligningState.ALIGNING_BACK
-              && RobotContainer.getArm().getAbsolutePosition() < 0) armPosition--;
-
-          Logger.recordOutput("Back_Scoring/setpoint", armPosition);
+          // Logger.recordOutput(
+          //     "Back_Scoring/startingPos", RobotContainer.getArm().getAbsolutePosition());
+          // Logger.recordOutput(
+          //     "Back_Scoring/aligningState", RobotState.getInstance().getAligningState());
+          // Logger.recordOutput(
+          //     "Back_Scoring/goalPos", RobotContainer.getArm().getAbsolutePosition());
 
           switch (level) {
             case L4:
@@ -158,7 +154,8 @@ public class ScoringFactory {
                       IntakeFactory.setPositionBlocking(
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
                       ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
-                      ArmFactory.setPositionBlocking(armPosition))
+                      ArmFactory.setPositionBlocking(
+                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
                   .withName("Prime " + level.name());
             case L3:
               return Commands.parallel(
@@ -166,7 +163,7 @@ public class ScoringFactory {
                       new MoveFromHandoffCommand(
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                           level.getElevatorSetpoint(),
-                          armPosition))
+                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
                   .withName("Prime " + level.name());
             case L2:
               return Commands.parallel(
@@ -174,7 +171,7 @@ public class ScoringFactory {
                   new MoveFromHandoffCommand(
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                           level.getElevatorSetpoint(),
-                          armPosition)
+                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)
                       .withName("Prime " + level.name()));
             default:
               return Commands.parallel(
@@ -182,7 +179,7 @@ public class ScoringFactory {
                   new MoveFromHandoffCommand(
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                           level.getElevatorSetpoint(),
-                          armPosition)
+                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)
                       .withName("Prime " + level.name()));
           }
         },

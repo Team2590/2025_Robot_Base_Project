@@ -313,6 +313,11 @@ public class RobotState extends SubsystemBase {
       dealgaeSetpoints.armPlaceSetpoint =
           Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION
               - Constants.ArmConstantsLeonidas.ARM_DEALGAE_POST; // .5 - 0
+      if (RobotState.getInstance().getAligningState() == AligningState.ALIGNING_BACK
+          && RobotContainer.getArm().getAbsolutePosition() > 0.5) {
+        coralScoringSetpoints.armSetpoint++;
+        coralScoringSetpoints.armPlaceSetpoint = 1.5;
+      }
     }
 
     targetPose = drive.flipScoringSide(originalTargetPose.get());
