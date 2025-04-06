@@ -660,7 +660,9 @@ public class RobotContainer {
         "intakeHandoff", GamePieceFactory.intakeCoralGroundAndHandoffNoStow());
 
     // Scoring Commands
-    NamedCommands.registerCommand("ScoreL4", ScoringFactory.score(ScoringFactory.Level.L4));
+    NamedCommands.registerCommand(
+        "ScoreL4",
+        ScoringFactory.scoreL4Sequentially()); // ScoringFactory.score(ScoringFactory.Level.L4));
     // .andThen(
     //     elevator
     //         .setPositionBlocking((ScoringFactory.Level.L4.getElevatorSetpoint() - 5))
@@ -668,7 +670,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("ScoreL3", ScoringFactory.score(ScoringFactory.Level.L3));
     NamedCommands.registerCommand("ScoreL2", ScoringFactory.score(ScoringFactory.Level.L2));
     NamedCommands.registerCommand("ScoreL1", ScoringFactory.score(ScoringFactory.Level.L1));
-    NamedCommands.registerCommand("PrimeL4WhileMoving", ScoringFactory.primeL4WhileMoving());
+    //   NamedCommands.registerCommand("PrimeL4WhileMoving", ScoringFactory.primeL4WhileMoving());
     NamedCommands.registerCommand("IntakeUprightCoral", GamePieceFactory.intakeAlgaeGround());
     NamedCommands.registerCommand(
         "IntakeUprightCoralNoStow", GamePieceFactory.intakeUprightCoralNoStow());
