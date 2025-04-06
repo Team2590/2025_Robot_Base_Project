@@ -9,6 +9,7 @@ import frc.robot.Constants.IntakeArmConstantsLeonidas;
 import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
+import frc.robot.RobotState.AligningState;
 import frc.robot.RobotState.ScoringSetpoints;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.util.NemesisMathUtil;
@@ -138,6 +139,10 @@ public class ScoringFactory {
   public static Command primeForLevel(Level level) {
     return Commands.defer(
         () -> {
+          double armPosition = RobotState.getInstance().getCoralScoringSetpoints().armSetpoint;
+
+          if (RobotState.getInstance().getAligningState() == AligningState.ALIGNING_BACK && RobotContainer.getArm().getAbsolutePosition() < 0) armPosition--;
+
           switch (level) {
             case L4:
               return Commands.parallel(
@@ -146,7 +151,7 @@ public class ScoringFactory {
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
                       ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
                       ArmFactory.setPositionBlocking(
-                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
+                          armPosition))
                   .withName("Prime " + level.name());
             case L3:
               return Commands.parallel(
@@ -154,7 +159,7 @@ public class ScoringFactory {
                       new MoveFromHandoffCommand(
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                           level.getElevatorSetpoint(),
-                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
+                          armPosition))
                   .withName("Prime " + level.name());
             case L2:
               return Commands.parallel(
@@ -162,7 +167,7 @@ public class ScoringFactory {
                   new MoveFromHandoffCommand(
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                           level.getElevatorSetpoint(),
-                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)
+                          armPosition)
                       .withName("Prime " + level.name()));
             default:
               return Commands.parallel(
@@ -170,7 +175,7 @@ public class ScoringFactory {
                   new MoveFromHandoffCommand(
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                           level.getElevatorSetpoint(),
-                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)
+                          armPosition)
                       .withName("Prime " + level.name()));
           }
         },
