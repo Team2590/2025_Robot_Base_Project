@@ -3,6 +3,7 @@ package frc.robot.subsystems.arm;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.util.NemesisMathUtil;
 import org.littletonrobotics.junction.Logger;
 
@@ -86,5 +87,29 @@ public class Arm extends SubsystemBase {
 
   public ArmIO getIO() {
     return arm;
+  }
+
+  public void setSlowMotionMagic() {
+    if (!(arm instanceof ArmIOTalonFX)) return;
+
+    ArmIOTalonFX armTalon = (ArmIOTalonFX) arm;
+    
+    armTalon.setMotionMagic(
+      Constants.ArmConstantsLeonidas.DEFAULT_CRUISE_VELOCITY, 
+      Constants.ArmConstantsLeonidas.DEFAULT_ACCELERATION, 
+      2000
+    );
+  }
+
+  public void resetMotionMagic() {
+    if (!(arm instanceof ArmIOTalonFX)) return;
+
+    ArmIOTalonFX armTalon = (ArmIOTalonFX) arm;
+
+    armTalon.setMotionMagic(
+      Constants.ArmConstantsLeonidas.DEFAULT_CRUISE_VELOCITY, 
+      Constants.ArmConstantsLeonidas.DEFAULT_ACCELERATION, 
+      Constants.ArmConstantsLeonidas.DEFAULT_JERK
+    );
   }
 }

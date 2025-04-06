@@ -141,12 +141,14 @@ public class ScoringFactory {
           switch (level) {
             case L4:
               return Commands.parallel(
+                      Commands.runOnce(() -> RobotContainer.getArm().setSlowMotionMagic()),
                       Commands.print("Priming " + level.name()),
                       IntakeFactory.setPositionBlocking(
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
                       ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
                       ArmFactory.setPositionBlocking(
                           RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
+                      .andThen(Commands.runOnce(() -> RobotContainer.getArm().resetMotionMagic()))
                   .withName("Prime " + level.name());
             case L3:
               return Commands.parallel(

@@ -24,6 +24,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SafetyChecker;
 import frc.robot.util.StickyFaultUtil;
@@ -34,10 +35,10 @@ public class ArmIOTalonFX implements ArmIO {
   LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP", 3);
   LoggedTunableNumber kD = new LoggedTunableNumber("Arm/kD", 0);
   LoggedTunableNumber MotionMagicCruiseVelocity1 =
-      new LoggedTunableNumber("Arm/MotionMagicCruiseVelocity", 1000);
+      new LoggedTunableNumber("Arm/MotionMagicCruiseVelocity", Constants.ArmConstantsLeonidas.DEFAULT_CRUISE_VELOCITY);
   LoggedTunableNumber MotionMagicAcceleration1 =
-      new LoggedTunableNumber("Arm/MotionMagicAcceleration", 15);
-  LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", 3000);
+      new LoggedTunableNumber("Arm/MotionMagicAcceleration", Constants.ArmConstantsLeonidas.DEFAULT_ACCELERATION);
+  LoggedTunableNumber MotionMagicJerk1 = new LoggedTunableNumber("Arm/MotionMagicJerk", Constants.ArmConstantsLeonidas.DEFAULT_JERK);
   LoggedTunableNumber setPos = new LoggedTunableNumber("Arm/setpointPos", 0);
   Slot0Configs slot0;
   TalonFXConfiguration cfg;
@@ -208,5 +209,12 @@ public class ArmIOTalonFX implements ArmIO {
     } else {
       System.out.println("CAN'T MOVE ARM, safety check failed.");
     }
+  }
+
+  public void setMotionMagic(double cruiseVelocity, double acceleration, double jerk) {
+    mm.MotionMagicCruiseVelocity = cruiseVelocity;
+    mm.MotionMagicAcceleration = acceleration;
+    mm.MotionMagicJerk = jerk;
+    arm.getConfigurator().apply(cfg);
   }
 }

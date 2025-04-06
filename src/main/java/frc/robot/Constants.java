@@ -294,6 +294,9 @@ public final class Constants {
     public static final double ARM_WRAP_POS = 0.794;
     public static final double ARM_HANDOFF_POS = 0.75;
     public static final double ARM_THRESHOLD_POS = .63;
+    public static final double DEFAULT_CRUISE_VELOCITY = 1000;
+    public static final double DEFAULT_ACCELERATION = 15;
+    public static final double DEFAULT_JERK = 3000;
   }
 
   public static class ElevatorConstantsLeonidas {
@@ -353,7 +356,7 @@ public final class Constants {
     public static final double reduction = 1;
     public static final double INTAKE_VOLTAGE = 12;
     public static final double OUTTAKE_VOLTAGE = -12;
-    public static final double INTAKE_ALGAE_VOLTAGE = -8;
+    public static final double INTAKE_ALGAE_VOLTAGE = -12;
     public static final double HOLD_ALGAE_VOLTAGE = -1;
     public static final int PROX_CHANNEL = 0;
   }
