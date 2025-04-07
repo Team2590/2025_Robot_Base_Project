@@ -190,6 +190,10 @@ public class RobotState extends SubsystemBase {
     // setBargeProcessorAlignment();
   }
 
+  public double getStowSetpoint() {
+    return RobotContainer.getArm().getAbsolutePosition() < 0.75 ? 0.25 : 1.25;
+  }
+
   /**
    * Checks what zone robot is in
    *
@@ -293,30 +297,31 @@ public class RobotState extends SubsystemBase {
 
     coralScoringSetpoints.elevatorSetpoint = elevatorSetpoint.get().getElevatorSetpoint();
 
+    double SETPOINT_TOLERANCE = 0.05;
+
     if (aligningState.get() == AligningState.ALIGNING_FRONT) {
-      coralScoringSetpoints.armSetpoint =
-          Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE; // .15
-      coralScoringSetpoints.armPlaceSetpoint =
-          Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST; // 0
-      dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_PRE; // 0
-      dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_POST; // 0
+      if (RobotContainer.getArm().getAbsolutePosition() < Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS + SETPOINT_TOLERANCE) {
+        coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_FRONT_PRE;
+        coralScoringSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_FRONT_POST;
+        dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_FRONT;
+        dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_FRONT;
+      } else if (RobotContainer.getArm().getAbsolutePosition() > Constants.ArmConstantsLeonidas.ARM_SCORE_BACK_FRONT_PRE - SETPOINT_TOLERANCE) {
+        coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_BACK_FRONT_PRE;
+        coralScoringSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_BACK_FRONT_POST;
+        dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_FRONT;
+        dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_FRONT;
+      }
     } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
-      coralScoringSetpoints.armSetpoint =
-          Constants.ArmConstantsLeonidas.BACK_HORIZONTAL
-              - Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE; // .5 - .15
-      coralScoringSetpoints.armPlaceSetpoint =
-          Constants.ArmConstantsLeonidas.BACK_HORIZONTAL
-              - Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST; // .5 - 0
-      dealgaeSetpoints.armSetpoint =
-          Constants.ArmConstantsLeonidas.BACK_HORIZONTAL
-              - Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION; // .5 - 0
-      dealgaeSetpoints.armPlaceSetpoint =
-          Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION
-              - Constants.ArmConstantsLeonidas.ARM_DEALGAE_POST; // .5 - 0
-      if (RobotState.getInstance().getAligningState() == AligningState.ALIGNING_BACK
-          && RobotContainer.getArm().getAbsolutePosition() > 0.5) {
-        coralScoringSetpoints.armSetpoint++;
-        coralScoringSetpoints.armPlaceSetpoint = 1.5;
+      if (RobotContainer.getArm().getAbsolutePosition() < Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_PRE + SETPOINT_TOLERANCE) {
+        coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_PRE;
+        coralScoringSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_POST;
+        dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_BACK;
+        dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_BACK;
+      } else if (RobotContainer.getArm().getAbsolutePosition() > Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS - SETPOINT_TOLERANCE) {
+        coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_BACK_BACK_PRE;
+        coralScoringSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_BACK_BACK_POST;
+        dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
+        dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
       }
     }
 

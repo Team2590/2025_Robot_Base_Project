@@ -26,12 +26,12 @@ public class ScoringFactory {
         Constants.ArmConstantsLeonidas.ARM_SET_STOW),
     L2(
         Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS,
-        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE,
-        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST),
+        Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_PRE,
+        Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_POST),
     L3(
         Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS,
-        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE,
-        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L3_POST),
+        Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_PRE,
+        Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_POST),
     L4(
         Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS,
         Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4,
@@ -135,15 +135,6 @@ public class ScoringFactory {
   public static Command primeForLevel(Level level) {
     return Commands.defer(
         () -> {
-          // double armPosition = RobotState.getInstance().getCoralScoringSetpoints().armSetpoint;
-
-          // Logger.recordOutput(
-          //     "Back_Scoring/startingPos", RobotContainer.getArm().getAbsolutePosition());
-          // Logger.recordOutput(
-          //     "Back_Scoring/aligningState", RobotState.getInstance().getAligningState());
-          // Logger.recordOutput(
-          //     "Back_Scoring/goalPos", RobotContainer.getArm().getAbsolutePosition());
-
           switch (level) {
             case L4:
               return Commands.parallel(
@@ -319,11 +310,13 @@ public class ScoringFactory {
    * @return Command sequence for stowing
    */
   public static Command stow() {
-    return new MoveFromHandoffCommand(
+    return Commands.defer(() -> {
+      return new MoveFromHandoffCommand(
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS,
-            Constants.ArmConstantsLeonidas.ARM_SET_STOW)
+            RobotState.getInstance().getStowSetpoint())
         .withName("Stow");
+    }, Set.of(RobotContainer.getArm(), RobotContainer.getEndEffector(), RobotContainer.getIntake()));
   }
 
   public static Command prepClimb() {
