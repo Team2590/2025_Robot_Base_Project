@@ -29,9 +29,9 @@ public class ControllerApp extends Application {
 
   // All button configurations
   private static final String[][] buttonConfigs = {
-    {"Left-L4", "Right-L4"},
+    {"Left-L2", "Right-L2"},
     {"Left-L3", "Right-L3"},
-    {"Left-L2", "Right-L2"}
+    {"Left-L4", "Right-L4"}
   };
 
   private GridPane mainButtonGrid;
