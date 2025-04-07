@@ -301,8 +301,8 @@ public final class Constants {
     public static final double ARM_SCORE_BACK_FRONT_PRE = 1.15;
     public static final double ARM_SCORE_BACK_FRONT_POST = 1.015;
     public static final double ARM_DEALGAE_BACK_FRONT = 1;
-    public static final double ARM_SCORE_BACK_BACK_PRE = 1.35; 
-    public static final double ARM_SCORE_BACK_BACK_POST = 1.485; 
+    public static final double ARM_SCORE_BACK_BACK_PRE = 1.35;
+    public static final double ARM_SCORE_BACK_BACK_POST = 1.485;
     public static final double ARM_DEALGAE_BACK_BACK = 1.5;
   }
 

@@ -68,9 +68,11 @@ class RobotStateTest {
 
     // Mock drive pose and methods
     when(drive.getPose()).thenReturn(new Pose2d(0, 0, new Rotation2d(0)));
-    when(drive.flipScoringSide(any(Pose2d.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    when(drive.flipScoringSide(any(Pose2d.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
 
-    robotState = RobotState.initialize(arm, drive, elevator, endEffector, intake, vision, controllerApp);
+    robotState =
+        RobotState.initialize(arm, drive, elevator, endEffector, intake, vision, controllerApp);
   }
 
   @AfterEach
@@ -84,10 +86,12 @@ class RobotStateTest {
   void updateScoringConfigurationSimple_FrontAlignment_ArmBelowHandoff_ReturnsCorrectSetpoints() {
     // Arrange
     robotState.setAligningState(RobotState.AligningState.ALIGNING_FRONT);
+    System.out.println(robotState.getAligningState().name());
     when(arm.getAbsolutePosition()).thenReturn(ArmConstantsLeonidas.ARM_HANDOFF_POS - 0.1);
 
     // Act
     robotState.periodic(); // This will call updateScoringConfigurationSimple
+    System.out.println(robotState.getAligningState().name());
 
     // Assert
     ScoringSetpoints setpoints = robotState.getCoralScoringSetpoints();

@@ -299,6 +299,7 @@ public class RobotState extends SubsystemBase {
 
     double SETPOINT_TOLERANCE = 0.05;
 
+    // spotless:off
     if (aligningState.get() == AligningState.ALIGNING_FRONT) {
       if (RobotContainer.getArm().getAbsolutePosition() < Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS + SETPOINT_TOLERANCE) {
         coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_FRONT_PRE;
@@ -323,6 +324,7 @@ public class RobotState extends SubsystemBase {
         dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
         dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
       }
+      // spotless:on
     }
 
     targetPose = drive.flipScoringSide(originalTargetPose.get());

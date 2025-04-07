@@ -310,13 +310,16 @@ public class ScoringFactory {
    * @return Command sequence for stowing
    */
   public static Command stow() {
-    return Commands.defer(() -> {
-      return new MoveFromHandoffCommand(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS,
-            RobotState.getInstance().getStowSetpoint())
-        .withName("Stow");
-    }, Set.of(RobotContainer.getArm(), RobotContainer.getEndEffector(), RobotContainer.getIntake()));
+    return Commands.defer(
+        () -> {
+          return new MoveFromHandoffCommand(
+                  Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                  Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS,
+                  RobotState.getInstance().getStowSetpoint())
+              .withName("Stow");
+        },
+        Set.of(
+            RobotContainer.getArm(), RobotContainer.getEndEffector(), RobotContainer.getIntake()));
   }
 
   public static Command prepClimb() {
