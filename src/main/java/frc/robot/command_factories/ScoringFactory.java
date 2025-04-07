@@ -146,21 +146,27 @@ public class ScoringFactory {
                           RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
                   .withName("Prime " + level.name());
             case L3:
-              return Commands.parallel(
-                      Commands.print("Priming " + level.name()),
-                      new MoveFromHandoffCommand(
-                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                          level.getElevatorSetpoint(),
-                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
+              return IntakeFactory.setPositionBlocking(
+                      Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS)
+                  .andThen(
+                      Commands.parallel(
+                          Commands.print("Priming " + level.name()),
+                          new MoveFromHandoffCommand(
+                              Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                              level.getElevatorSetpoint(),
+                              RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)))
                   .withName("Prime " + level.name());
             case L2:
-              return Commands.parallel(
-                  Commands.print("Priming " + level.name()),
-                  new MoveFromHandoffCommand(
-                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                          level.getElevatorSetpoint(),
-                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)
-                      .withName("Prime " + level.name()));
+              return IntakeFactory.setPositionBlocking(
+                      Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS)
+                  .andThen(
+                      Commands.parallel(
+                          Commands.print("Priming " + level.name()),
+                          new MoveFromHandoffCommand(
+                              Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                              level.getElevatorSetpoint(),
+                              RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)))
+                  .withName("Prime " + level.name());
             default:
               return Commands.parallel(
                   Commands.print("Priming " + level.name()),
@@ -310,15 +316,20 @@ public class ScoringFactory {
    * @return Command sequence for stowing
    */
   public static Command stow() {
-    return Commands.defer(
-        () -> {
-          return new MoveFromHandoffCommand(
-                  Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                  Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS,
-                  RobotState.getInstance().getStowSetpoint())
-              .withName("Stow");
-        },
-        Set.of(RobotContainer.getArm(), RobotContainer.getElevator(), RobotContainer.getIntake()));
+    return IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS)
+        .andThen(
+            Commands.defer(
+                () -> {
+                  return new MoveFromHandoffCommand(
+                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                          Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS,
+                          RobotState.getInstance().getStowSetpoint())
+                      .withName("Stow");
+                },
+                Set.of(
+                    RobotContainer.getArm(),
+                    RobotContainer.getElevator(),
+                    RobotContainer.getIntake())));
   }
 
   public static Command prepClimb() {
