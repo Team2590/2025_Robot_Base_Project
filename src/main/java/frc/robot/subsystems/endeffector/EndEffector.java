@@ -17,7 +17,7 @@ public class EndEffector extends SubsystemBase {
       new LoggedTunableNumber("EndEffector/ProxThreshold", 1500);
   private LoggedTunableNumber CURRENT_THRESHOLD =
       new LoggedTunableNumber("EndEffector/CurrentThreshold", 15);
-  private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 10);
+  private LoggedTunableNumber taps = new LoggedTunableNumber("EndEffector/taps", 20);
   private LinearFilter filter_current = LinearFilter.movingAverage((int) taps.get());
   private LinearFilter filter_prox = LinearFilter.movingAverage((int) taps.get());
   private double stator_current_filtered_data;
