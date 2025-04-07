@@ -9,15 +9,14 @@ public class MoveFromHandoffCommand extends Command {
   private double armSetpoint;
   private double elevatorSetpoint;
   private double intakeArmSetpoint;
-  private double armThreshold;
+  private double armFrontThreshold;
+  private double armBackThreshold;
 
-  /**
-   * @param armThreshold - max arm rotation count to achieve before being able to move in parallel
-   */
   public MoveFromHandoffCommand(
       double intakeTargetPos, double elevatorTargetPos, double armTargetPos) {
     setName("Move to handoff");
-    this.armThreshold = Constants.ArmConstantsLeonidas.ARM_THRESHOLD_POS;
+    this.armFrontThreshold = Constants.ArmConstantsLeonidas.ARM_BACK_THRESHOLD_POS;
+    this.armBackThreshold = Constants.ArmConstantsLeonidas.ARM_FRONT_THRESHOLD_POS;
     this.armSetpoint = armTargetPos;
     this.elevatorSetpoint = elevatorTargetPos;
     this.intakeArmSetpoint = intakeTargetPos;
@@ -35,7 +34,8 @@ public class MoveFromHandoffCommand extends Command {
 
   @Override
   public void execute() {
-    if ((RobotContainer.getArm().getAbsolutePosition() > armThreshold)
+    if ((RobotContainer.getArm().getAbsolutePosition() > armFrontThreshold
+            && RobotContainer.getArm().getAbsolutePosition() < armBackThreshold)
         && elevatorSetpoint < Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
       RobotContainer.getArm().getIO().setPosition(armSetpoint);
     } else {

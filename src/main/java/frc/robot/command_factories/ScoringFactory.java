@@ -318,8 +318,7 @@ public class ScoringFactory {
                   RobotState.getInstance().getStowSetpoint())
               .withName("Stow");
         },
-        Set.of(
-            RobotContainer.getArm(), RobotContainer.getEndEffector(), RobotContainer.getIntake()));
+        Set.of(RobotContainer.getArm(), RobotContainer.getElevator(), RobotContainer.getIntake()));
   }
 
   public static Command prepClimb() {

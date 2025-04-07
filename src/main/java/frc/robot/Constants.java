@@ -289,7 +289,8 @@ public final class Constants {
     // public static final double ARM_SCORING_POS = .7; // TODO: find real value
     public static final double ARM_WRAP_POS = 0.794;
     public static final double ARM_HANDOFF_POS = 0.75;
-    public static final double ARM_THRESHOLD_POS = .63;
+    public static final double ARM_FRONT_THRESHOLD_POS = .63;
+    public static final double ARM_BACK_THRESHOLD_POS = .87;
     public static final double ARM_STOW_FRONT = 0.25;
     public static final double ARM_SCORE_FRONT_FRONT_PRE = 0.15;
     public static final double ARM_SCORE_FRONT_FRONT_POST = 0.015;
