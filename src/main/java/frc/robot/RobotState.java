@@ -191,7 +191,11 @@ public class RobotState extends SubsystemBase {
   }
 
   public double getStowSetpoint() {
-    return RobotContainer.getArm().getAbsolutePosition() < 0.75 ? 0.25 : 1.25;
+    double SETPOINT_TOLERANCE = 0.05;
+    return RobotContainer.getArm().getAbsolutePosition()
+            < Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS + SETPOINT_TOLERANCE
+        ? Constants.ArmConstantsLeonidas.ARM_STOW_FRONT
+        : Constants.ArmConstantsLeonidas.ARM_STOW_BACK;
   }
 
   /**

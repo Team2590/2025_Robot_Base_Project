@@ -73,9 +73,10 @@ class RobotStateTest {
         .thenAnswer(invocation -> invocation.getArgument(0));
 
     // Initialize RobotState and create a spy
-    robotState = RobotState.initialize(arm, drive, elevator, endEffector, intake, vision, controllerApp);
+    robotState =
+        RobotState.initialize(arm, drive, elevator, endEffector, intake, vision, controllerApp);
     robotState = spy(robotState);
-    
+
     // Prevent setAligningStateBasedOnTargetPose from running during tests
     doNothing().when(robotState).setAligningStateBasedOnTargetPose(any());
   }
@@ -149,6 +150,22 @@ class RobotStateTest {
     assertEquals(ArmConstantsLeonidas.ARM_SCORE_BACK_BACK_PRE, setpoints.armSetpoint);
     assertEquals(ArmConstantsLeonidas.ARM_SCORE_BACK_BACK_POST, setpoints.armPlaceSetpoint);
     assertEquals(Level.L2.getElevatorSetpoint(), setpoints.elevatorSetpoint);
+  }
+
+  @Test
+  void getStowSetpoint_ArmAboveHandoff() {
+    when(arm.getAbsolutePosition()).thenReturn(ArmConstantsLeonidas.ARM_HANDOFF_POS + 0.1);
+
+    robotState.periodic();
+    assertEquals(ArmConstantsLeonidas.ARM_STOW_BACK, robotState.getStowSetpoint());
+  }
+
+  @Test
+  void getStowSetpoint_ArmBelowHandoff() {
+    when(arm.getAbsolutePosition()).thenReturn(ArmConstantsLeonidas.ARM_HANDOFF_POS - 0.1);
+
+    robotState.periodic();
+    assertEquals(ArmConstantsLeonidas.ARM_STOW_FRONT, robotState.getStowSetpoint());
   }
 
   @Test
