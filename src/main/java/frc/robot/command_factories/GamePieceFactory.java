@@ -9,6 +9,8 @@ import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.commands.MoveToHandoffCommand;
 import java.util.Set;
+import edu.wpi.first.math.geometry.Pose2d;
+import frc.robot.FieldConstants;
 
 public class GamePieceFactory {
 
@@ -79,7 +81,7 @@ public class GamePieceFactory {
         .withName("Handoff");
   }
 
-  public static Command intakeCoralGroundAndHandoffNoStow() {
+  public static Command intakeCoralGroundAndHandoffWithStow() {
     return Commands.sequence(
             new MoveToHandoffCommand(),
             IntakeFactory.runIntake(
@@ -100,10 +102,8 @@ public class GamePieceFactory {
                     IntakeFactory.runIntakeVoltage(
                         () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED))
                 .until(() -> RobotState.endEffectorHasGamePiece()))
-        .andThen(
-            ElevatorFactory.setPositionBlocking(
-                Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS))
-        .withName("Handoff");
+        .andThen(ScoringFactory.stow())
+        .withName("Handoff With Stow");
   }
 
   public static Command intakeCoralNoHandoff() {
@@ -167,5 +167,32 @@ public class GamePieceFactory {
             RobotContainer.getArm(),
             RobotContainer.getElevator(),
             RobotContainer.getEndEffector()));
+  }
+
+  public static Command intakeCoralGroundAndHandoffAutoStow() {
+    return Commands.defer(
+        () -> {
+          Pose2d currentPose = RobotContainer.getDrive().getPose();
+          double minDistance = Double.MAX_VALUE;
+          
+          // Check distance to all reef poses in the map
+          for (Pose2d pose : FieldConstants.RED_REEF_POSES.values()) {
+            double distance = currentPose.getTranslation().getDistance(pose.getTranslation());
+            minDistance = Math.min(minDistance, distance);
+          }
+          for (Pose2d pose : FieldConstants.BLUE_REEF_POSES.values()) {
+            double distance = currentPose.getTranslation().getDistance(pose.getTranslation());
+            minDistance = Math.min(minDistance, distance);
+          }
+          
+          // Choose command based on distance
+          if (minDistance > Constants.AutoStowConstants.AUTO_STOW_MIN_DISTANCE) {
+            return intakeCoralGroundAndHandoffWithStow();
+          } else {
+            return intakeCoralGroundAndHandoff();
+          }
+        },
+        Set.of(RobotContainer.getDrive()))
+        .withName("Intake Coral Ground and Handoff (Auto Stow)");
   }
 }

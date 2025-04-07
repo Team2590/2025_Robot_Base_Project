@@ -657,7 +657,7 @@ public class RobotContainer {
     // ScoringFactory.primeForLevel(ScoringFactory.Level.L1));
     // TODO: Prime for Source
     NamedCommands.registerCommand(
-        "intakeHandoff", GamePieceFactory.intakeCoralGroundAndHandoffNoStow());
+        "intakeHandoff", GamePieceFactory.intakeCoralGroundAndHandoffAutoStow()); 
 
     // Scoring Commands
     NamedCommands.registerCommand(

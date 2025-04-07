@@ -588,4 +588,8 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+
+  public static class AutoStowConstants {
+    public static final double AUTO_STOW_MIN_DISTANCE = 2.0; // meters
+  }
 }
