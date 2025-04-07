@@ -1,17 +1,14 @@
 package frc.robot.command_factories;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeArmConstantsLeonidas;
-import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.RobotState.ScoringSetpoints;
 import frc.robot.commands.MoveFromHandoffCommand;
-import frc.robot.util.NemesisMathUtil;
 import java.util.Set;
 
 /**
@@ -356,26 +353,6 @@ public class ScoringFactory {
             ArmFactory.setPosition(Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS),
             IntakeFactory.setHomePosition())
         .withName("Set defaults");
-  }
-
-  public static Command primeL4WhileMoving() {
-    return Commands.sequence(
-            Commands.waitUntil(
-                () -> {
-                  Pose2d currentPose = RobotContainer.getDrive().getPose();
-                  for (Pose2d pose : FieldConstants.RED_REEF_POSES.values()) {
-                    if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
-                      return true; // 1.5 meters max distance to start raising elevator
-                  }
-                  for (Pose2d pose : FieldConstants.BLUE_REEF_POSES.values()) {
-                    if (NemesisMathUtil.distance(currentPose, pose) < 1.5)
-                      return true; // 1.5 meters max distance to start raising elevator
-                  }
-                  return false;
-                }),
-            primeForLevel(Level.L4) // ,
-            )
-        .withName("Prime L4 while moving");
   }
 
   public static Command scoreL4Sequentially() {
