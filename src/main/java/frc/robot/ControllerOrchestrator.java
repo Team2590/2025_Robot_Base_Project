@@ -126,19 +126,17 @@ public class ControllerOrchestrator {
   }
 
   private Target parseTargetString(String targetString) {
-    // The new format from controller app is now: N_Side_Level
-    // where N is a placeholder, Side is Left/Right, Level is L2/L3/L4
+    // The new format from controller app is now: Side_Level
+    // where Side is Left/Right, Level is L2/L3/L4
     String[] parts = targetString.split("_");
-    if (parts.length != 3) {
+    if (parts.length != 2) {
       // System.err.println("---> Invalid target string received from ControllerApp: " +
       // targetString);
       return null;
     }
 
-    // Ignore the first part (direction) from controller app - we'll determine it based on robot
-    // pose
-    String leftOrRight = parts[1];
-    String levelString = parts[2].toUpperCase();
+    String leftOrRight = parts[0];
+    String levelString = parts[1].toUpperCase();
 
     // Find the closest compass direction based on the robot's current position
     String compassDir = determineCompassDirection();

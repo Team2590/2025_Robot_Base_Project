@@ -133,9 +133,8 @@ public class ControllerApp extends Application {
         String side = parts[0];
         String level = parts[1];
 
-        // We need to send a command with format: Direction_Side_Level
-        // For simplicity, we'll always use "N" as direction since it's not relevant anymore
-        pendingCommand = "N_" + side + "_" + level;
+        // New format: Side_Level (no compass direction)
+        pendingCommand = side + "_" + level;
         System.out.println("Updated command string: " + pendingCommand);
         sendToNetworkTables("moveTo", pendingCommand);
       }
@@ -155,9 +154,9 @@ public class ControllerApp extends Application {
     if (moveTo != null && !moveTo.equals("not found")) {
       // Split on underscore to separate parts
       String[] parts = moveTo.split("_");
-      if (parts.length >= 3) {
-        String side = parts[1];
-        String level = parts[2];
+      if (parts.length >= 2) {
+        String side = parts[0];
+        String level = parts[1];
 
         // Create button text format: "Side-Level"
         selectedDirection = side + "-" + level;
