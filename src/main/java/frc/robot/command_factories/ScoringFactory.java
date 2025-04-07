@@ -141,7 +141,8 @@ public class ScoringFactory {
                       Commands.print("Priming " + level.name()),
                       IntakeFactory.setPositionBlocking(
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
-                      ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
+                      ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()))
+                  .andThen(
                       ArmFactory.setPositionBlocking(
                           RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
                   .withName("Prime " + level.name());

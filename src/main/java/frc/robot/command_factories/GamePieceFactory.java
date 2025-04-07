@@ -192,7 +192,7 @@ public class GamePieceFactory {
             return intakeCoralGroundAndHandoff();
           }
         },
-        Set.of(RobotContainer.getDrive()))
+        Set.of(RobotContainer.getArm(), RobotContainer.getEndEffector(), RobotContainer.getIntake()))
         .withName("Intake Coral Ground and Handoff (Auto Stow)");
   }
 }
