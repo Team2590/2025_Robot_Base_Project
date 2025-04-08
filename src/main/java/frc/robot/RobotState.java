@@ -192,8 +192,16 @@ public class RobotState extends SubsystemBase {
 
   public double getStowSetpoint() {
     double SETPOINT_TOLERANCE = 0.05;
-    return RobotContainer.getArm().getAbsolutePosition()
-            < Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS + SETPOINT_TOLERANCE
+
+    if (NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)) {
+      if (aligningState.get() == AligningState.ALIGNING_FRONT) {
+        return Constants.ArmConstantsLeonidas.ARM_STOW_BACK;
+      } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
+        return Constants.ArmConstantsLeonidas.ARM_STOW_FRONT;
+      }
+    }
+
+    return RobotContainer.getArm().getAbsolutePosition() < Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS + SETPOINT_TOLERANCE
         ? Constants.ArmConstantsLeonidas.ARM_STOW_FRONT
         : Constants.ArmConstantsLeonidas.ARM_STOW_BACK;
   }
@@ -304,6 +312,7 @@ public class RobotState extends SubsystemBase {
     double SETPOINT_TOLERANCE = 0.05;
 
     // spotless:off
+    
     if (aligningState.get() == AligningState.ALIGNING_FRONT) {
       if (RobotContainer.getArm().getAbsolutePosition() < Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS + SETPOINT_TOLERANCE) {
         coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_FRONT_PRE;
@@ -328,8 +337,19 @@ public class RobotState extends SubsystemBase {
         dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
         dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
       }
-      // spotless:on
     }
+
+    if (NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)) {
+      if (aligningState.get() == AligningState.ALIGNING_FRONT) {
+        dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_FRONT;
+        dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_FRONT;
+      } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
+        dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
+        dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
+      }
+    }
+
+    // spotless:on
 
     targetPose = drive.flipScoringSide(originalTargetPose.get());
 
