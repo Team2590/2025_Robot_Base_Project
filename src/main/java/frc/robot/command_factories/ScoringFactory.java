@@ -26,12 +26,12 @@ public class ScoringFactory {
         Constants.ArmConstantsLeonidas.ARM_SET_STOW),
     L2(
         Constants.ElevatorConstantsLeonidas.ELEVATOR_L2_POS,
-        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE,
-        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST),
+        Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_PRE,
+        Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_POST),
     L3(
         Constants.ElevatorConstantsLeonidas.ELEVATOR_L3_POS,
-        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3_PRE,
-        Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L3_POST),
+        Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_PRE,
+        Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_POST),
     L4(
         Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS,
         Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4,
@@ -50,8 +50,8 @@ public class ScoringFactory {
         Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION),
     BARGE(
         Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS,
-        Constants.ArmConstantsLeonidas.ARM_BARGE_POS,
-        Constants.ArmConstantsLeonidas.ARM_BARGE_POS),
+        Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_FRONT_POS,
+        Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_FRONT_POS),
     PROCESSOR(
         Constants.ElevatorConstantsLeonidas.ELEVATOR_PROCESSOR_POS,
         Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS,
@@ -146,21 +146,27 @@ public class ScoringFactory {
                           RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
                   .withName("Prime " + level.name());
             case L3:
-              return Commands.parallel(
-                      Commands.print("Priming " + level.name()),
-                      new MoveFromHandoffCommand(
-                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                          level.getElevatorSetpoint(),
-                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
+              return IntakeFactory.setPositionBlocking(
+                      Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS)
+                  .andThen(
+                      Commands.parallel(
+                          Commands.print("Priming " + level.name()),
+                          new MoveFromHandoffCommand(
+                              Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                              level.getElevatorSetpoint(),
+                              RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)))
                   .withName("Prime " + level.name());
             case L2:
-              return Commands.parallel(
-                  Commands.print("Priming " + level.name()),
-                  new MoveFromHandoffCommand(
-                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                          level.getElevatorSetpoint(),
-                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)
-                      .withName("Prime " + level.name()));
+              return IntakeFactory.setPositionBlocking(
+                      Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS)
+                  .andThen(
+                      Commands.parallel(
+                          Commands.print("Priming " + level.name()),
+                          new MoveFromHandoffCommand(
+                              Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                              level.getElevatorSetpoint(),
+                              RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)))
+                  .withName("Prime " + level.name());
             default:
               return Commands.parallel(
                   Commands.print("Priming " + level.name()),
@@ -310,11 +316,20 @@ public class ScoringFactory {
    * @return Command sequence for stowing
    */
   public static Command stow() {
-    return new MoveFromHandoffCommand(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS,
-            Constants.ArmConstantsLeonidas.ARM_SET_STOW)
-        .withName("Stow");
+    return IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS)
+        .andThen(
+            Commands.defer(
+                () -> {
+                  return new MoveFromHandoffCommand(
+                          Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                          Constants.ElevatorConstantsLeonidas.ELEVATOR_STOW_POS,
+                          RobotState.getInstance().getStowSetpoint())
+                      .withName("Stow");
+                },
+                Set.of(
+                    RobotContainer.getArm(),
+                    RobotContainer.getElevator(),
+                    RobotContainer.getIntake())));
   }
 
   public static Command prepClimb() {
