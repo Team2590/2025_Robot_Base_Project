@@ -284,8 +284,10 @@ public final class Constants {
     public static final double ARM_DEALGAE_POST = 0;
     public static final double ARM_DEALGAE_PRE = 0;
     public static final double ARM_INTAKE_ALGAE_POS = .53;
-    public static final double ARM_BARGE_POS = .175; // TODO: find real value
-    public static final double ARM_BARGE_POS_BACK = .325; // TODO: find real value
+    public static final double ARM_BARGE_FRONT_FRONT_POS = .175; // TODO: find real value
+    public static final double ARM_BARGE_FRONT_BACK_POS = .325; // TODO: find real value
+    public static final double ARM_BARGE_BACK_FRONT_POS = 1.175; // TODO: find real value
+    public static final double ARM_BARGE_BACK_BACK_POS = 1.325; // TODO: find real valu
     // public static final double ARM_SCORING_POS = .7; // TODO: find real value
     public static final double ARM_WRAP_POS = 0.794;
     public static final double ARM_HANDOFF_POS = 0.75;

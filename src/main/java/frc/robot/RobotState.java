@@ -54,7 +54,7 @@ public class RobotState extends SubsystemBase {
           Level.DEALGAE_L2.getElevatorSetpoint(),
           Level.DEALGAE_L2.getarmPreScoreSetpoint(),
           Level.DEALGAE_L2.getArmScoringSetpoint());
-  private double bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS;
+  private double bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_FRONT_POS;
   private double processorArmPos = 0;
 
   private HashMap<String, Double> smartDeAlgaeSetpoints = new HashMap<>();
@@ -301,18 +301,12 @@ public class RobotState extends SubsystemBase {
       return;
     }
 
-    if (shouldScoreFrontBarge()) {
-      bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS;
-    } else {
-      bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS_BACK;
-    }
-
     coralScoringSetpoints.elevatorSetpoint = elevatorSetpoint.get().getElevatorSetpoint();
 
     double SETPOINT_TOLERANCE = 0.05;
 
     // spotless:off
-    
+
     if (aligningState.get() == AligningState.ALIGNING_FRONT) {
       if (RobotContainer.getArm().getAbsolutePosition() < Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS + SETPOINT_TOLERANCE) {
         coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_FRONT_PRE;
@@ -346,6 +340,20 @@ public class RobotState extends SubsystemBase {
       } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
         dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
         dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
+      }
+    }
+
+    if (shouldScoreFrontBarge()) {
+      if (NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, Constants.ArmConstantsLeonidas.ARM_STOW_FRONT)) {
+        bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_FRONT_POS;
+      } else if (NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, Constants.ArmConstantsLeonidas.ARM_STOW_BACK)) {
+        bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_BACK_FRONT_POS;
+      }
+    } else {
+      if (NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, Constants.ArmConstantsLeonidas.ARM_STOW_FRONT)) {
+        bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_BACK_POS;
+      } else if (NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, Constants.ArmConstantsLeonidas.ARM_STOW_BACK)) {
+        bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_BACK_FRONT_POS;
       }
     }
 

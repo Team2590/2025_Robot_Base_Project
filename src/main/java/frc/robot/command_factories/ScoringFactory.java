@@ -50,8 +50,8 @@ public class ScoringFactory {
         Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION),
     BARGE(
         Constants.ElevatorConstantsLeonidas.ELEVATOR_BARGE_POS,
-        Constants.ArmConstantsLeonidas.ARM_BARGE_POS,
-        Constants.ArmConstantsLeonidas.ARM_BARGE_POS),
+        Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_FRONT_POS,
+        Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_FRONT_POS),
     PROCESSOR(
         Constants.ElevatorConstantsLeonidas.ELEVATOR_PROCESSOR_POS,
         Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS,
