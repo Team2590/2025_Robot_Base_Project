@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B_Dash-C_N_R"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B_Dash-N_R_P3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B_Dash-S_R"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B_Dash-S_R_P2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B_Dash-P2_S_L"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

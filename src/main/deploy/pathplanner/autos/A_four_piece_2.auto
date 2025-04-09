@@ -100,7 +100,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SW_R_intake_SW_L"
+                  "pathName": null
                 }
               },
               {
@@ -151,7 +151,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SW_L_NW_R"
+                  "pathName": null
                 }
               },
               {

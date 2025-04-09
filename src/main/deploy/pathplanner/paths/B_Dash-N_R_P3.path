@@ -1,0 +1,75 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.826258116883116,
+        "y": 4.203064123376623
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.826258116883116,
+        "y": 4.203064123376623
+      },
+      "isLocked": false,
+      "linkedName": "B_Dash_C_N_R"
+    },
+    {
+      "anchor": {
+        "x": 5.42739448051948,
+        "y": 1.1902191558441553
+      },
+      "prevControl": {
+        "x": 6.11828327922078,
+        "y": 1.5107345779220775
+      },
+      "nextControl": {
+        "x": 4.4221110764431675,
+        "y": 0.7238505663242178
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.0327719155844155,
+        "y": 2.3440746753246753
+      },
+      "prevControl": {
+        "x": 1.7521509740259762,
+        "y": 1.9523336038961028
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "B_Dash_P3"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.3513513513513475,
+      "rotationDegrees": -108.06047193619915
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -120.8157057517292
+  },
+  "reversed": false,
+  "folder": "B_Dash",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}

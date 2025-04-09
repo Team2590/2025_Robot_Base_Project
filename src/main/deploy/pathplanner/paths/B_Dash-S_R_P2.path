@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.148173701298701,
+        "y": 3.8326907467532463
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.19375,
+        "y": 3.9395292207792205
+      },
+      "isLocked": false,
+      "linkedName": "B_Dash_S_R"
+    },
+    {
+      "anchor": {
+        "x": 0.8404626623376623,
+        "y": 4.025
+      },
+      "prevControl": {
+        "x": 1.3675324675324676,
+        "y": 3.968019480519482
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "B_Dash-S_R_P2"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 89.04515874612781
+  },
+  "reversed": false,
+  "folder": "B_Dash",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}
