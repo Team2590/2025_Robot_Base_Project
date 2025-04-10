@@ -275,11 +275,7 @@ public final class Constants {
     public static final double ARM_PROCESSOR_POS = 0;
     public static final double ARM_PROCESSOR_POS_BACK = 0.5;
     public static final double ARM_OPERATIONAL_MIN_POS = -.5;
-    public static final double ARM_OPERATIONAL_MAX_POS = 1;
-    public static final double ARM_SCORING_CORAL_POS_L2_PRE = 0.15;
-    public static final double ARM_SCORING_CORAL_POSE_L2_POST = 0.015;
-    public static final double ARM_SCORING_CORAL_POS_L3_PRE = 0.15;
-    public static final double ARM_SCORING_CORAL_POSE_L3_POST = 0;
+    public static final double ARM_OPERATIONAL_MAX_POS = 2;
     public static final double ARM_RELEASE_DIFF = 0.078;
     public static final double ARM_SCORING_CORAL_POS_L4 = ARM_SET_STOW; // TODO
     public static final double ARM_SCORING_CORAL_POSE_L4_POST = 0;
@@ -288,12 +284,29 @@ public final class Constants {
     public static final double ARM_DEALGAE_POST = 0;
     public static final double ARM_DEALGAE_PRE = 0;
     public static final double ARM_INTAKE_ALGAE_POS = .53;
-    public static final double ARM_BARGE_POS = .175; // TODO: find real value
-    public static final double ARM_BARGE_POS_BACK = .325; // TODO: find real value
+    public static final double ARM_BARGE_FRONT_FRONT_POS = .175; // TODO: find real value
+    public static final double ARM_BARGE_FRONT_BACK_POS = .325; // TODO: find real value
+    public static final double ARM_BARGE_BACK_FRONT_POS = 1.175; // TODO: find real value
+    public static final double ARM_BARGE_BACK_BACK_POS = 1.325; // TODO: find real valu
     // public static final double ARM_SCORING_POS = .7; // TODO: find real value
     public static final double ARM_WRAP_POS = 0.794;
     public static final double ARM_HANDOFF_POS = 0.75;
-    public static final double ARM_THRESHOLD_POS = .63;
+    public static final double ARM_FRONT_THRESHOLD_POS = .63;
+    public static final double ARM_BACK_THRESHOLD_POS = .87;
+    public static final double ARM_STOW_FRONT = 0.25;
+    public static final double ARM_SCORE_FRONT_FRONT_PRE = 0.15;
+    public static final double ARM_SCORE_FRONT_FRONT_POST = 0.015;
+    public static final double ARM_DEALGAE_FRONT_FRONT = 0;
+    public static final double ARM_SCORE_FRONT_BACK_PRE = 0.35;
+    public static final double ARM_SCORE_FRONT_BACK_POST = 0.485;
+    public static final double ARM_DEALGAE_FRONT_BACK = 0.5;
+    public static final double ARM_STOW_BACK = 1.25;
+    public static final double ARM_SCORE_BACK_FRONT_PRE = 1.15;
+    public static final double ARM_SCORE_BACK_FRONT_POST = 1.015;
+    public static final double ARM_DEALGAE_BACK_FRONT = 1;
+    public static final double ARM_SCORE_BACK_BACK_PRE = 1.35;
+    public static final double ARM_SCORE_BACK_BACK_POST = 1.485;
+    public static final double ARM_DEALGAE_BACK_BACK = 1.5;
   }
 
   public static class ElevatorConstantsLeonidas {
