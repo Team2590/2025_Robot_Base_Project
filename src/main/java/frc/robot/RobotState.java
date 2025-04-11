@@ -76,6 +76,11 @@ public class RobotState extends SubsystemBase {
     PROCESSOR_BACK,
   }
 
+  public static enum ReefTargetSide {
+    LEFT, 
+    RIGHT,
+  }
+
   public static class ScoringSetpoints {
     public double elevatorSetpoint;
     public double armSetpoint;

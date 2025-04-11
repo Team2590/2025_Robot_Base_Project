@@ -10,8 +10,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.RobotState.ReefTargetSide;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
+import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.NemesisDriveToPoseStraight;
 import frc.robot.subsystems.arm.Arm;
@@ -21,6 +23,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+
+import org.apache.commons.math3.geometry.partitioning.Side;
 
 public class ControllerOrchestrator {
 
@@ -153,6 +157,26 @@ public class ControllerOrchestrator {
 
     ScoringFactory.Level level = ScoringFactory.Level.valueOf(levelString);
     return new Target(targetPose, level);
+  }
+
+  private Level cachedLevel = Level.L4;
+  private ReefTargetSide cachedReefTargetSide = ReefTargetSide.LEFT;
+
+  public void setTarget(Level level, ReefTargetSide side) {
+    cachedLevel = level;
+    cachedReefTargetSide = side;
+    String targetSide = side == ReefTargetSide.LEFT ? "Left" : "Right";
+    parseTargetString(targetSide + "_" + level.name());
+  }
+
+  public void setTarget(Level level) {
+    cachedLevel = level;
+    setTarget(level, cachedReefTargetSide);
+  }
+
+  public void setTarget(ReefTargetSide side) {
+    cachedReefTargetSide = side;
+    setTarget(cachedLevel, side);
   }
 
   /**

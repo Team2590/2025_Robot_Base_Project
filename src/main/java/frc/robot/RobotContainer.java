@@ -29,8 +29,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
+import frc.robot.RobotState.ReefTargetSide;
 import frc.robot.command_factories.ArmFactory;
 import frc.robot.command_factories.ClimbFactory;
+import frc.robot.command_factories.ControllerFactory;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
@@ -501,6 +503,14 @@ public class RobotContainer {
         .whileTrue(
             EndEffectorFactory.runEndEffectorVoltage(
                 Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE));
+
+    controller.y().onTrue(ControllerFactory.setTargetLevel(Level.L4));
+    controller.b().onTrue(ControllerFactory.setTargetLevel(Level.L2));
+    controller.a().onTrue(ControllerFactory.setTargetLevel(Level.L3));
+    controller.x().onTrue(ControllerFactory.setTargetLevel(Level.L1));
+
+    controller.leftTrigger().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.LEFT));
+    controller.rightTrigger().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.RIGHT));
 
     // Scoring buttons
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
