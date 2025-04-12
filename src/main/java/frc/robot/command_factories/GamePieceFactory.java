@@ -118,8 +118,11 @@ public class GamePieceFactory {
         .withName("Intake Coral No Handoff");
   }
 
-  public static Command GrabAlgaeL2() {
+  public static Command intakeCoralGroundToL1() {
+    return GamePieceFactory.intakeCoralNoHandoff().andThen(IntakeFactory.setPosition(Constants.IntakeArmConstantsLeonidas.L1_POS));
+  }
 
+  public static Command grabAlgaeReef() {
     return Commands.defer(
         () -> {
           return (new MoveFromHandoffCommand(
@@ -136,32 +139,7 @@ public class GamePieceFactory {
               .andThen(
                   EndEffectorFactory.runEndEffectorVoltage(
                       Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE))
-              .withName("Grab Algae L2");
-        },
-        Set.of(
-            RobotContainer.getArm(),
-            RobotContainer.getElevator(),
-            RobotContainer.getEndEffector()));
-  }
-
-  public static Command GrabAlgaeL3() {
-    return Commands.defer(
-        () -> {
-          return (new MoveFromHandoffCommand(
-                      Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                      RobotState.getInstance()
-                          .getDealgaeSetpoints(Level.DEALGAE_L3)
-                          .elevatorSetpoint,
-                      RobotState.getInstance().getDealgaeSetpoints(Level.DEALGAE_L3).armSetpoint)
-                  .alongWith(
-                      Commands.runOnce(() -> RobotState.getInstance().setHasAlgae(true)),
-                      EndEffectorFactory.runEndEffectorVoltage(
-                              Constants.EndEffectorConstantsLeonidas.INTAKE_ALGAE_VOLTAGE)
-                          .until(() -> RobotState.endEffectorHasGamePiece())))
-              .andThen(
-                  EndEffectorFactory.runEndEffectorVoltage(
-                      Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE))
-              .withName("Grab Algae L2");
+              .withName("Grab Algae Reef");
         },
         Set.of(
             RobotContainer.getArm(),

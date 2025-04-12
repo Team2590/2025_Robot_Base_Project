@@ -294,6 +294,14 @@ public class RobotState extends SubsystemBase {
     hasGamePiece = false;
   }
 
+  public static boolean intakeHasCoral() {
+    return RobotContainer.getIntake().hasCoral();
+  }
+
+  public static boolean intakeDetectsCoral() {
+    return RobotContainer.getIntake().detectCoral();
+  }
+
   private void updateScoringConfigurationSimple(
       Supplier<Pose2d> originalTargetPose, Supplier<Level> elevatorSetpoint) {
     if (DriverStation.isAutonomous()) {

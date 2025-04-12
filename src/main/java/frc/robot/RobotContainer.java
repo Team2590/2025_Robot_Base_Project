@@ -36,6 +36,7 @@ import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.IntakeFactory;
+import frc.robot.command_factories.JoystickFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.DriveCommands;
@@ -488,11 +489,58 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+
+  // spotless:off
   private void configureButtonBindings() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
     // climb buttons
     // Causing NullPointerException on startup in SIM
+
+    rightJoystick.trigger()
+        .and(() -> controllerApp.getTarget().scoringLevel() == Level.L1)
+        .and(rightJoystick.button(4).negate())
+        .onTrue(GamePieceFactory.intakeCoralGroundToL1());
+
+    rightJoystick.trigger()
+        .and(() -> controllerApp.getTarget().scoringLevel() != Level.L1)
+        .and(rightJoystick.button(4).negate())
+        .onTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
+
+    rightJoystick.trigger()
+        .and(rightJoystick.button(4))
+        .onTrue(GamePieceFactory.intakeAlgaeGround());
+
+    rightJoystick.button(3)
+        .and(rightJoystick.button(4))
+        .onTrue(GamePieceFactory.grabAlgaeReef());
+
+    rightJoystick.button(2)
+        .whileTrue(controllerApp.driveAndAutoScoreCommand(drive, elevator, arm));
+
+    leftJoystick.trigger()
+        .and(() -> controllerApp.getTarget().scoringLevel() == Level.L1)
+        .whileTrue(IntakeFactory.runIntakeVoltage(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED));
+
+    // leftJoystick.trigger()
+    //     .and(() -> controllerApp.getTarget().scoringLevel() != Level.L1)
+    //     .whileTrue(ScoringFactory.score(null));
+
+    leftJoystick.povRight()
+        .whileTrue(ScoringFactory.score(Level.L2));
+
+    leftJoystick.povDown()
+        .whileTrue(ScoringFactory.score(Level.L3));
+
+    leftJoystick.povLeft()
+        .whileTrue(ScoringFactory.score(Level.L4));
+
+    leftJoystick.povUp()
+        .and(rightJoystick.button(4))
+        .onTrue(ScoringFactory.scoreAlgaeBarge());
+
+   
+
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
     rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
     rightJoystick.button(11).whileTrue(ScoringFactory.deployMech());
@@ -516,8 +564,8 @@ public class RobotContainer {
         .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
 
     // De-Algae Buttons
-    rightJoystick.povRight().onTrue(GamePieceFactory.GrabAlgaeL3());
-    rightJoystick.povLeft().onTrue(GamePieceFactory.GrabAlgaeL2());
+    rightJoystick.povRight().onTrue(GamePieceFactory.grabAlgaeReef());
+    rightJoystick.povLeft().onTrue(GamePieceFactory.grabAlgaeReef());
 
     // Manual Climb
     leftJoystick.button(8).whileTrue(ClimbFactory.manualRunClimb());
@@ -589,6 +637,7 @@ public class RobotContainer {
     // arm.getTunableNumber()));
 
   }
+  // spotless:on
 
   private void configureButtonBindingsTuning() {
     drive.setDefaultCommand(DriveFactory.joystickDrive());
@@ -606,8 +655,8 @@ public class RobotContainer {
 
     leftJoystick.button(3).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
 
-    rightJoystick.button(3).onTrue(GamePieceFactory.GrabAlgaeL2());
-    rightJoystick.button(4).onTrue(GamePieceFactory.GrabAlgaeL3());
+    rightJoystick.button(3).onTrue(GamePieceFactory.GrabAlgaeReef());
+    rightJoystick.button(4).onTrue(GamePieceFactory.GrabAlgaeReef());
 
     // leftJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
     // leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
