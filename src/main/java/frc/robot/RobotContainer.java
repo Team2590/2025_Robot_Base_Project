@@ -502,7 +502,6 @@ public class RobotContainer {
     controller.b().onTrue(ControllerFactory.setTargetLevel(Level.L2));
     controller.a().onTrue(ControllerFactory.setTargetLevel(Level.L3));
     controller.x().onTrue(ControllerFactory.setTargetLevel(Level.L1));
-
     controller.leftTrigger().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.LEFT));
     controller.rightTrigger().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.RIGHT));
 
@@ -562,14 +561,10 @@ public class RobotContainer {
     leftJoystick.button(2)
         .onTrue(ScoringFactory.stow());
 
-    leftJoystick.povRight()
-        .whileTrue(ScoringFactory.score(Level.L2));
-
-    leftJoystick.povDown()
-        .whileTrue(ScoringFactory.score(Level.L3));
-
-    leftJoystick.povLeft()
-        .whileTrue(ScoringFactory.score(Level.L4));
+    // manual scoring
+    leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
+    leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
+    leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
 
     leftJoystick.povUp()
         .and(rightJoystick.button(4))
