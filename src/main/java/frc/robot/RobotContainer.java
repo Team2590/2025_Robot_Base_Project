@@ -525,6 +525,7 @@ public class RobotContainer {
     rightJoystick.button(8)
         .onTrue(elevator.resetRotationCountCommand());
 
+    // main buttons
     rightJoystick.trigger()
         .and(() -> controllerApp.getTarget().scoringLevel() == Level.L1)
         .and(rightJoystick.button(4).negate())
@@ -542,6 +543,12 @@ public class RobotContainer {
     rightJoystick.button(3)
         .and(rightJoystick.button(4))
         .onTrue(GamePieceFactory.grabAlgaeReef());
+
+    rightJoystick.povUp()
+        .whileTrue(EndEffectorFactory.runEndEffectorVoltage(Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE));
+
+    rightJoystick.povDown()
+        .whileTrue(IntakeFactory.runIntakeVoltage(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED));
 
     rightJoystick.button(2)
         .whileTrue(controllerApp.driveAndAutoScoreCommand(drive, elevator, arm));
@@ -565,10 +572,7 @@ public class RobotContainer {
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
     leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
     leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
-
-    leftJoystick.povUp()
-        .and(rightJoystick.button(4))
-        .onTrue(ScoringFactory.scoreAlgaeBarge());
+    leftJoystick.povUp().and(rightJoystick.button(4)).onTrue(ScoringFactory.scoreAlgaeBarge());
   }
   // spotless:on
 
