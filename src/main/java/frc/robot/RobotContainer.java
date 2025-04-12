@@ -494,8 +494,27 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
+   
     // climb buttons
-    // Causing NullPointerException on startup in SIM
+    rightJoystick.button(16).whileTrue(ScoringFactory.climb());
+    rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
+    rightJoystick.button(11).whileTrue(ScoringFactory.deployMech());
+    leftJoystick.button(8).whileTrue(ClimbFactory.manualRunClimb());
+
+    // reset buttons
+    rightJoystick
+    .button(5)
+    .onTrue(
+        Commands.runOnce(
+                () ->
+                    drive.setPose(
+                        new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                drive)
+            .ignoringDisable(true)
+    );
+            
+    rightJoystick.button(8)
+        .onTrue(elevator.resetRotationCountCommand());
 
     rightJoystick.trigger()
         .and(() -> controllerApp.getTarget().scoringLevel() == Level.L1)
@@ -522,9 +541,16 @@ public class RobotContainer {
         .and(() -> controllerApp.getTarget().scoringLevel() == Level.L1)
         .whileTrue(IntakeFactory.runIntakeVoltage(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED));
 
-    // leftJoystick.trigger()
-    //     .and(() -> controllerApp.getTarget().scoringLevel() != Level.L1)
-    //     .whileTrue(ScoringFactory.score(null));
+    leftJoystick.trigger()
+        .and(() -> controllerApp.getTarget().scoringLevel() != Level.L1)
+        .whileTrue(ScoringFactory.armFollowThrough());
+
+    leftJoystick.trigger()
+        .and(rightJoystick.button(4))
+        .whileTrue(ScoringFactory.scoreProcessor());
+
+    leftJoystick.button(2)
+        .onTrue(ScoringFactory.stow());
 
     leftJoystick.povRight()
         .whileTrue(ScoringFactory.score(Level.L2));
@@ -538,104 +564,6 @@ public class RobotContainer {
     leftJoystick.povUp()
         .and(rightJoystick.button(4))
         .onTrue(ScoringFactory.scoreAlgaeBarge());
-
-   
-
-    rightJoystick.button(16).whileTrue(ScoringFactory.climb());
-    rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
-    rightJoystick.button(11).whileTrue(ScoringFactory.deployMech());
-    rightJoystick
-        .button(13)
-        .whileTrue(
-            EndEffectorFactory.runEndEffectorVoltage(
-                Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE));
-
-    // Scoring buttons
-    leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
-    leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
-    leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
-    // rightJoystick.povDown().whileTrue(ScoringFactory.score(Level.L1));
-    leftJoystick.button(2).whileTrue(ScoringFactory.stow());
-    rightJoystick.button(4).and(leftJoystick.trigger()).onTrue(ScoringFactory.scoreProcessor());
-    // change to follow thru
-    leftJoystick
-        .trigger()
-        .and(rightJoystick.button(4).negate())
-        .whileTrue(EndEffectorFactory.runEndEffectorOuttake());
-
-    // De-Algae Buttons
-    rightJoystick.povRight().onTrue(GamePieceFactory.grabAlgaeReef());
-    rightJoystick.povLeft().onTrue(GamePieceFactory.grabAlgaeReef());
-
-    // Manual Climb
-    leftJoystick.button(8).whileTrue(ClimbFactory.manualRunClimb());
-
-    // Controller App Buttons
-    rightJoystick.button(2).whileTrue(controllerApp.driveAndAutoScoreCommand(drive, elevator, arm));
-    rightJoystick.button(3).whileTrue(GamePieceFactory.intakeCoralNoHandoff());
-
-    leftJoystick
-        .button(4)
-        .whileTrue(
-            Commands.defer(
-                () -> {
-                  return ArmFactory.setPositionBlocking(
-                      RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint);
-                },
-                Set.of(arm)));
-
-    // Intake Buttons
-    leftJoystick.button(3).onTrue(ScoringFactory.score(Level.L1));
-    rightJoystick
-        .trigger()
-        .and(rightJoystick.button(4).negate())
-        .onTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
-
-    rightJoystick
-        .trigger()
-        .and(rightJoystick.button(4))
-        .onTrue(GamePieceFactory.intakeAlgaeGround());
-
-    rightJoystick
-        .povUp()
-        .whileTrue(
-            EndEffectorFactory.runEndEffectorVoltage(
-                Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE));
-
-    // Manual Elevator Control
-    rightJoystick.button(14).whileTrue(ElevatorFactory.manualDown());
-    rightJoystick.button(15).whileTrue(ElevatorFactory.manualUp());
-
-    // Reset Buttons
-    rightJoystick
-        .button(5)
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
-    rightJoystick.button(8).onTrue(elevator.resetRotationCountCommand());
-
-    // LEFT POV UP SCORE BARGE
-    leftJoystick.povUp().onTrue(ScoringFactory.scoreAlgaeBarge());
-    // RIGHT POV DOWN OUTTAKE ITNAKE (SPIT)
-    rightJoystick
-        .povDown()
-        .whileTrue(
-            IntakeFactory.runIntakeVoltage(
-                () -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED));
-
-    /* for tuning setpoints */
-    // rightJoystick
-    //     .trigger()
-    //     .and(leftJoystick.button(4).negate())
-    //     .whileTrue(
-    //         Atlas.synchronize(
-    //             intake.getArmTunableNumber(), elevator.getTunableNumber(),
-    // arm.getTunableNumber()));
-
   }
   // spotless:on
 

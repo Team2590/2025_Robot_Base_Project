@@ -208,43 +208,6 @@ public class ScoringFactory {
                 + setpoints.armSetpoint);
   }
 
-  // public static Command scoreTeleop(Level level) {
-  //   return switch (level) {
-  //     case L1:
-  //       yield scoreL1();
-  //     default:
-  //       yield primeForLevelTeleop(level).withName("Score " + level.name());
-  //   };
-  // }
-
-  // public static Command primeForLevelTeleop(Level level) {
-  //   switch (level) {
-  //     case L4:
-  //       return Commands.sequence(
-  //               Commands.parallel(
-  //                   Commands.print("Priming " + level.name()),
-  //                   ElevatorFactory.setPositionRun(level.getElevatorPosition())),
-  //
-  // ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L4))
-  //           .withName("Prime " + level.name());
-  //     case L3:
-  //       return Commands.sequence(
-  //               Commands.parallel(
-  //                   Commands.print("Priming " + level.name()),
-  //                   ElevatorFactory.setPositionRun(level.getElevatorPosition())),
-  //
-  // ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L3))
-  //           .withName("Prime " + level.name());
-  //     default:
-  //       return Commands.sequence(
-  //               Commands.parallel(
-  //                   Commands.print("Priming " + level.name()),
-  //                   ElevatorFactory.setPositionRun(level.getElevatorPosition())),
-  //               ArmFactory.setPositionRun(Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS))
-  //           .withName("Prime " + level.name());
-  //   }
-  // }
-
   /**
    * Creates a command sequence for scoring at L1.
    *
@@ -256,10 +219,6 @@ public class ScoringFactory {
         IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.L1_POS),
         IntakeFactory.runIntake(() -> 5).withName("Score L1"));
   }
-
-  // public static Command deAlgaeify() {
-  //   return Commands.sequence(ElevatorFactory.setPositionBlocking())
-  // }
 
   public static Command scoreAlgaeBarge() {
 
@@ -295,19 +254,6 @@ public class ScoringFactory {
                 Level.PROCESSOR.getArmScoringSetpoint()))
         .withName("Score Processor");
   }
-
-  /**
-   * Uses controller app input to set the arm and the elevator to the appropriate setpoints.
-   *
-   * @return Parallel Command sequence for setting the arm and elevator to the appropriate setpoints
-   *     using controller app input
-   */
-  // public static Command prepScore() {
-  //   ControllerOrchestrator controllerApp = RobotContainer.getControllerApp();
-  //   return Commands.parallel(
-  //       RobotContainer.getElevator().setPositionBlocking(controllerApp.getElevatorSetpoint()),
-  //       RobotContainer.getArm().setPositionBlocking(controllerApp.getArmSetpoint()));
-  // }
 
   /**
    * Creates a command to stow the scoring mechanism.
@@ -368,5 +314,9 @@ public class ScoringFactory {
         Commands.waitSeconds(.5),
         ArmFactory.setPositionBlocking(
             Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L4_POST));
+  }
+
+  public static Command armFollowThrough() {
+    return Commands.defer(() -> ArmFactory.setPosition(RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint), Set.of(RobotContainer.getArm()));
   }
 }
