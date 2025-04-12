@@ -29,8 +29,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
+import frc.robot.RobotState.ReefTargetSide;
 import frc.robot.command_factories.ArmFactory;
 import frc.robot.command_factories.ClimbFactory;
+import frc.robot.command_factories.ControllerFactory;
 import frc.robot.command_factories.DriveFactory;
 import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
@@ -495,6 +497,15 @@ public class RobotContainer {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
    
+    // operator controls
+    controller.y().onTrue(ControllerFactory.setTargetLevel(Level.L4));
+    controller.b().onTrue(ControllerFactory.setTargetLevel(Level.L2));
+    controller.a().onTrue(ControllerFactory.setTargetLevel(Level.L3));
+    controller.x().onTrue(ControllerFactory.setTargetLevel(Level.L1));
+
+    controller.leftTrigger().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.LEFT));
+    controller.rightTrigger().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.RIGHT));
+
     // climb buttons
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
     rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
@@ -502,16 +513,15 @@ public class RobotContainer {
     leftJoystick.button(8).whileTrue(ClimbFactory.manualRunClimb());
 
     // reset buttons
-    rightJoystick
-    .button(5)
-    .onTrue(
-        Commands.runOnce(
-                () ->
-                    drive.setPose(
-                        new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                drive)
-            .ignoringDisable(true)
-    );
+    rightJoystick.button(5)
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true)
+        );
             
     rightJoystick.button(8)
         .onTrue(elevator.resetRotationCountCommand());
@@ -583,8 +593,8 @@ public class RobotContainer {
 
     leftJoystick.button(3).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
 
-    rightJoystick.button(3).onTrue(GamePieceFactory.GrabAlgaeReef());
-    rightJoystick.button(4).onTrue(GamePieceFactory.GrabAlgaeReef());
+    rightJoystick.button(3).onTrue(GamePieceFactory.grabAlgaeReef());
+    rightJoystick.button(4).onTrue(GamePieceFactory.grabAlgaeReef());
 
     // leftJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
     // leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
