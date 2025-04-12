@@ -18,7 +18,9 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 public class ControllerOrchestrator {
 
@@ -28,6 +30,9 @@ public class ControllerOrchestrator {
   // What's a better default target location?
   private static final String DEFAULT_REEF_TARGET = "S_Left";
   private static final String DEFAULT_SOURCE_TARGET = "sourceR";
+
+  // Compass directions in clockwise order - used to find the closest direction
+  private static final String[] COMPASS_DIRECTIONS = {"N", "NE", "SE", "S", "SW", "NW"};
 
   private NetworkTableEntry getTableEntry(String key) {
     NetworkTable table = NetworkTableInstance.getDefault().getTable(CONTROLLER_TABLE_KEY);
@@ -120,20 +125,24 @@ public class ControllerOrchestrator {
         requirements);
   }
 
-  private static Target parseTargetString(String targetString) {
-    // We expect the string to be in the form NWright_L1
-    // If we get something else, we return null so a default
-    // value can be used.
+  private Target parseTargetString(String targetString) {
+    // The new format from controller app is now: Side_Level
+    // where Side is Left/Right, Level is L2/L3/L4
     String[] parts = targetString.split("_");
-    if (parts.length != 3) {
+    if (parts.length != 2) {
       // System.err.println("---> Invalid target string received from ControllerApp: " +
       // targetString);
       return null;
     }
-    String compassDir = parts[0];
-    String leftOrRight = parts[1];
+
+    String leftOrRight = parts[0];
+    String levelString = parts[1].toUpperCase();
+
+    // Find the closest compass direction based on the robot's current position
+    String compassDir = determineCompassDirection();
+
+    // Construct the pose key using the determined compass direction and the side from controller
     String poseKey = compassDir + "_" + leftOrRight;
-    String levelString = parts[2].toUpperCase();
 
     Pose2d targetPose = lookupPoseBasedOnAlliance(poseKey);
     if (targetPose == null) {
@@ -141,8 +150,60 @@ public class ControllerOrchestrator {
       //     "---> Caution!!! Invalid target pose key received from ControllerApp: " + poseKey);
       return null;
     }
+
     ScoringFactory.Level level = ScoringFactory.Level.valueOf(levelString);
     return new Target(targetPose, level);
+  }
+
+  /**
+   * Determines the closest compass direction based on the robot's current position. This method
+   * analyzes where the robot is on the field and returns the most appropriate compass direction (N,
+   * NE, SE, S, SW, NW) for targeting.
+   *
+   * @return The compass direction as a String
+   */
+  private String determineCompassDirection() {
+    // Get the robot's current position
+    Pose2d currentPose = RobotState.getInstance().getPose();
+
+    // If we can't determine the current pose, default to "N"
+    if (currentPose == null) {
+      return "N";
+    }
+
+    // Get alliance-specific field positions to determine which side of the field we're on
+    Optional<Alliance> alliance = DriverStation.getAlliance();
+    Alliance allianceValue = alliance.orElse(Alliance.Red);
+
+    // Create a map to track possible distances to each compass location
+    Map<Double, String> directionDistances = new TreeMap<>(); // TreeMap to keep it sorted
+
+    // For each compass direction, calculate a distance metric from the robot's position
+    // to determine which reef position would be most appropriate
+    for (String direction : COMPASS_DIRECTIONS) {
+      // For both Left and Right sides (we'll pick the closest one)
+      for (String side : new String[] {"Left", "Right"}) {
+        String poseKey = direction + "_" + side;
+        Pose2d targetPose = lookupPoseBasedOnAlliance(poseKey);
+
+        if (targetPose != null) {
+          // Calculate distance (simple Euclidean distance for now)
+          double distance = calculateDistance(currentPose, targetPose);
+          directionDistances.put(distance, direction);
+        }
+      }
+    }
+
+    // Return the closest direction (first entry in the sorted map)
+    // If no valid directions found, default to "N"
+    return directionDistances.isEmpty() ? "N" : directionDistances.values().iterator().next();
+  }
+
+  /** Calculate distance between two poses (simple Euclidean distance) */
+  private double calculateDistance(Pose2d pose1, Pose2d pose2) {
+    double dx = pose1.getX() - pose2.getX();
+    double dy = pose1.getY() - pose2.getY();
+    return Math.sqrt(dx * dx + dy * dy);
   }
 
   private static final Pose2d lookupPoseBasedOnAlliance(String poseKey) {
