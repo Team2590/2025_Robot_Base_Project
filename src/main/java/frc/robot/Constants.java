@@ -272,8 +272,6 @@ public final class Constants {
         .146; // .142; // -0.15; // -0.379; // -.3347; // -.635; // TODO
     public static final double sensorReduction = 58.8; // TODO
     public static final double BACK_HORIZONTAL = 0.5;
-    public static final double ARM_PROCESSOR_POS = 0;
-    public static final double ARM_PROCESSOR_POS_BACK = 0.5;
     public static final double ARM_OPERATIONAL_MIN_POS = -.5;
     public static final double ARM_OPERATIONAL_MAX_POS = 2;
     public static final double ARM_RELEASE_DIFF = 0.078;

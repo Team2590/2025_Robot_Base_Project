@@ -77,7 +77,7 @@ public class RobotState extends SubsystemBase {
   }
 
   public static enum ReefTargetSide {
-    LEFT, 
+    LEFT,
     RIGHT,
   }
 
@@ -198,7 +198,10 @@ public class RobotState extends SubsystemBase {
   public double getStowSetpoint() {
     double SETPOINT_TOLERANCE = 0.05;
 
-    if (NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)) {
+    if (NemesisMathUtil.isApprox(
+        RobotContainer.getArm().getAbsolutePosition(),
+        SETPOINT_TOLERANCE,
+        Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)) {
       if (aligningState.get() == AligningState.ALIGNING_FRONT) {
         return Constants.ArmConstantsLeonidas.ARM_STOW_BACK;
       } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
@@ -206,7 +209,8 @@ public class RobotState extends SubsystemBase {
       }
     }
 
-    return RobotContainer.getArm().getAbsolutePosition() < Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS + SETPOINT_TOLERANCE
+    return RobotContainer.getArm().getAbsolutePosition()
+            < Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS + SETPOINT_TOLERANCE
         ? Constants.ArmConstantsLeonidas.ARM_STOW_FRONT
         : Constants.ArmConstantsLeonidas.ARM_STOW_BACK;
   }
@@ -363,14 +367,33 @@ public class RobotState extends SubsystemBase {
         bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_BACK_FRONT_POS;
       } else if (RobotContainer.getArm().getAbsolutePosition() > Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS) {
         bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_BACK_FRONT_POS;
+      } else {
+        bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_FRONT_POS;
       }
     } else {
       if (NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, Constants.ArmConstantsLeonidas.ARM_STOW_FRONT)) {
         bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_BACK_POS;
       } else if (NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, Constants.ArmConstantsLeonidas.ARM_STOW_BACK)) {
         bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_BACK_BACK_POS;
-      } else if (RobotContainer.getArm().getAbsolutePosition() < Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS) {
+      } else if (RobotContainer.getArm().getAbsolutePosition() > Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS) {
         bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_BACK_BACK_POS;
+      } else {
+        bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_BACK_POS;
+      }
+    }
+
+    // same logic as dealgae
+    if (shouldScoreFrontProcessor()) {
+      if (RobotContainer.getArm().getAbsolutePosition() > Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS) {
+        processorArmPos = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_FRONT;
+      } else {
+        processorArmPos = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_FRONT;
+      }
+    } else {
+      if (RobotContainer.getArm().getAbsolutePosition() > Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS) {
+        processorArmPos = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
+      } else {
+        processorArmPos = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_BACK;
       }
     }
 
@@ -380,12 +403,6 @@ public class RobotState extends SubsystemBase {
 
     if (aligningState.get() == AligningState.ALIGNING_BACK) {
       targetPose = FieldConstants.convertBackScoring(targetPose);
-    }
-
-    if (processorState.get() == ProcessorScoringState.PROCESSOR_FRONT) {
-      processorArmPos = Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS;
-    } else {
-      processorArmPos = Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS;
     }
 
     Logger.recordOutput("RobotState/Pose", targetPose);
@@ -550,5 +567,14 @@ public class RobotState extends SubsystemBase {
       }
     }
     return true;
+  }
+
+  public static boolean shouldScoreFrontProcessor() {
+    double robotHeadingDegrees = RobotContainer.getDrive().getPose().getRotation().getDegrees();
+    double robotX = RobotContainer.getDrive().getPose().getX();
+
+    // Red alliance side
+    if (robotX <= 8.5) return robotHeadingDegrees <= 0;
+    return robotHeadingDegrees > 0;
   }
 }

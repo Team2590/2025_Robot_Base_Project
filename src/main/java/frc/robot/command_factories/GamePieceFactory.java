@@ -119,7 +119,8 @@ public class GamePieceFactory {
   }
 
   public static Command intakeCoralGroundToL1() {
-    return GamePieceFactory.intakeCoralNoHandoff().andThen(IntakeFactory.setPosition(Constants.IntakeArmConstantsLeonidas.L1_POS));
+    return GamePieceFactory.intakeCoralNoHandoff()
+        .andThen(IntakeFactory.setPosition(Constants.IntakeArmConstantsLeonidas.L1_POS));
   }
 
   public static Command grabAlgaeReef() {

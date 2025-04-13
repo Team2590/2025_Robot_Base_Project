@@ -7,11 +7,11 @@ import frc.robot.RobotState.ReefTargetSide;
 import frc.robot.command_factories.ScoringFactory.Level;
 
 public class ControllerFactory {
-    public static Command setTargetLevel(Level level) {
-        return Commands.runOnce(() -> RobotContainer.getControllerApp().setTarget(level));
-    }
+  public static Command setTargetLevel(Level level) {
+    return Commands.runOnce(() -> RobotContainer.getControllerApp().setTarget(level));
+  }
 
-    public static Command setTargetSide(ReefTargetSide side) {
-        return Commands.runOnce(() -> RobotContainer.getControllerApp().setTarget(side));
-    }
+  public static Command setTargetSide(ReefTargetSide side) {
+    return Commands.runOnce(() -> RobotContainer.getControllerApp().setTarget(side));
+  }
 }

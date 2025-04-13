@@ -54,8 +54,8 @@ public class ScoringFactory {
         Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_FRONT_POS),
     PROCESSOR(
         Constants.ElevatorConstantsLeonidas.ELEVATOR_PROCESSOR_POS,
-        Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS,
-        Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS);
+        Constants.ArmConstantsLeonidas.ARM_BARGE_BACK_FRONT_POS,
+        Constants.ArmConstantsLeonidas.ARM_BARGE_BACK_FRONT_POS);
 
     private final double elevatorSetpoint;
     private final double armPreScoreSetpoint;
@@ -251,7 +251,7 @@ public class ScoringFactory {
             new MoveFromHandoffCommand(
                 Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                 Level.PROCESSOR.getElevatorSetpoint(),
-                Level.PROCESSOR.getArmScoringSetpoint()))
+                RobotState.getInstance().getProcessorArmPos()))
         .withName("Score Processor");
   }
 
@@ -317,6 +317,10 @@ public class ScoringFactory {
   }
 
   public static Command armFollowThrough() {
-    return Commands.defer(() -> ArmFactory.setPosition(RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint), Set.of(RobotContainer.getArm()));
+    return Commands.defer(
+        () ->
+            ArmFactory.setPosition(
+                RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint),
+        Set.of(RobotContainer.getArm()));
   }
 }
