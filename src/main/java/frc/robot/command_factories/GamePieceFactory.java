@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
+import frc.robot.Constants.ArmConstantsLeonidas;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.MoveFromHandoffCommand;
 import frc.robot.commands.MoveToHandoffCommand;
@@ -121,6 +122,38 @@ public class GamePieceFactory {
   public static Command intakeCoralGroundToL1() {
     return GamePieceFactory.intakeCoralNoHandoff()
         .andThen(IntakeFactory.setPosition(Constants.IntakeArmConstantsLeonidas.L1_POS));
+  }
+
+  public static Command finishHandoff() {
+    return Commands.defer(() -> {
+        Command moveArmAndElevatorCommand;
+
+        if (RobotContainer.getElevator().getRotationCount() > Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
+            moveArmAndElevatorCommand = Commands.parallel(
+                ArmFactory.setPositionBlocking(ArmConstantsLeonidas.ARM_HANDOFF_POS),
+                ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS)
+            );
+        } else {
+            moveArmAndElevatorCommand = Commands.sequence(
+                ElevatorFactory.setPosition(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS),
+                ArmFactory.setPositionBlocking(ArmConstantsLeonidas.ARM_HANDOFF_POS)
+            );
+        }
+
+        return moveArmAndElevatorCommand
+            .andThen(IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS))
+            .andThen(ElevatorFactory.setPositionBlocking(13.9))
+            .andThen(
+                Commands.parallel(
+                    EndEffectorFactory.runEndEffectorVoltage(-Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE),
+                    IntakeFactory.runIntakeVoltage(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED)
+                ).until(() -> RobotState.endEffectorHasGamePiece())
+            )
+            .andThen(
+                ElevatorFactory.setPositionBlocking(
+                    Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS))
+            .withName("Finish Handoff");
+    }, intakeCoralGroundAndHandoff().getRequirements());
   }
 
   public static Command grabAlgaeReef() {
