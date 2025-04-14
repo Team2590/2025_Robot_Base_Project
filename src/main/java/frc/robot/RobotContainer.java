@@ -538,7 +538,6 @@ public class RobotContainer {
         .onTrue(GamePieceFactory.intakeAlgaeGround());
 
     rightJoystick.button(3)
-        .and(rightJoystick.button(4))
         .onTrue(GamePieceFactory.grabAlgaeReef());
 
     rightJoystick.povUp()

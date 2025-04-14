@@ -188,6 +188,7 @@ public class RobotState extends SubsystemBase {
     }
     if (!endEffector.hasGamePiece()) {
       clearEndEffectorHasGamePiece();
+      setHasAlgae(false);
     } else {
       hasGamePiece = true;
     }
@@ -279,16 +280,12 @@ public class RobotState extends SubsystemBase {
     }
   }
 
-  public double getEndEffectorCurrent() {
-    if (hasAlgae) {
-      return -1;
-    } else {
-      return 0;
-    }
-  }
-
   public void setHasAlgae(boolean v) {
     hasAlgae = v;
+  }
+
+  public boolean hasAlgae() {
+    return hasAlgae;
   }
 
   public void resetAligningState() {
