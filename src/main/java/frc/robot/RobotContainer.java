@@ -564,11 +564,14 @@ public class RobotContainer {
     leftJoystick.button(2)
         .onTrue(ScoringFactory.stow());
 
+    leftJoystick.povUp()
+        .onTrue(ScoringFactory.scoreAlgaeBarge());
+        
     // manual scoring
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
     leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
     leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
-    leftJoystick.povUp().and(rightJoystick.button(4)).onTrue(ScoringFactory.scoreAlgaeBarge());
+
   }
   // spotless:on
 
