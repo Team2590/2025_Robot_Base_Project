@@ -35,12 +35,10 @@ public class MoveFromHandoffCommand extends Command {
 
   @Override
   public void execute() {
-    if ((RobotContainer.getArm().getAbsolutePosition() > armFrontThreshold
-            && RobotContainer.getArm().getAbsolutePosition() < armBackThreshold)
-        && elevatorSetpoint < Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
+    boolean armApproxAtSetpoint = NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, armSetpoint);
+    boolean armInDangerRange = RobotContainer.getArm().getAbsolutePosition() > armFrontThreshold && RobotContainer.getArm().getAbsolutePosition() < armBackThreshold;
+    if ((!armApproxAtSetpoint || armInDangerRange) && elevatorSetpoint < Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
       RobotContainer.getArm().getIO().setPosition(armSetpoint);
-    } else if (!NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, armSetpoint)) {
-      return;
     } else {
       RobotContainer.getIntake().getArmIO().setPosition(intakeArmSetpoint);
       RobotContainer.getElevator().getIO().setPosition(elevatorSetpoint);
