@@ -184,7 +184,7 @@ public class ControllerOrchestrator {
    *
    * @return The compass direction as a String
    */
-  private String determineCompassDirection() {
+  public String determineCompassDirection() {
     // Get the robot's current position
     Pose2d currentPose = RobotState.getInstance().getPose();
 

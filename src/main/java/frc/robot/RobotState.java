@@ -122,13 +122,13 @@ public class RobotState extends SubsystemBase {
     this.vision = vision;
     this.controllerApp = controllerApp;
 
-    smartDeAlgaeSetpoints.put("N_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2);
-    smartDeAlgaeSetpoints.put("NW_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
-    smartDeAlgaeSetpoints.put("NE_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
-    smartDeAlgaeSetpoints.put("NW_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
-    smartDeAlgaeSetpoints.put("SE_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2);
-    smartDeAlgaeSetpoints.put("SW_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2);
-    smartDeAlgaeSetpoints.put("S_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
+    smartDeAlgaeSetpoints.put("N", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2);
+    smartDeAlgaeSetpoints.put("NW", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
+    smartDeAlgaeSetpoints.put("NE", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
+    smartDeAlgaeSetpoints.put("NW", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
+    smartDeAlgaeSetpoints.put("SE", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2);
+    smartDeAlgaeSetpoints.put("SW", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2);
+    smartDeAlgaeSetpoints.put("S", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
   }
 
   /**
@@ -190,7 +190,7 @@ public class RobotState extends SubsystemBase {
     }
     if (!endEffector.hasGamePiece()) {
       clearEndEffectorHasGamePiece();
-      setHasAlgae(false);
+      // setHasAlgae(false);
     } else {
       hasGamePiece = true;
     }
@@ -206,9 +206,9 @@ public class RobotState extends SubsystemBase {
         SETPOINT_TOLERANCE,
         Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)) {
       if (aligningState.get() == AligningState.ALIGNING_FRONT) {
-        return Constants.ArmConstantsLeonidas.ARM_STOW_BACK;
-      } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
         return Constants.ArmConstantsLeonidas.ARM_STOW_FRONT;
+      } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
+        return Constants.ArmConstantsLeonidas.ARM_STOW_BACK;
       }
     }
 
@@ -444,6 +444,7 @@ public class RobotState extends SubsystemBase {
     Logger.recordOutput("RobotState/processorArmSetpoint", processorArmPos);
     Logger.recordOutput("RobotState/groundPickupSetpint", groundPickupArmPos);
     Logger.recordOutput("RobotState/hasAlgae", hasAlgae);
+    Logger.recordOutput("RobotState/NearestReefKey", controllerApp.determineCompassDirection());
   }
 
   public Pose2d getTargetPose() {
@@ -491,14 +492,9 @@ public class RobotState extends SubsystemBase {
 
       ScoringSetpoints setpoint_copy = dealgaeSetpoints;
 
-      String key = controllerApp.getMoveTo();
-      for (String side : smartDeAlgaeSetpoints.keySet()) {
+      String key = controllerApp.determineCompassDirection();
+      setpoint_copy.elevatorSetpoint = smartDeAlgaeSetpoints.get(key);
 
-        if (key.contains(side)) {
-          setpoint_copy.elevatorSetpoint = smartDeAlgaeSetpoints.get(side);
-        }
-      }
-      // setpoint_copy.elevatorSetpoint = level.getElevatorSetpoint();
       Logger.recordOutput("RobotState/SmartDealgaeAcutal", setpoint_copy.elevatorSetpoint);
       System.out.println("Dealgae Setpoint is+ " + setpoint_copy.elevatorSetpoint);
       return setpoint_copy;
