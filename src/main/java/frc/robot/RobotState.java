@@ -400,9 +400,9 @@ public class RobotState extends SubsystemBase {
     }
 
     if (RobotContainer.getArm().getAbsolutePosition() < 0.76) {
-      groundPickupArmPos = Constants.ArmConstantsLeonidas.ARM_PICKUP_FRONT_POS;
+      groundPickupArmPos = Constants.ArmConstantsLeonidas.ARM_PICKUP_FRONT_BACK_POS;
     } else {
-      groundPickupArmPos = Constants.ArmConstantsLeonidas.ARM_PICKUP_BACK_POS;
+      groundPickupArmPos = Constants.ArmConstantsLeonidas.ARM_PICKUP_BACK_BACK_POS;
     }
 
     // spotless:on
