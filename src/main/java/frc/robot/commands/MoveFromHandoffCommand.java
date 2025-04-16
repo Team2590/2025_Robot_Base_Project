@@ -16,8 +16,8 @@ public class MoveFromHandoffCommand extends Command {
   public MoveFromHandoffCommand(
       double intakeTargetPos, double elevatorTargetPos, double armTargetPos) {
     setName("Move to handoff");
-    this.armFrontThreshold = Constants.ArmConstantsLeonidas.ARM_BACK_THRESHOLD_POS;
-    this.armBackThreshold = Constants.ArmConstantsLeonidas.ARM_FRONT_THRESHOLD_POS;
+    this.armFrontThreshold = Constants.ArmConstantsLeonidas.ARM_FRONT_THRESHOLD_POS;
+    this.armBackThreshold = Constants.ArmConstantsLeonidas.ARM_BACK_THRESHOLD_POS;
     this.armSetpoint = armTargetPos;
     this.elevatorSetpoint = elevatorTargetPos;
     this.intakeArmSetpoint = intakeTargetPos;
@@ -35,9 +35,14 @@ public class MoveFromHandoffCommand extends Command {
 
   @Override
   public void execute() {
-    boolean armApproxAtSetpoint = NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, armSetpoint);
-    boolean armInDangerRange = RobotContainer.getArm().getAbsolutePosition() > armFrontThreshold && RobotContainer.getArm().getAbsolutePosition() < armBackThreshold;
-    if ((!armApproxAtSetpoint || armInDangerRange) && elevatorSetpoint < Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
+    boolean armApproxAtSetpoint =
+        NemesisMathUtil.isApprox(
+            RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, armSetpoint);
+    boolean armInDangerRange =
+        RobotContainer.getArm().getAbsolutePosition() > armFrontThreshold
+            && RobotContainer.getArm().getAbsolutePosition() < armBackThreshold;
+    if ((!armApproxAtSetpoint || armInDangerRange)
+        && elevatorSetpoint < Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
       RobotContainer.getArm().getIO().setPosition(armSetpoint);
     } else {
       RobotContainer.getIntake().getArmIO().setPosition(intakeArmSetpoint);
