@@ -305,6 +305,8 @@ public final class Constants {
     public static final double ARM_SCORE_BACK_BACK_PRE = 1.35;
     public static final double ARM_SCORE_BACK_BACK_POST = 1.485;
     public static final double ARM_DEALGAE_BACK_BACK = 1.5;
+    public static final double ARM_PICKUP_BACK_POS = 0.53;
+    public static final double ARM_PICKUP_FRONT_POS = 0.97;
   }
 
   public static class ElevatorConstantsLeonidas {

@@ -11,6 +11,7 @@ public class MoveFromHandoffCommand extends Command {
   private double intakeArmSetpoint;
   private double armFrontThreshold;
   private double armBackThreshold;
+  private double SETPOINT_TOLERANCE = 0.05;
 
   public MoveFromHandoffCommand(
       double intakeTargetPos, double elevatorTargetPos, double armTargetPos) {
@@ -38,6 +39,8 @@ public class MoveFromHandoffCommand extends Command {
             && RobotContainer.getArm().getAbsolutePosition() < armBackThreshold)
         && elevatorSetpoint < Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_POS) {
       RobotContainer.getArm().getIO().setPosition(armSetpoint);
+    } else if (!NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, armSetpoint)) {
+      return;
     } else {
       RobotContainer.getIntake().getArmIO().setPosition(intakeArmSetpoint);
       RobotContainer.getElevator().getIO().setPosition(elevatorSetpoint);

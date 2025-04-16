@@ -15,10 +15,11 @@ public class GamePieceFactory {
 
   public static Command intakeAlgaeGround() {
     // spotless:off
-    return new MoveFromHandoffCommand(
+    return Commands.defer(() -> {
+        return new MoveFromHandoffCommand(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
-                    Constants.ArmConstantsLeonidas.ARM_INTAKE_ALGAE_POS
+                    RobotState.getInstance().getGrondPickupArmPos()
                 )
                 .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
                 .andThen(
@@ -28,16 +29,20 @@ public class GamePieceFactory {
                     )
                 )
         .withName("Intake Algae Ground");
+    }, Set.of(RobotContainer.getElevator(), RobotContainer.getArm(), RobotContainer.getEndEffector()));
     // spotless:on
   }
 
   public static Command intakeAlgaeGroundNoStow() {
-    return new MoveFromHandoffCommand(
+    return Commands.defer(() -> {
+        return new MoveFromHandoffCommand(
             Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
             Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
-            Constants.ArmConstantsLeonidas.ARM_INTAKE_ALGAE_POS)
+            RobotState.getInstance().getGrondPickupArmPos()
+            )
         .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
         .withName("Intake Algae Ground No Stow");
+    }, Set.of(RobotContainer.getElevator(), RobotContainer.getArm(), RobotContainer.getEndEffector()));
   }
 
   public static Command intakeUprightCoralNoStow() {

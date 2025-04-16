@@ -56,6 +56,7 @@ public class RobotState extends SubsystemBase {
           Level.DEALGAE_L2.getArmScoringSetpoint());
   private double bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_FRONT_POS;
   private double processorArmPos = 0;
+  private double groundPickupArmPos = 0;
 
   private HashMap<String, Double> smartDeAlgaeSetpoints = new HashMap<>();
 
@@ -308,6 +309,10 @@ public class RobotState extends SubsystemBase {
     return RobotContainer.getIntake().detectCoral();
   }
 
+  public double getGrondPickupArmPos() {
+    return groundPickupArmPos;
+  }
+
   private void updateScoringConfigurationSimple(
       Supplier<Pose2d> originalTargetPose, Supplier<Level> elevatorSetpoint) {
     if (DriverStation.isAutonomous()) {
@@ -392,6 +397,12 @@ public class RobotState extends SubsystemBase {
       } else {
         processorArmPos = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_BACK;
       }
+    }
+
+    if (RobotContainer.getArm().getAbsolutePosition() < 0.76) {
+      groundPickupArmPos = Constants.ArmConstantsLeonidas.ARM_PICKUP_FRONT_POS;
+    } else {
+      groundPickupArmPos = Constants.ArmConstantsLeonidas.ARM_PICKUP_BACK_POS;
     }
 
     // spotless:on
