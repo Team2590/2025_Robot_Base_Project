@@ -19,30 +19,36 @@ public class GamePieceFactory {
         return new MoveFromHandoffCommand(
                     Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                     Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
-                    RobotState.getInstance().getGrondPickupArmPos()
+                    RobotState.getInstance().getGroundPickupArmPos() // 0.58
                 )
                 .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
-                .andThen(
-                    Commands.parallel(
-                        ScoringFactory.stow(),
-                        EndEffectorFactory.runEndEffectorVoltage(Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE)
-                    )
-                )
+                .andThen(Commands.runOnce(() -> RobotState.getInstance().setHasAlgae(true)))
+                // .andThen(
+                //     Commands.parallel(
+                //         ScoringFactory.stow(),
+                //         EndEffectorFactory.runEndEffectorVoltage(Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE)
+                //     )
+                // )
         .withName("Intake Algae Ground");
     }, Set.of(RobotContainer.getElevator(), RobotContainer.getArm(), RobotContainer.getEndEffector()));
     // spotless:on
   }
 
   public static Command intakeAlgaeGroundNoStow() {
-    return Commands.defer(() -> {
-        return new MoveFromHandoffCommand(
-            Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-            Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
-            RobotState.getInstance().getGrondPickupArmPos()
-            )
-        .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
-        .withName("Intake Algae Ground No Stow");
-    }, Set.of(RobotContainer.getElevator(), RobotContainer.getArm(), RobotContainer.getEndEffector()));
+    return Commands.defer(
+        () -> {
+          return new MoveFromHandoffCommand(
+                  Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
+                  Constants.ElevatorConstantsLeonidas.ELEVATOR_INTAKE_ALGAE_POS,
+                  RobotState.getInstance().getGroundPickupArmPos())
+              .andThen(EndEffectorFactory.runEndEffectorGrabAndHoldAlgae())
+              .andThen(Commands.runOnce(() -> RobotState.getInstance().setHasAlgae(true)))
+              .withName("Intake Algae Ground No Stow");
+        },
+        Set.of(
+            RobotContainer.getElevator(),
+            RobotContainer.getArm(),
+            RobotContainer.getEndEffector()));
   }
 
   public static Command intakeUprightCoralNoStow() {
@@ -69,7 +75,7 @@ public class GamePieceFactory {
                     .andThen(
                         IntakeFactory.setPositionBlocking(
                             Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS))
-                    .andThen(ElevatorFactory.setPositionBlocking(13.9))))
+                    .andThen(ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_PRE_POS))))
         .andThen(
             Commands.parallel(
                     EndEffectorFactory.runEndEffectorVoltage(
@@ -96,7 +102,7 @@ public class GamePieceFactory {
                     .andThen(
                         IntakeFactory.setPositionBlocking(
                             Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS))
-                    .andThen(ElevatorFactory.setPositionBlocking(13.9))))
+                    .andThen(ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_PRE_POS))))
         .andThen(
             Commands.parallel(
                     EndEffectorFactory.runEndEffectorVoltage(
@@ -151,7 +157,7 @@ public class GamePieceFactory {
               .andThen(
                   IntakeFactory.setPositionBlocking(
                       Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS))
-              .andThen(ElevatorFactory.setPositionBlocking(13.9))
+              .andThen(ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_HANDOFF_PRE_POS))
               .andThen(
                   Commands.parallel(
                           EndEffectorFactory.runEndEffectorVoltage(

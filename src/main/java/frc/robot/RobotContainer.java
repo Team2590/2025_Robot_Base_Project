@@ -422,8 +422,8 @@ public class RobotContainer {
     if (Constants.currentMode == Constants.Mode.SIM) {
       configureButtonBindingsSimulation();
     } else {
-      configureButtonBindings();
-      //   configureButtonBindingsTuning();
+      //   configureButtonBindings();
+      configureButtonBindingsTuning();
     }
   }
 
@@ -577,22 +577,30 @@ public class RobotContainer {
 
   private void configureButtonBindingsTuning() {
     drive.setDefaultCommand(DriveFactory.joystickDrive());
-    rightJoystick
-        .trigger()
-        .whileTrue(
-            IntakeFactory.setPosition(
-                Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS));
-    rightJoystick
-        .button(2)
-        .whileTrue(
-            IntakeFactory.setPosition(Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS));
+    controller.y().onTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
+    controller.a().onTrue(ScoringFactory.stow());
+    controller.x().onTrue(GamePieceFactory.intakeAlgaeGround());
+    controller.b().onTrue(GamePieceFactory.grabAlgaeReef());
+    controller.button(8).onTrue(ScoringFactory.score(Level.L2));
+    controller.rightBumper().onTrue(ScoringFactory.scoreAlgaeBarge());
+    controller.leftBumper().onTrue(ScoringFactory.scoreProcessor());
 
-    leftJoystick.button(2).onTrue(GamePieceFactory.intakeAlgaeGround());
+    // rightJoystick
+    //     .trigger()
+    //     .whileTrue(
+    //         IntakeFactory.setPosition(
+    //             Constants.IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS));
+    // rightJoystick
+    //     .button(2)
+    //     .whileTrue(
+    //         IntakeFactory.setPosition(Constants.IntakeArmConstantsLeonidas.INTAKE_HANDOFF_POS));
 
-    leftJoystick.button(3).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+    // leftJoystick.button(2).onTrue(GamePieceFactory.intakeAlgaeGround());
 
-    rightJoystick.button(3).onTrue(GamePieceFactory.grabAlgaeReef());
-    rightJoystick.button(4).onTrue(GamePieceFactory.grabAlgaeReef());
+    // leftJoystick.button(3).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
+
+    // rightJoystick.button(3).onTrue(GamePieceFactory.grabAlgaeReef());
+    // rightJoystick.button(4).onTrue(GamePieceFactory.grabAlgaeReef());
 
     // leftJoystick.povUp().whileTrue(EndEffectorFactory.runEndEffectorOuttake());
     // leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
@@ -607,7 +615,8 @@ public class RobotContainer {
     // // rightJoystick.button(11).onTrue(ScoringFactory.prepClimb());
     // rightJoystick.button(16).onTrue(ScoringFactory.climb());
 
-    leftJoystick.button(4).whileTrue(controllerApp.driveAndAutoScoreCommand(drive, elevator, arm));
+    // leftJoystick.button(4).whileTrue(controllerApp.driveAndAutoScoreCommand(drive, elevator,
+    // arm));
 
     // rightJoystick
 

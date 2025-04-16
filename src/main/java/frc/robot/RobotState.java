@@ -101,9 +101,10 @@ public class RobotState extends SubsystemBase {
   private AtomicReference<ProcessorScoringState> processorState =
       new AtomicReference<ProcessorScoringState>(ProcessorScoringState.PROCESSOR_FRONT);
   private AligningState previousAligningState = AligningState.NOT_ALIGNING;
+  private boolean hasAlgae = false;
   private final Lock updateLock = new ReentrantLock();
 
-  private boolean hasAlgae = false;
+  // private boolean hasAlgae = false;
 
   private RobotState(
       Arm arm,
@@ -282,11 +283,21 @@ public class RobotState extends SubsystemBase {
   }
 
   public void setHasAlgae(boolean v) {
-    hasAlgae = v;
+    updateLock.lock();
+    try {
+      hasAlgae = v;
+    } finally {
+      updateLock.unlock();
+    }
   }
 
   public boolean hasAlgae() {
-    return hasAlgae;
+    updateLock.lock();
+    try {
+      return hasAlgae;
+    } finally {
+      updateLock.unlock();
+    }
   }
 
   public void resetAligningState() {
@@ -309,8 +320,13 @@ public class RobotState extends SubsystemBase {
     return RobotContainer.getIntake().detectCoral();
   }
 
-  public double getGrondPickupArmPos() {
-    return groundPickupArmPos;
+  public double getGroundPickupArmPos() {
+    updateLock.lock();
+    try {
+      return groundPickupArmPos;
+    } finally {
+      updateLock.unlock();
+    }
   }
 
   private void updateScoringConfigurationSimple(
@@ -426,6 +442,8 @@ public class RobotState extends SubsystemBase {
         "RobotState/algaeScoringPlaceSetpoint", algaeScoringSetpoints.armPlaceSetpoint);
     Logger.recordOutput("RobotState/bargeArmSetpoint", bargeArmPos);
     Logger.recordOutput("RobotState/processorArmSetpoint", processorArmPos);
+    Logger.recordOutput("RobotState/groundPickupSetpint", groundPickupArmPos);
+    Logger.recordOutput("RobotState/hasAlgae", hasAlgae);
   }
 
   public Pose2d getTargetPose() {

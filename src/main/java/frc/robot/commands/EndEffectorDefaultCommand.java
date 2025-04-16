@@ -17,7 +17,7 @@ public class EndEffectorDefaultCommand extends Command {
           .getIO()
           .setVoltage(Constants.EndEffectorConstantsLeonidas.HOLD_ALGAE_VOLTAGE);
     } else {
-      RobotContainer.getEndEffector().getIO().setVoltage(0);
+      RobotContainer.getEndEffector().getIO().setVoltage(Constants.EndEffectorConstantsLeonidas.HOLD_CORAL_VOLTAGE); // -.3
     }
   }
 
