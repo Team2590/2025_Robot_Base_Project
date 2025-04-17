@@ -320,7 +320,9 @@ public class ScoringFactory {
               // ArmFactory.setPositionBlocking(RobotState.getInstance().getStowSetpoint()),
               ElevatorFactory.setPositionBlocking(
                   Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
-              // Commands.waitSeconds(.2),
+              ArmFactory.setPositionBlocking(
+                  RobotState.getInstance().getCoralScoringSetpoints().armSetpoint),
+              Commands.waitSeconds(.25),
               ArmFactory.setPositionBlocking(
                   RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint));
         },

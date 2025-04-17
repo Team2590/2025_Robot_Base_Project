@@ -185,9 +185,9 @@ public class RobotState extends SubsystemBase {
       setAligningStateBasedOnTargetPose(() -> controllerApp.getTarget().pose());
       updateScoringConfigurationSimple(
           () -> controllerApp.getTarget().pose(), () -> controllerApp.getTarget().scoringLevel());
-      Logger.recordOutput(
-          "RobotState/ScoringTarget", controllerApp.getTarget().scoringLevel().name());
-      Logger.recordOutput("RobotState/ScoringSide", controllerApp.getReefSide());
+      // Logger.recordOutput(
+      //     "RobotState/ScoringTarget", controllerApp.getTarget().scoringLevel().name());
+      // Logger.recordOutput("RobotState/ScoringSide", controllerApp.getReefSide());
     } finally {
       updateLock.unlock();
     }

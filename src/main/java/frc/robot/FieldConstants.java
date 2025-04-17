@@ -248,7 +248,7 @@ public class FieldConstants {
   }
 
   public static void logBlueReefPoses() {
-    Map<String, Pose2d> poseMap = buildRedReefPosesMap();
+    Map<String, Pose2d> poseMap = buildBlueReefPosesMap();
     for (String s : poseMap.keySet()) {
 
       Pose2d pose = poseMap.get(s);

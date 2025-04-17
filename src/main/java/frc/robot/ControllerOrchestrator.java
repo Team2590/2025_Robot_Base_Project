@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.RobotState.ReefTargetSide;
+import frc.robot.command_factories.ArmFactory;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
@@ -94,15 +95,19 @@ public class ControllerOrchestrator {
    * Controller App.
    */
   public Command bindScoringCommand(Elevator elevator, Arm arm) {
-    var requirements = new HashSet<Subsystem>();
-    requirements.add(elevator);
-    requirements.add(arm);
+    // var requirements = new HashSet<Subsystem>();
+    // // requirements.add(elevator);
+    // requirements.add(arm);
 
-    return Commands.defer(
-        () -> {
-          return ScoringFactory.score(RobotState.getInstance().getCoralScoringSetpoints());
-        },
-        requirements);
+    // return Commands.defer(
+    //     () -> {
+    //       System.out.println(
+    //           "arm place target: "
+    //               + RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint);
+    return ArmFactory.setPositionBlocking(.015);
+    // ScoringFactory.score(RobotState.getInstance().getCoralScoringSetpoints());
+    // },
+    // requirements);
   }
 
   /** Command that needs to be bound to a button to driveToTarget. */
