@@ -268,7 +268,8 @@ public final class Constants {
     public static final double ARM_VERTICAL_POS = .25;
     // public static final double magOffset = -.596436; // -.398
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
-    public static final double magOffset = 0.324; // 0.385; // 0; // .454; // 0; // -.473;
+    public static final double magOffset = -.474;
+    // -0.412; // 0; // 0.324; // 0.385; // 0; // .454; // 0; // -.473;
     // .146; // .142; // -0.15; // -0.379; // -.3347; // -.635; // TODO
     public static final double sensorReduction = 58.8; // TODO
     public static final double BACK_HORIZONTAL = 0.5;
@@ -330,7 +331,7 @@ public final class Constants {
     public static final double ELEVATOR_STOW_POS = 1;
     public static final double ELEVATOR_L2_POS = 3; // TODO
     public static final double ELEVATOR_L3_POS = 11.35; // TODO
-    public static final double ELEVATOR_L4_POS = 25.0; // TODO
+    public static final double ELEVATOR_L4_POS = 25.0 - .5 - .5 - 1; // TODO
     public static final double ELEVATOR_DEALGAE_L2 = 12; // TODO
     public static final double ELEVATOR_DEALGAE_L3 = 19.76; // TODO
     public static final double ELEVATOR_SOURCE_POS = 5.15; // TODO
@@ -369,7 +370,7 @@ public final class Constants {
     public static final double OUTTAKE_VOLTAGE = -12;
     public static final double INTAKE_ALGAE_VOLTAGE = -12;
     public static final double HOLD_ALGAE_VOLTAGE = -0.75;
-    public static final double HOLD_CORAL_VOLTAGE = -.3;
+    public static final double HOLD_CORAL_VOLTAGE = -.25;
     public static final int PROX_CHANNEL = 0;
   }
 

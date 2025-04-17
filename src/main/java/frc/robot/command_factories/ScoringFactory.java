@@ -282,12 +282,18 @@ public class ScoringFactory {
     // return new ParallelCommandGroup(
     // ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.CLIMB_POS),
     // ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.CLIMB_POS),
-    return new MoveFromHandoffCommand(
-            IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
-            .33,
-            Constants.ArmConstantsLeonidas.ARM_SET_STOW)
+    return Commands.defer(
+            () -> {
+              return new MoveFromHandoffCommand(
+                  IntakeArmConstantsLeonidas.INTAKE_GROUND_CORAL_POS,
+                  .33,
+                  RobotState.getInstance().getStowSetpoint());
+            },
+            Set.of(
+                RobotContainer.getArm(), RobotContainer.getIntake(), RobotContainer.getElevator()))
         // .andThen(LEDFactory.blink())
         .withName("Deploy climb mechanism");
+
     // , ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)
   }
 
@@ -308,12 +314,17 @@ public class ScoringFactory {
   }
 
   public static Command scoreL4Sequentially() {
-    return new SequentialCommandGroup(
-        ArmFactory.setPositionBlocking(Constants.ArmConstantsLeonidas.ARM_SET_STOW),
-        ElevatorFactory.setPositionBlocking(Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
-        Commands.waitSeconds(.5),
-        ArmFactory.setPositionBlocking(
-            Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L4_POST));
+    return Commands.defer(
+        () -> {
+          return new SequentialCommandGroup(
+              // ArmFactory.setPositionBlocking(RobotState.getInstance().getStowSetpoint()),
+              ElevatorFactory.setPositionBlocking(
+                  Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
+              // Commands.waitSeconds(.2),
+              ArmFactory.setPositionBlocking(
+                  RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint));
+        },
+        Set.of(RobotContainer.getArm(), RobotContainer.getElevator()));
   }
 
   public static Command armFollowThrough() {

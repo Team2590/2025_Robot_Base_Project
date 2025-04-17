@@ -33,6 +33,7 @@ import frc.robot.RobotState.ReefTargetSide;
 import frc.robot.command_factories.ClimbFactory;
 import frc.robot.command_factories.ControllerFactory;
 import frc.robot.command_factories.DriveFactory;
+import frc.robot.command_factories.ElevatorFactory;
 import frc.robot.command_factories.EndEffectorFactory;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.IntakeFactory;
@@ -580,6 +581,10 @@ public class RobotContainer {
     leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
     leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
     leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
+
+    rightJoystick.button(14).whileTrue(ElevatorFactory.manualUp());
+    rightJoystick.button(13).whileTrue(ElevatorFactory.manualDown());
+
 
   }
   // spotless:on
