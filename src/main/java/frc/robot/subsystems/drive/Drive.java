@@ -457,6 +457,7 @@ public class Drive extends SubsystemBase {
    * targetPose.
    */
   public boolean frontScore(Pose2d targetPose) {
+    // spotless:off
     double differencefromFront =
         Math.abs(this.getPose().getRotation().minus(targetPose.getRotation()).getRadians());
     double differencefromBack =
@@ -467,5 +468,16 @@ public class Drive extends SubsystemBase {
                 .plus(new Rotation2d(Math.PI))
                 .getRadians());
     return differencefromFront <= differencefromBack;
+    // spotless:on
+    // double differencefromFront =
+    //     this.getPose().getRotation().minus(targetPose.getRotation()).getRadians();
+    // while (differencefromFront > 180) {
+    //   differencefromFront -= 360;
+    // }
+    // while (differencefromFront < -180) {
+    //   differencefromFront += 360;
+    // }
+    // differencefromFront = Math.abs(differencefromFront);
+    // return differencefromFront < Math.PI / 2;
   }
 }

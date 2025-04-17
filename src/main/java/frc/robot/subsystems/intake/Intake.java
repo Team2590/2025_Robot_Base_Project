@@ -2,7 +2,6 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -95,8 +94,8 @@ public class Intake extends SubsystemBase {
     public Command setPositionBlocking(double position) {
       return runEnd(() -> intakeArmIO.setPosition(position), () -> intakeArmIO.setPosition(position))
           .until(() -> {
-              System.out.println("input position rads:" + intakeArmInputs.positionRads);
-              System.out.println("setpoint" + Units.rotationsToRadians(position));
+              // System.out.println("input position rads:" + intakeArmInputs.positionRads);
+              // System.out.println("setpoint" + Units.rotationsToRadians(position));
               return NemesisMathUtil.isApprox(intakeArmInputs.rotationCount, setpointTolerance, position);
           });
     }

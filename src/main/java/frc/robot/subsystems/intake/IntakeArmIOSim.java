@@ -22,7 +22,8 @@ public class IntakeArmIOSim implements IntakeArmIO {
   public void setNeutralMode(NeutralModeValue mode) {
     // Simulation doesn't inherently need neutral mode, but you might use it
     // for internal tracking if needed.  For now, just print a warning.
-    System.out.println("IntakeArmIOSim: setNeutralMode called, but has no effect in simulation.");
+    // System.out.println("IntakeArmIOSim: setNeutralMode called, but has no effect in
+    // simulation.");
   }
 
   @Override
@@ -47,10 +48,11 @@ public class IntakeArmIOSim implements IntakeArmIO {
       // A more accurate simulation would apply a voltage to reach the target position.
       //  That would require a more sophisticated model.
     } else {
-      System.out.println("CAN'T MOVE INTAKE ARM, SAFETY CHECK FAILED");
+      // System.out.println("CAN'T MOVE INTAKE ARM, SAFETY CHECK FAILED");
     }
-    System.out.println(
-        "IntakeArmIOSim: setPosition called directly.  This is a simplified simulation behavior.");
+    // System.out.println(
+    //     "IntakeArmIOSim: setPosition called directly.  This is a simplified simulation
+    // behavior.");
   }
 
   @Override

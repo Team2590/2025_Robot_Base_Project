@@ -36,7 +36,7 @@ public class EndEffector extends SubsystemBase {
     io.updateInputs(inputs);
     // filtered_data = filter.calculate(prox.getValue());
     stator_current_filtered_data = filter_current.calculate(inputs.statorCurrentAmps);
-    // prox_filtered_data = filter_prox.calculate(prox.getValue());
+    prox_filtered_data = filter_prox.calculate(prox.getValue());
 
     // Logger.recordOutput("EndEffector/current", inputs.statorCurrentAmps);
     Logger.recordOutput("EndEffector/proxValue", prox.getValue());
@@ -121,8 +121,8 @@ public class EndEffector extends SubsystemBase {
   }
 
   public boolean hasGamePiece() {
-    return stator_current_filtered_data >= CURRENT_THRESHOLD.get();
-    // prox_filtered_data >= PROX_THRESHOLD.get();
+    // return stator_current_filtered_data >= CURRENT_THRESHOLD.get();
+    return prox_filtered_data >= PROX_THRESHOLD.get();
   }
 
   public boolean isRunning() {

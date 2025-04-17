@@ -43,6 +43,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private LoggedTunableNumber jerk = new LoggedTunableNumber("Elevator/jerk", 1500);
   private LoggedTunableNumber setPos = new LoggedTunableNumber("Elevator/setpointPos", 20);
   private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
+  private TalonFXConfiguration talonFXConfigFollower = new TalonFXConfiguration();
   private Slot0Configs slot0Configs = talonFXConfig.Slot0;
   private MotionMagicConfigs motionMagicConfigs = talonFXConfig.MotionMagic;
   private StatusSignal<Angle> position;
@@ -69,7 +70,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     talonFXConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = .05;
     talonFXConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = .05;
     talonFXConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = .05;
-    StickyFaultUtil.clearMotorStickyFaults(leader, "Elevator Motor");
+    StickyFaultUtil.clearMotorStickyFaults(leader, "Elevator Motor Leader");
 
     slot0Configs.kS = kS.get();
     slot0Configs.kV = kV.get();
@@ -110,6 +111,19 @@ public class ElevatorIOTalonFX implements ElevatorIO {
       boolean followerOpposeLeader) {
     this(canID, canBus, currentLimitAmps, invert, brake, reduction);
     follower = new TalonFX(followerCanID, followerCanBus);
+    // talonFXConfigFollower.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake :
+    // NeutralModeValue.Coast;
+    talonFXConfigFollower.MotorOutput.Inverted =
+        invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+    talonFXConfigFollower.MotorOutput.NeutralMode =
+        brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+    talonFXConfigFollower.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
+    talonFXConfigFollower.CurrentLimits.SupplyCurrentLimitEnable = true;
+    talonFXConfigFollower.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = .05;
+    talonFXConfigFollower.ClosedLoopRamps.TorqueClosedLoopRampPeriod = .05;
+    talonFXConfigFollower.ClosedLoopRamps.VoltageClosedLoopRampPeriod = .05;
+    StickyFaultUtil.clearMotorStickyFaults(follower, "Elevator Motor Follower");
+    follower.getConfigurator().apply(talonFXConfigFollower);
     follower.setControl(new Follower(canID, followerOpposeLeader));
   }
 
@@ -192,7 +206,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         leader.setControl(request.withPosition(position));
       }
     } else {
-      System.out.println("CAN'T MOVE ELEVATOR, safety check failed.");
+      // System.out.println("CAN'T MOVE ELEVATOR, safety check failed.");
     }
   }
 
@@ -207,7 +221,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         leader.setControl(request.withPosition(setPos.get()));
       }
     } else {
-      System.out.println("CAN'T MOVE ELEVATOR, safety check failed.");
+      // System.out.println("CAN'T MOVE ELEVATOR, safety check failed.");
     }
   }
 
@@ -244,7 +258,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position.getValueAsDouble())) {
       leader.setControl(volts);
     } else {
-      System.out.println("CAN'T MOVE ELEVATOR, arm not in valid position");
+      // System.out.println("CAN'T MOVE ELEVATOR, arm not in valid position");
     }
   }
 
