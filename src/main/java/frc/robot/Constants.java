@@ -317,7 +317,7 @@ public final class Constants {
     public static final String canBus = "Takeover";
     public static final int currentLimitAmps = 120;
     public static final boolean invert = true;
-    public static final boolean brake = true;
+    public static final boolean brake = false;
     public static final double reduction = 7;
     public static final int followerCanID = 26;
     public static final String followerCanBus = "Takeover";
