@@ -48,11 +48,11 @@ public class ElevatorIOSim implements ElevatorIO {
   @Override
   public void setPosition(double position) {
 
-    System.out.println("Setting elevator position: " + position);
+    // System.out.println("Setting elevator position: " + position);
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, position)) {
       this.rotationCount = position;
     } else {
-      System.out.println("CAN'T MOVE ELEVATOR (SIM), safety check failed.");
+      // System.out.println("CAN'T MOVE ELEVATOR (SIM), safety check failed.");
     }
   }
 

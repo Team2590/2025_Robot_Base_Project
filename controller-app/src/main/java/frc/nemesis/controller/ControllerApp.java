@@ -59,7 +59,7 @@ public class ControllerApp extends Application {
 
     primaryStage.setOnCloseRequest(
         event -> {
-          System.out.println("Exiting ...");
+          // System.out.println("Exiting ...");
           client.disconnect();
         });
 
@@ -135,7 +135,7 @@ public class ControllerApp extends Application {
 
         // New format: Side_Level (no compass direction)
         pendingCommand = side + "_" + level;
-        System.out.println("Updated command string: " + pendingCommand);
+        // System.out.println("Updated command string: " + pendingCommand);
         sendToNetworkTables("moveTo", pendingCommand);
       }
     }
@@ -144,7 +144,7 @@ public class ControllerApp extends Application {
   private void sendToNetworkTables(String key, String command) {
     if (command != null) {
       client.publish(key, command);
-      System.out.println("Sending command: " + command);
+      // System.out.println("Sending command: " + command);
     }
   }
 

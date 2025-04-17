@@ -145,7 +145,7 @@ public class ArmIOTalonFX implements ArmIO {
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position)) {
       arm.setControl(mmv.withPosition(position));
     } else {
-      System.out.println("CAN'T MOVE ARM, safety check failed.");
+      // System.out.println("CAN'T MOVE ARM, safety check failed.");
     }
   }
 
@@ -154,7 +154,7 @@ public class ArmIOTalonFX implements ArmIO {
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, setPos.get())) {
       arm.setControl(mmv.withPosition(setPos.get()));
     } else {
-      System.out.println("CAN'T MOVE ARM, safety check failed.");
+      // System.out.println("CAN'T MOVE ARM, safety check failed.");
     }
   }
 
@@ -206,7 +206,7 @@ public class ArmIOTalonFX implements ArmIO {
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, armPos)) {
       arm.setControl(new VoltageOut(volts));
     } else {
-      System.out.println("CAN'T MOVE ARM, safety check failed.");
+      // System.out.println("CAN'T MOVE ARM, safety check failed.");
     }
   }
 }

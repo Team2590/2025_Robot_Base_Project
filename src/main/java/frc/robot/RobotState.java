@@ -502,7 +502,7 @@ public class RobotState extends SubsystemBase {
       setpoint_copy.elevatorSetpoint = smartDeAlgaeSetpoints.get(key);
 
       Logger.recordOutput("RobotState/SmartDealgaeAcutal", setpoint_copy.elevatorSetpoint);
-      System.out.println("Dealgae Setpoint is+ " + setpoint_copy.elevatorSetpoint);
+      // System.out.println("Dealgae Setpoint is+ " + setpoint_copy.elevatorSetpoint);
       return setpoint_copy;
     } finally {
       updateLock.unlock();

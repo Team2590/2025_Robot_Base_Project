@@ -313,7 +313,7 @@ public class FieldConstants {
       double adjustXRight =
           Units.inchesToMeters(7.87 - 2.5); // + RobotState.getInstance().getReefOffsetRight());
 
-      System.out.println("updating offsets to " + adjustY);
+      // System.out.println("updating offsets to " + adjustY);
 
       var rightBranchPose =
           new Pose2d(
@@ -351,7 +351,7 @@ public class FieldConstants {
     // logBlueReefPoses();
     // Rebuild the reef poses if y offset is changed in AdvantageScope
     if (Drive.reefYOffset.hasChanged("ReefYOffset".hashCode())) {
-      System.out.println("Rebuilding reef poses, new y offset: " + Drive.reefYOffset.get());
+      // System.out.println("Rebuilding reef poses, new y offset: " + Drive.reefYOffset.get());
       BlueReefPoses.reef = getReefPoses(false);
       RedReefPoses.reef = getReefPoses(true);
       BLUE_REEF_POSES = buildBlueReefPosesMap();

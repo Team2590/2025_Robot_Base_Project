@@ -138,7 +138,7 @@ public class ScoringFactory {
           switch (level) {
             case L4:
               return Commands.parallel(
-                      Commands.print("Priming " + level.name()),
+                      // Commands.print("Priming " + level.name()),
                       IntakeFactory.setPositionBlocking(
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
                       ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
@@ -150,7 +150,7 @@ public class ScoringFactory {
                       Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS)
                   .andThen(
                       Commands.parallel(
-                          Commands.print("Priming " + level.name()),
+                          // Commands.print("Priming " + level.name()),
                           new MoveFromHandoffCommand(
                               Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                               level.getElevatorSetpoint(),
@@ -161,7 +161,7 @@ public class ScoringFactory {
                       Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS)
                   .andThen(
                       Commands.parallel(
-                          Commands.print("Priming " + level.name()),
+                          // Commands.print("Priming " + level.name()),
                           new MoveFromHandoffCommand(
                               Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                               level.getElevatorSetpoint(),
@@ -169,7 +169,7 @@ public class ScoringFactory {
                   .withName("Prime " + level.name());
             default:
               return Commands.parallel(
-                  Commands.print("Priming " + level.name()),
+                  // Commands.print("Priming " + level.name()),
                   new MoveFromHandoffCommand(
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                           level.getElevatorSetpoint(),
@@ -192,11 +192,11 @@ public class ScoringFactory {
 
   public static Command primeForLevel(ScoringSetpoints setpoints) {
     return Commands.parallel(
-            Commands.print(
-                "Priming with Elevator setpoint "
-                    + setpoints.elevatorSetpoint
-                    + " and arm setpoint = "
-                    + setpoints.armSetpoint),
+            // Commands.print(
+            //     "Priming with Elevator setpoint "
+            //         + setpoints.elevatorSetpoint
+            //         + " and arm setpoint = "
+            //         + setpoints.armSetpoint),
             new MoveFromHandoffCommand(
                 Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                 setpoints.elevatorSetpoint,
