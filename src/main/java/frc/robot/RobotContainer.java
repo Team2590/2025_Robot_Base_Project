@@ -433,6 +433,13 @@ public class RobotContainer {
     leftJoystick.button(1).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
     leftJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
 
+    controller.x().onTrue(ControllerFactory.setTargetLevel(Level.L4));
+    controller.b().onTrue(ControllerFactory.setTargetLevel(Level.L2));
+    controller.y().onTrue(ControllerFactory.setTargetLevel(Level.L3));
+    controller.a().onTrue(ControllerFactory.setTargetLevel(Level.L1));
+    controller.leftBumper().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.LEFT));
+    controller.rightBumper().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.RIGHT));
+
     // leftJoystick
     //     .button(3)
     //     .whileTrue(
@@ -495,12 +502,12 @@ public class RobotContainer {
     drive.setDefaultCommand(DriveFactory.joystickDrive());
    
     // operator controls
-    controller.y().onTrue(ControllerFactory.setTargetLevel(Level.L4));
+    controller.x().onTrue(ControllerFactory.setTargetLevel(Level.L4));
     controller.b().onTrue(ControllerFactory.setTargetLevel(Level.L2));
-    controller.a().onTrue(ControllerFactory.setTargetLevel(Level.L3));
-    controller.x().onTrue(ControllerFactory.setTargetLevel(Level.L1));
-    controller.leftTrigger().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.LEFT));
-    controller.rightTrigger().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.RIGHT));
+    controller.y().onTrue(ControllerFactory.setTargetLevel(Level.L3));
+    controller.a().onTrue(ControllerFactory.setTargetLevel(Level.L1));
+    controller.leftBumper().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.LEFT));
+    controller.rightBumper().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.RIGHT));
 
     // climb buttons
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
@@ -548,6 +555,8 @@ public class RobotContainer {
 
     rightJoystick.button(2)
         .whileTrue(controllerApp.driveAndAutoScoreCommand(drive, elevator, arm));
+    
+    rightJoystick.button(4).onTrue(controllerApp.bindScoringCommand(elevator, arm));
 
     leftJoystick.trigger()
         .and(() -> controllerApp.getTarget().scoringLevel() == Level.L1)

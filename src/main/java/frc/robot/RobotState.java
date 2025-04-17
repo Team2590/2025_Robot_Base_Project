@@ -336,6 +336,8 @@ public class RobotState extends SubsystemBase {
       return;
     }
 
+    Logger.recordOutput("RobotState/ScoringLevel", elevatorSetpoint.get().name());
+
     coralScoringSetpoints.elevatorSetpoint = elevatorSetpoint.get().getElevatorSetpoint();
 
     double SETPOINT_TOLERANCE = 0.05;
@@ -445,6 +447,7 @@ public class RobotState extends SubsystemBase {
     Logger.recordOutput("RobotState/groundPickupSetpint", groundPickupArmPos);
     Logger.recordOutput("RobotState/hasAlgae", hasAlgae);
     Logger.recordOutput("RobotState/NearestReefKey", controllerApp.determineCompassDirection());
+    Logger.recordOutput("RobotState/scoreProcessorFront", shouldScoreFrontProcessor());
   }
 
   public Pose2d getTargetPose() {

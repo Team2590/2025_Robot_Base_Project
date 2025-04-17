@@ -36,6 +36,8 @@ public class ControllerOrchestrator {
   // Compass directions in clockwise order - used to find the closest direction
   private static final String[] COMPASS_DIRECTIONS = {"N", "NE", "SE", "S", "SW", "NW"};
 
+  private Target target = new Target(lookupPoseBasedOnAlliance("SW_Left"), Level.L4);
+
   private NetworkTableEntry getTableEntry(String key) {
     NetworkTable table = NetworkTableInstance.getDefault().getTable(CONTROLLER_TABLE_KEY);
     return table.getEntry(key);
@@ -58,13 +60,18 @@ public class ControllerOrchestrator {
   }
 
   public Target getTarget() {
-    Target target = parseTargetString(getMoveTo());
-    if (target == null) {
-      target = new Target(lookupPoseBasedOnAlliance(DEFAULT_REEF_TARGET), ScoringFactory.Level.L4);
-      // System.err.println("---> Using Default Target: " + target);
-      return target;
-    }
-    return target;
+    // return target;
+    String side = cachedReefTargetSide == ReefTargetSide.LEFT ? "Left" : "Right";
+    return new Target(
+        lookupPoseBasedOnAlliance(determineCompassDirection() + "_" + side), cachedLevel);
+    // Target target = parseTargetString(getMoveTo());
+    // if (target == null) {
+    //   target = new Target(lookupPoseBasedOnAlliance(DEFAULT_REEF_TARGET),
+    // ScoringFactory.Level.L4);
+    //   // System.err.println("---> Using Default Target: " + target);
+    //   return target;
+    // }
+    // return target;
   }
 
   public Target getSourceTarget() {
@@ -160,21 +167,13 @@ public class ControllerOrchestrator {
   private Level cachedLevel = Level.L4;
   private ReefTargetSide cachedReefTargetSide = ReefTargetSide.LEFT;
 
-  public void setTarget(Level level, ReefTargetSide side) {
-    cachedLevel = level;
-    cachedReefTargetSide = side;
-    String targetSide = side == ReefTargetSide.LEFT ? "Left" : "Right";
-    parseTargetString(targetSide + "_" + level.name());
-  }
-
   public void setTarget(Level level) {
     cachedLevel = level;
-    setTarget(level, cachedReefTargetSide);
   }
 
   public void setTarget(ReefTargetSide side) {
+    System.out.println("Set reef target side called");
     cachedReefTargetSide = side;
-    setTarget(cachedLevel, side);
   }
 
   /**
