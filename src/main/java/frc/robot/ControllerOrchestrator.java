@@ -74,6 +74,10 @@ public class ControllerOrchestrator {
     // return target;
   }
 
+  public String getReefSide() {
+    return cachedReefTargetSide.name();
+  }
+
   public Target getSourceTarget() {
     Target target;
     Pose2d pose = lookupPoseBasedOnAlliance(getSource());

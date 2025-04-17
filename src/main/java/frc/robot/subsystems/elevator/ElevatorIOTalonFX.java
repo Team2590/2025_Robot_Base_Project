@@ -111,17 +111,19 @@ public class ElevatorIOTalonFX implements ElevatorIO {
       boolean followerOpposeLeader) {
     this(canID, canBus, currentLimitAmps, invert, brake, reduction);
     follower = new TalonFX(followerCanID, followerCanBus);
-    // talonFXConfigFollower.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+    // talonFXConfigFollower.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake :
+    // NeutralModeValue.Coast;
     talonFXConfigFollower.MotorOutput.Inverted =
-        !invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
-    talonFXConfigFollower.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+        invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+    talonFXConfigFollower.MotorOutput.NeutralMode =
+        brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     talonFXConfigFollower.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
     talonFXConfigFollower.CurrentLimits.SupplyCurrentLimitEnable = true;
     talonFXConfigFollower.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = .05;
     talonFXConfigFollower.ClosedLoopRamps.TorqueClosedLoopRampPeriod = .05;
     talonFXConfigFollower.ClosedLoopRamps.VoltageClosedLoopRampPeriod = .05;
     StickyFaultUtil.clearMotorStickyFaults(follower, "Elevator Motor Follower");
-    follower.getConfigurator().apply(talonFXConfig);
+    follower.getConfigurator().apply(talonFXConfigFollower);
     follower.setControl(new Follower(canID, followerOpposeLeader));
   }
 
