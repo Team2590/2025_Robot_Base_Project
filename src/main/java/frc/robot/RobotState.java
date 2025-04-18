@@ -241,6 +241,7 @@ public class RobotState extends SubsystemBase {
 
   /** Align to the front or back of the robot based on the given target pose. */
   public void setAligningStateBasedOnTargetPose(Supplier<Pose2d> targetPose) {
+    Logger.recordOutput("RobotState/ControllerAppTargetPose", targetPose.get());
     if (drive.frontScore(targetPose.get())) {
       setAligningState(AligningState.ALIGNING_FRONT);
     } else {

@@ -45,10 +45,10 @@ public class VisionIOPhotonVisionSim extends VisionIOPhotonVision {
 
     // Add sim cameras for each camera config
     var cameraProperties = new SimCameraProperties();
-    for (CameraThread thread : cameraThreads) {
-      PhotonCameraSim cameraSim = new PhotonCameraSim(thread.getCamera(), cameraProperties);
-      visionSim.addCamera(cameraSim, thread.getRobotToCamera());
-    }
+    // for (CameraThread thread : cameraThreads) {
+    //   PhotonCameraSim cameraSim = new PhotonCameraSim(thread.getCamera(), cameraProperties);
+    //   visionSim.addCamera(cameraSim, thread.getRobotToCamera());
+    // }
   }
 
   @Override
