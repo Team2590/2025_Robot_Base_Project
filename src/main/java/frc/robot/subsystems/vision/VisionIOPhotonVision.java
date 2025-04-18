@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.photonvision.PhotonCamera;
@@ -111,8 +112,13 @@ public class VisionIOPhotonVision implements VisionIO {
             synchronized (observationLock) {
               // Update target observation
               if (result.hasTargets()) {
-                for (int i = 0; i < result.targets.size(); i++) {
-                  Transform3d camTransform3d = result.targets.get(i).getBestCameraToTarget();
+                // Create a safe copy of the targets to avoid concurrent modification
+                List<org.photonvision.targeting.PhotonTrackedTarget> filteredTargets = new ArrayList<>(result.targets);
+                Iterator<org.photonvision.targeting.PhotonTrackedTarget> iterator = filteredTargets.iterator();
+                
+                while (iterator.hasNext()) {
+                  var target = iterator.next();
+                  Transform3d camTransform3d = target.getBestCameraToTarget();
                   double distance =
                       Math.hypot(
                           Math.hypot(camTransform3d.getX(), camTransform3d.getY()),
@@ -120,26 +126,23 @@ public class VisionIOPhotonVision implements VisionIO {
                   boolean isInWhiteList =
                       (DriverStation.getAlliance().isPresent()
                           && ((VisionConstants.FIDUCIAL_IDS_RED.contains(
-                                      result.targets.get(i).getFiducialId())
+                                      target.getFiducialId())
                                   && DriverStation.getAlliance().get().equals(Alliance.Red))
                               || (VisionConstants.FIDUCIAL_IDS_BLUE.contains(
-                                      result.targets.get(i).getFiducialId())
+                                      target.getFiducialId())
                                   && DriverStation.getAlliance().get().equals(Alliance.Blue))));
                   if ((distance >= VisionConstants.DISTANCE_THRESHOLD) || !isInWhiteList) {
-                    // System.out.println(distance);
-                    // System.out.println(targets.get(i));
-                    result.targets.remove(i);
-                    i--;
+                    iterator.remove();
                   }
-
-                  // System.out.println(result.targets);
                 }
 
-                if (result.hasTargets()) {
+                if (!filteredTargets.isEmpty()) {
+                  // Use the best target from our filtered collection instead
+                  var bestTarget = filteredTargets.get(0); // Assuming first is best after filtering
                   latestTargetObservation =
                       new TargetObservation(
-                          Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
-                          Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
+                          Rotation2d.fromDegrees(bestTarget.getYaw()),
+                          Rotation2d.fromDegrees(bestTarget.getPitch()));
                 }
               }
 
@@ -152,7 +155,10 @@ public class VisionIOPhotonVision implements VisionIO {
                     new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
 
                 double totalTagDistance = 0.0;
-                for (var target : result.targets) {
+                // Create a safe copy for iteration to avoid concurrent modification
+                List<org.photonvision.targeting.PhotonTrackedTarget> safeTargets = 
+                    new ArrayList<>(result.targets);
+                for (var target : safeTargets) {
                   totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
                 }
 
@@ -164,10 +170,11 @@ public class VisionIOPhotonVision implements VisionIO {
                         robotPose,
                         multitagResult.estimatedPose.ambiguity,
                         multitagResult.fiducialIDsUsed.size(),
-                        totalTagDistance / result.targets.size(),
+                        totalTagDistance / safeTargets.size(),
                         PoseObservationType.PHOTONVISION));
               } else if (!result.targets.isEmpty()) {
-                var target = result.targets.get(0);
+                // Create a safe copy of the first target
+                var target = new ArrayList<>(result.targets).get(0);
 
                 // Calculate robot pose
                 var tagPose = aprilTagLayout.getTagPose(target.fiducialId);

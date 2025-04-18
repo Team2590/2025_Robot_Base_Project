@@ -83,7 +83,8 @@ public class CoralIOPhotonVision implements CoralDetectionIO {
             synchronized (observationLock) {
               try {
                 if (result.hasTargets()) {
-                  target = result.getBestTarget();
+                  var bestTarget = result.getBestTarget();
+                  target = bestTarget;
                   double mPitch = Math.toRadians(target.getPitch());
                   double mYaw = Math.toRadians(target.getYaw());
                   double realPitch = Math.atan2(mPitch, camFocalLength.getAsDouble());
