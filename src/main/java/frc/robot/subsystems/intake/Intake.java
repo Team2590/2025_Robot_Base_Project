@@ -112,11 +112,11 @@ public class Intake extends SubsystemBase {
   public Command runIntakeUntilHasCoral(double voltage) {
     return runEnd(
             () -> {
-              System.out.println("Starting the intake command now!");
+              // System.out.println("Starting the intake command now!");
               intakeIO.setVoltage(voltage);
             },
             () -> {
-              System.out.println("Stopping the intake command now!");
+              // System.out.println("Stopping the intake command now!");
               intakeIO.stop();
             })
         .until(() -> hasCoral())

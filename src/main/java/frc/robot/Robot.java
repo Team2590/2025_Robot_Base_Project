@@ -196,4 +196,12 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+  protected void loopFunc() {
+    try {
+      super.loopFunc();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 }

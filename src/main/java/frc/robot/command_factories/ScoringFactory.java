@@ -217,7 +217,7 @@ public class ScoringFactory {
   public static Command scoreL1() {
     return Commands.sequence(
         IntakeFactory.setPositionBlocking(Constants.IntakeArmConstantsLeonidas.L1_POS),
-        IntakeFactory.runIntake(() -> 5).withName("Score L1"));
+        IntakeFactory.runIntake(() -> 0.5).withName("Score L1"));
   }
 
   public static Command scoreAlgaeBarge() {
@@ -318,13 +318,14 @@ public class ScoringFactory {
         () -> {
           return new SequentialCommandGroup(
               // ArmFactory.setPositionBlocking(RobotState.getInstance().getStowSetpoint()),
-              ElevatorFactory.setPositionBlocking(
-                  Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
-              ArmFactory.setPositionBlocking(
-                  RobotState.getInstance().getCoralScoringSetpoints().armSetpoint),
+              Commands.parallel(
+                  ElevatorFactory.setPositionBlocking(
+                      Constants.ElevatorConstantsLeonidas.ELEVATOR_L4_POS),
+                  ArmFactory.setPositionBlocking(
+                      Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_FRONT_PRE)),
               Commands.waitSeconds(.25),
               ArmFactory.setPositionBlocking(
-                  RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint));
+                  Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_FRONT_POST));
         },
         Set.of(RobotContainer.getArm(), RobotContainer.getElevator()));
   }

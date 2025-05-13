@@ -436,8 +436,8 @@ public class RobotContainer {
 
     controller.x().onTrue(ControllerFactory.setTargetLevel(Level.L4));
     controller.b().onTrue(ControllerFactory.setTargetLevel(Level.L2));
-    controller.y().onTrue(ControllerFactory.setTargetLevel(Level.L3));
-    controller.a().onTrue(ControllerFactory.setTargetLevel(Level.L1));
+    controller.a().onTrue(ControllerFactory.setTargetLevel(Level.L3));
+    controller.y().onTrue(ControllerFactory.setTargetLevel(Level.L1));
     controller.leftBumper().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.LEFT));
     controller.rightBumper().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.RIGHT));
 
@@ -505,10 +505,11 @@ public class RobotContainer {
     // operator controls
     controller.x().onTrue(ControllerFactory.setTargetLevel(Level.L4));
     controller.b().onTrue(ControllerFactory.setTargetLevel(Level.L2));
-    controller.y().onTrue(ControllerFactory.setTargetLevel(Level.L3));
-    controller.a().onTrue(ControllerFactory.setTargetLevel(Level.L1));
+    controller.a().onTrue(ControllerFactory.setTargetLevel(Level.L3));
+    controller.y().onTrue(ControllerFactory.setTargetLevel(Level.L1));
     controller.leftBumper().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.LEFT));
     controller.rightBumper().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.RIGHT));
+    controller.rightTrigger().whileTrue(EndEffectorFactory.runEndEffectorVoltage(Constants.EndEffectorConstantsLeonidas.INTAKE_ALGAE_VOLTAGE));
 
     // climb buttons
     rightJoystick.button(16).whileTrue(ScoringFactory.climb());
@@ -557,7 +558,7 @@ public class RobotContainer {
     rightJoystick.button(2)
         .whileTrue(controllerApp.driveAndAutoScoreCommand(drive, elevator, arm));
     
-    rightJoystick.button(4).onTrue(controllerApp.bindScoringCommand(elevator, arm));
+    // rightJoystick.button(4).onTrue(controllerApp.bindScoringCommand(elevator, arm));
 
     leftJoystick.trigger()
         .and(() -> controllerApp.getTarget().scoringLevel() == Level.L1)

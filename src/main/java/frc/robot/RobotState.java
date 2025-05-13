@@ -587,14 +587,19 @@ public class RobotState extends SubsystemBase {
       robotHeadingDegrees += 360;
     }
 
-    if (DriverStation.getAlliance().isPresent()) {
-      if (DriverStation.getAlliance().get() == Alliance.Blue) {
-        return robotHeadingDegrees > -90 && robotHeadingDegrees <= 90;
-      } else { // Red Alliance
-        return robotHeadingDegrees > 90 || robotHeadingDegrees <= -90;
-      }
+    // if (DriverStation.getAlliance().isPresent()) {
+    //   if (DriverStation.getAlliance().get() == Alliance.Blue) {
+    //     return robotHeadingDegrees > -90 && robotHeadingDegrees <= 90;
+    //   } else { // Red Alliance
+    //     return robotHeadingDegrees > 90 || robotHeadingDegrees <= -90;
+    //   }
+    // }
+
+    if (RobotContainer.getDrive().getPose().getX() < 8.8) {
+      return robotHeadingDegrees > -90 && robotHeadingDegrees <= 90;
+    } else { // Red Alliance
+      return robotHeadingDegrees > 90 || robotHeadingDegrees <= -90;
     }
-    return true;
   }
 
   public static boolean shouldScoreFrontProcessor() {
