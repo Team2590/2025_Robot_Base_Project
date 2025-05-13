@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.RobotState;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.NemesisMathUtil;
 import org.littletonrobotics.junction.Logger;
@@ -45,7 +46,7 @@ public class MoveToHandoffCommand extends Command {
     double elevatorThreshold = minElevatorHeight.get();
 
     if (currentElevatorPos < elevatorThreshold) {
-      RobotContainer.getArm().getIO().setPosition(this.armStowSetpoint);
+      RobotContainer.getArm().getIO().setPosition(RobotState.getInstance().getStowSetpoint());
     } else {
       RobotContainer.getArm().getIO().setPosition(this.targetArmSetpoint);
     }

@@ -34,7 +34,7 @@ class NetworkTableClient {
   public void connect() {
     if (networkTable.isConnected()) {
       // Already connected
-      System.out.println(" -- Already Connected -- ");
+      // System.out.println(" -- Already Connected -- ");
       return;
     }
     networkTable.setServer("localhost");
