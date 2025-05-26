@@ -51,9 +51,10 @@ import frc.robot.subsystems.climb.ClimbIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIO;
-import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
+import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
@@ -76,6 +77,9 @@ import frc.robot.util.NemesisAutoBuilder.ReefTarget;
 import java.util.List;
 import java.util.Set;
 import lombok.Getter;
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -108,6 +112,7 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+  private SwerveDriveSimulation driveSimulation = null;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -117,10 +122,10 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIOPigeon2(),
-                new ModuleIOTalonFX(constantsWrapper.FrontLeft, constantsWrapper),
-                new ModuleIOTalonFX(constantsWrapper.FrontRight, constantsWrapper),
-                new ModuleIOTalonFX(constantsWrapper.BackLeft, constantsWrapper),
-                new ModuleIOTalonFX(constantsWrapper.BackRight, constantsWrapper),
+                new ModuleIOTalonFXReal(constantsWrapper.FrontLeft, constantsWrapper),
+                new ModuleIOTalonFXReal(constantsWrapper.FrontRight, constantsWrapper),
+                new ModuleIOTalonFXReal(constantsWrapper.BackLeft, constantsWrapper),
+                new ModuleIOTalonFXReal(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
         vision =
             new Vision(
@@ -158,10 +163,10 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIOPigeon2(),
-                new ModuleIOTalonFX(constantsWrapper.FrontLeft, constantsWrapper),
-                new ModuleIOTalonFX(constantsWrapper.FrontRight, constantsWrapper),
-                new ModuleIOTalonFX(constantsWrapper.BackLeft, constantsWrapper),
-                new ModuleIOTalonFX(constantsWrapper.BackRight, constantsWrapper),
+                new ModuleIOTalonFXReal(constantsWrapper.FrontLeft, constantsWrapper),
+                new ModuleIOTalonFXReal(constantsWrapper.FrontRight, constantsWrapper),
+                new ModuleIOTalonFXReal(constantsWrapper.BackLeft, constantsWrapper),
+                new ModuleIOTalonFXReal(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
         vision =
             new Vision(
@@ -208,10 +213,10 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIOPigeon2() {},
-                new ModuleIOTalonFX(constantsWrapper.FrontLeft, constantsWrapper),
-                new ModuleIOTalonFX(constantsWrapper.FrontRight, constantsWrapper),
-                new ModuleIOTalonFX(constantsWrapper.BackLeft, constantsWrapper),
-                new ModuleIOTalonFX(constantsWrapper.BackRight, constantsWrapper),
+                new ModuleIOTalonFXReal(constantsWrapper.FrontLeft, constantsWrapper),
+                new ModuleIOTalonFXReal(constantsWrapper.FrontRight, constantsWrapper),
+                new ModuleIOTalonFXReal(constantsWrapper.BackLeft, constantsWrapper),
+                new ModuleIOTalonFXReal(constantsWrapper.BackRight, constantsWrapper),
                 constantsWrapper);
         arm =
             new Arm(
@@ -293,14 +298,29 @@ public class RobotContainer {
                 Constants.LEDConstantsLeonidas.halfWay);
         break;
       case SIM:
+        driveSimulation =
+            new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+        SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
         drive =
             new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(constantsWrapper.FrontLeft, constantsWrapper),
-                new ModuleIOSim(constantsWrapper.FrontRight, constantsWrapper),
-                new ModuleIOSim(constantsWrapper.BackLeft, constantsWrapper),
-                new ModuleIOSim(constantsWrapper.BackRight, constantsWrapper),
+                new GyroIOSim(driveSimulation.getGyroSimulation()),
+                new ModuleIOTalonFXSim(
+                    constantsWrapper.FrontLeft, driveSimulation.getModules()[0], constantsWrapper),
+                new ModuleIOTalonFXSim(
+                    constantsWrapper.FrontRight, driveSimulation.getModules()[1], constantsWrapper),
+                new ModuleIOTalonFXSim(
+                    constantsWrapper.BackLeft, driveSimulation.getModules()[2], constantsWrapper),
+                new ModuleIOTalonFXSim(
+                    constantsWrapper.BackRight, driveSimulation.getModules()[3], constantsWrapper),
                 constantsWrapper);
+        // drive =
+        //     new Drive(
+        //         new GyroIO() {},
+        //         new ModuleIOSim(constantsWrapper.FrontLeft, constantsWrapper),
+        //         new ModuleIOSim(constantsWrapper.FrontRight, constantsWrapper),
+        //         new ModuleIOSim(constantsWrapper.BackLeft, constantsWrapper),
+        //         new ModuleIOSim(constantsWrapper.BackRight, constantsWrapper),
+        //         constantsWrapper);
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -428,6 +448,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindingsSimulation() {
+    SimulatedArena.getInstance().resetFieldForAuto();
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
     leftJoystick.button(1).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
@@ -701,5 +722,24 @@ public class RobotContainer {
 
   public static CommandXboxController getOperatorController() {
     return controller;
+  }
+
+  public void resetSimulationField() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    driveSimulation.setSimulationWorldPose(new Pose2d(3, 3, new Rotation2d()));
+    SimulatedArena.getInstance().resetFieldForAuto();
+  }
+
+  public void updateSimulation() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    SimulatedArena.getInstance().simulationPeriodic();
+    Logger.recordOutput(
+        "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
+    Logger.recordOutput(
+        "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+    Logger.recordOutput(
+        "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
   }
 }
