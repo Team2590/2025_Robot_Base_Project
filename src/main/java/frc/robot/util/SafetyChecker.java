@@ -34,13 +34,13 @@ public class SafetyChecker {
         // movingPosition is arm position
         // otherPosition is elevator position
         if (!isArmInOperationalRange(movingPosition)) {
-          System.out.println(
-              "Arm is out of operational range, movingPosition: "
-                  + movingPosition
-                  + " operational range: "
-                  + Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS
-                  + " to "
-                  + Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS);
+          // System.out.println(
+          //     "Arm is out of operational range, movingPosition: "
+          //         + movingPosition
+          //         + " operational range: "
+          //         + Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS
+          //         + " to "
+          //         + Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS);
           return false; // trying to overshoot the arm position's capabilities
         }
 
@@ -51,13 +51,13 @@ public class SafetyChecker {
         // movingPosition is elevator position
         // otherPosition is arm position
         if (!isElevatorInOperationalRange(movingPosition)) {
-          System.out.println(
-              "Elevator is out of operational range, movingPosition: "
-                  + movingPosition
-                  + " operational range: "
-                  + Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS
-                  + " to "
-                  + Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS);
+          // System.out.println(
+          //     "Elevator is out of operational range, movingPosition: "
+          //         + movingPosition
+          //         + " operational range: "
+          //         + Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MIN_POS
+          //         + " to "
+          //         + Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS);
           return false; // outside elevators capabilities
         }
 
@@ -65,19 +65,19 @@ public class SafetyChecker {
 
       case INTAKE_MOVEMENT:
         if (!isIntakeInOperationalRange(movingPosition)) {
-          System.out.println(
-              "Intake is out of operational range, movingPosition: "
-                  + movingPosition
-                  + " operational range: "
-                  + Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MIN_POS
-                  + " to "
-                  + Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MAX_POS);
+          // System.out.println(
+          //     "Intake is out of operational range, movingPosition: "
+          //         + movingPosition
+          //         + " operational range: "
+          //         + Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MIN_POS
+          //         + " to "
+          //         + Constants.IntakeArmConstantsLeonidas.INTAKE_OPERATIONAL_MAX_POS);
           return false;
         }
         return true;
 
       default:
-        System.out.println("cry cry somehow you're not working --> " + checkType);
+        // System.out.println("cry cry somehow you're not working --> " + checkType);
         return false;
     }
   }
@@ -95,15 +95,16 @@ public class SafetyChecker {
             // && isSafe(MechanismType.INTAKE_MOVEMENT, intakeSetpoint)
             && isSafe(MechanismType.ELEVATOR_MOVEMENT, elevatorSetpoint);
     if (!elevatorOperational(elevatorSetpoint, armSetpoint)) {
-      System.out.println(" \n \n ELEVATOR AND ARM BELOW HAND OFF POS (DANGER) \n \n");
+      // System.out.println(" \n \n ELEVATOR AND ARM BELOW HAND OFF POS (DANGER) \n \n");
     }
     // if (!isSafe(MechanismType.INTAKE_MOVEMENT, intakeSetpoint)) {
     //   System.out.println("intake very sad very DANGEROUS \n INTAKE NOT IN OPERATIONAL ZONE");
     // }
-    System.out.println("arm is safe?: " + isSafe(MechanismType.ARM_MOVEMENT, armSetpoint));
-    System.out.println("intake is safe?: " + isSafe(MechanismType.INTAKE_MOVEMENT, intakeSetpoint));
-    System.out.println(
-        "elevator is safe?: " + isSafe(MechanismType.ELEVATOR_MOVEMENT, elevatorSetpoint));
+    // System.out.println("arm is safe?: " + isSafe(MechanismType.ARM_MOVEMENT, armSetpoint));
+    // System.out.println("intake is safe?: " + isSafe(MechanismType.INTAKE_MOVEMENT,
+    // intakeSetpoint));
+    // System.out.println(
+    //     "elevator is safe?: " + isSafe(MechanismType.ELEVATOR_MOVEMENT, elevatorSetpoint));
     return subsystemsOperational && elevatorOperational(elevatorSetpoint, armSetpoint);
   }
 

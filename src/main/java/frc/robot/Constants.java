@@ -268,32 +268,46 @@ public final class Constants {
     public static final double ARM_VERTICAL_POS = .25;
     // public static final double magOffset = -.596436; // -.398
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
-    public static final double magOffset =
-        .146; // .142; // -0.15; // -0.379; // -.3347; // -.635; // TODO
+    public static final double magOffset = .455; // -.474;
+    // -0.412; // 0; // 0.324; // 0.385; // 0; // .454; // 0; // -.473;
+    // .146; // .142; // -0.15; // -0.379; // -.3347; // -.635; // TODO
     public static final double sensorReduction = 58.8; // TODO
     public static final double BACK_HORIZONTAL = 0.5;
-    public static final double ARM_PROCESSOR_POS = 0;
-    public static final double ARM_PROCESSOR_POS_BACK = 0.5;
     public static final double ARM_OPERATIONAL_MIN_POS = -.5;
-    public static final double ARM_OPERATIONAL_MAX_POS = 1;
-    public static final double ARM_SCORING_CORAL_POS_L2_PRE = 0.15;
-    public static final double ARM_SCORING_CORAL_POSE_L2_POST = 0.015;
-    public static final double ARM_SCORING_CORAL_POS_L3_PRE = 0.15;
-    public static final double ARM_SCORING_CORAL_POSE_L3_POST = 0;
+    public static final double ARM_OPERATIONAL_MAX_POS = 2;
     public static final double ARM_RELEASE_DIFF = 0.078;
-    public static final double ARM_SCORING_CORAL_POS_L4 = ARM_SET_STOW; // TODO
+    public static final double ARM_SCORING_CORAL_POS_L4 = ARM_SET_STOW; // .TODO
     public static final double ARM_SCORING_CORAL_POSE_L4_POST = 0;
     public static final double ARM_INTAKE_SOURCE_POSITION = .18; // TODO
     public static final double ARM_DEALGAE_POSITION = 0.012;
     public static final double ARM_DEALGAE_POST = 0;
     public static final double ARM_DEALGAE_PRE = 0;
     public static final double ARM_INTAKE_ALGAE_POS = .53;
-    public static final double ARM_BARGE_POS = .175; // TODO: find real value
-    public static final double ARM_BARGE_POS_BACK = .325; // TODO: find real value
+    public static final double ARM_BARGE_FRONT_FRONT_POS = .175; // TODO: find real value
+    public static final double ARM_BARGE_FRONT_BACK_POS = .325; // TODO: find real value
+    public static final double ARM_BARGE_BACK_FRONT_POS = 1.175; // TODO: find real value
+    public static final double ARM_BARGE_BACK_BACK_POS = 1.325; // TODO: find real valu
     // public static final double ARM_SCORING_POS = .7; // TODO: find real value
     public static final double ARM_WRAP_POS = 0.794;
     public static final double ARM_HANDOFF_POS = 0.75;
-    public static final double ARM_THRESHOLD_POS = .63;
+    public static final double ARM_FRONT_THRESHOLD_POS = .63;
+    public static final double ARM_BACK_THRESHOLD_POS = .87;
+    public static final double ARM_STOW_FRONT = 0.25;
+    public static final double ARM_SCORE_FRONT_FRONT_PRE = 0.15;
+    public static final double ARM_SCORE_FRONT_FRONT_POST = 0.015;
+    public static final double ARM_DEALGAE_FRONT_FRONT = 0;
+    public static final double ARM_SCORE_FRONT_BACK_PRE = 0.35;
+    public static final double ARM_SCORE_FRONT_BACK_POST = 0.485;
+    public static final double ARM_DEALGAE_FRONT_BACK = 0.5;
+    public static final double ARM_STOW_BACK = 1.25;
+    public static final double ARM_SCORE_BACK_FRONT_PRE = 1.15;
+    public static final double ARM_SCORE_BACK_FRONT_POST = 1.015;
+    public static final double ARM_DEALGAE_BACK_FRONT = 1;
+    public static final double ARM_SCORE_BACK_BACK_PRE = 1.35;
+    public static final double ARM_SCORE_BACK_BACK_POST = 1.485;
+    public static final double ARM_DEALGAE_BACK_BACK = 1.5;
+    public static final double ARM_PICKUP_FRONT_BACK_POS = 0.53;
+    public static final double ARM_PICKUP_BACK_BACK_POS = 1.53;
   }
 
   public static class ElevatorConstantsLeonidas {
@@ -311,12 +325,13 @@ public final class Constants {
     public static final boolean followerOpposeLeader = false;
     public static final double kS = 0.59545; // TODO
     public static final double kV = 0.1609; // TODO
-    public static final double ELEVATOR_HANDOFF_POS = 16;
-    public static final double ELEVATOR_PROCESSOR_POS = 1 + 1.5;
+    public static final double ELEVATOR_HANDOFF_POS = 16.75;
+    public static final double ELEVATOR_HANDOFF_PRE_POS = 14.2;
+    public static final double ELEVATOR_PROCESSOR_POS = 1 + 1.5 + 1.5;
     public static final double ELEVATOR_STOW_POS = 1;
     public static final double ELEVATOR_L2_POS = 3; // TODO
     public static final double ELEVATOR_L3_POS = 11.35; // TODO
-    public static final double ELEVATOR_L4_POS = 25.0; // TODO
+    public static final double ELEVATOR_L4_POS = 25.0 - .5 - .5 - 1; // TODO
     public static final double ELEVATOR_DEALGAE_L2 = 12; // TODO
     public static final double ELEVATOR_DEALGAE_L3 = 19.76; // TODO
     public static final double ELEVATOR_SOURCE_POS = 5.15; // TODO
@@ -353,8 +368,9 @@ public final class Constants {
     public static final double reduction = 1;
     public static final double INTAKE_VOLTAGE = 12;
     public static final double OUTTAKE_VOLTAGE = -12;
-    public static final double INTAKE_ALGAE_VOLTAGE = -8;
-    public static final double HOLD_ALGAE_VOLTAGE = -1;
+    public static final double INTAKE_ALGAE_VOLTAGE = -12;
+    public static final double HOLD_ALGAE_VOLTAGE = -0.75;
+    public static final double HOLD_CORAL_VOLTAGE = -.25;
     public static final int PROX_CHANNEL = 0;
   }
 

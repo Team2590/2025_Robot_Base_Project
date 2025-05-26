@@ -54,8 +54,9 @@ public class RobotState extends SubsystemBase {
           Level.DEALGAE_L2.getElevatorSetpoint(),
           Level.DEALGAE_L2.getarmPreScoreSetpoint(),
           Level.DEALGAE_L2.getArmScoringSetpoint());
-  private double bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS;
+  private double bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_FRONT_POS;
   private double processorArmPos = 0;
+  private double groundPickupArmPos = 0;
 
   private HashMap<String, Double> smartDeAlgaeSetpoints = new HashMap<>();
 
@@ -74,6 +75,11 @@ public class RobotState extends SubsystemBase {
   public static enum ProcessorScoringState {
     PROCESSOR_FRONT,
     PROCESSOR_BACK,
+  }
+
+  public static enum ReefTargetSide {
+    LEFT,
+    RIGHT,
   }
 
   public static class ScoringSetpoints {
@@ -95,9 +101,10 @@ public class RobotState extends SubsystemBase {
   private AtomicReference<ProcessorScoringState> processorState =
       new AtomicReference<ProcessorScoringState>(ProcessorScoringState.PROCESSOR_FRONT);
   private AligningState previousAligningState = AligningState.NOT_ALIGNING;
+  private boolean hasAlgae = false;
   private final Lock updateLock = new ReentrantLock();
 
-  private boolean hasAlgae = false;
+  // private boolean hasAlgae = false;
 
   private RobotState(
       Arm arm,
@@ -115,13 +122,13 @@ public class RobotState extends SubsystemBase {
     this.vision = vision;
     this.controllerApp = controllerApp;
 
-    smartDeAlgaeSetpoints.put("N_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2);
-    smartDeAlgaeSetpoints.put("NW_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
-    smartDeAlgaeSetpoints.put("NE_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
-    smartDeAlgaeSetpoints.put("NW_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
-    smartDeAlgaeSetpoints.put("SE_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2);
-    smartDeAlgaeSetpoints.put("SW_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2);
-    smartDeAlgaeSetpoints.put("S_", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
+    smartDeAlgaeSetpoints.put("N", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2);
+    smartDeAlgaeSetpoints.put("NW", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
+    smartDeAlgaeSetpoints.put("NE", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
+    smartDeAlgaeSetpoints.put("NW", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
+    smartDeAlgaeSetpoints.put("SE", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2);
+    smartDeAlgaeSetpoints.put("SW", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L2);
+    smartDeAlgaeSetpoints.put("S", Constants.ElevatorConstantsLeonidas.ELEVATOR_DEALGAE_L3);
   }
 
   /**
@@ -178,16 +185,40 @@ public class RobotState extends SubsystemBase {
       setAligningStateBasedOnTargetPose(() -> controllerApp.getTarget().pose());
       updateScoringConfigurationSimple(
           () -> controllerApp.getTarget().pose(), () -> controllerApp.getTarget().scoringLevel());
+      // Logger.recordOutput(
+      //     "RobotState/ScoringTarget", controllerApp.getTarget().scoringLevel().name());
+      // Logger.recordOutput("RobotState/ScoringSide", controllerApp.getReefSide());
     } finally {
       updateLock.unlock();
     }
     if (!endEffector.hasGamePiece()) {
       clearEndEffectorHasGamePiece();
+      // setHasAlgae(false);
     } else {
       hasGamePiece = true;
     }
     Logger.recordOutput("RobotState/EndEffectorHasGamePiece", hasGamePiece);
     // setBargeProcessorAlignment();
+  }
+
+  public double getStowSetpoint() {
+    double SETPOINT_TOLERANCE = 0.05;
+
+    if (NemesisMathUtil.isApprox(
+        RobotContainer.getArm().getAbsolutePosition(),
+        SETPOINT_TOLERANCE,
+        Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)) {
+      if (aligningState.get() == AligningState.ALIGNING_FRONT) {
+        return Constants.ArmConstantsLeonidas.ARM_STOW_FRONT;
+      } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
+        return Constants.ArmConstantsLeonidas.ARM_STOW_BACK;
+      }
+    }
+
+    return RobotContainer.getArm().getAbsolutePosition()
+            < Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS + SETPOINT_TOLERANCE
+        ? Constants.ArmConstantsLeonidas.ARM_STOW_FRONT
+        : Constants.ArmConstantsLeonidas.ARM_STOW_BACK;
   }
 
   /**
@@ -254,16 +285,22 @@ public class RobotState extends SubsystemBase {
     }
   }
 
-  public double getEndEffectorCurrent() {
-    if (hasAlgae) {
-      return -1;
-    } else {
-      return 0;
+  public void setHasAlgae(boolean v) {
+    updateLock.lock();
+    try {
+      hasAlgae = v;
+    } finally {
+      updateLock.unlock();
     }
   }
 
-  public void setHasAlgae(boolean v) {
-    hasAlgae = v;
+  public boolean hasAlgae() {
+    updateLock.lock();
+    try {
+      return hasAlgae;
+    } finally {
+      updateLock.unlock();
+    }
   }
 
   public void resetAligningState() {
@@ -278,6 +315,23 @@ public class RobotState extends SubsystemBase {
     hasGamePiece = false;
   }
 
+  public static boolean intakeHasCoral() {
+    return RobotContainer.getIntake().hasCoral();
+  }
+
+  public static boolean intakeDetectsCoral() {
+    return RobotContainer.getIntake().detectCoral();
+  }
+
+  public double getGroundPickupArmPos() {
+    updateLock.lock();
+    try {
+      return groundPickupArmPos;
+    } finally {
+      updateLock.unlock();
+    }
+  }
+
   private void updateScoringConfigurationSimple(
       Supplier<Pose2d> originalTargetPose, Supplier<Level> elevatorSetpoint) {
     if (DriverStation.isAutonomous()) {
@@ -285,46 +339,99 @@ public class RobotState extends SubsystemBase {
       return;
     }
 
-    if (shouldScoreFrontBarge()) {
-      bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS;
-    } else {
-      bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_POS_BACK;
-    }
+    Logger.recordOutput("RobotState/ScoringLevel", elevatorSetpoint.get().name());
 
     coralScoringSetpoints.elevatorSetpoint = elevatorSetpoint.get().getElevatorSetpoint();
 
+    double SETPOINT_TOLERANCE = 0.05;
+
+    // spotless:off
+
     if (aligningState.get() == AligningState.ALIGNING_FRONT) {
-      coralScoringSetpoints.armSetpoint =
-          Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE; // .15
-      coralScoringSetpoints.armPlaceSetpoint =
-          Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST; // 0
-      dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_PRE; // 0
-      dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_POST; // 0
+      if (RobotContainer.getArm().getAbsolutePosition() < Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS + SETPOINT_TOLERANCE) {
+        coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_FRONT_PRE;
+        coralScoringSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_FRONT_POST;
+        dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_FRONT;
+        dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_FRONT;
+      } else if (RobotContainer.getArm().getAbsolutePosition() > Constants.ArmConstantsLeonidas.ARM_SCORE_BACK_FRONT_PRE - SETPOINT_TOLERANCE) {
+        coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_BACK_FRONT_PRE;
+        coralScoringSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_BACK_FRONT_POST;
+        dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_FRONT;
+        dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_FRONT;
+      }
     } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
-      coralScoringSetpoints.armSetpoint =
-          Constants.ArmConstantsLeonidas.BACK_HORIZONTAL
-              - Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POS_L2_PRE; // .5 - .15
-      coralScoringSetpoints.armPlaceSetpoint =
-          Constants.ArmConstantsLeonidas.BACK_HORIZONTAL
-              - Constants.ArmConstantsLeonidas.ARM_SCORING_CORAL_POSE_L2_POST; // .5 - 0
-      dealgaeSetpoints.armSetpoint =
-          Constants.ArmConstantsLeonidas.BACK_HORIZONTAL
-              - Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION; // .5 - 0
-      dealgaeSetpoints.armPlaceSetpoint =
-          Constants.ArmConstantsLeonidas.ARM_DEALGAE_POSITION
-              - Constants.ArmConstantsLeonidas.ARM_DEALGAE_POST; // .5 - 0
+      if (RobotContainer.getArm().getAbsolutePosition() < Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_PRE + SETPOINT_TOLERANCE) {
+        coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_PRE;
+        coralScoringSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_POST;
+        dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_BACK;
+        dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_BACK;
+      } else if (RobotContainer.getArm().getAbsolutePosition() > Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS - SETPOINT_TOLERANCE) {
+        coralScoringSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_BACK_BACK_PRE;
+        coralScoringSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_SCORE_BACK_BACK_POST;
+        dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
+        dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
+      }
     }
+
+    if (NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)) {
+      if (aligningState.get() == AligningState.ALIGNING_FRONT) {
+        dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_FRONT;
+        dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_FRONT;
+      } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
+        dealgaeSetpoints.armSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
+        dealgaeSetpoints.armPlaceSetpoint = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
+      }
+    }
+
+    if (shouldScoreFrontBarge()) {
+      if (NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, Constants.ArmConstantsLeonidas.ARM_STOW_FRONT)) {
+        bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_FRONT_POS;
+      } else if (NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, Constants.ArmConstantsLeonidas.ARM_STOW_BACK)) {
+        bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_BACK_FRONT_POS;
+      } else if (RobotContainer.getArm().getAbsolutePosition() > Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS) {
+        bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_BACK_FRONT_POS;
+      } else {
+        bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_FRONT_POS;
+      }
+    } else {
+      if (NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, Constants.ArmConstantsLeonidas.ARM_STOW_FRONT)) {
+        bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_BACK_POS;
+      } else if (NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, Constants.ArmConstantsLeonidas.ARM_STOW_BACK)) {
+        bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_BACK_BACK_POS;
+      } else if (RobotContainer.getArm().getAbsolutePosition() > Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS) {
+        bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_BACK_BACK_POS;
+      } else {
+        bargeArmPos = Constants.ArmConstantsLeonidas.ARM_BARGE_FRONT_BACK_POS;
+      }
+    }
+
+    // same logic as dealgae
+    if (shouldScoreFrontProcessor()) {
+      if (RobotContainer.getArm().getAbsolutePosition() > Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS) {
+        processorArmPos = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_FRONT;
+      } else {
+        processorArmPos = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_FRONT;
+      }
+    } else {
+      if (RobotContainer.getArm().getAbsolutePosition() > Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS) {
+        processorArmPos = Constants.ArmConstantsLeonidas.ARM_DEALGAE_BACK_BACK;
+      } else {
+        processorArmPos = Constants.ArmConstantsLeonidas.ARM_DEALGAE_FRONT_BACK;
+      }
+    }
+
+    if (RobotContainer.getArm().getAbsolutePosition() < 0.76) {
+      groundPickupArmPos = Constants.ArmConstantsLeonidas.ARM_PICKUP_FRONT_BACK_POS;
+    } else {
+      groundPickupArmPos = Constants.ArmConstantsLeonidas.ARM_PICKUP_BACK_BACK_POS;
+    }
+
+    // spotless:on
 
     targetPose = drive.flipScoringSide(originalTargetPose.get());
 
     if (aligningState.get() == AligningState.ALIGNING_BACK) {
       targetPose = FieldConstants.convertBackScoring(targetPose);
-    }
-
-    if (processorState.get() == ProcessorScoringState.PROCESSOR_FRONT) {
-      processorArmPos = Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS;
-    } else {
-      processorArmPos = Constants.ArmConstantsLeonidas.ARM_PROCESSOR_POS;
     }
 
     Logger.recordOutput("RobotState/Pose", targetPose);
@@ -340,6 +447,10 @@ public class RobotState extends SubsystemBase {
         "RobotState/algaeScoringPlaceSetpoint", algaeScoringSetpoints.armPlaceSetpoint);
     Logger.recordOutput("RobotState/bargeArmSetpoint", bargeArmPos);
     Logger.recordOutput("RobotState/processorArmSetpoint", processorArmPos);
+    Logger.recordOutput("RobotState/groundPickupSetpint", groundPickupArmPos);
+    Logger.recordOutput("RobotState/hasAlgae", hasAlgae);
+    Logger.recordOutput("RobotState/NearestReefKey", controllerApp.determineCompassDirection());
+    Logger.recordOutput("RobotState/scoreProcessorFront", shouldScoreFrontProcessor());
   }
 
   public Pose2d getTargetPose() {
@@ -387,16 +498,11 @@ public class RobotState extends SubsystemBase {
 
       ScoringSetpoints setpoint_copy = dealgaeSetpoints;
 
-      String key = controllerApp.getMoveTo();
-      for (String side : smartDeAlgaeSetpoints.keySet()) {
+      String key = controllerApp.determineCompassDirection();
+      setpoint_copy.elevatorSetpoint = smartDeAlgaeSetpoints.get(key);
 
-        if (key.contains(side)) {
-          setpoint_copy.elevatorSetpoint = smartDeAlgaeSetpoints.get(side);
-        }
-      }
-      // setpoint_copy.elevatorSetpoint = level.getElevatorSetpoint();
       Logger.recordOutput("RobotState/SmartDealgaeAcutal", setpoint_copy.elevatorSetpoint);
-      System.out.println("Dealgae Setpoint is+ " + setpoint_copy.elevatorSetpoint);
+      // System.out.println("Dealgae Setpoint is+ " + setpoint_copy.elevatorSetpoint);
       return setpoint_copy;
     } finally {
       updateLock.unlock();
@@ -481,13 +587,27 @@ public class RobotState extends SubsystemBase {
       robotHeadingDegrees += 360;
     }
 
-    if (DriverStation.getAlliance().isPresent()) {
-      if (DriverStation.getAlliance().get() == Alliance.Blue) {
-        return robotHeadingDegrees > -90 && robotHeadingDegrees <= 90;
-      } else { // Red Alliance
-        return robotHeadingDegrees > 90 || robotHeadingDegrees <= -90;
-      }
+    // if (DriverStation.getAlliance().isPresent()) {
+    //   if (DriverStation.getAlliance().get() == Alliance.Blue) {
+    //     return robotHeadingDegrees > -90 && robotHeadingDegrees <= 90;
+    //   } else { // Red Alliance
+    //     return robotHeadingDegrees > 90 || robotHeadingDegrees <= -90;
+    //   }
+    // }
+
+    if (RobotContainer.getDrive().getPose().getX() < 8.8) {
+      return robotHeadingDegrees > -90 && robotHeadingDegrees <= 90;
+    } else { // Red Alliance
+      return robotHeadingDegrees > 90 || robotHeadingDegrees <= -90;
     }
-    return true;
+  }
+
+  public static boolean shouldScoreFrontProcessor() {
+    double robotHeadingDegrees = RobotContainer.getDrive().getPose().getRotation().getDegrees();
+    double robotX = RobotContainer.getDrive().getPose().getX();
+
+    // Red alliance side
+    if (robotX <= 8.5) return robotHeadingDegrees <= 0;
+    return robotHeadingDegrees > 0;
   }
 }

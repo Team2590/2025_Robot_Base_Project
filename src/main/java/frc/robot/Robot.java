@@ -71,7 +71,7 @@ public class Robot extends LoggedRobot {
       case Leonidas:
         // Running on a real robot, log to a USB stick ("/U/logs")
         Logger.addDataReceiver(new WPILOGWriter());
-        Logger.addDataReceiver(new NT4Publisher());
+        // Logger.addDataReceiver(new NT4Publisher());
         break;
       case SIM:
         // Running a physics simulator, log to NT
@@ -196,4 +196,12 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+  protected void loopFunc() {
+    try {
+      super.loopFunc();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 }

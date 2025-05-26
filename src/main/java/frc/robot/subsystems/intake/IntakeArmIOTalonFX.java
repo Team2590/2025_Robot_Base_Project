@@ -141,7 +141,7 @@ public class IntakeArmIOTalonFX implements IntakeArmIO {
         leader.setControl(request.withPosition(position));
       }
     } else {
-      System.out.println("CAN'T MOVE INTAKE ARM, SAFETY CHECK FAILED");
+      // System.out.println("CAN'T MOVE INTAKE ARM, SAFETY CHECK FAILED");
     }
   }
 
