@@ -16,7 +16,6 @@ package frc.robot.subsystems.vision;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -25,7 +24,7 @@ import gg.questnav.questnav.QuestNav;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOQuestNav implements VisionIO {
-  public static record CameraConfig(String name, Transform3d robotToCamera) {}
+  public static record QuestConfig(String name) {}
 
   protected final List<QuestThread> questThreads = new ArrayList<>();
   private final Object observationLock = new Object();
@@ -38,20 +37,16 @@ public class VisionIOQuestNav implements VisionIO {
    *
    * @param cameraConfigs List of camera configurations (name and transform)
    */
-  public VisionIOQuestNav(List<CameraConfig> cameraConfigs) {
-    for (CameraConfig config : cameraConfigs) {
-        QuestThread thread = new QuestThread(config.name());
-        questThreads.add(thread);
-    }
+  public VisionIOQuestNav(QuestConfig questConfig) {
+    QuestThread thread = new QuestThread(questConfig.name());
+    questThreads.add(thread);
 
     // Fixes race condition with Alerts being created in PhotonCamera
     // which causes ConcurrentModificationException.
-    for (QuestThread thread : questThreads) {
-      thread.start();
-      try {
-        Thread.sleep(20);
-      } catch (InterruptedException ignore) {
-      }
+    thread.start();
+        try {
+            Thread.sleep(20);
+        } catch (InterruptedException ignore) {
     }
   }
 
@@ -103,7 +98,7 @@ public class VisionIOQuestNav implements VisionIO {
                     timestamp, 
                     robotPose, 
                     0.01, 
-                    1, 
+                    0, 
                     0.1, 
                     PoseObservationType.QUESTNAV)
             );

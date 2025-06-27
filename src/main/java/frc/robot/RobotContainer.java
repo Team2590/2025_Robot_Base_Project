@@ -72,6 +72,8 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.subsystems.vision.VisionIOQuestNav;
+import frc.robot.subsystems.vision.VisionIOQuestNav.QuestConfig;
 import frc.robot.util.NemesisAutoBuilder;
 import frc.robot.util.NemesisAutoBuilder.ReefTarget;
 import java.util.List;
@@ -127,6 +129,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 null,
+                new VisionIOQuestNav(new QuestConfig("QuestNav")),
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
@@ -168,6 +171,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 null,
+                new VisionIOQuestNav(new QuestConfig("QuestNav")),
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
@@ -243,6 +247,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new CoralIOPhotonVision(),
+                new VisionIOQuestNav(new QuestConfig("QuestNav")),
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
@@ -306,6 +311,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new CoralDetectionIOSim(),
+                null,
                 new VisionIOPhotonVisionSim(
                     List.of(
                         new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
@@ -342,6 +348,7 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 null,
+                new VisionIOQuestNav(new QuestConfig("QuestNav")),
                 new VisionIOPhotonVision(
                     List.of(
                         new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),

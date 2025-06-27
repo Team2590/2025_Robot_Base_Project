@@ -38,14 +38,16 @@ public class Vision extends SubsystemBase {
   private final CoralDetectionIO coralDetectionIO;
   private final CoralDetectionIOInputsAutoLogged coralDetectionInputs =
       new CoralDetectionIOInputsAutoLogged();
+  private final VisionIOQuestNav questNavIO;
 
-  public Vision(VisionConsumer consumer, CoralDetectionIO coralDetectionIOInput, VisionIO... io) {
+  public Vision(VisionConsumer consumer, CoralDetectionIO coralDetectionIOInput, VisionIOQuestNav questNavInputs, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
     this.coralDetectionIO = coralDetectionIOInput;
+    this.questNavIO = questNavInputs;
 
     // Initialize inputs
-    this.inputs = new VisionIOInputsAutoLogged[io.length];
+    this.inputs = new VisionIOInputsAutoLogged[io.length + 1]; // +1 for QuestNav
     for (int i = 0; i < inputs.length; i++) {
       inputs[i] = new VisionIOInputsAutoLogged();
     }
@@ -70,10 +72,16 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // Photonvision
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
     }
+
+    // QuestNav
+    int questNavIndex = io.length;
+    questNavIO.updateInputs(inputs[questNavIndex]);
+    Logger.processInputs("Vision/QuestNav", inputs[questNavIndex]);
 
     // Initialize logging values
     List<Pose3d> allTagPoses = new LinkedList<>();
@@ -82,7 +90,7 @@ public class Vision extends SubsystemBase {
     List<Pose3d> allRobotPosesRejected = new LinkedList<>();
 
     // Loop over cameras
-    for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
+    for (int cameraIndex = 0; cameraIndex < inputs.length; cameraIndex++) {
       // Update disconnected alert
       // disconnectedAlerts[cameraIndex].set(!inputs[cameraIndex].connected);
 
@@ -104,6 +112,7 @@ public class Vision extends SubsystemBase {
       for (var observation : inputs[cameraIndex].poseObservations) {
         // Check whether to reject pose
         boolean rejectPose =
+          !(observation.type() == PoseObservationType.QUESTNAV) || 
             observation.tagCount() == 0 // Must have at least one tag
                 || (observation.tagCount() == 1
                     && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
@@ -115,7 +124,6 @@ public class Vision extends SubsystemBase {
                 || observation.pose().getX() > aprilTagLayout.getFieldLength()
                 || observation.pose().getY() < 0.0
                 || observation.pose().getY() > aprilTagLayout.getFieldWidth();
-
         // Add pose to log
         robotPoses.add(observation.pose());
         if (rejectPose) {
@@ -137,8 +145,10 @@ public class Vision extends SubsystemBase {
         if (observation.type() == PoseObservationType.MEGATAG_2) {
           linearStdDev *= linearStdDevMegatag2Factor;
           angularStdDev *= angularStdDevMegatag2Factor;
-        }
-        if (cameraIndex < cameraStdDevFactors.length) {
+        } else if (observation.type() == PoseObservationType.QUESTNAV){
+          linearStdDev = 0.02;
+          angularStdDev = 0.035;
+        } else if (cameraIndex < cameraStdDevFactors.length) {
           linearStdDev *= cameraStdDevFactors[cameraIndex];
           angularStdDev *= cameraStdDevFactors[cameraIndex];
         }
@@ -151,9 +161,16 @@ public class Vision extends SubsystemBase {
       }
 
       // Log camera datadata
-      Logger.recordOutput(
+      if(cameraIndex == questNavIndex){
+        Logger.recordOutput(
+          "Vision/QuestNav/RobotPoses",
+          robotPoses.toArray(new Pose3d[robotPoses.size()]));
+      } else {
+        Logger.recordOutput(
           "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
           robotPoses.toArray(new Pose3d[robotPoses.size()]));
+      }
+      
       Logger.processInputs("Vision/CoralDetection", coralDetectionInputs);
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);
