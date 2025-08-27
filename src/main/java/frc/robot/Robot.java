@@ -17,6 +17,8 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.pathplanner.lib.commands.PathfindingCommand;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -130,6 +132,25 @@ public class Robot extends LoggedRobot {
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
     FieldConstants.updateTunableNumbers();
+    Logger.recordOutput("Cal/RobotPose", new Pose2d());
+    Logger.recordOutput(
+        "Cal/ZeroedComponentPoses",
+        new Pose3d[] {new Pose3d(), new Pose3d(), new Pose3d(), new Pose3d()});
+    Logger.recordOutput(
+        "Cal/FinalComponentPoses",
+        new Pose3d[] {
+          // new Pose3d(
+          //     new Translation3d(-0.365, -0.435, 0.155),
+          //     new Rotation3d(
+          //         Radians.convertFrom(90, Degrees), 0, Radians.convertFrom(90, Degrees))),
+          // new Pose3d(),
+          // new Pose3d(
+          //     new Translation3d(0.13, 0, 0.08),
+          //     new Rotation3d(Radians.convertFrom(90, Degrees), 0, 0))
+          // new Pose3d(),
+          // new Pose3d(),
+          // new Pose3d(new Translation3d(0, 0, -(Timer.getTimestamp() * 0.1)), new Rotation3d())
+        });
   }
 
   /** This function is called once when the robot is disabled. */
