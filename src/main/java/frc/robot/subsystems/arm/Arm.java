@@ -24,7 +24,7 @@ public class Arm extends SubsystemBase {
     Logger.processInputs("Arm", inputs);
 
     // Log current position and target position
-    Logger.recordOutput("Arm/CurrentPosition", inputs.armpos);
+    // Logger.recordOutput("Arm/CurrentPosition", inputs.armpos);
     Logger.recordOutput("Arm/TargetPosition", setpoint);
   }
 
