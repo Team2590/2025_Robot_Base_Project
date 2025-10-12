@@ -210,17 +210,20 @@ public class RobotState extends SubsystemBase {
 
   public void updateComponentPoses() {
     Translation3d[] elevatorTranslations = elevator.getElevatorTranslations();
-    componentPoses =
-        new Pose3d[] {
-          new Pose3d(elevatorTranslations[0], new Rotation3d()),
-          new Pose3d(elevatorTranslations[1], new Rotation3d()),
-          new Pose3d(
-              elevatorTranslations[1].plus(new Translation3d(0, 0, 0.36)),
-              arm.getArmRotation().rotateBy(new Rotation3d(0, -10 * Math.PI / 180, 0))),
-          new Pose3d()
-        };
-      }
-      
+    Rotation3d armRotation = arm.getArmRotation();
+    if (elevatorTranslations != null && armRotation != null) {
+      componentPoses =
+          new Pose3d[] {
+            new Pose3d(elevatorTranslations[0], new Rotation3d()),
+            new Pose3d(elevatorTranslations[1], new Rotation3d()),
+            new Pose3d(
+                elevatorTranslations[1].plus(new Translation3d(0, 0, 0.36)),
+                arm.getArmRotation().rotateBy(new Rotation3d(0, -10 * Math.PI / 180, 0))),
+            new Pose3d()
+          };
+    }
+  }
+
   public double getStowSetpoint() {
     double SETPOINT_TOLERANCE = 0.05;
 
