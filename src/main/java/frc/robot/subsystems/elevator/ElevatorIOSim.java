@@ -76,7 +76,7 @@ public class ElevatorIOSim implements ElevatorIO {
       requestedPositionMeters = positionMeters;
       elevatorSim.setState(positionMeters, cruiseVelocity.get());
     } else {
-      System.out.println("CAN'T MOVE ELEVATOR (SIM), safety check failed.");
+      // System.out.println("CAN'T MOVE ELEVATOR (SIM), safety check failed.");
     }
   }
 

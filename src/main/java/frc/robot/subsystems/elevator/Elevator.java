@@ -25,7 +25,7 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     io.updateTunableNumbers();
     io.updateInputs(inputs);
-    // Logger.processInputs("Elevator", inputs);
+    Logger.processInputs("Elevator", inputs);
 
     // Log current position and target position
     Logger.recordOutput("Elevator/CurrentPosition", inputs.rotationCount);

@@ -39,9 +39,9 @@ public class FRCPolygon {
     try {
       ppath = PathPlannerPath.fromPathFile(pathPlannername);
     } catch (IOException e) {
-      System.out.println("Error reading File:" + e);
+      // System.out.println("Error reading File:" + e);
     } catch (ParseException e) {
-      System.out.println("Error Parsing File" + e);
+      // System.out.println("Error Parsing File" + e);
     }
 
     List<Translation2d> translations = new ArrayList<>();

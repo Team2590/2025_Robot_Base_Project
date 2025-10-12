@@ -2,7 +2,6 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -43,7 +42,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     intakeIO.updateInputs(intakeInputs);
-    // Logger.processInputs("Intake", intakeInputs);
+    Logger.processInputs("Intake", intakeInputs);
     // intakeDisconnected.set(!intakeInputs.connected);
 
     proxOneFilteredData = proxOneFilter.calculate(proxOne.getValue());
@@ -66,7 +65,7 @@ public class Intake extends SubsystemBase {
 
     public IntakeArm(IntakeArmIO intakeArmIO) {
       this.intakeArmIO = intakeArmIO;
-      // Logger.processInputs("IntakeArm", intakeArmInputs);
+      Logger.processInputs("IntakeArm", intakeArmInputs);
       // intakeArmDisconnected = new Alert("Intake Arm motor disconnected!", Alert.AlertType.kWarning);
     }
 
@@ -95,8 +94,8 @@ public class Intake extends SubsystemBase {
     public Command setPositionBlocking(double position) {
       return runEnd(() -> intakeArmIO.setPosition(position), () -> intakeArmIO.setPosition(position))
           .until(() -> {
-              System.out.println("input position rads:" + intakeArmInputs.positionRads);
-              System.out.println("setpoint" + Units.rotationsToRadians(position));
+              // System.out.println("input position rads:" + intakeArmInputs.positionRads);
+              // System.out.println("setpoint" + Units.rotationsToRadians(position));
               return NemesisMathUtil.isApprox(intakeArmInputs.rotationCount, setpointTolerance, position);
           });
     }
@@ -113,11 +112,11 @@ public class Intake extends SubsystemBase {
   public Command runIntakeUntilHasCoral(double voltage) {
     return runEnd(
             () -> {
-              System.out.println("Starting the intake command now!");
+              // System.out.println("Starting the intake command now!");
               intakeIO.setVoltage(voltage);
             },
             () -> {
-              System.out.println("Stopping the intake command now!");
+              // System.out.println("Stopping the intake command now!");
               intakeIO.stop();
             })
         .until(() -> hasCoral())

@@ -22,10 +22,10 @@ public class Arm extends SubsystemBase {
   public void periodic() {
     arm.updateTunableNumbers();
     arm.updateInputs(inputs);
-    // Logger.processInputs("Arm", inputs);
+    Logger.processInputs("Arm", inputs);
 
     // Log current position and target position
-    Logger.recordOutput("Arm/CurrentPosition", inputs.armpos);
+    // Logger.recordOutput("Arm/CurrentPosition", inputs.armpos);
     Logger.recordOutput("Arm/TargetPosition", setpoint);
   }
 
