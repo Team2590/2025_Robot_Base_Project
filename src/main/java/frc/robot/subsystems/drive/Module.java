@@ -13,8 +13,6 @@
 
 package frc.robot.subsystems.drive;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
@@ -24,6 +22,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 // import edu.wpi.first.wpilibj.Alert;
 // import edu.wpi.first.wpilibj.Alert.AlertType;
+import org.littletonrobotics.junction.Logger;
 
 public class Module {
   private final ModuleIO io;

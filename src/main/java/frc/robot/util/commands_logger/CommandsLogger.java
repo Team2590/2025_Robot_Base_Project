@@ -2,7 +2,6 @@ package frc.robot.util.commands_logger;
 
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.util.ArrayList;
-
 import org.littletonrobotics.junction.Logger;
 
 // spotless:off
