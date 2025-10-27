@@ -314,14 +314,6 @@ public class RobotContainer {
                 new ModuleIOTalonFXSim(
                     constantsWrapper.BackRight, driveSimulation.getModules()[3], constantsWrapper),
                 constantsWrapper);
-        // drive =
-        //     new Drive(
-        //         new GyroIO() {},
-        //         new ModuleIOSim(constantsWrapper.FrontLeft, constantsWrapper),
-        //         new ModuleIOSim(constantsWrapper.FrontRight, constantsWrapper),
-        //         new ModuleIOSim(constantsWrapper.BackLeft, constantsWrapper),
-        //         new ModuleIOSim(constantsWrapper.BackRight, constantsWrapper),
-        //         constantsWrapper);
         vision =
             new Vision(
                 drive::addVisionMeasurement,

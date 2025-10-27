@@ -90,6 +90,6 @@ public class Arm extends SubsystemBase {
   }
 
   public Rotation3d getArmRotation() {
-    return new Rotation3d(0, -inputs.armpos / 0.25 * 90 * Math.PI / 180, 0);
+    return new Rotation3d(0, -inputs.armpos * 2 * Math.PI, 0);
   }
 }
