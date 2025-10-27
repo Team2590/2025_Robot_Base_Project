@@ -48,11 +48,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.generated.TunerConstantsLeonidas;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.LoggedTunableNumber;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import org.ironmaple.simulation.drivesims.COTS;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -200,6 +204,23 @@ public class Drive extends SubsystemBase {
   }
 
   public static String autoCommandMessage = "yap yap"; // need it in some periodic
+
+  public static final DriveTrainSimulationConfig mapleSimConfig =
+      DriveTrainSimulationConfig.Default()
+          .withRobotMass(Kilograms.of(ROBOT_MASS_KG))
+          .withCustomModuleTranslations(getModuleTranslations())
+          .withGyro(COTS.ofPigeon2())
+          .withSwerveModule(
+              new SwerveModuleSimulationConfig(
+                  DCMotor.getKrakenX60(1),
+                  DCMotor.getKrakenX60(1),
+                  TunerConstantsLeonidas.FrontLeft.DriveMotorGearRatio,
+                  TunerConstantsLeonidas.FrontLeft.SteerMotorGearRatio,
+                  Volts.of(TunerConstantsLeonidas.FrontLeft.DriveFrictionVoltage),
+                  Volts.of(TunerConstantsLeonidas.FrontLeft.SteerFrictionVoltage),
+                  Meters.of(TunerConstantsLeonidas.FrontLeft.WheelRadius),
+                  KilogramSquareMeters.of(TunerConstantsLeonidas.FrontLeft.SteerInertia),
+                  WHEEL_COF));
 
   @Override
   public void periodic() {
@@ -419,11 +440,14 @@ public class Drive extends SubsystemBase {
   /** Returns an array of module translations. */
   public static Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
-      new Translation2d(constantsWrapper.FrontLeft.LocationX, constantsWrapper.FrontLeft.LocationY),
       new Translation2d(
-          constantsWrapper.FrontRight.LocationX, constantsWrapper.FrontRight.LocationY),
-      new Translation2d(constantsWrapper.BackLeft.LocationX, constantsWrapper.BackLeft.LocationY),
-      new Translation2d(constantsWrapper.BackRight.LocationX, constantsWrapper.BackRight.LocationY)
+          TunerConstantsLeonidas.FrontLeft.LocationX, TunerConstantsLeonidas.FrontLeft.LocationY),
+      new Translation2d(
+          TunerConstantsLeonidas.FrontRight.LocationX, TunerConstantsLeonidas.FrontRight.LocationY),
+      new Translation2d(
+          TunerConstantsLeonidas.BackLeft.LocationX, TunerConstantsLeonidas.BackLeft.LocationY),
+      new Translation2d(
+          TunerConstantsLeonidas.BackRight.LocationX, TunerConstantsLeonidas.BackRight.LocationY)
     };
   }
 
