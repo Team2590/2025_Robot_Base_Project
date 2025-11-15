@@ -35,7 +35,7 @@ This document outlines the control mappings for both the driver (using joysticks
 - **POV Left**: Grab algae at Level 2
 - **POV Up**: End effector intake voltage
 - **POV Down**: Intake coral outtake (spit)
-- **Trigger**: 
+- **Trigger**:
   - With button 4: Intake algae from ground
   - Without button 4: Intake coral from ground with handoff
 

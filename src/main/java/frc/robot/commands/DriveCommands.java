@@ -472,7 +472,7 @@ public class DriveCommands {
     ySpeedController.setTolerance(Constants.DriveToPoseStraight.YController.tolerance);
     angularSpeedController.setTolerance(Constants.DriveToPoseStraight.ThetaController.tolerance);
 
-    angularSpeedController.enableContinuousInput(-Math.PI, -Math.PI);
+    angularSpeedController.enableContinuousInput(-Math.PI, Math.PI);
 
     return Commands.run(
             () -> {

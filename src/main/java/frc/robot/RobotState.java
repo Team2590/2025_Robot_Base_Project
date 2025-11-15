@@ -193,7 +193,10 @@ public class RobotState extends SubsystemBase {
   public double getStowSetpoint() {
     double SETPOINT_TOLERANCE = 0.05;
 
-    if (NemesisMathUtil.isApprox(RobotContainer.getArm().getAbsolutePosition(), SETPOINT_TOLERANCE, Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)) {
+    if (NemesisMathUtil.isApprox(
+        RobotContainer.getArm().getAbsolutePosition(),
+        SETPOINT_TOLERANCE,
+        Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS)) {
       if (aligningState.get() == AligningState.ALIGNING_FRONT) {
         return Constants.ArmConstantsLeonidas.ARM_STOW_BACK;
       } else if (aligningState.get() == AligningState.ALIGNING_BACK) {
@@ -201,7 +204,8 @@ public class RobotState extends SubsystemBase {
       }
     }
 
-    return RobotContainer.getArm().getAbsolutePosition() < Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS + SETPOINT_TOLERANCE
+    return RobotContainer.getArm().getAbsolutePosition()
+            < Constants.ArmConstantsLeonidas.ARM_HANDOFF_POS + SETPOINT_TOLERANCE
         ? Constants.ArmConstantsLeonidas.ARM_STOW_FRONT
         : Constants.ArmConstantsLeonidas.ARM_STOW_BACK;
   }
