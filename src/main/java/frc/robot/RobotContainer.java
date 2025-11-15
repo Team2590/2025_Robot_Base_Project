@@ -20,8 +20,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -48,6 +46,7 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOSim;
 import frc.robot.subsystems.arm.ArmIOTalonFX;
 import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.climb.ClimbIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -336,7 +335,7 @@ public class RobotContainer {
             new EndEffector(
                 new EndEffectorIOSim(
                     DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
-        climb = null;
+        climb = new Climb(new ClimbIOSim());
         led = new NemesisLED(2, 56, 29);
         break;
 
@@ -430,88 +429,8 @@ public class RobotContainer {
    * uses Subsystems factories which in turn use RobotContainer which is not fully initialized yet
    * since constructor is not fully executed, causing NullPointerExceptions at startup.
    */
-  public void configureButtons() {
-    // Configure the button bindings
-    if (Constants.currentMode == Constants.Mode.SIM) {
-      configureButtonBindingsSimulation();
-    } else {
-      configureButtonBindings();
-      //   configureButtonBindingsTuning();
-    }
-  }
-
-  private void configureButtonBindingsSimulation() {
-    SimulatedArena.getInstance().resetFieldForAuto();
-    // Default drive command using new factory method, replacement for above ^^.
-    drive.setDefaultCommand(DriveFactory.joystickDrive());
-    leftJoystick.button(1).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
-    leftJoystick.button(2).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
-
-    controller.x().onTrue(ControllerFactory.setTargetLevel(Level.L4));
-    controller.b().onTrue(ControllerFactory.setTargetLevel(Level.L2));
-    controller.a().onTrue(ControllerFactory.setTargetLevel(Level.L3));
-    controller.y().onTrue(ControllerFactory.setTargetLevel(Level.L1));
-    controller.leftBumper().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.LEFT));
-    controller.rightBumper().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.RIGHT));
-
-    // leftJoystick
-    //     .button(3)
-    //     .whileTrue(
-    //         DriveCommands.driveToPoseStraight(drive, () ->
-    // FieldConstants.BlueReefPoses.NE_left));
-
-    // Add elevator control bindings
-    leftJoystick
-        .button(4)
-        .onTrue(
-            elevator.setPositionCommand(
-                Constants.ElevatorConstantsLeonidas
-                    .ELEVATOR_OPERATIONAL_MIN_POS)); // Move to home position
-    leftJoystick
-        .button(5)
-        .onTrue(
-            elevator.setPositionCommand(
-                Constants.ElevatorConstantsLeonidas.ELEVATOR_OPERATIONAL_MAX_POS)); // Just safe
-
-    // Add arm control bindings
-    leftJoystick
-        .button(6)
-        .onTrue(
-            arm.setPositionCommand(
-                Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MIN_POS)); // Min position
-    leftJoystick
-        .button(7)
-        .onTrue(
-            arm.setPositionCommand(
-                Constants.ArmConstantsLeonidas.ARM_OPERATIONAL_MAX_POS)); // Max position
-
-    leftJoystick.button(8).onTrue(ScoringFactory.score(Level.L3));
-    leftJoystick.button(9).onTrue(ScoringFactory.scoreProcessor());
-
-    // TODO(asim): These are only mapped in SIM, need to figure out how to map them in real robot
-    // leftJoystick.button(10).whileTrue(controllerApp.bindDriveToTargetCommand(drive));
-    // leftJoystick.button(11).whileTrue(controllerApp.bindScoringCommand(elevator, arm));
-    // leftJoystick.button(12).whileTrue(controllerApp.bindDriveToSourceIntake(drive));
-
-    // leftJoystick
-    //     .button(13)
-    //     .whileTrue(
-    //         DriveCommands.alignToTargetLine(
-    //             drive,
-    //             getLeftJoystick()::getY, // Forward/backward control
-    //             getLeftJoystick()::getX, // Strafe control (partially overridden by alignment)
-    //             () -> controllerApp.getTarget().pose(),
-    //             1.0));
-  }
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-
   // spotless:off
-  private void configureButtonBindings() {
+  public void configureButtons() {
     // Default drive command using new factory method, replacement for above ^^.
     drive.setDefaultCommand(DriveFactory.joystickDrive());
    

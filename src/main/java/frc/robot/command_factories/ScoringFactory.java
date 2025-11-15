@@ -85,7 +85,9 @@ public class ScoringFactory {
         () -> {
           return switch (level) {
             case L1:
-              yield scoreL1();
+              yield scoreL1()
+                  .beforeStarting(
+                      () -> System.out.println("Executing score command for: " + level.name()));
             case L2:
               yield primeForLevel(level)
                   .andThen(
@@ -94,6 +96,8 @@ public class ScoringFactory {
                           level.getElevatorSetpoint(),
                           RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint))
                   .alongWith(RobotContainer.getEndEffector().stopEndEffector())
+                  .beforeStarting(
+                      () -> System.out.println("Executing score command for: " + level.name()))
                   .withName("Score " + level.name());
             case L3:
               yield primeForLevel(level)
@@ -107,6 +111,8 @@ public class ScoringFactory {
                                   .getCoralScoringSetpoints()
                                   .armPlaceSetpoint)))
                   .alongWith(RobotContainer.getEndEffector().stopEndEffector())
+                  .beforeStarting(
+                      () -> System.out.println("Executing score command for: " + level.name()))
                   .withName("Score " + level.name());
             case L4:
               yield primeForLevel(level)
@@ -120,12 +126,16 @@ public class ScoringFactory {
                                   .getCoralScoringSetpoints()
                                   .armPlaceSetpoint)))
                   .alongWith(RobotContainer.getEndEffector().stopEndEffector())
+                  .beforeStarting(
+                      () -> System.out.println("Executing score command for: " + level.name()))
                   .withName("Score " + level.name());
             default:
               yield primeForLevel(level)
                   .andThen(EndEffectorFactory.runEndEffectorOuttake())
                   .until(() -> !RobotState.endEffectorHasGamePiece())
                   .alongWith(RobotContainer.getEndEffector().stopEndEffector())
+                  .beforeStarting(
+                      () -> System.out.println("Executing score command for: " + level.name()))
                   .withName("Score " + level.name());
           };
         },
