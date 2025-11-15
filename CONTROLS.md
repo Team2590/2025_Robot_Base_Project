@@ -1,7 +1,7 @@
 # Robot Controls Documentation
 
 ## Overview
-This document outlines the control mappings for both the driver (using joysticks) and operator (using the controller app) of the robot. The controls are organized by functionality and user role.
+This document outlines the control mappings for both the driver (using joysticks) and operator (using an Xbox controller) of the robot. The controls are organized by functionality and user role.
 
 ## Driver Controls (Joysticks)
 
@@ -10,34 +10,33 @@ This document outlines the control mappings for both the driver (using joysticks
 #### Left Joystick
 - **Default**: Drive control (forward/backward, strafe)
 - **Button 2**: Stow mechanism
-- **Button 3**: Score at Level 1
-- **Button 4**: Set arm to coral scoring position
 - **Button 8**: Manual climb control
 - **POV Right**: Score at Level 2
 - **POV Down**: Score at Level 3
 - **POV Left**: Score at Level 4
 - **POV Up**: Score algae barge
-- **Trigger**: End effector outtake (when right joystick button 4 is not pressed)
+- **Trigger**:
+  - With Right Joystick Button 4: Score in processor
+  - If target is Level 1: Outtake coral
+  - If target is not Level 1: Arm follow through
 
 #### Right Joystick
 - **Button 2**: Drive and auto score command
-- **Button 3**: Intake coral (no handoff)
-- **Button 4**: Score processor (when combined with left joystick trigger)
-- **Button 5**: Reset robot pose
+- **Button 3**: Grab algae from reef
+- **Button 4**: (Used in combination with other buttons)
+- **Button 5**: Reset drive pose
 - **Button 8**: Reset elevator rotation count
-- **Button 11**: Deploy mechanism
+- **Button 11**: Deploy climb mechanism
 - **Button 12**: Prepare for climb
-- **Button 13**: Hold algae voltage
-- **Button 14**: Manual elevator down
-- **Button 15**: Manual elevator up
+- **Button 13**: Manual elevator down
+- **Button 14**: Manual elevator up
 - **Button 16**: Climb
-- **POV Right**: Grab algae at Level 3
-- **POV Left**: Grab algae at Level 2
-- **POV Up**: End effector intake voltage
+- **POV Up**: End effector intake
 - **POV Down**: Intake coral outtake (spit)
 - **Trigger**:
   - With button 4: Intake algae from ground
-  - Without button 4: Intake coral from ground with handoff
+  - Without button 4 (target is L1): Intake coral from ground to L1
+  - Without button 4 (target is not L1): Intake coral from ground with handoff
 
 ### Simulation Mode Controls
 
@@ -51,25 +50,17 @@ This document outlines the control mappings for both the driver (using joysticks
 - **Button 8**: Score at Level 3
 - **Button 9**: Score processor
 
-## Operator Controls (Controller App)
+## Operator Controls (Xbox Controller)
 
-The operator uses a JavaFX-based controller application with the following features:
+The operator uses an Xbox controller for target selection.
 
-### Main Control Grid
-- **Left-L4**: Select left side Level 4 scoring position
-- **Right-L4**: Select right side Level 4 scoring position
-- **Left-L3**: Select left side Level 3 scoring position
-- **Right-L3**: Select right side Level 3 scoring position
-- **Left-L2**: Select left side Level 2 scoring position
-- **Right-L2**: Select right side Level 2 scoring position
-
-### Bottom Controls
-- **Connect**: Connect to robot
-- **Refresh**: Refresh the interface
-
-### Visual Feedback
-- Selected buttons are highlighted in green (#00CC66)
-- Unselected buttons are blue (#0080FF)
+- **X Button**: Set target to Level 4
+- **B Button**: Set target to Level 2
+- **A Button**: Set target to Level 3
+- **Y Button**: Set target to Level 1
+- **Left Bumper**: Set target side to Left
+- **Right Bumper**: Set target side to Right
+- **Right Trigger**: Run end effector for algae intake
 
 ## Additional Notes
 
