@@ -2,6 +2,7 @@ package frc.robot.util.commands_logger;
 
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.util.ArrayList;
+import org.littletonrobotics.junction.Logger;
 
 // spotless:off
 public class CommandsLogger {
@@ -36,7 +37,7 @@ public class CommandsLogger {
   public void run() {
     updateInputs(loggerInputs);
     clearCurrent();
-    // Logger.processInputs("Commands Logger", loggerInputs);
+    Logger.processInputs("Commands Logger", loggerInputs);
   }
 
   public static CommandsLogger getInstance() {

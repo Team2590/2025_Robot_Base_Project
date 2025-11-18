@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
+import org.littletonrobotics.junction.Logger;
 
 public class Climb extends SubsystemBase {
   private final ClimbIO io;
@@ -19,7 +20,7 @@ public class Climb extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    // Logger.processInputs("Climb", inputs);
+    Logger.processInputs("Climb", inputs);
     // Logger.recordOutput("Climb/LimitSwitch", climbLimitSwitch.get());
   }
 

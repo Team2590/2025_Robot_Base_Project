@@ -1,6 +1,7 @@
 package frc.robot.subsystems.arm;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.NemesisMathUtil;
@@ -21,10 +22,10 @@ public class Arm extends SubsystemBase {
   public void periodic() {
     arm.updateTunableNumbers();
     arm.updateInputs(inputs);
-    // Logger.processInputs("Arm", inputs);
+    Logger.processInputs("Arm", inputs);
 
     // Log current position and target position
-    Logger.recordOutput("Arm/CurrentPosition", inputs.armpos);
+    // Logger.recordOutput("Arm/CurrentPosition", inputs.armpos);
     Logger.recordOutput("Arm/TargetPosition", setpoint);
   }
 
@@ -86,5 +87,9 @@ public class Arm extends SubsystemBase {
 
   public ArmIO getIO() {
     return arm;
+  }
+
+  public Rotation3d getArmRotation() {
+    return new Rotation3d(0, -inputs.armpos * 2 * Math.PI, 0);
   }
 }

@@ -1,7 +1,10 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,6 +29,8 @@ import org.littletonrobotics.junction.Logger;
 
 public class RobotState extends SubsystemBase {
   Pose2d robotPose;
+  private Pose3d[] componentPoses =
+      new Pose3d[] {new Pose3d(), new Pose3d(), new Pose3d(), new Pose3d()};
   private String currentZone;
   private final Arm arm;
   private final Drive drive;
@@ -183,6 +188,7 @@ public class RobotState extends SubsystemBase {
     updateLock.lock();
     try {
       setAligningStateBasedOnTargetPose(() -> controllerApp.getTarget().pose());
+      updateComponentPoses();
       updateScoringConfigurationSimple(
           () -> controllerApp.getTarget().pose(), () -> controllerApp.getTarget().scoringLevel());
       // Logger.recordOutput(
@@ -198,7 +204,24 @@ public class RobotState extends SubsystemBase {
       hasGamePiece = true;
     }
     Logger.recordOutput("RobotState/EndEffectorHasGamePiece", hasGamePiece);
+    Logger.recordOutput("RobotState/ComponentPoses", componentPoses);
     // setBargeProcessorAlignment();
+  }
+
+  public void updateComponentPoses() {
+    Translation3d[] elevatorTranslations = elevator.getElevatorTranslations();
+    Rotation3d armRotation = arm.getArmRotation();
+    if (elevatorTranslations != null && armRotation != null) {
+      componentPoses =
+          new Pose3d[] {
+            new Pose3d(elevatorTranslations[0], new Rotation3d()),
+            new Pose3d(elevatorTranslations[1], new Rotation3d()),
+            new Pose3d(
+                elevatorTranslations[1].plus(new Translation3d(0, 0, 0.36)),
+                arm.getArmRotation().rotateBy(new Rotation3d(0, -10 * Math.PI / 180, 0))),
+            new Pose3d()
+          };
+    }
   }
 
   public double getStowSetpoint() {

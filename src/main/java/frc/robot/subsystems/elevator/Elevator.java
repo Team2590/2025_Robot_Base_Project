@@ -2,6 +2,7 @@ package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -24,7 +25,7 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     io.updateTunableNumbers();
     io.updateInputs(inputs);
-    // Logger.processInputs("Elevator", inputs);
+    Logger.processInputs("Elevator", inputs);
 
     // Log current position and target position
     Logger.recordOutput("Elevator/CurrentPosition", inputs.rotationCount);
@@ -106,5 +107,20 @@ public class Elevator extends SubsystemBase {
 
   public ElevatorIO getIO() {
     return io;
+  }
+
+  public double getHeightMeters() {
+    return inputs.rotationCount * 6 / Constants.ElevatorConstantsLeonidas.reduction;
+  }
+
+  public Translation3d[] getElevatorTranslations() {
+    if (getHeightMeters() < 0.61) {
+      return new Translation3d[] {
+        new Translation3d(0, 0, 0), new Translation3d(0, 0, getHeightMeters()),
+      };
+    }
+    return new Translation3d[] {
+      new Translation3d(0, 0, getHeightMeters() - 0.61), new Translation3d(0, 0, getHeightMeters())
+    };
   }
 }
