@@ -13,14 +13,13 @@
 
 package frc.robot.subsystems.vision;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import gg.questnav.questnav.QuestNav;
+import java.util.ArrayList;
+import java.util.List;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOQuestNav implements VisionIO {
@@ -44,9 +43,9 @@ public class VisionIOQuestNav implements VisionIO {
     // Fixes race condition with Alerts being created in PhotonCamera
     // which causes ConcurrentModificationException.
     thread.start();
-        try {
-            Thread.sleep(20);
-        } catch (InterruptedException ignore) {
+    try {
+      Thread.sleep(20);
+    } catch (InterruptedException ignore) {
     }
   }
 
@@ -77,33 +76,30 @@ public class VisionIOQuestNav implements VisionIO {
       questNav = new QuestNav();
       initialRobotPose = /* find out how to get initial pose using photonvision */ new Pose3d();
       questNav.setPose(initialRobotPose.toPose2d());
-      robotPose = new Pose3d(questNav.getPose()).transformBy(new Transform3d(0, 0, initialRobotPose.getZ(), new Rotation3d()));
+      robotPose =
+          new Pose3d(questNav.getPose())
+              .transformBy(new Transform3d(0, 0, initialRobotPose.getZ(), new Rotation3d()));
     }
 
     public boolean isConnected() {
       return connected;
     }
 
-    public void updateRobotPose(){
-        robotPose = new Pose3d(questNav.getPose()).transformBy(new Transform3d(0, 0, initialRobotPose.getZ(), new Rotation3d()));
+    public void updateRobotPose() {
+      robotPose =
+          new Pose3d(questNav.getPose())
+              .transformBy(new Transform3d(0, 0, initialRobotPose.getZ(), new Rotation3d()));
     }
 
     @Override
     public void run() {
-        if(questNav.isConnected() && questNav.isTracking()){
-            updateRobotPose();
-            double timestamp = questNav.getDataTimestamp();
-            latestPoseObservations.add(
-                new PoseObservation(
-                    timestamp, 
-                    robotPose, 
-                    0.01, 
-                    0, 
-                    0.1, 
-                    PoseObservationType.QUESTNAV)
-            );
-            // TODO: FIX POSE OBSERVATION TO FIT WITH QUESTNAV INSTEAD OF PUTTING DUMMY VALUES
-        }
+      if (questNav.isConnected() && questNav.isTracking()) {
+        updateRobotPose();
+        double timestamp = questNav.getDataTimestamp();
+        latestPoseObservations.add(
+            new PoseObservation(timestamp, robotPose, 0.01, 0, 0.1, PoseObservationType.QUESTNAV));
+        // TODO: FIX POSE OBSERVATION TO FIT WITH QUESTNAV INSTEAD OF PUTTING DUMMY VALUES
+      }
     }
   }
 }

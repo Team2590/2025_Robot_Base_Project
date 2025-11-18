@@ -13,18 +13,16 @@
 
 package frc.robot.subsystems.vision;
 
-import java.util.Set;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import java.util.Set;
 
 public class VisionConstants {
   // AprilTag layout
@@ -131,9 +129,9 @@ public class VisionConstants {
   public static double DISTANCE_THRESHOLD = Units.inchesToMeters(120); // TODO: TUNE VALUE FOR COMP
 
   public static Matrix<N3, N1> QUESTNAV_STD_DEVS =
-    VecBuilder.fill(
-        0.02, // Trust down to 2cm in X direction
-        0.02, // Trust down to 2cm in Y direction
-        0.035 // Trust down to 2 degrees rotational
-    );
+      VecBuilder.fill(
+          0.02, // Trust down to 2cm in X direction
+          0.02, // Trust down to 2cm in Y direction
+          0.035 // Trust down to 2 degrees rotational
+          );
 }

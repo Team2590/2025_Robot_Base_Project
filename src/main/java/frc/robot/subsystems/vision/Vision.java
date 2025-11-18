@@ -40,7 +40,11 @@ public class Vision extends SubsystemBase {
       new CoralDetectionIOInputsAutoLogged();
   private final VisionIOQuestNav questNavIO;
 
-  public Vision(VisionConsumer consumer, CoralDetectionIO coralDetectionIOInput, VisionIOQuestNav questNavInputs, VisionIO... io) {
+  public Vision(
+      VisionConsumer consumer,
+      CoralDetectionIO coralDetectionIOInput,
+      VisionIOQuestNav questNavInputs,
+      VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
     this.coralDetectionIO = coralDetectionIOInput;
@@ -112,8 +116,8 @@ public class Vision extends SubsystemBase {
       for (var observation : inputs[cameraIndex].poseObservations) {
         // Check whether to reject pose
         boolean rejectPose =
-          !(observation.type() == PoseObservationType.QUESTNAV) || 
-            observation.tagCount() == 0 // Must have at least one tag
+            !(observation.type() == PoseObservationType.QUESTNAV)
+                || observation.tagCount() == 0 // Must have at least one tag
                 || (observation.tagCount() == 1
                     && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
                 || Math.abs(observation.pose().getZ())
@@ -145,7 +149,7 @@ public class Vision extends SubsystemBase {
         if (observation.type() == PoseObservationType.MEGATAG_2) {
           linearStdDev *= linearStdDevMegatag2Factor;
           angularStdDev *= angularStdDevMegatag2Factor;
-        } else if (observation.type() == PoseObservationType.QUESTNAV){
+        } else if (observation.type() == PoseObservationType.QUESTNAV) {
           linearStdDev = 0.02;
           angularStdDev = 0.035;
         } else if (cameraIndex < cameraStdDevFactors.length) {
@@ -161,16 +165,15 @@ public class Vision extends SubsystemBase {
       }
 
       // Log camera datadata
-      if(cameraIndex == questNavIndex){
+      if (cameraIndex == questNavIndex) {
         Logger.recordOutput(
-          "Vision/QuestNav/RobotPoses",
-          robotPoses.toArray(new Pose3d[robotPoses.size()]));
+            "Vision/QuestNav/RobotPoses", robotPoses.toArray(new Pose3d[robotPoses.size()]));
       } else {
         Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
-          robotPoses.toArray(new Pose3d[robotPoses.size()]));
+            "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
+            robotPoses.toArray(new Pose3d[robotPoses.size()]));
       }
-      
+
       Logger.processInputs("Vision/CoralDetection", coralDetectionInputs);
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);

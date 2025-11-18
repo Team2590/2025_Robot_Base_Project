@@ -16,6 +16,6 @@
       "version": "2025-1.0.0-beta"
     }
   ],
-    "cppDependencies": [],
-    "jniDependencies": []
+  "cppDependencies": [],
+  "jniDependencies": []
 }
