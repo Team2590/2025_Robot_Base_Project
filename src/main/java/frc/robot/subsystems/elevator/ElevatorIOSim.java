@@ -10,7 +10,7 @@ import frc.robot.util.SafetyChecker;
 
 public class ElevatorIOSim implements ElevatorIO {
   private ElevatorSim elevatorSim;
-  private double drumRadiusMeters;
+  private double drumCircumfrenceMeters;
   private double gearing;
   private LoggedTunableNumber cruiseVelocity = new LoggedTunableNumber("Arm/cruiseVelocity", 10);
   private LoggedTunableNumber acceleration = new LoggedTunableNumber("Arm/acceleration", 15);
@@ -25,14 +25,14 @@ public class ElevatorIOSim implements ElevatorIO {
       DCMotor gearbox,
       double gearing,
       double carriageMassKg,
-      double drumRadiusMeters,
+      double drumCircumfrenceMeters,
       double minHeightMeters,
       double maxHeightMeters,
       boolean simulateGravity,
       double startingHeightMeters,
       double... measurementStdDevs) {
     this.gearBox = gearbox;
-    this.drumRadiusMeters = drumRadiusMeters;
+    this.drumCircumfrenceMeters = drumCircumfrenceMeters;
     this.gearing = gearing;
 
     elevatorSim =
@@ -40,7 +40,7 @@ public class ElevatorIOSim implements ElevatorIO {
             gearbox,
             gearing,
             carriageMassKg,
-            drumRadiusMeters,
+            drumCircumfrenceMeters / (2 * Math.PI),
             minHeightMeters,
             maxHeightMeters,
             simulateGravity,
@@ -72,7 +72,7 @@ public class ElevatorIOSim implements ElevatorIO {
     double elevatorPos = this.rotationCount;
 
     if (SafetyChecker.isSafe(SafetyChecker.MechanismType.ELEVATOR_MOVEMENT, elevatorPos)) {
-      double positionMeters = position * 2 * Math.PI * drumRadiusMeters / gearing;
+      double positionMeters = position * drumCircumfrenceMeters / gearing;
       requestedPositionMeters = positionMeters;
       elevatorSim.setState(positionMeters, cruiseVelocity.get());
     } else {
@@ -107,6 +107,6 @@ public class ElevatorIOSim implements ElevatorIO {
   }
 
   private double positionToRotations(double positionMeters) {
-    return positionMeters / (2 * Math.PI * drumRadiusMeters / gearing);
+    return positionMeters / (drumCircumfrenceMeters * gearing);
   }
 }
