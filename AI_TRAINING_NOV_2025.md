@@ -71,6 +71,7 @@ style: |
 
 **The Workflow:**
 Instead of Alt-Tabbing to Chrome, pipe the error directly to AI.
+*(Note: You can also simply copy/paste the build output if you prefer.)*
 
 ```bash
 > ./gradlew build
@@ -93,6 +94,7 @@ Instead of Alt-Tabbing to Chrome, pipe the error directly to AI.
 1.  Clone a repo (e.g., Team 254 or our old code) into Antigravity.
 2.  **Prompt:** *"Scan this folder. Explain how the `AutoSelector` class passes the chosen routine to `RobotContainer`."*
 3.  **Prompt:** *"I see `new InstantCommand(...)` used here. Explain what that class does in WPILib and why they chose it over `RunCommand`."*
+4.  **Reverse Search:** *"I know the robot shoots notes. Find the code responsible for the shooting sequence and explain how it handles the flywheel spin-up."*
 
 > **Goal:** Use AI to **trace logic** threads that would take hours to read manually.
 
@@ -118,7 +120,7 @@ Instead of Alt-Tabbing to Chrome, pipe the error directly to AI.
 
 1.  **Plan (Antigravity):** "We need a Climber." Generate the Plan/Skeleton.
 2.  **Verify (The Human):** Read the code. Does it match our wiring?
-3.  **Transfer (WPILib VS Code):** Copy the file to the real project.
+3.  **Transfer (WPILib VS Code):** If Antigravity modified the file, just **Accept Changes** and open it in VS Code. Otherwise, copy/paste.
 4.  **Debug (Gemini CLI):** Fix syntax errors in the terminal.
 5.  **Deploy:** Test on the Robot.
 
