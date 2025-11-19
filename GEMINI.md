@@ -22,7 +22,9 @@ The project follows a standard command-based architecture:
 *   **`Main.java`**: The main entry point that initializes the robot.
 *   **`Robot.java`**: The main robot class that contains the robot's lifecycle methods (`robotInit`, `autonomousInit`, `teleopInit`, etc.) and runs the `CommandScheduler`.
 *   **`RobotContainer.java`**: The central class that instantiates subsystems, configures button bindings, and sets up autonomous routines. It uses a hardware abstraction layer to switch between real hardware and simulation.
-*   **Subsystems (`src/main/java/frc/robot/subsystems/`)**: These classes represent the physical components of the robot (e.g., `Drive`, `Arm`, `Elevator`).
+*   **Subsystems (`src/main/java/frc/robot/subsystems/`)**: These classes represent the physical components of the robot.
+    *   Current Subsystems: `LEDS`, `arm`, `climb`, `drive`, `elevator`, `endeffector`, `intake`, `peashooter`, `shooter`, `vision`.
+
 *   **Commands (`src/main/java/frc/robot/commands/` and `command_factories/`)**: These classes represent actions the robot can take. Command factories are used to create complex, reusable commands.
 *   **`Constants.java`**: A centralized location for all robot constants, making tuning and configuration easier.
 
@@ -67,3 +69,14 @@ The project includes a separate controller application. To run it, use:
 *   **Testing:** The project is set up with JUnit and Mockito for unit testing, located in the `src/test/java` directory.
 *   **Constants:** All constants are stored in the `Constants.java` file.
 *   **Command-Based Model:** The project strictly adheres to the command-based model. Subsystems are self-contained, and their methods are controlled by Commands. Operator actions are bound to commands in `RobotContainer.java`.
+
+## Maintaining This File
+
+This `GEMINI.md` file serves as a high-level map of the project for both human developers and AI assistants. It should be updated when:
+
+1.  **New Subsystems are Added/Removed:** Update the "Subsystems" list in the Architecture section.
+2.  **Major Architectural Changes:** If the core patterns (like Command-Based) change.
+3.  **New Tools or Libraries:** If a new major library (like a new logging framework) is added.
+
+Keeping this file up-to-date ensures that I (your AI assistant) always have the most accurate context to help you effectively.
+
