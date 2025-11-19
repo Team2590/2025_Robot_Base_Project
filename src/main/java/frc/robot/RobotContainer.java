@@ -65,6 +65,10 @@ import frc.robot.subsystems.intake.IntakeArmIOSim;
 import frc.robot.subsystems.intake.IntakeArmIOTalonFX;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.peashooter.PeaShooter;
+import frc.robot.subsystems.peashooter.PeaShooterIO;
+import frc.robot.subsystems.peashooter.PeaShooterIOSim;
+import frc.robot.subsystems.peashooter.PeaShooterIOTalonFX;
 import frc.robot.subsystems.vision.CoralDetectionIOSim;
 import frc.robot.subsystems.vision.CoralIOPhotonVision;
 import frc.robot.subsystems.vision.Vision;
@@ -94,6 +98,7 @@ public class RobotContainer {
   @Getter private static EndEffector endEffector;
   @Getter private static Climb climb;
   @Getter private static NemesisLED led;
+  @Getter private static PeaShooter peaShooter;
   @Getter private static ControllerOrchestrator controllerApp = new ControllerOrchestrator();
 
   // private final Intake intake;
@@ -152,6 +157,7 @@ public class RobotContainer {
         endEffector = null;
         climb = null;
         led = null;
+        peaShooter = new PeaShooter(new PeaShooterIOTalonFX());
         break;
       case LARRY:
         // Real robot, instantiate hardware IO implementations
@@ -203,6 +209,7 @@ public class RobotContainer {
                 new EndEffectorIOTalonFX(0, "Takeover", 120, false, true, angularStdDevBaseline));
         climb = null;
         led = null;
+        peaShooter = new PeaShooter(new PeaShooterIOTalonFX());
         break;
       case Leonidas:
         drive =
@@ -291,6 +298,7 @@ public class RobotContainer {
                 Constants.LEDConstantsLeonidas.port,
                 Constants.LEDConstantsLeonidas.length,
                 Constants.LEDConstantsLeonidas.halfWay);
+        peaShooter = new PeaShooter(new PeaShooterIOTalonFX());
         break;
       case SIM:
         drive =
@@ -325,6 +333,7 @@ public class RobotContainer {
                     DCMotor.getFalcon500(1), EndEffectorConstantsLeonidas.reduction, 1));
         climb = null;
         led = new NemesisLED(2, 56, 29);
+        peaShooter = new PeaShooter(new PeaShooterIOSim());
         break;
 
       default:
@@ -355,6 +364,7 @@ public class RobotContainer {
         elevator = null;
         endEffector = null;
         climb = null;
+        peaShooter = new PeaShooter(new PeaShooterIO() {});
         break;
     }
     RobotState.initialize(arm, drive, elevator, endEffector, intake, vision, controllerApp);
