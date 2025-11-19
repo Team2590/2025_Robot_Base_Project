@@ -112,7 +112,7 @@ Instead of Alt-Tabbing to Chrome, pipe the error directly to AI.
 
   - [ ] Did it import `com.revrobotics` correctly?
   - [ ] Did it use the correct Motor Type (Brushed vs Brushless)?
-  - [ ] **ACTION:** Copy the clean boilerplate to WPILib VS Code. YOU write the logic inside the empty methods.
+  - [ ] **ACTION:** YOU write the logic inside the empty methods.
 
 -----
 
