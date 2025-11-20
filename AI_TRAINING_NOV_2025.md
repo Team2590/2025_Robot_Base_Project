@@ -1,3 +1,27 @@
+<!-- 
+AI Session Summary
+
+Me:  Help me create a one hour training session for 9th through 12th grade students on an First Robotics team about the basics of AI and how it applies to coding. Specifically how it applies to FRC projects (java, wpilib, etc). The tools I want to tell them about for coding are Google Antigravity and Gemini CLI.  I want to emphasize the importance of using it as a learning tool. Let's start with an outline. 
+
+Gemini: Here you go: <outline>
+
+Me & Gemini: <Misc back and forth adjustments>
+
+(provides final outline)
+
+What software do you recommend to create a slide deck from this ? 
+
+Gemini: Marp  
+
+Me: Can you create the markdown so that i can copy/paste it into my editor ? 
+
+Gemini: Here you go... <code>
+
+Me: <copy/paste into Antigravity, and went through additional iterations/modifications in that UI>
+
+DONE!  Total time: about 30 minutes total.
+
+-->
 ---
 marp: true
 theme: default
