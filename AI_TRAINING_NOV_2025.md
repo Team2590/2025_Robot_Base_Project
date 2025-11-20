@@ -14,6 +14,8 @@ style: |
   blockquote { border-left: 5px solid #cc0000; background: #f9f9f9; padding: 15px; font-style: italic; }
 ---
 
+![w:200px](NemesisLogo.jpg)
+
 # You Are the Senior Developer
 ## AI as a Force Multiplier, Not a Pilot
 
@@ -35,9 +37,9 @@ style: |
 
 ---
 
-# The "Why" (Part 1): The Offline Field
+# The "Why" (Part 1): Logistical Concerns
 
-**Why can't we just use Cursor/Antigravity for everything?**
+**Why can't we just use Gemini/ChatGPT/Cursor/Antigravity for everything?**
 
 1.  **The Field is Offline:**
     - Possibly no Wi-Fi in the pits. No AI. No StackOverflow.
@@ -120,7 +122,8 @@ Instead of Alt-Tabbing to Chrome, pipe the error directly to AI.
 
 1.  **Plan (Antigravity):** "We need a Climber." Generate the Plan/Skeleton.
 2.  **Verify (The Human):** Read the code. Does it match our wiring?
-3.  **Transfer (WPILib VS Code):** If Antigravity modified the file, just **Accept Changes** and open it in VS Code. Otherwise, copy/paste.
+3.  **Switch UI (WPILib VS Code):** If Antigravity modified the file, just **Accept Changes** and open it in VS Code. Otherwise, copy/paste.
+4.  **Test (WPILib VS Code):** Run simulator, unit tests.
 4.  **Debug (Gemini CLI):** Fix syntax errors in the terminal.
 5.  **Deploy:** Test on the Robot.
 
@@ -129,7 +132,7 @@ Instead of Alt-Tabbing to Chrome, pipe the error directly to AI.
 # The Final Challenge: The Vibe Check
 
 **The 5-Minute Rule:**
-If you cannot explain *why* a block of code works in 5 minutes, **delete it.**
+If you cannot explain *why* a block of code works in 5 minutes, **delete/revert it.**
 
 **Homework Assignment:**
 
