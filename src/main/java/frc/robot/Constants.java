@@ -417,6 +417,29 @@ public final class Constants {
     public static final double CLIMB_VOLTAGE = 11.0; // 2.0 tested
   }
 
+  public final class PeaShooterConstants {
+    public static final int LEFT_FLYWHEEL_ID = 30;
+    public static final int RIGHT_FLYWHEEL_ID = 31;
+    public static final int HOOD_ID = 32;
+    public static final String CANBUS = "Takeover";
+    public static final int CURRENT_LIMIT_AMPS = 40;
+    public static final boolean INVERT_LEFT = false;
+    public static final boolean INVERT_RIGHT = true;
+    public static final boolean INVERT_HOOD = false;
+    public static final double FLYWHEEL_REDUCTION = 1.0;
+    public static final double HOOD_REDUCTION = 10.0;
+    public static final double HOOD_MIN_POS = 0.0;
+    public static final double HOOD_MAX_POS = 45.0; // Degrees
+    public static final double FLYWHEEL_kP = 0.1;
+    public static final double FLYWHEEL_kI = 0.0;
+    public static final double FLYWHEEL_kD = 0.0;
+    public static final double FLYWHEEL_kS = 0.1;
+    public static final double FLYWHEEL_kV = 0.12;
+    public static final double HOOD_kP = 2.0;
+    public static final double HOOD_kI = 0.0;
+    public static final double HOOD_kD = 0.0;
+  }
+
   public final class LEDConstantsLeonidas {
     public static final int port = 0;
     public static final int length = 56;
