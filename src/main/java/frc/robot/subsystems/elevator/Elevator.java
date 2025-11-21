@@ -110,7 +110,8 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getHeightMeters() {
-    return inputs.rotationCount * 6 / Constants.ElevatorConstantsLeonidas.reduction;
+    // 18T * 5mm pitch * 24:14 gear ratio
+    return inputs.rotationCount * 18 * 0.005 * 24 / 14;
   }
 
   public Translation3d[] getElevatorTranslations() {
