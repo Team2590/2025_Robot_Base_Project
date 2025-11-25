@@ -96,4 +96,9 @@ public class VisionIOQuestNav implements VisionIO {
     }
     questNav.cleanUpQuestNavMessages();
   }
+
+  @Override
+  public void resetPose(edu.wpi.first.math.geometry.Pose2d pose) {
+    questNav.resetPose(pose);
+  }
 }

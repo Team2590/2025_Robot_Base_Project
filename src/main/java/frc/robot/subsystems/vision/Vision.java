@@ -32,27 +32,37 @@ import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
+  private final VisionIOQuestNav questNavIO;
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
-  // private final Alert[] disconnectedAlerts;
 
-  public Vision(VisionConsumer consumer, VisionIO... io) {
+  public Vision(VisionConsumer consumer, VisionIOQuestNav questNavIO, VisionIO... cameraIOs) {
     this.consumer = consumer;
-    this.io = io;
+    this.questNavIO = questNavIO;
+
+    // Create a new array to hold all VisionIO objects
+    this.io = new VisionIO[cameraIOs.length + (questNavIO != null ? 1 : 0)];
+    int ioIndex = 0;
+
+    // Add camera IOs to the array
+    for (VisionIO cameraIO : cameraIOs) {
+      this.io[ioIndex++] = cameraIO;
+    }
+
+    // Add questNavIO to the array if it exists
+    if (questNavIO != null) {
+      this.io[ioIndex] = questNavIO;
+    }
 
     // Initialize inputs
     this.inputs = new VisionIOInputsAutoLogged[io.length];
     for (int i = 0; i < inputs.length; i++) {
       inputs[i] = new VisionIOInputsAutoLogged();
     }
+  }
 
-    // Initialize disconnected alerts
-    // this.disconnectedAlerts = new Alert[io.length];
-    // for (int i = 0; i < inputs.length; i++) {
-    //   disconnectedAlerts[i] =
-    //       new Alert(
-    //           "Vision camera " + Integer.toString(i) + " is disconnected.", AlertType.kWarning);
-    // }
+  public Vision(VisionConsumer consumer, VisionIO... io) {
+    this(consumer, null, io);
   }
 
   /**
@@ -119,27 +129,31 @@ public class Vision extends SubsystemBase {
           continue;
         }
 
-        // Calculate standard deviations
-        double stdDevFactor =
-            Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
-        double linearStdDev = linearStdDevBaseline * stdDevFactor;
-        double angularStdDev = angularStdDevBaseline * stdDevFactor;
-        if (observation.type() == PoseObservationType.MEGATAG_2) {
-          linearStdDev *= linearStdDevMegatag2Factor;
-          angularStdDev *= angularStdDevMegatag2Factor;
-        } else if (observation.type() == PoseObservationType.QUESTNAV) {
-          linearStdDev = VisionConstants.QUESTNAV_STD_DEVS.get(0, 0);
-          angularStdDev = VisionConstants.QUESTNAV_STD_DEVS.get(2, 0);
-        } else if (cameraIndex < cameraStdDevFactors.length) {
-          linearStdDev *= cameraStdDevFactors[cameraIndex];
-          angularStdDev *= cameraStdDevFactors[cameraIndex];
-        }
+        // If QuestNav observation, directly update odometry
+        if (observation.type() == PoseObservationType.QUESTNAV) {
+          consumer.updateOdometryFromQuestNav(
+              observation.pose().toPose2d(), observation.timestamp());
+        } else {
+          // For other vision observations (e.g., PhotonVision), calculate standard deviations and
+          // send as corrections
+          double stdDevFactor =
+              Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
+          double linearStdDev = linearStdDevBaseline * stdDevFactor;
+          double angularStdDev = angularStdDevBaseline * stdDevFactor;
+          if (observation.type() == PoseObservationType.MEGATAG_2) {
+            linearStdDev *= linearStdDevMegatag2Factor;
+            angularStdDev *= angularStdDevMegatag2Factor;
+          } else if (cameraIndex < cameraStdDevFactors.length) {
+            linearStdDev *= cameraStdDevFactors[cameraIndex];
+            angularStdDev *= cameraStdDevFactors[cameraIndex];
+          }
 
-        // Send vision observation
-        consumer.accept(
-            observation.pose().toPose2d(),
-            observation.timestamp(),
-            VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
+          // Send vision observation as correction
+          consumer.accept(
+              observation.pose().toPose2d(),
+              observation.timestamp(),
+              VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
+        }
       }
 
       // Log camera datadata
@@ -158,11 +172,12 @@ public class Vision extends SubsystemBase {
         "Vision/Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[allRobotPoses.size()]));
   }
 
-  @FunctionalInterface
   public static interface VisionConsumer {
     public void accept(
         Pose2d visionRobotPoseMeters,
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs);
+
+    public void updateOdometryFromQuestNav(Pose2d questNavPose, double timestampSeconds);
   }
 }

@@ -47,4 +47,6 @@ public interface VisionIO {
   }
 
   public default void updateInputs(VisionIOInputs inputs) {}
+
+  public default void resetPose(edu.wpi.first.math.geometry.Pose2d pose) {}
 }

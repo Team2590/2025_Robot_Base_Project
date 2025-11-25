@@ -17,8 +17,11 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -66,11 +69,8 @@ import frc.robot.subsystems.intake.IntakeArmIOSim;
 import frc.robot.subsystems.intake.IntakeArmIOTalonFX;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import frc.robot.subsystems.vision.*;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import frc.robot.subsystems.vision.VisionIOQuestNav;
 import frc.robot.util.NemesisAutoBuilder;
 import frc.robot.util.NemesisAutoBuilder.ReefTarget;
 import java.util.List;
@@ -128,10 +128,26 @@ public class RobotContainer {
                 constantsWrapper);
         vision =
             new Vision(
-                drive::addVisionMeasurement,
+                new Vision.VisionConsumer() {
+                  @Override
+                  public void accept(
+                      Pose2d visionRobotPoseMeters,
+                      double timestampSeconds,
+                      Matrix<N3, N1> visionMeasurementStdDevs) {
+                    drive.addVisionMeasurement(
+                        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+                  }
+
+                  @Override
+                  public void updateOdometryFromQuestNav(
+                      Pose2d questNavPose, double timestampSeconds) {
+                    drive.updateOdometryFromQuestNav(questNavPose, timestampSeconds);
+                  }
+                },
                 new VisionIOQuestNav("QuestNav"),
                 new VisionIOPhotonVision(
                     List.of(new CameraConfig(PHOTON_TEST_CAMERA, robotToPhotonTestCamera))));
+
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -165,7 +181,22 @@ public class RobotContainer {
                 constantsWrapper);
         vision =
             new Vision(
-                drive::addVisionMeasurement,
+                new Vision.VisionConsumer() {
+                  @Override
+                  public void accept(
+                      Pose2d visionRobotPoseMeters,
+                      double timestampSeconds,
+                      Matrix<N3, N1> visionMeasurementStdDevs) {
+                    drive.addVisionMeasurement(
+                        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+                  }
+
+                  @Override
+                  public void updateOdometryFromQuestNav(
+                      Pose2d questNavPose, double timestampSeconds) {
+                    drive.updateOdometryFromQuestNav(questNavPose, timestampSeconds);
+                  }
+                },
                 new VisionIOQuestNav("QuestNav"),
                 new VisionIOPhotonVision(
                     List.of(new CameraConfig(PHOTON_TEST_CAMERA, robotToPhotonTestCamera))));
@@ -236,7 +267,22 @@ public class RobotContainer {
         elevator.resetRotationCount();
         vision =
             new Vision(
-                drive::addVisionMeasurement,
+                new Vision.VisionConsumer() {
+                  @Override
+                  public void accept(
+                      Pose2d visionRobotPoseMeters,
+                      double timestampSeconds,
+                      Matrix<N3, N1> visionMeasurementStdDevs) {
+                    drive.addVisionMeasurement(
+                        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+                  }
+
+                  @Override
+                  public void updateOdometryFromQuestNav(
+                      Pose2d questNavPose, double timestampSeconds) {
+                    drive.updateOdometryFromQuestNav(questNavPose, timestampSeconds);
+                  }
+                },
                 new VisionIOQuestNav("QuestNav"),
                 new VisionIOPhotonVision(
                     List.of(new CameraConfig(PHOTON_TEST_CAMERA, robotToPhotonTestCamera))));
@@ -302,11 +348,25 @@ public class RobotContainer {
                 constantsWrapper);
         vision =
             new Vision(
-                drive::addVisionMeasurement,
+                new Vision.VisionConsumer() {
+                  @Override
+                  public void accept(
+                      Pose2d visionRobotPoseMeters,
+                      double timestampSeconds,
+                      Matrix<N3, N1> visionMeasurementStdDevs) {
+                    drive.addVisionMeasurement(
+                        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+                  }
+
+                  @Override
+                  public void updateOdometryFromQuestNav(
+                      Pose2d questNavPose, double timestampSeconds) {
+                    drive.updateOdometryFromQuestNav(questNavPose, timestampSeconds);
+                  }
+                },
                 new VisionIOQuestNav("QuestNav"),
-                new VisionIOPhotonVisionSim(
-                    List.of(new CameraConfig(PHOTON_TEST_CAMERA, robotToPhotonTestCamera)),
-                    () -> drive.getPose()));
+                new VisionIOPhotonVision(
+                    List.of(new CameraConfig(PHOTON_TEST_CAMERA, robotToPhotonTestCamera))));
         intake =
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
@@ -334,7 +394,22 @@ public class RobotContainer {
                 constantsWrapper);
         vision =
             new Vision(
-                drive::addVisionMeasurement,
+                new Vision.VisionConsumer() {
+                  @Override
+                  public void accept(
+                      Pose2d visionRobotPoseMeters,
+                      double timestampSeconds,
+                      Matrix<N3, N1> visionMeasurementStdDevs) {
+                    drive.addVisionMeasurement(
+                        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+                  }
+
+                  @Override
+                  public void updateOdometryFromQuestNav(
+                      Pose2d questNavPose, double timestampSeconds) {
+                    drive.updateOdometryFromQuestNav(questNavPose, timestampSeconds);
+                  }
+                },
                 new VisionIOQuestNav("QuestNav"),
                 new VisionIOPhotonVision(
                     List.of(new CameraConfig(PHOTON_TEST_CAMERA, robotToPhotonTestCamera))));
