@@ -330,7 +330,10 @@ public class RobotContainer {
                 new IntakeArmIOSim(DCMotor.getFalcon500(1), 4, .1));
         arm = new Arm(new ArmIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 1, true, 1));
         elevator =
-            new Elevator(new ElevatorIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 10, false, 1));
+            new Elevator(
+                // 18T * 5mm pitch * 24:14 gear ratio
+                new ElevatorIOSim(
+                    DCMotor.getFalcon500(1), (24.0 / 14.0), 1, 18 * .005, 0, 4, false, 0));
         endEffector =
             new EndEffector(
                 new EndEffectorIOSim(
