@@ -11,8 +11,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.RobotState.ReefTargetSide;
-import frc.robot.command_factories.ArmFactory;
-import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.ScoringFactory;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.commands.DriveCommands;
@@ -90,26 +88,6 @@ public class ControllerOrchestrator {
     return new Target(lookupPoseBasedOnAlliance(getSource()), ScoringFactory.Level.SOURCE);
   }
 
-  /**
-   * Command that needs to be bound to a button to execute scoring at the level specified by
-   * Controller App.
-   */
-  public Command bindScoringCommand(Elevator elevator, Arm arm) {
-    // var requirements = new HashSet<Subsystem>();
-    // // requirements.add(elevator);
-    // requirements.add(arm);
-
-    // return Commands.defer(
-    //     () -> {
-    //       System.out.println(
-    //           "arm place target: "
-    //               + RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint);
-    return ArmFactory.setPositionBlocking(.015);
-    // ScoringFactory.score(RobotState.getInstance().getCoralScoringSetpoints());
-    // },
-    // requirements);
-  }
-
   /** Command that needs to be bound to a button to driveToTarget. */
   public Command bindDriveToTargetCommand(Drive drive) {
     return new NemesisDriveToPoseStraight(drive, () -> RobotState.getInstance().getTargetPose());
@@ -124,7 +102,7 @@ public class ControllerOrchestrator {
         () -> {
           return Commands.parallel(
               new NemesisDriveToPoseStraight(drive, () -> RobotState.getInstance().getTargetPose()),
-              ScoringFactory.primeForLevel(RobotState.getInstance().getCoralScoringSetpoints()));
+              ScoringFactory.primeForLevel(getTarget().scoringLevel()));
         },
         requirements);
   }
@@ -137,8 +115,7 @@ public class ControllerOrchestrator {
         () -> {
           return new ParallelCommandGroup(
               DriveCommands.preciseAlignmentAutoBuilder(
-                  drive, () -> getSourceTarget().pose(), getSourceTarget().pose().getRotation()),
-              GamePieceFactory.intakeCoralGroundAndHandoff());
+                  drive, () -> getSourceTarget().pose(), getSourceTarget().pose().getRotation()));
         },
         requirements);
   }

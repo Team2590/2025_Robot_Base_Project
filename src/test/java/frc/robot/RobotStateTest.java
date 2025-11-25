@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants.ArmConstantsLeonidas;
-import frc.robot.RobotState.ScoringSetpoints;
 import frc.robot.command_factories.ScoringFactory.Level;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
@@ -86,70 +85,6 @@ class RobotStateTest {
     mockCloseable.close();
     driverStationMock.close();
     robotContainerMock.close();
-  }
-
-  @Test
-  void updateScoringConfigurationSimple_FrontAlignment_ArmBelowHandoff_ReturnsCorrectSetpoints() {
-    // Arrange
-    robotState.setAligningState(RobotState.AligningState.ALIGNING_FRONT);
-    when(arm.getAbsolutePosition()).thenReturn(ArmConstantsLeonidas.ARM_HANDOFF_POS - 0.1);
-
-    // Act
-    robotState.periodic();
-
-    // Assert
-    ScoringSetpoints setpoints = robotState.getCoralScoringSetpoints();
-    assertEquals(ArmConstantsLeonidas.ARM_SCORE_FRONT_FRONT_PRE, setpoints.armSetpoint);
-    assertEquals(ArmConstantsLeonidas.ARM_SCORE_FRONT_FRONT_POST, setpoints.armPlaceSetpoint);
-    assertEquals(Level.L2.getElevatorSetpoint(), setpoints.elevatorSetpoint);
-  }
-
-  @Test
-  void updateScoringConfigurationSimple_FrontAlignment_ArmAboveBackFront_ReturnsCorrectSetpoints() {
-    // Arrange
-    robotState.setAligningState(RobotState.AligningState.ALIGNING_FRONT);
-    when(arm.getAbsolutePosition()).thenReturn(ArmConstantsLeonidas.ARM_SCORE_BACK_FRONT_PRE + 0.1);
-
-    // Act
-    robotState.periodic();
-
-    // Assert
-    ScoringSetpoints setpoints = robotState.getCoralScoringSetpoints();
-    assertEquals(ArmConstantsLeonidas.ARM_SCORE_BACK_FRONT_PRE, setpoints.armSetpoint);
-    assertEquals(ArmConstantsLeonidas.ARM_SCORE_BACK_FRONT_POST, setpoints.armPlaceSetpoint);
-    assertEquals(Level.L2.getElevatorSetpoint(), setpoints.elevatorSetpoint);
-  }
-
-  @Test
-  void updateScoringConfigurationSimple_BackAlignment_ArmBelowFrontBack_ReturnsCorrectSetpoints() {
-    // Arrange
-    robotState.setAligningState(RobotState.AligningState.ALIGNING_BACK);
-    when(arm.getAbsolutePosition()).thenReturn(ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_PRE - 0.1);
-
-    // Act
-    robotState.periodic();
-
-    // Assert
-    ScoringSetpoints setpoints = robotState.getCoralScoringSetpoints();
-    assertEquals(ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_PRE, setpoints.armSetpoint);
-    assertEquals(ArmConstantsLeonidas.ARM_SCORE_FRONT_BACK_POST, setpoints.armPlaceSetpoint);
-    assertEquals(Level.L2.getElevatorSetpoint(), setpoints.elevatorSetpoint);
-  }
-
-  @Test
-  void updateScoringConfigurationSimple_BackAlignment_ArmAboveHandoff_ReturnsCorrectSetpoints() {
-    // Arrange
-    robotState.setAligningState(RobotState.AligningState.ALIGNING_BACK);
-    when(arm.getAbsolutePosition()).thenReturn(ArmConstantsLeonidas.ARM_HANDOFF_POS + 0.1);
-
-    // Act
-    robotState.periodic();
-
-    // Assert
-    ScoringSetpoints setpoints = robotState.getCoralScoringSetpoints();
-    assertEquals(ArmConstantsLeonidas.ARM_SCORE_BACK_BACK_PRE, setpoints.armSetpoint);
-    assertEquals(ArmConstantsLeonidas.ARM_SCORE_BACK_BACK_POST, setpoints.armPlaceSetpoint);
-    assertEquals(Level.L2.getElevatorSetpoint(), setpoints.elevatorSetpoint);
   }
 
   @Test

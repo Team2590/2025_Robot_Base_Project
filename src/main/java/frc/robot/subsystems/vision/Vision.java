@@ -35,23 +35,13 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   // private final Alert[] disconnectedAlerts;
-  private final CoralDetectionIO coralDetectionIO;
-  private final CoralDetectionIOInputsAutoLogged coralDetectionInputs =
-      new CoralDetectionIOInputsAutoLogged();
-  private final VisionIOQuestNav questNavIO;
 
-  public Vision(
-      VisionConsumer consumer,
-      CoralDetectionIO coralDetectionIOInput,
-      VisionIOQuestNav questNavInputs,
-      VisionIO... io) {
+  public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
-    this.coralDetectionIO = coralDetectionIOInput;
-    this.questNavIO = questNavInputs;
 
     // Initialize inputs
-    this.inputs = new VisionIOInputsAutoLogged[io.length + 1]; // +1 for QuestNav
+    this.inputs = new VisionIOInputsAutoLogged[io.length];
     for (int i = 0; i < inputs.length; i++) {
       inputs[i] = new VisionIOInputsAutoLogged();
     }
@@ -76,17 +66,6 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Photonvision
-    for (int i = 0; i < io.length; i++) {
-      io[i].updateInputs(inputs[i]);
-      Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
-    }
-
-    // QuestNav
-    int questNavIndex = io.length;
-    questNavIO.updateInputs(inputs[questNavIndex]);
-    Logger.processInputs("Vision/QuestNav", inputs[questNavIndex]);
-
     // Initialize logging values
     List<Pose3d> allTagPoses = new LinkedList<>();
     List<Pose3d> allRobotPoses = new LinkedList<>();
@@ -116,8 +95,7 @@ public class Vision extends SubsystemBase {
       for (var observation : inputs[cameraIndex].poseObservations) {
         // Check whether to reject pose
         boolean rejectPose =
-            !(observation.type() == PoseObservationType.QUESTNAV)
-                || observation.tagCount() == 0 // Must have at least one tag
+            observation.tagCount() == 0 // Must have at least one tag
                 || (observation.tagCount() == 1
                     && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
                 || Math.abs(observation.pose().getZ())
@@ -150,8 +128,8 @@ public class Vision extends SubsystemBase {
           linearStdDev *= linearStdDevMegatag2Factor;
           angularStdDev *= angularStdDevMegatag2Factor;
         } else if (observation.type() == PoseObservationType.QUESTNAV) {
-          linearStdDev = 0.02;
-          angularStdDev = 0.035;
+          linearStdDev = VisionConstants.QUESTNAV_STD_DEVS.get(0, 0);
+          angularStdDev = VisionConstants.QUESTNAV_STD_DEVS.get(2, 0);
         } else if (cameraIndex < cameraStdDevFactors.length) {
           linearStdDev *= cameraStdDevFactors[cameraIndex];
           angularStdDev *= cameraStdDevFactors[cameraIndex];
@@ -165,16 +143,10 @@ public class Vision extends SubsystemBase {
       }
 
       // Log camera datadata
-      if (cameraIndex == questNavIndex) {
-        Logger.recordOutput(
-            "Vision/QuestNav/RobotPoses", robotPoses.toArray(new Pose3d[robotPoses.size()]));
-      } else {
-        Logger.recordOutput(
-            "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
-            robotPoses.toArray(new Pose3d[robotPoses.size()]));
-      }
+      Logger.recordOutput(
+          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
+          robotPoses.toArray(new Pose3d[robotPoses.size()]));
 
-      Logger.processInputs("Vision/CoralDetection", coralDetectionInputs);
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);
       allRobotPosesAccepted.addAll(robotPosesAccepted);
@@ -184,7 +156,6 @@ public class Vision extends SubsystemBase {
     // Log summary data
     Logger.recordOutput(
         "Vision/Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[allRobotPoses.size()]));
-    coralDetectionIO.updateInputs(coralDetectionInputs);
   }
 
   @FunctionalInterface
@@ -193,13 +164,5 @@ public class Vision extends SubsystemBase {
         Pose2d visionRobotPoseMeters,
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs);
-  }
-
-  public Pose2d getNearestCoralPose() {
-    return coralDetectionInputs.coralPose;
-  }
-
-  public Rotation2d getNearestCoralRotation() {
-    return coralDetectionInputs.coralRotation;
   }
 }

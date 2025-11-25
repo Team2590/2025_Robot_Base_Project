@@ -7,7 +7,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.IntakeArmConstantsLeonidas;
 import frc.robot.RobotContainer;
 import frc.robot.RobotState;
-import frc.robot.RobotState.ScoringSetpoints;
 import frc.robot.commands.MoveFromHandoffCommand;
 import java.util.Set;
 
@@ -92,7 +91,7 @@ public class ScoringFactory {
                       new MoveFromHandoffCommand(
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                           level.getElevatorSetpoint(),
-                          RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint))
+                          level.getArmScoringSetpoint()))
                   .alongWith(RobotContainer.getEndEffector().stopEndEffector())
                   .withName("Score " + level.name());
             case L3:
@@ -102,10 +101,7 @@ public class ScoringFactory {
                           IntakeFactory.setPositionBlocking(
                               Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
                           ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
-                          ArmFactory.setPositionBlocking(
-                              RobotState.getInstance()
-                                  .getCoralScoringSetpoints()
-                                  .armPlaceSetpoint)))
+                          ArmFactory.setPositionBlocking(level.getArmScoringSetpoint())))
                   .alongWith(RobotContainer.getEndEffector().stopEndEffector())
                   .withName("Score " + level.name());
             case L4:
@@ -115,10 +111,7 @@ public class ScoringFactory {
                           IntakeFactory.setPositionBlocking(
                               Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
                           ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
-                          ArmFactory.setPositionBlocking(
-                              RobotState.getInstance()
-                                  .getCoralScoringSetpoints()
-                                  .armPlaceSetpoint)))
+                          ArmFactory.setPositionBlocking(level.getArmScoringSetpoint())))
                   .alongWith(RobotContainer.getEndEffector().stopEndEffector())
                   .withName("Score " + level.name());
             default:
@@ -142,8 +135,7 @@ public class ScoringFactory {
                       IntakeFactory.setPositionBlocking(
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS),
                       ElevatorFactory.setPositionBlocking(level.getElevatorSetpoint()),
-                      ArmFactory.setPositionBlocking(
-                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint))
+                      ArmFactory.setPositionBlocking(level.getarmPreScoreSetpoint()))
                   .withName("Prime " + level.name());
             case L3:
               return IntakeFactory.setPositionBlocking(
@@ -154,7 +146,7 @@ public class ScoringFactory {
                           new MoveFromHandoffCommand(
                               Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                               level.getElevatorSetpoint(),
-                              RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)))
+                              level.getarmPreScoreSetpoint())))
                   .withName("Prime " + level.name());
             case L2:
               return IntakeFactory.setPositionBlocking(
@@ -165,7 +157,7 @@ public class ScoringFactory {
                           new MoveFromHandoffCommand(
                               Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                               level.getElevatorSetpoint(),
-                              RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)))
+                              level.getarmPreScoreSetpoint())))
                   .withName("Prime " + level.name());
             default:
               return Commands.parallel(
@@ -173,39 +165,11 @@ public class ScoringFactory {
                   new MoveFromHandoffCommand(
                           Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                           level.getElevatorSetpoint(),
-                          RobotState.getInstance().getCoralScoringSetpoints().armSetpoint)
+                          level.getarmPreScoreSetpoint())
                       .withName("Prime " + level.name()));
           }
         },
         Set.of(RobotContainer.getElevator(), RobotContainer.getArm(), RobotContainer.getIntake()));
-  }
-
-  public static Command score(ScoringSetpoints setpoints) {
-    return primeForLevel(setpoints)
-        .andThen(ArmFactory.setPositionBlocking(setpoints.armPlaceSetpoint))
-        .withName(
-            "Score with Elevator setpoint "
-                + setpoints.elevatorSetpoint
-                + " and arm setpoint = "
-                + setpoints.armSetpoint);
-  }
-
-  public static Command primeForLevel(ScoringSetpoints setpoints) {
-    return Commands.parallel(
-            // Commands.print(
-            //     "Priming with Elevator setpoint "
-            //         + setpoints.elevatorSetpoint
-            //         + " and arm setpoint = "
-            //         + setpoints.armSetpoint),
-            new MoveFromHandoffCommand(
-                Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
-                setpoints.elevatorSetpoint,
-                setpoints.armSetpoint))
-        .withName(
-            "Priming with Elevator setpoint "
-                + setpoints.elevatorSetpoint
-                + " and arm setpoint = "
-                + setpoints.armSetpoint);
   }
 
   /**
@@ -330,11 +294,11 @@ public class ScoringFactory {
         Set.of(RobotContainer.getArm(), RobotContainer.getElevator()));
   }
 
-  public static Command armFollowThrough() {
-    return Commands.defer(
-        () ->
-            ArmFactory.setPosition(
-                RobotState.getInstance().getCoralScoringSetpoints().armPlaceSetpoint),
-        Set.of(RobotContainer.getArm()));
-  }
+  // public static Command armFollowThrough() {
+  //   return Commands.defer(
+  //       () ->
+  //           ArmFactory.setPosition(
+  //               RobotState.getInstance().getTarget().scoringLevel().getArmScoringSetpoint()),
+  //       Set.of(RobotContainer.getArm()));
+  // }
 }

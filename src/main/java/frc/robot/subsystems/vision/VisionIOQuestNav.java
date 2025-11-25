@@ -1,105 +1,99 @@
-// Copyright 2021-2025 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import gg.questnav.questnav.QuestNav;
+import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
 import java.util.List;
 
-/** IO implementation for real PhotonVision hardware. */
 public class VisionIOQuestNav implements VisionIO {
-  public static record QuestConfig(String name) {}
+  private final QuestNav questNav;
+  private final String name;
 
-  protected final List<QuestThread> questThreads = new ArrayList<>();
-  private final Object observationLock = new Object();
-  private List<PoseObservation> latestPoseObservations = new ArrayList<>();
-  private TargetObservation latestTargetObservation =
-      new TargetObservation(new Rotation2d(), new Rotation2d());
+  public VisionIOQuestNav(String name) {
+    this.name = name;
+    this.questNav = new QuestNav();
+  }
 
-  /**
-   * Creates a new VisionIOPhotonVision with multiple cameras.
-   *
-   * @param cameraConfigs List of camera configurations (name and transform)
-   */
-  public VisionIOQuestNav(QuestConfig questConfig) {
-    QuestThread thread = new QuestThread(questConfig.name());
-    questThreads.add(thread);
-
-    // Fixes race condition with Alerts being created in PhotonCamera
-    // which causes ConcurrentModificationException.
-    thread.start();
-    try {
-      Thread.sleep(20);
-    } catch (InterruptedException ignore) {
-    }
+  public VisionIOQuestNav(String name, QuestNav questNav) {
+    this.name = name;
+    this.questNav = questNav;
   }
 
   @Override
   public void updateInputs(VisionIOInputs inputs) {
-    synchronized (observationLock) {
-      // Update connected status - true if any camera is connected
-      inputs.connected = questThreads.stream().anyMatch(QuestThread::isConnected);
+    inputs.connected = questNav.isConnected();
 
-      // Copy latest observations to inputs
-      inputs.poseObservations = latestPoseObservations.toArray(new PoseObservation[0]);
-      inputs.latestTargetObservation = latestTargetObservation;
+    // Only update if connected
+    if (inputs.connected) {
+      List<PoseObservation> observations = new ArrayList<>();
+      double timestamp = Timer.getFPGATimestamp() - questNav.getTimestamp(); // Approximate latency
 
-      // Clear for next update
-      latestPoseObservations.clear();
+      // QuestNav only provides robot pose directly, not camera pose.
+      // We will assume a dummy camera pose and then convert it to robot pose later
+      // The current Vision.java converts from camera to robot pose,
+      // so we will provide robot pose as camera pose here and adjust Vision.java to handle it.
+      // Alternatively, we could convert QuestNav's robot pose to a dummy camera pose using
+      // robotToCamera transform, but that might be more complex.
+
+      // For now, let's just pass the robot pose directly as the observation pose
+      // and update the Vision subsystem to handle it.
+
+      // A simple solution is to return the robot's pose directly as the observation.pose,
+      // and ensure the Vision subsystem uses this directly as a robot pose, not a camera pose.
+      // This means we might need to modify Vision.java to have a specific path for QuestNav
+      // observations that are already in robot frame.
+
+      // Another way: create a dummy Transform3d that represents a "camera" at the robot's center,
+      // facing forward, and then apply that transform to QuestNav's robot pose to get a "camera"
+      // pose.
+      // This keeps the Vision subsystem's logic more consistent.
+
+      // Let's use the second approach to keep Vision.java generic.
+      // Assuming a dummy camera at (0,0,0) with no rotation relative to the robot.
+      // This means QuestNav's robot pose IS the "camera" pose from QuestNav's perspective.
+      // Vision.java will then subtract robotToCamera transform.
+
+      // So, the pose returned by getRobotPose() is effectively the origin of the "QuestNav camera".
+      // We need to apply the robotToCamera transform in reverse to get the robot pose.
+      // The Vision subsystem's consumer expects a robot pose, so QuestNav.getRobotPose() is
+      // directly usable.
+
+      // Let's simplify and directly provide QuestNav's robot pose as a Pose3d observation.
+      // This implies that Vision.java should treat QuestNav observations as *robot poses*, not
+      // *camera poses*.
+      // We'll need a way to distinguish this.
+
+      // Okay, looking at the Vision.java again, it uses `observation.type() ==
+      // PoseObservationType.QUESTNAV`.
+      // This means QuestNav observations are treated differently. So we can directly pass robot
+      // pose.
+      Pose3d robotPose3d =
+          new Pose3d(
+              questNav.getRobotPose().getX(),
+              questNav.getRobotPose().getY(),
+              0,
+              new Rotation3d(
+                  0,
+                  0,
+                  questNav.getRobotPose().getRotation().getRadians())); // Assuming Z=0 for QuestNav
+
+      observations.add(
+          new PoseObservation(
+              timestamp,
+              robotPose3d,
+              0.0, // Ambiguity is not provided by QuestNav directly, set to 0
+              1, // Assume 1 tag, as it's a single pose source
+              0.0, // Average tag distance not applicable
+              VisionIO.PoseObservationType.QUESTNAV));
+      inputs.poseObservations = observations.toArray(new PoseObservation[0]);
+      inputs.latestTargetObservation =
+          new TargetObservation(new Rotation2d(), new Rotation2d()); // Dummy
+      inputs.tagIds = new int[0]; // No AprilTag IDs from QuestNav
+    } else {
+      inputs.poseObservations = new PoseObservation[0];
     }
-  }
-
-  protected class QuestThread extends Thread {
-    private volatile boolean connected = false;
-    private QuestNav questNav;
-    private Pose3d robotPose;
-    private Pose3d initialRobotPose;
-
-    public QuestThread(String name) {
-      super("Vision-" + name);
-      setDaemon(true);
-      questNav = new QuestNav();
-      initialRobotPose = /* find out how to get initial pose using photonvision */ new Pose3d();
-      questNav.setPose(initialRobotPose.toPose2d());
-      robotPose =
-          new Pose3d(questNav.getPose())
-              .transformBy(new Transform3d(0, 0, initialRobotPose.getZ(), new Rotation3d()));
-    }
-
-    public boolean isConnected() {
-      return connected;
-    }
-
-    public void updateRobotPose() {
-      robotPose =
-          new Pose3d(questNav.getPose())
-              .transformBy(new Transform3d(0, 0, initialRobotPose.getZ(), new Rotation3d()));
-    }
-
-    @Override
-    public void run() {
-      if (questNav.isConnected() && questNav.isTracking()) {
-        updateRobotPose();
-        double timestamp = questNav.getDataTimestamp();
-        latestPoseObservations.add(
-            new PoseObservation(timestamp, robotPose, 0.01, 0, 0.1, PoseObservationType.QUESTNAV));
-        // TODO: FIX POSE OBSERVATION TO FIT WITH QUESTNAV INSTEAD OF PUTTING DUMMY VALUES
-      }
-    }
+    questNav.cleanUpQuestNavMessages();
   }
 }

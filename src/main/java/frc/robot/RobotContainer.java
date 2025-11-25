@@ -66,14 +66,11 @@ import frc.robot.subsystems.intake.IntakeArmIOSim;
 import frc.robot.subsystems.intake.IntakeArmIOTalonFX;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
-import frc.robot.subsystems.vision.CoralDetectionIOSim;
-import frc.robot.subsystems.vision.CoralIOPhotonVision;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision.CameraConfig;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.vision.VisionIOQuestNav;
-import frc.robot.subsystems.vision.VisionIOQuestNav.QuestConfig;
 import frc.robot.util.NemesisAutoBuilder;
 import frc.robot.util.NemesisAutoBuilder.ReefTarget;
 import java.util.List;
@@ -132,14 +129,9 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                null,
-                new VisionIOQuestNav(new QuestConfig("QuestNav")),
+                new VisionIOQuestNav("QuestNav"),
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
-                        new CameraConfig(frontBottomReefCameraName, robotToFrontBottomReefCam),
-                        new CameraConfig(backTopReefCameraName, robotToBackTopReefCam),
-                        new CameraConfig(backBottomReefCameraName, robotToBackBottomReefCam))));
+                    List.of(new CameraConfig(PHOTON_TEST_CAMERA, robotToPhotonTestCamera))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -174,14 +166,9 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                null,
-                new VisionIOQuestNav(new QuestConfig("QuestNav")),
+                new VisionIOQuestNav("QuestNav"),
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
-                        new CameraConfig(frontBottomReefCameraName, robotToFrontBottomReefCam),
-                        new CameraConfig(backTopReefCameraName, robotToBackTopReefCam),
-                        new CameraConfig(backBottomReefCameraName, robotToBackBottomReefCam))));
+                    List.of(new CameraConfig(PHOTON_TEST_CAMERA, robotToPhotonTestCamera))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -250,14 +237,9 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new CoralIOPhotonVision(),
-                new VisionIOQuestNav(new QuestConfig("QuestNav")),
+                new VisionIOQuestNav("QuestNav"),
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
-                        new CameraConfig(frontBottomReefCameraName, robotToFrontBottomReefCam),
-                        new CameraConfig(backTopReefCameraName, robotToBackTopReefCam),
-                        new CameraConfig(backBottomReefCameraName, robotToBackBottomReefCam))));
+                    List.of(new CameraConfig(PHOTON_TEST_CAMERA, robotToPhotonTestCamera))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(
@@ -321,14 +303,9 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new CoralDetectionIOSim(),
-                null,
+                new VisionIOQuestNav("QuestNav"),
                 new VisionIOPhotonVisionSim(
-                    List.of(
-                        new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
-                        new CameraConfig(frontBottomReefCameraName, robotToFrontBottomReefCam),
-                        new CameraConfig(backTopReefCameraName, robotToBackTopReefCam),
-                        new CameraConfig(backBottomReefCameraName, robotToBackBottomReefCam)),
+                    List.of(new CameraConfig(PHOTON_TEST_CAMERA, robotToPhotonTestCamera)),
                     () -> drive.getPose()));
         intake =
             new Intake(
@@ -358,14 +335,9 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                null,
-                new VisionIOQuestNav(new QuestConfig("QuestNav")),
+                new VisionIOQuestNav("QuestNav"),
                 new VisionIOPhotonVision(
-                    List.of(
-                        new CameraConfig(frontTopReefCameraName, robotToFrontTopReefCam),
-                        new CameraConfig(frontBottomReefCameraName, robotToFrontBottomReefCam),
-                        new CameraConfig(backTopReefCameraName, robotToBackTopReefCam),
-                        new CameraConfig(backBottomReefCameraName, robotToBackBottomReefCam))));
+                    List.of(new CameraConfig(PHOTON_TEST_CAMERA, robotToPhotonTestCamera))));
         intake =
             new Intake(
                 new IntakeIOTalonFX(60, "Takeover", 20, false, true, 1),
@@ -471,15 +443,15 @@ public class RobotContainer {
         .onTrue(elevator.resetRotationCountCommand());
 
     // main buttons
-    rightJoystick.trigger()
-        .and(() -> controllerApp.getTarget().scoringLevel() == Level.L1)
-        .and(rightJoystick.button(4).negate())
-        .onTrue(GamePieceFactory.intakeCoralGroundToL1());
+    // rightJoystick.trigger()
+    //     .and(() -> controllerApp.getTarget().scoringLevel() == Level.L1)
+    //     .and(rightJoystick.button(4).negate())
+    //     .onTrue(GamePieceFactory.intakeCoralGroundToL1());
 
-    rightJoystick.trigger()
-        .and(() -> controllerApp.getTarget().scoringLevel() != Level.L1)
-        .and(rightJoystick.button(4).negate())
-        .onTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
+    // rightJoystick.trigger()
+    //     .and(() -> controllerApp.getTarget().scoringLevel() != Level.L1)
+    //     .and(rightJoystick.button(4).negate())
+    //     .onTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
 
     rightJoystick.trigger()
         .and(rightJoystick.button(4))
@@ -503,9 +475,9 @@ public class RobotContainer {
         .and(() -> controllerApp.getTarget().scoringLevel() == Level.L1)
         .whileTrue(IntakeFactory.runIntakeVoltage(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED));
 
-    leftJoystick.trigger()
-        .and(() -> controllerApp.getTarget().scoringLevel() != Level.L1)
-        .whileTrue(ScoringFactory.armFollowThrough());
+    // leftJoystick.trigger()
+    //     .and(() -> controllerApp.getTarget().scoringLevel() != Level.L1)
+    //     .whileTrue(ScoringFactory.armFollowThrough());
 
     leftJoystick.trigger()
         .and(rightJoystick.button(4))
@@ -531,7 +503,7 @@ public class RobotContainer {
 
   private void configureButtonBindingsTuning() {
     drive.setDefaultCommand(DriveFactory.joystickDrive());
-    controller.y().onTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
+    // controller.y().onTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
     controller.a().onTrue(ScoringFactory.stow());
     controller.x().onTrue(GamePieceFactory.intakeAlgaeGround());
     controller.b().onTrue(GamePieceFactory.grabAlgaeReef());
@@ -604,8 +576,8 @@ public class RobotContainer {
     // NamedCommands.registerCommand("PrimeL1",
     // ScoringFactory.primeForLevel(ScoringFactory.Level.L1));
     // TODO: Prime for Source
-    NamedCommands.registerCommand(
-        "intakeHandoff", GamePieceFactory.intakeCoralGroundAndHandoffNoStow());
+    // NamedCommands.registerCommand(
+    //     "intakeHandoff", GamePieceFactory.intakeCoralGroundAndHandoffNoStow());
 
     // Scoring Commands
     NamedCommands.registerCommand(
@@ -620,8 +592,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("ScoreL1", ScoringFactory.score(ScoringFactory.Level.L1));
     //   NamedCommands.registerCommand("PrimeL4WhileMoving", ScoringFactory.primeL4WhileMoving());
     NamedCommands.registerCommand("IntakeUprightCoral", GamePieceFactory.intakeAlgaeGround());
-    NamedCommands.registerCommand(
-        "IntakeUprightCoralNoStow", GamePieceFactory.intakeUprightCoralNoStow());
+    // NamedCommands.registerCommand(
+    //     "IntakeUprightCoralNoStow", GamePieceFactory.intakeUprightCoralNoStow());
     NamedCommands.registerCommand("ScoreL4Sequentially", ScoringFactory.scoreL4Sequentially());
 
     // Does this need priming?
