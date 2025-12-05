@@ -17,8 +17,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -30,11 +28,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstantsLarry;
 import frc.robot.Constants.EndEffectorConstantsLeonidas;
 import frc.robot.RobotState.ReefTargetSide;
-import frc.robot.command_factories.ClimbFactory;
 import frc.robot.command_factories.ControllerFactory;
 import frc.robot.command_factories.DriveFactory;
-import frc.robot.command_factories.ElevatorFactory;
-import frc.robot.command_factories.EndEffectorFactory;
 import frc.robot.command_factories.GamePieceFactory;
 import frc.robot.command_factories.IntakeFactory;
 import frc.robot.command_factories.ScoringFactory;
@@ -503,88 +498,88 @@ public class RobotContainer {
     drive.setDefaultCommand(DriveFactory.joystickDrive());
    
     // operator controls
-    controller.x().onTrue(ControllerFactory.setTargetLevel(Level.L4));
-    controller.b().onTrue(ControllerFactory.setTargetLevel(Level.L2));
-    controller.a().onTrue(ControllerFactory.setTargetLevel(Level.L3));
-    controller.y().onTrue(ControllerFactory.setTargetLevel(Level.L1));
-    controller.leftBumper().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.LEFT));
-    controller.rightBumper().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.RIGHT));
-    controller.rightTrigger().whileTrue(EndEffectorFactory.runEndEffectorVoltage(Constants.EndEffectorConstantsLeonidas.INTAKE_ALGAE_VOLTAGE));
+    // controller.x().onTrue(ControllerFactory.setTargetLevel(Level.L4));
+    // controller.b().onTrue(ControllerFactory.setTargetLevel(Level.L2));
+    // controller.a().onTrue(ControllerFactory.setTargetLevel(Level.L3));
+    // controller.y().onTrue(ControllerFactory.setTargetLevel(Level.L1));
+    // controller.leftBumper().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.LEFT));
+    // controller.rightBumper().onTrue(ControllerFactory.setTargetSide(ReefTargetSide.RIGHT));
+    // controller.rightTrigger().whileTrue(EndEffectorFactory.runEndEffectorVoltage(Constants.EndEffectorConstantsLeonidas.INTAKE_ALGAE_VOLTAGE));
 
-    // climb buttons
-    rightJoystick.button(16).whileTrue(ScoringFactory.climb());
-    rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
-    rightJoystick.button(11).whileTrue(ScoringFactory.deployMech());
-    leftJoystick.button(8).whileTrue(ClimbFactory.manualRunClimb());
+    // // climb buttons
+    // rightJoystick.button(16).whileTrue(ScoringFactory.climb());
+    // rightJoystick.button(12).onTrue(ScoringFactory.prepClimb());
+    // rightJoystick.button(11).whileTrue(ScoringFactory.deployMech());
+    // leftJoystick.button(8).whileTrue(ClimbFactory.manualRunClimb());
 
-    // reset buttons
-    rightJoystick.button(5)
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true)
-        );
+    // // reset buttons
+    // rightJoystick.button(5)
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true)
+    //     );
             
-    rightJoystick.button(8)
-        .onTrue(elevator.resetRotationCountCommand());
+    // rightJoystick.button(8)
+    //     .onTrue(elevator.resetRotationCountCommand());
 
     // main buttons
     rightJoystick.trigger()
-        .and(() -> controllerApp.getTarget().scoringLevel() == Level.L1)
-        .and(rightJoystick.button(4).negate())
+        // .and(() -> controllerApp.getTarget().scoringLevel() == Level.L1)
+        // .and(rightJoystick.button(4).negate())
         .onTrue(GamePieceFactory.intakeCoralGroundToL1());
 
-    rightJoystick.trigger()
-        .and(() -> controllerApp.getTarget().scoringLevel() != Level.L1)
-        .and(rightJoystick.button(4).negate())
-        .onTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
+    // rightJoystick.trigger()
+    //     .and(() -> controllerApp.getTarget().scoringLevel() != Level.L1)
+    //     .and(rightJoystick.button(4).negate())
+    //     .onTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
 
-    rightJoystick.trigger()
-        .and(rightJoystick.button(4))
-        .onTrue(GamePieceFactory.intakeAlgaeGround());
+    // rightJoystick.trigger()
+    //     .and(rightJoystick.button(4))
+    //     .onTrue(GamePieceFactory.intakeAlgaeGround());
 
-    rightJoystick.button(3)
-        .onTrue(GamePieceFactory.grabAlgaeReef());
+    // rightJoystick.button(3)
+    //     .onTrue(GamePieceFactory.grabAlgaeReef());
 
-    rightJoystick.povUp()
-        .whileTrue(EndEffectorFactory.runEndEffectorVoltage(Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE));
+    // rightJoystick.povUp()
+    //     .whileTrue(EndEffectorFactory.runEndEffectorVoltage(Constants.EndEffectorConstantsLeonidas.INTAKE_VOLTAGE));
 
-    rightJoystick.povDown()
+    leftJoystick.trigger()
         .whileTrue(IntakeFactory.runIntakeVoltage(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED));
 
-    rightJoystick.button(2)
-        .whileTrue(controllerApp.driveAndAutoScoreCommand(drive, elevator, arm));
+    // rightJoystick.button(2)
+    //     .whileTrue(controllerApp.driveAndAutoScoreCommand(drive, elevator, arm));
     
     // rightJoystick.button(4).onTrue(controllerApp.bindScoringCommand(elevator, arm));
 
-    leftJoystick.trigger()
-        .and(() -> controllerApp.getTarget().scoringLevel() == Level.L1)
-        .whileTrue(IntakeFactory.runIntakeVoltage(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED));
+    // leftJoystick.trigger()
+    //     .and(() -> controllerApp.getTarget().scoringLevel() == Level.L1)
+    //     .whileTrue(IntakeFactory.runIntakeVoltage(() -> Constants.IntakeConstantsLeonidas.INTAKE_CORAL_OUTTAKE_SPEED));
 
-    leftJoystick.trigger()
-        .and(() -> controllerApp.getTarget().scoringLevel() != Level.L1)
-        .whileTrue(ScoringFactory.armFollowThrough());
+    // leftJoystick.trigger()
+    //     .and(() -> controllerApp.getTarget().scoringLevel() != Level.L1)
+    //     .whileTrue(ScoringFactory.armFollowThrough());
 
-    leftJoystick.trigger()
-        .and(rightJoystick.button(4))
-        .whileTrue(ScoringFactory.scoreProcessor());
+    // leftJoystick.trigger()
+    //     .and(rightJoystick.button(4))
+    //     .whileTrue(ScoringFactory.scoreProcessor());
 
     leftJoystick.button(2)
         .onTrue(ScoringFactory.stow());
 
-    leftJoystick.povUp()
-        .onTrue(ScoringFactory.scoreAlgaeBarge());
+    // leftJoystick.povUp()
+    //     .onTrue(ScoringFactory.scoreAlgaeBarge());
         
-    // manual scoring
-    leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
-    leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
-    leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
+    // // manual scoring
+    // leftJoystick.povRight().whileTrue(ScoringFactory.score(Level.L2));
+    // leftJoystick.povDown().whileTrue(ScoringFactory.score(Level.L3));
+    // leftJoystick.povLeft().whileTrue(ScoringFactory.score(Level.L4));
 
-    rightJoystick.button(14).whileTrue(ElevatorFactory.manualUp());
-    rightJoystick.button(13).whileTrue(ElevatorFactory.manualDown());
+    // rightJoystick.button(14).whileTrue(ElevatorFactory.manualUp());
+    // rightJoystick.button(13).whileTrue(ElevatorFactory.manualDown());
 
 
   }

@@ -268,7 +268,7 @@ public final class Constants {
     public static final double ARM_VERTICAL_POS = .25;
     // public static final double magOffset = -.596436; // -.398
     // WHEN RESETTING ARM, RESET TO 6 DEGREES FROM HORIZONTAL (use measur;e app on iPhone :) )
-    public static final double magOffset = .455; // -.474;
+    public static final double magOffset = 0.123; // -.474;
     // -0.412; // 0; // 0.324; // 0.385; // 0; // .454; // 0; // -.473;
     // .146; // .142; // -0.15; // -0.379; // -.3347; // -.635; // TODO
     public static final double sensorReduction = 58.8; // TODO

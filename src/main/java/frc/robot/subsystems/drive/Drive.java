@@ -101,13 +101,13 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator;
 
   public static LoggedTunableNumber maxVelocityMPSScaler =
-      new LoggedTunableNumber("DriveToPoseConstaints/maxVelocityMPSScaler", .5);
+      new LoggedTunableNumber("DriveToPoseConstaints/maxVelocityMPSScaler", .2);
   public static LoggedTunableNumber maxAccelerationMPSSqScaler =
-      new LoggedTunableNumber("DriveToPoseConstaints/maxAccelerationMPSSqScaler", .5);
+      new LoggedTunableNumber("DriveToPoseConstaints/maxAccelerationMPSSqScaler", .2);
   public static LoggedTunableNumber maxAngularVelocityRadPerSecScaler =
-      new LoggedTunableNumber("DriveToPoseConstaints/maxAngularVelocityRadPerSecScaler", .5);
+      new LoggedTunableNumber("DriveToPoseConstaints/maxAngularVelocityRadPerSecScaler", .3);
   public static LoggedTunableNumber maxAngularAccelerationRadPerSecSqScaler =
-      new LoggedTunableNumber("DriveToPoseConstaints/maxAngularAccelerationRadPerSecSqScaler", .5);
+      new LoggedTunableNumber("DriveToPoseConstaints/maxAngularAccelerationRadPerSecSqScaler", .3);
 
   public static PathConstraints fastpathConstraints =
       new PathConstraints(
