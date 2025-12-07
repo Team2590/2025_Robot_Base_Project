@@ -53,10 +53,10 @@ public final class Constants {
   public static final double endEffectOffset = .2921; // Offset of the end effector to the
 
   public static class DriveToPoseConstraints {
-    public static double maxVelocityMPS = 3;
-    public static double maxAccelerationMPSSq = 3;
-    public static double maxAngularVelocityRadPerSec = 6;
-    public static double maxAngularAccelerationRadPerSecSq = 3;
+    public static double maxVelocityMPS = 1;
+    public static double maxAccelerationMPSSq = 1;
+    public static double maxAngularVelocityRadPerSec = 3;
+    public static double maxAngularAccelerationRadPerSecSq = 1;
 
     public static LoggedTunableNumber maxVelocityMPSScaler =
         new LoggedTunableNumber("DriveToPoseConstaints/maxVelocityMPSScaler", 1);

@@ -101,13 +101,13 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator;
 
   public static LoggedTunableNumber maxVelocityMPSScaler =
-      new LoggedTunableNumber("DriveToPoseConstaints/maxVelocityMPSScaler", .2);
+      new LoggedTunableNumber("DriveToPoseConstaints/maxVelocityMPSScaler", 0.05);
   public static LoggedTunableNumber maxAccelerationMPSSqScaler =
-      new LoggedTunableNumber("DriveToPoseConstaints/maxAccelerationMPSSqScaler", .2);
+      new LoggedTunableNumber("DriveToPoseConstaints/maxAccelerationMPSSqScaler", .05);
   public static LoggedTunableNumber maxAngularVelocityRadPerSecScaler =
-      new LoggedTunableNumber("DriveToPoseConstaints/maxAngularVelocityRadPerSecScaler", .3);
+      new LoggedTunableNumber("DriveToPoseConstaints/maxAngularVelocityRadPerSecScaler", .1);
   public static LoggedTunableNumber maxAngularAccelerationRadPerSecSqScaler =
-      new LoggedTunableNumber("DriveToPoseConstaints/maxAngularAccelerationRadPerSecSqScaler", .3);
+      new LoggedTunableNumber("DriveToPoseConstaints/maxAngularAccelerationRadPerSecSqScaler", .1);
 
   public static PathConstraints fastpathConstraints =
       new PathConstraints(
@@ -282,7 +282,8 @@ public class Drive extends SubsystemBase {
     // Calculate module setpoints
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, constantsWrapper.kSpeedAt12Volts);
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        setpointStates, constantsWrapper.kSpeedAt12Volts.times(0.3));
 
     // Log unoptimized setpoints and setpoint speeds
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
@@ -404,7 +405,7 @@ public class Drive extends SubsystemBase {
 
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
-    return constantsWrapper.kSpeedAt12Volts.in(MetersPerSecond);
+    return constantsWrapper.kSpeedAt12Volts.in(MetersPerSecond) * .3;
   }
 
   public RobotConfig getConfig() {

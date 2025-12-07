@@ -17,6 +17,8 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -513,15 +515,15 @@ public class RobotContainer {
     // leftJoystick.button(8).whileTrue(ClimbFactory.manualRunClimb());
 
     // // reset buttons
-    // rightJoystick.button(5)
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-    //                 drive)
-    //             .ignoringDisable(true)
-    //     );
+    rightJoystick.button(5)
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true)
+        );
             
     // rightJoystick.button(8)
     //     .onTrue(elevator.resetRotationCountCommand());
@@ -567,8 +569,8 @@ public class RobotContainer {
     //     .and(rightJoystick.button(4))
     //     .whileTrue(ScoringFactory.scoreProcessor());
 
-    leftJoystick.button(2)
-        .onTrue(ScoringFactory.stow());
+    // leftJoystick.button(2)
+    //     .onTrue(ScoringFactory.stow());
 
     // leftJoystick.povUp()
     //     .onTrue(ScoringFactory.scoreAlgaeBarge());
