@@ -230,9 +230,9 @@ public class RobotState extends SubsystemBase {
     return currentZone;
   }
 
-  public Pose2d getNearestCoralPose() {
-    return vision.getNearestCoralPose();
-  }
+  // public Pose2d getNearestCoralPose() {
+  //   return vision.getNearestCoralPose();
+  // }
 
   public AligningState getAligningState() {
     return aligningState.get();

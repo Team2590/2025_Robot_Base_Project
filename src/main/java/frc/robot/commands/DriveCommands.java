@@ -533,11 +533,11 @@ public class DriveCommands {
   }
   // spotless:on
 
-  public static Command joystickDriveToCoral(
-      Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
-    return joystickDriveAtAngle(
-        drive, xSupplier, ySupplier, () -> RobotContainer.getVision().getNearestCoralRotation());
-  }
+  // public static Command joystickDriveToCoral(
+  //     Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+  //   return joystickDriveAtAngle(
+  //       drive, xSupplier, ySupplier, () -> RobotContainer.getVision().getNearestCoralRotation());
+  // }
   /**
    * Convenient method that sets the AligningState before running the command and resets it after.
    */

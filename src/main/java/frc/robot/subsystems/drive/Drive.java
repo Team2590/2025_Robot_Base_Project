@@ -27,12 +27,10 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -48,6 +46,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.generated.TunerConstantsLeonidas;
 import frc.robot.generated.TunerConstantsWrapper;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.LoggedTunableNumber;
@@ -98,7 +97,7 @@ public class Drive extends SubsystemBase {
         new SwerveModulePosition(),
         new SwerveModulePosition()
       };
-  private SwerveDrivePoseEstimator poseEstimator;
+  private Pose2d currentEstimatedPose;
 
   public static LoggedTunableNumber maxVelocityMPSScaler =
       new LoggedTunableNumber("DriveToPoseConstaints/maxVelocityMPSScaler", .5);
@@ -142,9 +141,7 @@ public class Drive extends SubsystemBase {
     // Usage reporting for swerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_AdvantageKit);
     kinematics = new SwerveDriveKinematics(getModuleTranslations());
-    poseEstimator =
-        new SwerveDrivePoseEstimator(
-            kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+    currentEstimatedPose = new Pose2d();
 
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
@@ -205,7 +202,7 @@ public class Drive extends SubsystemBase {
   public void periodic() {
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
-    // Logger.processInputs("Drive/Gyro", gyroInputs);
+    Logger.processInputs("Drive/Gyro", gyroInputs);
     // Logger.recordOutput("Drive/constants", constantsWrapper.driveBaseRadius);
     for (var module : modules) {
       module.periodic();
@@ -225,40 +222,9 @@ public class Drive extends SubsystemBase {
       Logger.recordOutput("SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
     }
 
-    // Update odometry
-    double[] sampleTimestamps =
-        modules[0].getOdometryTimestamps(); // All signals are sampled together
-    int sampleCount = sampleTimestamps.length;
-    for (int i = 0; i < sampleCount; i++) {
-      // Read wheel positions and deltas from each module
-      SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
-      SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
-      for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
-        modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
-        moduleDeltas[moduleIndex] =
-            new SwerveModulePosition(
-                modulePositions[moduleIndex].distanceMeters
-                    - lastModulePositions[moduleIndex].distanceMeters,
-                modulePositions[moduleIndex].angle);
-        lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
-      }
-
-      // Update gyro angle
-      if (gyroInputs.connected) {
-        // Use the real gyro angle
-        rawGyroRotation = gyroInputs.odometryYawPositions[i];
-      } else {
-        // Use the angle delta from the kinematics and module deltas
-        Twist2d twist = kinematics.toTwist2d(moduleDeltas);
-        rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
-      }
-
-      // Apply update
-      poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
-      // Logger.recordOutput(
-      //     "Odometry/zoneOfField",
-      //     Constants.locator.getZoneOfField(poseEstimator.getEstimatedPosition()));
-    }
+    // Odometry is now handled by QuestNav directly updating currentEstimatedPose.
+    // Vision measurements (including QuestNav's "odometry" and PhotonVision's corrections)
+    // are applied via addVisionMeasurement or updateOdometryFromQuestNav.
 
     // Update gyro alert
     // gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
@@ -380,7 +346,7 @@ public class Drive extends SubsystemBase {
   /** Returns the current odometry pose. */
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
-    return poseEstimator.getEstimatedPosition();
+    return currentEstimatedPose;
   }
 
   /** Returns the current odometry rotation. */
@@ -390,16 +356,56 @@ public class Drive extends SubsystemBase {
 
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
-    poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
+    currentEstimatedPose = pose;
+    // Potentially reset GyroIO or QuestNavIO here if their internal states need to match the new
+    // pose.
+    // However, since QuestNav is the primary odometry, its internal reset will be handled elsewhere
+    // (e.g., in Vision.java).
+    // The GyroIO currently does not have a setYaw method.
+  }
+
+  /** Updates the robot's pose directly from QuestNav odometry. */
+  public void updateOdometryFromQuestNav(Pose2d questNavPose, double timestamp) {
+    currentEstimatedPose = questNavPose;
+    Logger.recordOutput("Odometry/QuestNav", questNavPose); // Log for debugging
   }
 
   /** Adds a new timestamped vision measurement. */
   public void addVisionMeasurement(
       Pose2d visionRobotPoseMeters,
-      double timestampSeconds,
+      double timestampSeconds, // Timestamp is useful but not directly used in this simple blending
       Matrix<N3, N1> visionMeasurementStdDevs) {
-    poseEstimator.addVisionMeasurement(
-        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+
+    // Simple blending. Lower standard deviation means more trust in vision measurement.
+    double xStdDev = visionMeasurementStdDevs.get(0, 0);
+    double yStdDev = visionMeasurementStdDevs.get(1, 0);
+    double rotStdDev = visionMeasurementStdDevs.get(2, 0);
+
+    // Define some arbitrary "base" standard deviation for comparison.
+    // If vision reports lower std dev, it gets more weight.
+    // These constants can be tuned for desired blending behavior.
+    final double BASE_LINEAR_STD_DEV = 0.5; // Example: 0.5 meters
+    final double BASE_ROT_STD_DEV = Math.toRadians(5.0); // Example: 5 degrees
+    final double MAX_CORRECTION_WEIGHT = 0.2; // Max 20% correction per measurement
+
+    double xWeight = Math.min(1.0, BASE_LINEAR_STD_DEV / xStdDev);
+    double yWeight = Math.min(1.0, BASE_LINEAR_STD_DEV / yStdDev);
+    double rotWeight = Math.min(1.0, BASE_ROT_STD_DEV / rotStdDev);
+
+    // Ensure weights are not too high, we want correction, not overwrite
+    xWeight = Math.min(xWeight, MAX_CORRECTION_WEIGHT);
+    yWeight = Math.min(yWeight, MAX_CORRECTION_WEIGHT);
+    rotWeight = Math.min(rotWeight, MAX_CORRECTION_WEIGHT);
+
+    currentEstimatedPose =
+        new Pose2d(
+            currentEstimatedPose.getX() * (1 - xWeight) + visionRobotPoseMeters.getX() * xWeight,
+            currentEstimatedPose.getY() * (1 - yWeight) + visionRobotPoseMeters.getY() * yWeight,
+            currentEstimatedPose
+                .getRotation()
+                .interpolate(visionRobotPoseMeters.getRotation(), rotWeight));
+
+    Logger.recordOutput("Odometry/VisionCorrectionApplied", currentEstimatedPose);
   }
 
   /** Returns the maximum linear speed in meters per sec. */
@@ -419,11 +425,14 @@ public class Drive extends SubsystemBase {
   /** Returns an array of module translations. */
   public static Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
-      new Translation2d(constantsWrapper.FrontLeft.LocationX, constantsWrapper.FrontLeft.LocationY),
       new Translation2d(
-          constantsWrapper.FrontRight.LocationX, constantsWrapper.FrontRight.LocationY),
-      new Translation2d(constantsWrapper.BackLeft.LocationX, constantsWrapper.BackLeft.LocationY),
-      new Translation2d(constantsWrapper.BackRight.LocationX, constantsWrapper.BackRight.LocationY)
+          TunerConstantsLeonidas.FrontLeft.LocationX, TunerConstantsLeonidas.FrontLeft.LocationY),
+      new Translation2d(
+          TunerConstantsLeonidas.FrontRight.LocationX, TunerConstantsLeonidas.FrontRight.LocationY),
+      new Translation2d(
+          TunerConstantsLeonidas.BackLeft.LocationX, TunerConstantsLeonidas.BackLeft.LocationY),
+      new Translation2d(
+          TunerConstantsLeonidas.BackRight.LocationX, TunerConstantsLeonidas.BackRight.LocationY)
     };
   }
 
