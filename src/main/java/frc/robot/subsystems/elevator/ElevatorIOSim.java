@@ -1,5 +1,6 @@
 package frc.robot.subsystems.elevator;
 
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -19,7 +20,7 @@ public class ElevatorIOSim implements ElevatorIO {
   private double rotationCount;
   private DCMotor gearBox;
   private double requestedPositionMeters = 0;
-  private boolean holding = true;
+  private boolean holding = false;
 
   public ElevatorIOSim(
       DCMotor gearbox,
@@ -83,6 +84,11 @@ public class ElevatorIOSim implements ElevatorIO {
   @Override
   public double getTargetPosition() {
     return requestedPositionMeters;
+  }
+
+  @Override
+  public void setVoltage(VoltageOut volts) {
+    elevatorSim.setInputVoltage(volts.Output);
   }
 
   @Override
