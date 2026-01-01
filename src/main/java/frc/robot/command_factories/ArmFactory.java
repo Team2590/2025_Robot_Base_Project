@@ -16,8 +16,10 @@ public class ArmFactory {
    * @return Command to set arm position
    */
   public static Command setPosition(double position) {
-    return RobotContainer.getArm().setPositionCommand(position).withName("Set Arm Position");
-    // .onlyIf(() -> SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position));
+    return RobotContainer.getArm()
+        .setPositionCommand(position)
+        .withName("Set Arm Position")
+        .onlyIf(() -> SafetyChecker.isSafe(SafetyChecker.MechanismType.ARM_MOVEMENT, position));
   }
 
   public static Command setPositionBlocking(double position) {

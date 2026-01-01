@@ -40,6 +40,7 @@ public class ArmIOSim implements ArmIO {
             maxHeightMeters,
             simulateGravity,
             startingHeightMeters);
+    this.armabspos = startingHeightMeters;
   }
 
   @Override
