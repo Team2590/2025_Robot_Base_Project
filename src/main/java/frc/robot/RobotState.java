@@ -30,7 +30,7 @@ import org.littletonrobotics.junction.Logger;
 public class RobotState extends SubsystemBase {
   Pose2d robotPose;
   private Pose3d[] componentPoses =
-      new Pose3d[] {new Pose3d(), new Pose3d(), new Pose3d(), new Pose3d()};
+      new Pose3d[] {new Pose3d(), new Pose3d(), new Pose3d(), new Pose3d(), new Pose3d()};
   private String currentZone;
   private final Arm arm;
   private final Drive drive;
@@ -219,7 +219,14 @@ public class RobotState extends SubsystemBase {
             new Pose3d(
                 elevatorTranslations[1].plus(new Translation3d(0, 0, 0.36)),
                 arm.getArmRotation().rotateBy(new Rotation3d(0, -10 * Math.PI / 180, 0))),
-            new Pose3d()
+            new Pose3d(
+                0,
+                -0.263,
+                0.15,
+                intake
+                    .getIntakeArmRotation()
+                    .rotateBy(new Rotation3d(-1.423, 0, 0))) // -1.2, 1.1 -0.243902439
+            // new Pose3d(0, -0.255, 0.15, new Rotation3d(-0.7, 0, 0))
           };
     }
   }

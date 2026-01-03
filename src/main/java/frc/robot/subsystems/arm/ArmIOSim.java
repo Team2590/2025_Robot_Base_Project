@@ -3,6 +3,7 @@ package frc.robot.subsystems.arm;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.util.LoggedTunableNumber;
 
@@ -13,6 +14,7 @@ public class ArmIOSim implements ArmIO {
   private LoggedTunableNumber cruiseVelocity = new LoggedTunableNumber("Arm/cruiseVelocity", 10);
   private NeutralModeValue neutralMode;
   private double armabspos;
+  private double voltage;
   private DCMotor gearBox;
   private double requestedPositionMeters = 0;
   private boolean holding = true;
@@ -40,11 +42,18 @@ public class ArmIOSim implements ArmIO {
             maxHeightMeters,
             simulateGravity,
             startingHeightMeters);
+    this.armabspos = startingHeightMeters;
   }
 
   @Override
   public void updateInputs(ArmIOInputs io) {
     io.armpos = this.armabspos;
+    io.connected = true;
+    io.positionRads = armSim.getAngleRads();
+    io.rotationCount = this.armabspos;
+    io.velocityRadsPerSec = armSim.getVelocityRadPerSec();
+    io.appliedVoltage = voltage;
+    io.connected = true;
   }
 
   @Override
@@ -53,6 +62,7 @@ public class ArmIOSim implements ArmIO {
   @Override
   public void setPosition(double position) {
     this.armabspos = position;
+    armSim.setState(Units.rotationsToRadians(position), 0.0);
   }
 
   @Override
@@ -68,7 +78,7 @@ public class ArmIOSim implements ArmIO {
 
   @Override
   public void setPower(DutyCycleOut power) {
-
+    voltage = power.Output;
     armSim.setInputVoltage(power.Output);
   }
 }

@@ -2,6 +2,7 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,7 +17,8 @@ public class Intake extends SubsystemBase {
   public IntakeIO intakeIO;
   private IntakeArmIO intakeArmIO;
   private IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
-  // private IntakeArmIOInputsAutoLogged intakeArmInputs = new IntakeArmIOInputsAutoLogged();
+  // private IntakeArmIOInputsAutoLogged intakeArmInputs = new
+  // IntakeArmIOInputsAutoLogged();
   // private Alert intakeDisconnected;
   private IntakeArm intakeArm;
   private LoggedTunableNumber PROX_ONE_THRESHOLD = new LoggedTunableNumber("Intake/ProxOneThreshold", 600);
@@ -32,7 +34,8 @@ public class Intake extends SubsystemBase {
   public Intake(IntakeIO intakeIO, IntakeArmIO intakeArmIO) {
     this.intakeIO = intakeIO;
     this.intakeArmIO = intakeArmIO;
-    // intakeDisconnected = new Alert("Intake motor disconnected!", Alert.AlertType.kWarning);
+    // intakeDisconnected = new Alert("Intake motor disconnected!",
+    // Alert.AlertType.kWarning);
     intakeArm = new IntakeArm(intakeArmIO);
     intakeIO.setNeutralMode(NeutralModeValue.Brake);
     proxOneFilter = LinearFilter.movingAverage((int) LINEAR_FILTER_SAMPLES.get());
@@ -66,12 +69,14 @@ public class Intake extends SubsystemBase {
     public IntakeArm(IntakeArmIO intakeArmIO) {
       this.intakeArmIO = intakeArmIO;
       Logger.processInputs("IntakeArm", intakeArmInputs);
-      // intakeArmDisconnected = new Alert("Intake Arm motor disconnected!", Alert.AlertType.kWarning);
+      // intakeArmDisconnected = new Alert("Intake Arm motor disconnected!",
+      // Alert.AlertType.kWarning);
     }
 
     public void periodic() {
       intakeArmIO.updateInputs(intakeArmInputs);
       intakeArmIO.updateTunableNumbers();
+      Logger.processInputs("IntakeArm", intakeArmInputs);
       // intakeArmDisconnected.set(!intakeArmInputs.connected);
     }
 
@@ -79,7 +84,7 @@ public class Intake extends SubsystemBase {
       return runOnce(() -> intakeArmIO.resetRotationCount());
     }
 
-    public void resetArmRotationCount(){
+    public void resetArmRotationCount() {
       intakeArmIO.resetRotationCount();
     }
 
@@ -94,9 +99,9 @@ public class Intake extends SubsystemBase {
     public Command setPositionBlocking(double position) {
       return runEnd(() -> intakeArmIO.setPosition(position), () -> intakeArmIO.setPosition(position))
           .until(() -> {
-              // System.out.println("input position rads:" + intakeArmInputs.positionRads);
-              // System.out.println("setpoint" + Units.rotationsToRadians(position));
-              return NemesisMathUtil.isApprox(intakeArmInputs.rotationCount, setpointTolerance, position);
+            System.out.println("input position rads:" + intakeArmInputs.rotationCount);
+            System.out.println("setpoint" + position);
+            return NemesisMathUtil.isApprox(intakeArmInputs.rotationCount, setpointTolerance, position);
           });
     }
 
@@ -111,14 +116,14 @@ public class Intake extends SubsystemBase {
 
   public Command runIntakeUntilHasCoral(double voltage) {
     return runEnd(
-            () -> {
-              // System.out.println("Starting the intake command now!");
-              intakeIO.setVoltage(voltage);
-            },
-            () -> {
-              // System.out.println("Stopping the intake command now!");
-              intakeIO.stop();
-            })
+        () -> {
+          // System.out.println("Starting the intake command now!");
+          intakeIO.setVoltage(voltage);
+        },
+        () -> {
+          // System.out.println("Stopping the intake command now!");
+          intakeIO.stop();
+        })
         .until(() -> hasCoral())
         .withName("Run Intake");
   }
@@ -169,6 +174,10 @@ public class Intake extends SubsystemBase {
   @AutoLogOutput
   public boolean detectCoral() {
     return proxOneFilteredData > PROX_ONE_THRESHOLD.get() || proxTwoFilteredData > PROX_TWO_THRESHOLD.get();
-  }
+  } 
+
+  public Rotation3d getIntakeArmRotation() {
+      return new Rotation3d(intakeArmIO.getRotationCount() * 6.154, 0, 0);
+    }
 }
 // spotless:on

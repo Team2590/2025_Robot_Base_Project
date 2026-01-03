@@ -328,7 +328,7 @@ public class RobotContainer {
             new Intake(
                 new IntakeIOSim(DCMotor.getFalcon500(1), 4, .1),
                 new IntakeArmIOSim(DCMotor.getFalcon500(1), 4, .1));
-        arm = new Arm(new ArmIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 1, true, 1));
+        arm = new Arm(new ArmIOSim(DCMotor.getFalcon500(1), 1, 1, 1, 1, 1, true, 0.25));
         elevator =
             new Elevator(
                 // 18T * 5mm pitch * 24:14 gear ratio
@@ -509,7 +509,7 @@ public class RobotContainer {
 
     leftJoystick.button(2)
         .onTrue(ScoringFactory.stow());
-
+        
     leftJoystick.povUp()
         .onTrue(ScoringFactory.scoreAlgaeBarge());
         
