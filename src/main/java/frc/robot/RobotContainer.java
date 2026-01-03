@@ -509,9 +509,7 @@ public class RobotContainer {
 
     leftJoystick.button(2)
         .onTrue(ScoringFactory.stow());
-
-    // leftJoystick.button(3).onTrue(GamePieceFactory.intakeCoralGroundAndHandoff());
-
+        
     leftJoystick.povUp()
         .onTrue(ScoringFactory.scoreAlgaeBarge());
         

@@ -2,6 +2,7 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -75,6 +76,7 @@ public class Intake extends SubsystemBase {
     public void periodic() {
       intakeArmIO.updateInputs(intakeArmInputs);
       intakeArmIO.updateTunableNumbers();
+      Logger.processInputs("IntakeArm", intakeArmInputs);
       // intakeArmDisconnected.set(!intakeArmInputs.connected);
     }
 
@@ -172,6 +174,10 @@ public class Intake extends SubsystemBase {
   @AutoLogOutput
   public boolean detectCoral() {
     return proxOneFilteredData > PROX_ONE_THRESHOLD.get() || proxTwoFilteredData > PROX_TWO_THRESHOLD.get();
-  }
+  } 
+
+  public Rotation3d getIntakeArmRotation() {
+      return new Rotation3d(intakeArmIO.getRotationCount() * 6.154, 0, 0);
+    }
 }
 // spotless:on

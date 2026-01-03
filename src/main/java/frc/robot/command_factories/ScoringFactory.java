@@ -193,10 +193,10 @@ public class ScoringFactory {
   public static Command primeForLevel(ScoringSetpoints setpoints) {
     return Commands.parallel(
             // Commands.print(
-            //     "Priming with Elevator setpoint "
-            //         + setpoints.elevatorSetpoint
-            //         + " and arm setpoint = "
-            //         + setpoints.armSetpoint),
+            // "Priming with Elevator setpoint "
+            // + setpoints.elevatorSetpoint
+            // + " and arm setpoint = "
+            // + setpoints.armSetpoint),
             new MoveFromHandoffCommand(
                 Constants.IntakeArmConstantsLeonidas.INTAKE_HOME_POS,
                 setpoints.elevatorSetpoint,
@@ -294,7 +294,8 @@ public class ScoringFactory {
         // .andThen(LEDFactory.blink())
         .withName("Deploy climb mechanism");
 
-    // , ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)
+    // ,
+    // ClimbFactory.runClimb(Constants.ClimbConstantsLeonidas.CLIMB_MECHANISM_POSITION)
   }
 
   public static Command deployMech() {

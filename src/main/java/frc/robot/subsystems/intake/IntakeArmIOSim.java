@@ -29,9 +29,10 @@ public class IntakeArmIOSim implements IntakeArmIO {
   public void updateInputs(IntakeArmIOInputs io) {
     sim.setInputVoltage(appliedVoltage); // Set voltage to the sim
     sim.update(0.02); // Simulate for 20ms (adjust as needed)
+    io.connected = true;
     io.appliedVoltage = sim.getInputVoltage();
     io.positionRads = sim.getAngularPositionRad();
-    io.rotationCount = sim.getAngularPositionRotations();
+    io.rotationCount = position;
     io.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
   }
 
